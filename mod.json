@@ -1,0 +1,14 @@
+{
+    "Name": "IRTweaks",
+    "Enabled": true,
+    "Version": "0.1.0",
+    "Description": "",
+    "Author": "IceRaptor",
+    "Website": "https://github.com/IceRaptor/IRTweaks",
+    "Contact": "",
+    "DLL": "IRTweaks.dll",
+    "DependsOn" : [ ],
+    "Settings": {
+        "Debug" : false,
+    }
+}
