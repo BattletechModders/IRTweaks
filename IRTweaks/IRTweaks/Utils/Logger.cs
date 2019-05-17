@@ -20,6 +20,7 @@ namespace IRTweaks {
         }
 
         public void Debug(string message) { if (Mod.Config.Debug) { Info(message); } }
+        public void Trace(string message) { if (Mod.Config.Trace) { Info(message); } }
 
         public void Info(string message) {
             string now = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.CultureInfo.InvariantCulture);
