@@ -4,6 +4,11 @@ using System.Collections.Generic;
 
 namespace IRTweaks {
 
+    public static class ModStats {
+        public const string CalledShowAlwaysAllow = "IRTCalledShotAlwaysAllow";
+        public const string CalledShotMod = "IRTCalledShotMod";
+    }
+
     public class ToHitCfg {
 
         public int CalledShotDefaultMod = 6;

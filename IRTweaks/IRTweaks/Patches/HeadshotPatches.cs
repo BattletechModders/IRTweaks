@@ -11,22 +11,20 @@ namespace IRTweaks {
             Mod.Log.Trace("HUDMAR:SHA entered");
 
             if (__instance.UseForCalledShots && location == ArmorLocation.Head) {
-                Mod.Log.Debug("  Attempting to prevent headshot.");
-                Statistic allowHeadshotStat = State.CurrentAttacker?.StatCollection.GetStatistic("IRTAllowHeadshot");
+                Mod.Log.Trace("  Checking if headshot should be prevented.");
+                Statistic allowHeadshotStat = State.CurrentAttacker?.StatCollection.GetStatistic(ModStats.CalledShowAlwaysAllow);
                 bool allowHeadShot = allowHeadshotStat != null ? allowHeadshotStat.Value<bool>() : false;
 
                 bool canBeTargeted = ___displayedMech.IsShutDown || ___displayedMech.IsProne || allowHeadShot;
                 Mod.Log.Trace($"  canBeTargeted:{canBeTargeted} isShutdown:{___displayedMech.IsShutDown} isProne:{___displayedMech.IsProne} allowHeadshot:{allowHeadShot}");
 
                 if (!canBeTargeted) {
-                    Mod.Log.Trace("  preventing targeting of head.");
+                    Mod.Log.Debug("  preventing targeting of head.");
                     __instance.ClearHoveredArmor(ArmorLocation.Head);
                 } else {
-                    Mod.Log.Trace("  target head can be targeted.");
+                    Mod.Log.Debug("  target head can be targeted.");
                 }
-                
             }
-            
         }
     }
 

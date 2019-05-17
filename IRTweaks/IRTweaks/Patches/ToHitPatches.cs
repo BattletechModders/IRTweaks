@@ -7,6 +7,7 @@ namespace IRTweaks {
     [HarmonyPatch(typeof(ToHit))]
     [HarmonyPatch("GetMoraleAttackModifier")]
     public static class ToHit_GetMoraleAttackModifier {
+        private const string AllowCalledShotsStat = "IRTCalledShotMod";
 
         public static void Postfix(ToHit __instance, ICombatant target, bool isMoraleAttack, ref float __result) {
             Mod.Log.Trace("TH:GMAM entered");
@@ -15,7 +16,7 @@ namespace IRTweaks {
                 int defaultValue = Mod.Config.ToHitCfg.CalledShotDefaultMod;
                 int pilotValue = PilotHelper.GetCurrentAttackerCalledShotModifier();
 
-                Statistic calledShotModStat = State.CurrentAttacker?.StatCollection.GetStatistic("IRTCalledShotMod");
+                Statistic calledShotModStat = State.CurrentAttacker?.StatCollection.GetStatistic(ModStats.CalledShotMod);
                 int unitMod = calledShotModStat != null ? calledShotModStat.Value<int>() : 0;
 
                 __result = defaultValue + pilotValue + unitMod;
