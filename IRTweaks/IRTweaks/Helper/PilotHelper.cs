@@ -6,26 +6,26 @@ namespace IRTweaks {
 
     class PilotHelper {
 
-        // Inject a pilot into the cache, if they aren't already present
-        public static void CachePilot(Pilot pilot) {
-            string pilotKey = pilot?.GUID;
-            if (!State.CurrentAttackerCalledShotMod.ContainsKey(pilotKey) ) {
-                Mod.Log.Debug($" Caching pilot:{pilot?.Name}_{pilot?.ParentActor?.DisplayName}");
-                int baseCSMod = GetTacticsModifier(pilot);
-                int tagsCSMod = GetTagsModifier(pilot, Mod.Config.ToHitCfg.CalledShotPilotTags);
-                int calledShotMod = -1 * (baseCSMod + tagsCSMod);
-                Mod.Log.Debug($" Pilot:{pilot?.Name} has -1 * (baseCSMod:{baseCSMod} + tagsCSMod:{tagsCSMod}) = calledShotMod:{calledShotMod}");
-                State.CurrentAttackerCalledShotMod[pilotKey] = calledShotMod;
-            } else {
-                Mod.Log.Debug($" Pilot:{pilot?.Name}_{pilot?.ParentActor?.DisplayName} already cached, skipping.");
-            }
+        public static string GetPilotKey(Pilot pilot) {
+            return $"{pilot?.Name}_{pilot?.ParentActor?.DisplayName}_{pilot?.GUID}_{pilot?.ParentActor?.GUID}";
         }
 
-        public static int GetCurrentAttackerCalledShotModifier() {
+        public static int GetCalledShotModifier(Pilot pilot) {
             int mod = 0;
-            if (State.CurrentAttacker != null && State.CurrentAttacker.GetPilot() != null) {
-                mod = State.CurrentAttackerCalledShotMod[State.CurrentAttacker.GetPilot().GUID];
+
+            string pilotKey = GetPilotKey(pilot);
+            if (!State.PilotCalledShotModifiers.ContainsKey(pilotKey)) {
+                Mod.Log.Debug($" Calculating calledShotModifier for pilot:{pilotKey}");
+                int defaultMod = Mod.Config.ToHitCfg.CalledShotDefaultMod;
+                int tacticsMod = GetTacticsModifier(pilot);
+                int tagsCSMod = GetTagsModifier(pilot, Mod.Config.ToHitCfg.CalledShotPilotTags);
+                int calledShotMod = defaultMod + (-1 * (tacticsMod + tagsCSMod));
+                Mod.Log.Debug($" Pilot:{pilotKey} has calledShotMod:{calledShotMod} = defaultMod:{defaultMod} + (-1 * (tacticsMod:{tacticsMod} + tagsCSMod:{tagsCSMod}))");
+                State.PilotCalledShotModifiers[pilotKey] = calledShotMod;
+            } else {
+                mod = State.PilotCalledShotModifiers[pilotKey];
             }
+            
             return mod;
         }
 
@@ -116,7 +116,7 @@ namespace IRTweaks {
             int normalizedVal = NormalizeSkill(skillValue);
             int mod = ModifierBySkill[normalizedVal];
             foreach (Ability ability in pilot.Abilities.Distinct()) {
-                Mod.Log.Debug($"Pilot {pilot.Name} has ability:{ability.Def.Id}.");
+                Mod.Log.Trace($"Pilot {pilot.Name} has ability:{ability.Def.Id}.");
                 if (ability.Def.Id.ToLower().Equals(abilityDefIdL5.ToLower()) || ability.Def.Id.ToLower().Equals(abilityDefIdL8.ToLower())) {
                     Mod.Log.Debug($"Pilot {pilot.Name} has targeted ability:{ability.Def.Id}, boosting their modifier.");
                     mod += 1;

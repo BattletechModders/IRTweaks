@@ -46,6 +46,9 @@ namespace IRTweaks {
 
             var harmony = HarmonyInstance.Create(HarmonyPackage);
             harmony.PatchAll(Assembly.GetExecutingAssembly());
+
+            // Setup the diag for me 
+            //Helper.DiagnosticLogger.PatchAllMethods();
         }
 
     }

@@ -1,7 +1,9 @@
 ﻿using BattleTech;
 using BattleTech.UI;
 using Harmony;
+using IRTweaks.Helper;
 using System;
+using System.Collections.Generic;
 
 namespace IRTweaks {
 
@@ -9,15 +11,20 @@ namespace IRTweaks {
     public static class HUDMechArmorReadout_SetHoveredArmor {
 
         public static void Postfix(HUDMechArmorReadout __instance, ArmorLocation location, Mech ___displayedMech) {
-            Mod.Log.Trace("HUDMAR:SHA entered");
-
             if (__instance.UseForCalledShots && location == ArmorLocation.Head) {
-                Mod.Log.Trace("  Checking if headshot should be prevented.");
-                Statistic allowHeadshotStat = State.CurrentAttacker?.StatCollection.GetStatistic(ModStats.CalledShowAlwaysAllow);
-                bool allowHeadShot = allowHeadshotStat != null ? allowHeadshotStat.Value<bool>() : false;
+                Mod.Log.Trace("HUDMAR:SHA entered");
 
-                bool canBeTargeted = ___displayedMech.IsShutDown || ___displayedMech.IsProne || allowHeadShot;
-                Mod.Log.Trace($"  canBeTargeted:{canBeTargeted} isShutdown:{___displayedMech.IsShutDown} isProne:{___displayedMech.IsProne} allowHeadshot:{allowHeadShot}");
+                bool canAlwaysCalledShot = false;
+                List<Statistic> customStats = ActorHelper.FindCustomStatistic(ModStats.CalledShowAlwaysAllow, __instance.HUD.SelectedActor);
+                foreach (Statistic stat in customStats) {
+                    if (stat.ValueType() == typeof(bool) && stat.Value<bool>()) {
+                        canAlwaysCalledShot = true;
+                    }
+                }
+                bool canBeTargeted = __instance.HUD.SelectedTarget.IsShutDown || __instance.HUD.SelectedTarget.IsProne || canAlwaysCalledShot;
+
+                Mod.Log.Debug($"  Hover - target:{___displayedMech.DisplayName}_{___displayedMech.GetPilot()?.Name} canBeTargeted:{canBeTargeted} by attacker{__instance.HUD.SelectedActor.DisplayName}");
+                Mod.Log.Debug($"      isShutdown:{___displayedMech.IsShutDown} isProne:{___displayedMech.IsProne} canAlwaysCalledShot:{canAlwaysCalledShot}");
 
                 if (!canBeTargeted) {
                     Mod.Log.Debug("  preventing targeting of head.");
@@ -37,15 +44,21 @@ namespace IRTweaks {
             Mod.Log.Trace("SSF:SCS entered");
 
             if (location == ArmorLocation.Head) {
-                Mod.Log.Debug("  Checking if headshot should be prevented.");
+                Mod.Log.Debug("  SCS Checking if headshot should be prevented.");
 
-                Statistic allowHeadshotStat = __instance.SelectedActor?.StatCollection.GetStatistic(ModStats.CalledShowAlwaysAllow);
-                bool allowHeadShot = allowHeadshotStat != null ? allowHeadshotStat.Value<bool>() : false;
+                bool canAlwaysCalledShot = false;
+                List<Statistic> customStats = ActorHelper.FindCustomStatistic(ModStats.CalledShowAlwaysAllow, __instance.SelectedActor);
+                foreach (Statistic stat in customStats) {
+                    if (stat.ValueType() == typeof(bool) && stat.Value<bool>()) {
+                        canAlwaysCalledShot = true;
+                    }
+                }
 
-                bool canBeTargeted = __instance.TargetedCombatant.IsShutDown || __instance.TargetedCombatant.IsProne || allowHeadShot;
-                Mod.Log.Trace($"  canBeTargeted:{canBeTargeted} isShutdown:{__instance.TargetedCombatant.IsShutDown} isProne:{__instance.TargetedCombatant.IsProne} allowHeadshot:{allowHeadShot}");
+                bool canBeTargeted = __instance.TargetedCombatant.IsShutDown || __instance.TargetedCombatant.IsProne || canAlwaysCalledShot;
+                Mod.Log.Debug($"  Select - target:{__instance.TargetedCombatant.DisplayName}_{__instance.TargetedCombatant.GetPilot()?.Name} canBeTargeted:{canBeTargeted} by attacker:{__instance.SelectedActor}");
+                Mod.Log.Debug($"      isShutdown:{__instance.TargetedCombatant.IsShutDown} isProne:{__instance.TargetedCombatant.IsProne} canAlwaysCalledShot:{canAlwaysCalledShot}");
 
-                if (!allowHeadShot) {
+                if (!canBeTargeted) {
                     Mod.Log.Debug("  Disabling headshot.");
                     Traverse.Create(__instance).Method("ClearCalledShot").GetValue();
                 }
