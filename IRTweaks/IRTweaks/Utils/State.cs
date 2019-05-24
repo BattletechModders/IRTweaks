@@ -1,5 +1,6 @@
 ﻿
 using BattleTech;
+using BattleTech.UI;
 using System.Collections.Generic;
 
 namespace IRTweaks {
@@ -11,6 +12,8 @@ namespace IRTweaks {
         public static AbstractActor CurrentAttacker;
         public static Weapon CurrentWeapon;
         public static ICombatant CurrentTarget;
+
+        public static SelectionStateSensorLock SelectionStateSensorLock;
 
         public static void Reset() {
             // Reinitialize state

@@ -24,13 +24,75 @@ namespace IRTweaks {
         }
     }
 
+    [HarmonyPatch(typeof(SelectionStateSensorLock), "CanActorUseThisState")]
+    public static class SelectionStateSensorLock_CanActorUseThisState {
+
+        public static void Postfix(SelectionStateSensorLock __instance, AbstractActor actor, ref bool __result) {
+            Mod.Log.Trace("SSSL:CAUTS entered");
+
+            if (actor != null && actor.GetPilot() != null) {
+                Pilot pilot = actor?.GetPilot();
+                Ability activeAbility = pilot.GetActiveAbility(ActiveAbilityID.SensorLock);
+                bool flag = (activeAbility != null && activeAbility.IsAvailable);
+                Mod.Log.Debug($"  Pilot has sensorLock:{activeAbility} and abilityIsAvailable:{activeAbility.IsAvailable}");
+                __result = flag;
+            }
+        }
+    }
+
+    [HarmonyPatch(typeof(SelectionStateSensorLock), "CreateFiringOrders")]
+    public static class SelectionStateSensorLock_CreateFiringOrders {
+
+        public static void Postfix(SelectionStateSensorLock __instance, string button) {
+            Mod.Log.Trace("SSSL:CFO entered");
+
+            if (button == "BTN_FireConfirm" && __instance.HasTarget) {
+                State.SelectionStateSensorLock = __instance;
+            }
+        }
+    }
+
+
+    [HarmonyPatch(typeof(SelectionStateSensorLock), "OnInactivate")]
+    public static class SelectionStateSensorLock_OnInactivate {
+
+        public static void Postfix(SelectionStateSensorLock __instance) {
+            Mod.Log.Trace("SSSL:OI entered");
+        }
+    }
+
     [HarmonyPatch(typeof(SensorLockSequence))]
     [HarmonyPatch("CompleteOrders")]
     public static class SensorLockSequence_CompleteOrders {
 
         public static bool Prefix(SensorLockSequence __instance, AbstractActor ___owningActor) {
-            //Mod.Log.Trace("SLS:CO entered, aborting invocation");
+            Mod.Log.Trace("SLS:CO entered, aborting invocation");
             //Mod.Log.Trace($"  oa:{___owningActor.DisplayName}_{___owningActor.GetPilot().Name} hasFired:{___owningActor.HasFiredThisRound} hasMoved:{___owningActor.HasMovedThisRound} hasActivated:{___owningActor.HasActivatedThisRound}");
+
+            // Force the ability to be on cooldown
+            if (___owningActor != null && ___owningActor.GetPilot() != null) {
+                Pilot pilot = ___owningActor.GetPilot();
+                Ability ability = pilot.GetActiveAbility(ActiveAbilityID.SensorLock);
+                Mod.Log.Debug($"  On sensor lock complete, cooldown is:{ability.CurrentCooldown}");
+                if (ability.CurrentCooldown < 1) {
+                    ability.ActivateCooldown();
+                }
+
+                Mod.Log.Debug($"  Clearing all sequences");
+
+                if (State.SelectionStateSensorLock != null) {
+                    Mod.Log.Debug($"  Calling clearTargetedActor");
+                    Traverse traverse = Traverse.Create(State.SelectionStateSensorLock).Method("ClearTargetedActor");
+                    traverse.GetValue();
+
+                    //State.SelectionStateSensorLock.BackOut();
+
+                    State.SelectionStateSensorLock = null;
+
+                }
+
+            }
+
             return false;
         }
     }
@@ -69,6 +131,18 @@ namespace IRTweaks {
                 Mod.Log.Trace($"    ca:{__instance.ConsumesActivation} fae:{__instance.ForceActivationEnd}");
 
                 Mod.Log.Trace(" SensorLockSequence, skipping.");
+
+                Mod.Log.Trace(" Clearing shown list");
+                Traverse.Create(__instance).Method("ClearShownList").GetValue();
+                Mod.Log.Trace(" Clearing camera");
+                Traverse.Create(__instance).Method("ClearCamersa").GetValue();
+                Mod.Log.Trace(" Clearing focal point");
+                Traverse.Create(__instance).Method("ClearFocalPoint").GetValue();
+                if (__instance.CompletedCallback != null) {
+                    Mod.Log.Trace(" Getting finnished sequence");
+                    var seqFinished  = Traverse.Create(__instance).Property("CompletedCallback").GetValue<SequenceFinished>();
+                }
+
                 return true;
             } else {
                 //Mod.Log.Trace(" Not SensorLockSequence, continuing.");

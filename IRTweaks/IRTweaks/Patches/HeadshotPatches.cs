@@ -1,6 +1,7 @@
 ﻿using BattleTech;
 using BattleTech.UI;
 using Harmony;
+using System;
 
 namespace IRTweaks {
 
@@ -25,6 +26,34 @@ namespace IRTweaks {
                     Mod.Log.Debug("  target head can be targeted.");
                 }
             }
+        }
+    }
+
+    [HarmonyPatch(typeof(SelectionStateFire), "SetCalledShot")]
+    [HarmonyPatch(new Type[] {  typeof(ArmorLocation) })]
+    public static class SelectionStateFire_SetCalledShot {
+
+        public static void Postfix(SelectionStateFire __instance, ArmorLocation location) {
+            Mod.Log.Trace("SSF:SCS entered");
+
+            if (location == ArmorLocation.Head) {
+                Mod.Log.Debug("  Checking if headshot should be prevented.");
+
+                Statistic allowHeadshotStat = __instance.SelectedActor?.StatCollection.GetStatistic(ModStats.CalledShowAlwaysAllow);
+                bool allowHeadShot = allowHeadshotStat != null ? allowHeadshotStat.Value<bool>() : false;
+
+                bool canBeTargeted = __instance.TargetedCombatant.IsShutDown || __instance.TargetedCombatant.IsProne || allowHeadShot;
+                Mod.Log.Trace($"  canBeTargeted:{canBeTargeted} isShutdown:{__instance.TargetedCombatant.IsShutDown} isProne:{__instance.TargetedCombatant.IsProne} allowHeadshot:{allowHeadShot}");
+
+                if (!allowHeadShot) {
+                    Mod.Log.Debug("  Disabling headshot.");
+                    Traverse.Create(__instance).Method("ClearCalledShot").GetValue();
+                }
+
+            }
+
+
+
         }
     }
 
