@@ -1,6 +1,7 @@
 ﻿using BattleTech;
 using BattleTech.UI;
 using Harmony;
+using Localize;
 
 namespace IRTweaks {
 
@@ -55,30 +56,36 @@ namespace IRTweaks {
         }
     }
 
-    //[HarmonyPatch(typeof(CombatHUDWeaponSlot), "UpdateToolTipsFiring")]
-    //public static class CombatHUDWeaponSlot_UpdateToolTipsFiring {
+    [HarmonyPatch(typeof(CombatHUDWeaponSlot), "UpdateToolTipsFiring")]
+    public static class CombatHUDWeaponSlot_UpdateToolTipsFiring {
 
-    //    public static void Postfix(CombatHUDWeaponSlot __instance, ICombatant target, CombatGameState ___Combat, CombatHUD ___HUD, int ___modifier) {
-    //        if (___HUD.SelectionHandler.ActiveState.SelectionType == SelectionType.FireMorale) {
-    //            Mod.Log.Trace("CHUDWS:UTTF:Post entered.");
+        public static void Postfix(CombatHUDWeaponSlot __instance, ICombatant target, CombatGameState ___Combat, CombatHUD ___HUD, int ___modifier) {
+            if (___HUD.SelectionHandler.ActiveState.SelectionType == SelectionType.FireMorale) {
+                Mod.Log.Trace("CHUDWS:UTTF:Post entered.");
 
-    //            // Calculate called shot modifier
-    //            int pilotValue = PilotHelper.GetCalledShotModifier(___HUD.SelectedActor.GetPilot());
-    //            // TODO: Find items that could apply a modifier
-    //            //Statistic calledShotModStat = State.CurrentAttacker?.StatCollection.GetStatistic(ModStats.CalledShotMod);
-    //            //int unitMod = calledShotModStat != null ? calledShotModStat.Value<int>() : 0;
-    //            int calledShotMod = pilotValue;
-    //            Mod.Log.Debug($" Called Shot from pilot:{___HUD.SelectedActor.GetPilot().Name} => pilotValue:{pilotValue} + unitMod:0 = calledShotMod:{calledShotMod}");
+                // Calculate called shot modifier
+                int pilotValue = PilotHelper.GetCalledShotModifier(___HUD.SelectedActor.GetPilot());
+                // TODO: Find items that could apply a modifier
+                //Statistic calledShotModStat = State.CurrentAttacker?.StatCollection.GetStatistic(ModStats.CalledShotMod);
+                //int unitMod = calledShotModStat != null ? calledShotModStat.Value<int>() : 0;
+                int calledShotMod = pilotValue;
+                Mod.Log.Debug($" Called Shot from pilot:{___HUD.SelectedActor.GetPilot().Name} => pilotValue:{pilotValue} + unitMod:0 = calledShotMod:{calledShotMod}");
 
-    //            if (calledShotMod != 0) {
-    //                ___modifier = calledShotMod;
+                if (calledShotMod != 0) {
+                    AddMoraleToolTip(__instance, ___Combat.Constants.CombatUIConstants.MoraleAttackDescription.Name, calledShotMod);
+                }
+            }
+        }
 
-    //                Traverse traverse = Traverse.Create(__instance).Method("AddToolTipDetail");
-    //                traverse.GetValue(new object[] { ___Combat.Constants.CombatUIConstants.MoraleAttackDescription.Name, ___modifier });
-    //            }
-    //        }
-    //    }
-    //}
+        private static void AddMoraleToolTip(CombatHUDWeaponSlot instance, string description, int modifier) {
+            Mod.Log.Trace($"CHUDWS:UTTF:AMTT - adding desc:{description} with modifier:{modifier}.");
+            if (modifier < 0) {
+                instance.ToolTipHoverElement.BuffStrings.Add(new Text("{0} {1:+0;-#}", new object[] { description, modifier }));
+            } else if (modifier > 0) {
+                instance.ToolTipHoverElement.DebuffStrings.Add(new Text("{0} {1:+0;-#}", new object[] { description, modifier }));
+            }
+        }
+    }
 
     //// Cleanup at the end of combat
     //[HarmonyPatch(typeof(TurnDirector), "OnCombatGameDestroyed")]
