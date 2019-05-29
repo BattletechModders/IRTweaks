@@ -61,7 +61,6 @@
     <Compile Include="Helper\DiagnosticLogger.cs" />
     <Compile Include="Helper\PilotHelper.cs" />
     <Compile Include="IRTweaks.cs" />
-    <Compile Include="Patches\TestPatches.cs" />
     <Compile Include="Patches\ToHitPatches.cs" />
     <Compile Include="Patches\HeadshotPatches.cs" />
     <Compile Include="Patches\SensorLockPatches.cs" />

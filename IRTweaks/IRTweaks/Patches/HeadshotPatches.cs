@@ -12,7 +12,7 @@ namespace IRTweaks {
 
         public static void Postfix(AbstractActor __instance) {
             Mod.Log.Trace("AA:IES entered.");
-            __instance.StatCollection.AddStatistic<bool>(ModStats.CalledShotMod, false);
+            __instance.StatCollection.AddStatistic<Int32>(ModStats.CalledShotMod, 0);
             __instance.StatCollection.AddStatistic<bool>(ModStats.CalledShowAlwaysAllow, false);
         }
     }

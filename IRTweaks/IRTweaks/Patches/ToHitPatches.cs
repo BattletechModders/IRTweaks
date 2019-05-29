@@ -23,11 +23,14 @@ namespace IRTweaks {
 
                 // Calculate called shot modifier
                 int pilotValue = PilotHelper.GetCalledShotModifier(attacker.GetPilot());
-                // TODO: Find items that could apply a modifier
-                //Statistic calledShotModStat = State.CurrentAttacker?.StatCollection.GetStatistic(ModStats.CalledShotMod);
-                //int unitMod = calledShotModStat != null ? calledShotModStat.Value<int>() : 0;
-                int calledShotMod = pilotValue;
-                Mod.Log.Debug($" Called Shot from pilot:{attacker.GetPilot().Name} => pilotValue:{pilotValue} + unitMod:0 = calledShotMod:{calledShotMod}");
+                
+                int unitMod = 0;
+                if (attacker.StatCollection.ContainsStatistic(ModStats.CalledShotMod)) {
+                    unitMod = attacker.StatCollection.GetStatistic(ModStats.CalledShotMod).Value<int>();
+                }
+                
+                int calledShotMod = pilotValue + unitMod;
+                Mod.Log.Debug($"   Called Shot from pilot:{attacker.GetPilot().Name} => pilotValue:{pilotValue} + unitMod:{unitMod} = calledShotMod:{calledShotMod}");
 
                 __result = __result + calledShotMod;
             }
@@ -43,11 +46,14 @@ namespace IRTweaks {
 
                 // Calculate called shot modifier
                 int pilotValue = PilotHelper.GetCalledShotModifier(attacker.GetPilot());
-                // TODO: Find items that could apply a modifier
-                //Statistic calledShotModStat = State.CurrentAttacker?.StatCollection.GetStatistic(ModStats.CalledShotMod);
-                //int unitMod = calledShotModStat != null ? calledShotModStat.Value<int>() : 0;
-                int calledShotMod = pilotValue;
-                Mod.Log.Debug($" Called Shot from pilot:{attacker.GetPilot().Name} => pilotValue:{pilotValue} + unitMod:0 = calledShotMod:{calledShotMod}");
+
+                int unitMod = 0;
+                if (attacker.StatCollection.ContainsStatistic(ModStats.CalledShotMod)) {
+                    unitMod = attacker.StatCollection.GetStatistic(ModStats.CalledShotMod).Value<int>();
+                }
+
+                int calledShotMod = pilotValue + unitMod;
+                Mod.Log.Debug($"   Called Shot from pilot:{attacker.GetPilot().Name} => pilotValue:{pilotValue} + unitMod:{unitMod} = calledShotMod:{calledShotMod}");
 
                 if (calledShotMod != 0) {
                     __result = string.Format("{0}CALLED-SHOT {1:+#;-#}; ", __result, (int)calledShotMod);
@@ -63,13 +69,18 @@ namespace IRTweaks {
             if (___HUD.SelectionHandler.ActiveState.SelectionType == SelectionType.FireMorale) {
                 Mod.Log.Trace("CHUDWS:UTTF:Post entered.");
 
+                AbstractActor attacker = ___HUD.SelectedActor;
+
                 // Calculate called shot modifier
                 int pilotValue = PilotHelper.GetCalledShotModifier(___HUD.SelectedActor.GetPilot());
-                // TODO: Find items that could apply a modifier
-                //Statistic calledShotModStat = State.CurrentAttacker?.StatCollection.GetStatistic(ModStats.CalledShotMod);
-                //int unitMod = calledShotModStat != null ? calledShotModStat.Value<int>() : 0;
-                int calledShotMod = pilotValue;
-                Mod.Log.Debug($" Called Shot from pilot:{___HUD.SelectedActor.GetPilot().Name} => pilotValue:{pilotValue} + unitMod:0 = calledShotMod:{calledShotMod}");
+
+                int unitMod = 0;
+                if (attacker.StatCollection.ContainsStatistic(ModStats.CalledShotMod)) {
+                    unitMod = attacker.StatCollection.GetStatistic(ModStats.CalledShotMod).Value<int>();
+                }
+
+                int calledShotMod = pilotValue + unitMod;
+                Mod.Log.Debug($"   Called Shot from pilot:{attacker.GetPilot().Name} => pilotValue:{pilotValue} + unitMod:0 = calledShotMod:{calledShotMod}");
 
                 if (calledShotMod != 0) {
                     AddMoraleToolTip(__instance, ___Combat.Constants.CombatUIConstants.MoraleAttackDescription.Name, calledShotMod);
@@ -87,14 +98,4 @@ namespace IRTweaks {
         }
     }
 
-    //// Cleanup at the end of combat
-    //[HarmonyPatch(typeof(TurnDirector), "OnCombatGameDestroyed")]
-    //public static class TurnDirector_OnCombatGameDestroyed {
-
-    //    public static void Postfix(TurnDirector __instance) {
-    //        Mod.Log.Trace("TD:OCGD entered");
-
-    //        State.Reset();
-    //    }
-    //}
 }
