@@ -13,16 +13,8 @@ namespace IRTweaks.Helper {
 
             // Walk the actor's statCollection
             if (actor.StatCollection.ContainsStatistic(statName)) {
-                Mod.Log.Debug($"  actor has stat");
+                Mod.Log.Debug($"  actor has stat: {statName}");
                 statistics.Add(actor.StatCollection.GetStatistic(statName));
-            }
-
-            // Walk their components
-            foreach (MechComponent mc in actor.allComponents) {
-                if (mc.StatCollection.ContainsStatistic(statName)) {
-                    Mod.Log.Debug($"  Component id:{mc.defId} has stat");
-                    statistics.Add(mc.StatCollection.GetStatistic(statName));
-                }
             }
 
             Mod.Log.Debug($" == DONE Searching actor:{actor.DisplayName} and components for stat:{statName}");

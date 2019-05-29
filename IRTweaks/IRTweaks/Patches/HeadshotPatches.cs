@@ -7,6 +7,16 @@ using System.Collections.Generic;
 
 namespace IRTweaks {
 
+    [HarmonyPatch(typeof(AbstractActor), "InitEffectStats")]
+    public static class AbstractActor_InitEffectStats {
+
+        public static void Postfix(AbstractActor __instance) {
+            Mod.Log.Trace("AA:IES entered.");
+            __instance.StatCollection.AddStatistic<bool>(ModStats.CalledShotMod, false);
+            __instance.StatCollection.AddStatistic<bool>(ModStats.CalledShowAlwaysAllow, false);
+        }
+    }
+
     [HarmonyPatch(typeof(HUDMechArmorReadout), "SetHoveredArmor")]
     public static class HUDMechArmorReadout_SetHoveredArmor {
 
@@ -23,7 +33,7 @@ namespace IRTweaks {
                 }
                 bool canBeTargeted = __instance.HUD.SelectedTarget.IsShutDown || __instance.HUD.SelectedTarget.IsProne || canAlwaysCalledShot;
 
-                Mod.Log.Debug($"  Hover - target:{___displayedMech.DisplayName}_{___displayedMech.GetPilot()?.Name} canBeTargeted:{canBeTargeted} by attacker{__instance.HUD.SelectedActor.DisplayName}");
+                Mod.Log.Debug($"  Hover - target:({___displayedMech.DisplayName}_{___displayedMech.GetPilot()?.Name}) canBeTargeted:{canBeTargeted} by attacker:({__instance.HUD.SelectedActor.DisplayName})");
                 Mod.Log.Debug($"      isShutdown:{___displayedMech.IsShutDown} isProne:{___displayedMech.IsProne} canAlwaysCalledShot:{canAlwaysCalledShot}");
 
                 if (!canBeTargeted) {
