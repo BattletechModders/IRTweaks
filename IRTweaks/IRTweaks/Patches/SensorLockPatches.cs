@@ -135,11 +135,11 @@ namespace IRTweaks {
                 Mod.Log.Trace(" Clearing shown list");
                 Traverse.Create(__instance).Method("ClearShownList").GetValue();
                 Mod.Log.Trace(" Clearing camera");
-                Traverse.Create(__instance).Method("ClearCamersa").GetValue();
+                Traverse.Create(__instance).Method("ClearCamera").GetValue();
                 Mod.Log.Trace(" Clearing focal point");
                 Traverse.Create(__instance).Method("ClearFocalPoint").GetValue();
                 if (__instance.CompletedCallback != null) {
-                    Mod.Log.Trace(" Getting finnished sequence");
+                    Mod.Log.Trace(" Getting SequenceFinished");
                     var seqFinished  = Traverse.Create(__instance).Property("CompletedCallback").GetValue<SequenceFinished>();
                 }
 
@@ -170,6 +170,22 @@ namespace IRTweaks {
                 }
             } 
 
+        }
+    }
+
+    [HarmonyPatch(typeof(AIUtil), "EvaluateSensorLockQuality")]
+    public static class AIUtil_EvaluateSensorLockQuality {
+
+        public static bool Prefix(ref bool __result, AbstractActor movingUnit, ICombatant target, out float quality) {
+
+            AbstractActor abstractActor = target as AbstractActor;
+            if (abstractActor == null || movingUnit.DynamicUnitRole == UnitRole.LastManStanding || !abstractActor.HasActivatedThisRound || abstractActor.IsDead || abstractActor.EvasivePipsTotal == 0) {
+                quality = float.MinValue;
+                __result = false;
+                return false;
+            }
+            quality = float.MinValue;
+            return true;
         }
     }
 
