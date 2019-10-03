@@ -1,6 +1,7 @@
 ﻿
 using BattleTech;
 using BattleTech.UI;
+using IRTweaks.Modules.StoreUI;
 using System.Collections.Generic;
 
 namespace IRTweaks {
@@ -11,9 +12,14 @@ namespace IRTweaks {
 
         public static SelectionStateSensorLock SelectionStateSensorLock;
 
+
+
         public static void Reset() {
             // Reinitialize state
             PilotCalledShotModifiers.Clear();
+
+            // Reset module state
+            StoreUIModule.State.Reset();
         }
     }
 

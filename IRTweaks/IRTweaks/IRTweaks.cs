@@ -3,6 +3,8 @@ using Newtonsoft.Json;
 using System;
 using System.Diagnostics;
 using System.Reflection;
+using us.frostraptor.modUtils.logging;
+using IRTweaks.Modules.StoreUI;
 
 namespace IRTweaks {
 
@@ -11,7 +13,7 @@ namespace IRTweaks {
         public const string HarmonyPackage = "us.frostraptor.IRTweaks";
         public const string LogName = "ir_tweaks";
 
-        public static Logger Log;
+        public static IntraModLogger Log;
         public static string ModDir;
         public static ModConfig Config;
 
@@ -28,7 +30,7 @@ namespace IRTweaks {
                 Mod.Config = new ModConfig();
             }
 
-            Log = new Logger(modDirectory, LogName);
+            Log = new IntraModLogger(modDirectory, LogName, Config.Debug, Config.Trace);
 
             Assembly asm = Assembly.GetExecutingAssembly();
             FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(asm.Location);
@@ -45,7 +47,10 @@ namespace IRTweaks {
             }
 
             var harmony = HarmonyInstance.Create(HarmonyPackage);
-            harmony.PatchAll(Assembly.GetExecutingAssembly());
+            //harmony.PatchAll(Assembly.GetExecutingAssembly());
+
+            // Initialize modules
+            StoreUIModule.InitModule(harmony);
 
             // Setup the diag for me 
             //Helper.DiagnosticLogger.PatchAllMethods();

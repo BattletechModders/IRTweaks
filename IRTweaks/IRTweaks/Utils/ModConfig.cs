@@ -9,6 +9,12 @@ namespace IRTweaks {
         public const string CalledShotMod = "IRTCalledShotMod";
     }
 
+    public class StoreQOL {
+        public bool Enabled = false;
+        public int QuantityOnShift = 5;
+        public int QuantityOnControl = 20;
+    }
+
     public class ToHitCfg {
 
         public int CalledShotDefaultMod = 6;
@@ -24,10 +30,13 @@ namespace IRTweaks {
         public bool Trace = false;
 
         public ToHitCfg ToHitCfg = new ToHitCfg();
+        public StoreQOL StoreQOL = new StoreQOL();
 
         public void LogConfig() {
             Mod.Log.Info("=== MOD CONFIG BEGIN ===");
             Mod.Log.Info($"  DEBUG:{this.Debug} Trace:{this.Trace}");
+
+            Mod.Log.Info($"  StorePatches enabled: {this.StoreQOL.Enabled}");
 
             Mod.Log.Info("  -- To Hit --");
             Mod.Log.Info($"   CalledShotDefaultMod:{ToHitCfg.CalledShotDefaultMod}");
