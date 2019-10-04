@@ -1,51 +1,23 @@
-﻿using System;
-using System.Reflection;
-using BattleTech;
+﻿using BattleTech;
 using BattleTech.UI;
 using BattleTech.UI.TMProWrapper;
-using Harmony;
 using HBS;
+using IRTweaks.Modules.StoreUI;
 using Localize;
+using System;
 using UnityEngine;
 
-namespace IRTweaks.Modules.StoreUI {
-
-    public static class StoreUIModule {
-
-        static bool Initialized = false;
-        public class State {
-            public static bool StoreIsBuying = false;
-            public static bool StoreIsSelling = false;
-            public static void Reset() {
-                StoreIsBuying = false;
-                StoreIsSelling = false;
-            }
+namespace IRTweaks.Modules.UI {
+    public static class State {
+        public static bool StoreIsBuying = false;
+        public static bool StoreIsSelling = false;
+        public static void Reset() {
+            StoreIsBuying = false;
+            StoreIsSelling = false;
         }
+    }
 
-        public static void InitModule(HarmonyInstance harmony) {
-            if (Mod.Config.StoreQOL.Enabled && !Initialized) {
-                Mod.Log.Info("Enabling StoreUI Patches.");
-
-                try {
-                    MethodInfo refreshMI = AccessTools.Method(typeof(SG_Stores_MultiPurchasePopup), "Refresh");
-                    HarmonyMethod mpp_R_Post = new HarmonyMethod(typeof(StoreUIModule), "MultiPurchasePopup_Refresh_Postfix");
-                    harmony.Patch(refreshMI, null, mpp_R_Post, null);
-
-                    MethodInfo mpp_ReceiveButtonPress = AccessTools.Method(typeof(SG_Stores_MultiPurchasePopup), "ReceiveButtonPress");
-                    HarmonyMethod mpp_RBP_Pre = new HarmonyMethod(typeof(StoreUIModule), "MultiPurchasePopup_ReceiveButtonPress_Prefix");
-                    harmony.Patch(mpp_ReceiveButtonPress, mpp_RBP_Pre, null, null);
-
-                    MethodInfo ss_ReceiveButtonPress = AccessTools.Method(typeof(SG_Shop_Screen), "ReceiveButtonPress");
-                    HarmonyMethod ss_RBP_Pre = new HarmonyMethod(typeof(StoreUIModule), "Shop_Screen_ReceiveButtonPress_Prefix");
-                    harmony.Patch(ss_ReceiveButtonPress, ss_RBP_Pre, null, null);
-                }
-                catch (Exception e) {
-                    Mod.Log.Info($"Failed to load patches due to: {e.Message}");
-                }
-            }
-            StoreUIModule.Initialized = true;
-        }
-
+    public static class StoreQuantities {
         public static void MultiPurchasePopup_Refresh_Postfix(SG_Stores_MultiPurchasePopup __instance, int ___costPerUnit, int ___quantityBeingSold,
             LocalizableText ___TitleText, LocalizableText ___DescriptionText, string ___itemName, HBSDOTweenButton ___ConfirmButton) {
             Mod.Log.Debug("SG_S_MPP:R entered.");
@@ -56,8 +28,7 @@ namespace IRTweaks.Modules.StoreUI {
                 ___TitleText.SetText($"BUY: {___itemName}", new object[] { });
                 ___DescriptionText.SetText($"BUY FOR <color=#F79B26>{SimGameState.GetCBillString(value)}</color>", new object[] { });
                 ___ConfirmButton.SetText("BUY");
-            }
-            else if (State.StoreIsSelling) {
+            } else if (State.StoreIsSelling) {
                 ___TitleText.SetText("SELL: {___itemName}", new object[] { });
                 ___DescriptionText.SetText($"SELL FOR <color=#F79B26>{SimGameState.GetCBillString(value)}</color>", new object[] { });
                 ___ConfirmButton.SetText("SELL");
@@ -73,9 +44,7 @@ namespace IRTweaks.Modules.StoreUI {
             var ctrlIsPressed = Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl);
 
             int quantity;
-            if (shiftIsPressed) { quantity = Mod.Config.StoreQOL.QuantityOnShift; }
-            else if (ctrlIsPressed) { quantity = Mod.Config.StoreQOL.QuantityOnControl; }
-            else { quantity = 1; }
+            if (shiftIsPressed) { quantity = Mod.Config.Store.QuantityOnShift; } else if (ctrlIsPressed) { quantity = Mod.Config.Store.QuantityOnControl; } else { quantity = 1; }
 
 
             if (button == "Up") {
@@ -83,27 +52,22 @@ namespace IRTweaks.Modules.StoreUI {
                 Mod.Log.Debug($"  UP raw newQuantity:{newQuantity} = quantityBeingSold:{___quantityBeingSold} + quantity:{quantity}");
                 if (newQuantity <= ___maxYouCanSell) {
                     ___quantityBeingSold = newQuantity;
-                }
-                else {
+                } else {
                     ___quantityBeingSold = ___maxYouCanSell;
                     Mod.Log.Debug($"  UP normalized quantity to:{___quantityBeingSold}");
                 }
-            }
-            else if (button == "Down") {
+            } else if (button == "Down") {
                 int newQuantity = ___quantityBeingSold - quantity;
                 Mod.Log.Debug($"  DOWN raw newQuantity:{newQuantity} = quantityBeingSold:{___quantityBeingSold} - quantity:{quantity}");
                 if (newQuantity > 1) {
                     ___quantityBeingSold = newQuantity;
-                }
-                else {
+                } else {
                     ___quantityBeingSold = 1;
                 }
-            }
-            else if (button == "Max") {
+            } else if (button == "Max") {
                 Mod.Log.Debug($"  MAX newQuantity = maxYouCanSell:{___maxYouCanSell}");
                 ___quantityBeingSold = ___maxYouCanSell;
-            }
-            else if (button == "Min") {
+            } else if (button == "Min") {
                 Mod.Log.Debug($"  MIN newQuantity = 1");
                 ___quantityBeingSold = 1;
             }
@@ -122,8 +86,7 @@ namespace IRTweaks.Modules.StoreUI {
             State.Reset();
             if (button != "Capitalism" || ___selectedController == null) {
                 return true;
-            }
-            else {
+            } else {
                 int cBillValue = ___selectedController.GetCBillValue();
                 if (___isInBuyingState) {
                     Mod.Log.Debug($"SG_S_S:RBP - processing a purchase.");
@@ -151,8 +114,7 @@ namespace IRTweaks.Modules.StoreUI {
                             LazySingletonBehavior<UIManager>.Instance.GetOrCreatePopupModule<SG_Stores_MultiPurchasePopup>(string.Empty);
                         orCreatePopupModule.SetData(___simState, ___selectedController.shopDefItem,
                             ___selectedController.GetName(), popupQuantity, price, buyHelper.BuyMultipleItems);
-                    }
-                    else {
+                    } else {
                         GenericPopupBuilder.Create("Confirm?", Strings.T("Purchase for {0}?", SimGameState.GetCBillString(price)))
                             .AddButton("Cancel")
                             .AddButton("Accept", __instance.BuyCurrentSelection)
@@ -161,8 +123,7 @@ namespace IRTweaks.Modules.StoreUI {
                             .Render();
                     }
 
-                }
-                else {
+                } else {
                     Mod.Log.Debug($"SG_S_S:RBP - processing a sale.");
                     State.StoreIsSelling = true;
                     int num = cBillValue;
@@ -171,16 +132,14 @@ namespace IRTweaks.Modules.StoreUI {
                             LazySingletonBehavior<UIManager>.Instance.GetOrCreatePopupModule<SG_Stores_MultiPurchasePopup>(string.Empty);
                         orCreatePopupModule.SetData(___simState, ___selectedController.shopDefItem,
                             ___selectedController.GetName(), ___selectedController.quantity, num, __instance.SoldMultipleItems);
-                    }
-                    else if (num >= ___simState.Constants.Finances.ShopWarnBeforeSellingPriceMinimum) {
+                    } else if (num >= ___simState.Constants.Finances.ShopWarnBeforeSellingPriceMinimum) {
                         GenericPopupBuilder.Create("Confirm?", Strings.T("Sell for {0}?", SimGameState.GetCBillString(num)))
                                 .AddButton("Cancel")
                                 .AddButton("Accept", __instance.SellCurrentSelection)
                                 .CancelOnEscape()
                                 .AddFader(LazySingletonBehavior<UIManager>.Instance.UILookAndColorConstants.PopupBackfill)
                                 .Render();
-                    }
-                    else {
+                    } else {
                         // Sell a single instance
                         __instance.SellCurrentSelection();
                     }
@@ -189,5 +148,4 @@ namespace IRTweaks.Modules.StoreUI {
             }
         }
     }
-
 }

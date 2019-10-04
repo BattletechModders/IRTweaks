@@ -5,6 +5,8 @@ using System.Diagnostics;
 using System.Reflection;
 using us.frostraptor.modUtils.logging;
 using IRTweaks.Modules.StoreUI;
+using IRTweaks.Modules.Combat;
+using IRTweaks.Modules.Tooltip;
 
 namespace IRTweaks {
 
@@ -47,10 +49,10 @@ namespace IRTweaks {
             }
 
             var harmony = HarmonyInstance.Create(HarmonyPackage);
-            //harmony.PatchAll(Assembly.GetExecutingAssembly());
 
             // Initialize modules
-            StoreUIModule.InitModule(harmony);
+            CombatFixes.InitModule(harmony);
+            UIFixes.InitModule(harmony);
 
             // Setup the diag for me 
             //Helper.DiagnosticLogger.PatchAllMethods();
