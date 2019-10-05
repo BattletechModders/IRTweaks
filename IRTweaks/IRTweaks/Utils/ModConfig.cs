@@ -1,12 +1,14 @@
-﻿
-
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace IRTweaks {
 
     public static class ModStats {
         public const string CalledShowAlwaysAllow = "IRTCalledShotAlwaysAllow";
         public const string CalledShotMod = "IRTCalledShotMod";
+
+        public const string RandomMechs = "StartingRandomMechLists";
+        public const string FactionRep = "FactionReputation";
+        public const string StrayShotValidTargets = "StrayShotValidTargets";
     }
 
     public class StoreOpts {
@@ -16,16 +18,35 @@ namespace IRTweaks {
 
     public class Combat {
         public int PilotAttributesMax = 13;
+
         public CalledShotOpts CalledShot = new CalledShotOpts();
         public class CalledShotOpts {
             public int Modifier = 6;
             public Dictionary<string, int> PilotTags = new Dictionary<string, int>();
         }
+
+        public SpawnProtectionOpts SpawnProtection = new SpawnProtectionOpts();
+        public class SpawnProtectionOpts {
+            public bool ApplyGuard = true;
+
+            public int EvasionPips = 6;
+
+            public bool ApplyToEnemies = true;
+            public bool ApplyToAllies = true;
+            public bool ApplyToNeutrals = true;
+
+            public bool ApplyToReinforcements = false;
+        }
     }
 
     public class FixesFlags {
+        public bool DisableCombatSaves = true;
         public bool ExtendedStats = true;
+        public bool FlexibleSensorLock = true;
         public bool PreventCalledShots = true;
+        public bool RandomStartByDifficulty = true;
+        public bool SkirmishReset = true;
+        public bool SpawnProtection = true;
         public bool StoreQOL = true;
         public bool WeaponTooltip = true;
     }

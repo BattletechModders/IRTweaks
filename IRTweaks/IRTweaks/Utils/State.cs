@@ -1,9 +1,5 @@
 ﻿
-using BattleTech;
 using BattleTech.UI;
-using IRTweaks.Modules.Combat;
-using IRTweaks.Modules.StoreUI;
-using IRTweaks.Modules.Tooltip;
 using System.Collections.Generic;
 
 namespace IRTweaks {

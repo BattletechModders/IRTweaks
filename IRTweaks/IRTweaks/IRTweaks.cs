@@ -7,6 +7,7 @@ using us.frostraptor.modUtils.logging;
 using IRTweaks.Modules.StoreUI;
 using IRTweaks.Modules.Combat;
 using IRTweaks.Modules.Tooltip;
+using IRTweaks.Modules.Misc;
 
 namespace IRTweaks {
 
@@ -52,6 +53,7 @@ namespace IRTweaks {
 
             // Initialize modules
             CombatFixes.InitModule(harmony);
+            MiscFixes.InitModule(harmony);
             UIFixes.InitModule(harmony);
 
             // Setup the diag for me 

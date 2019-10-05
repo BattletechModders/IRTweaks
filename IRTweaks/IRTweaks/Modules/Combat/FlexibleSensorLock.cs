@@ -2,32 +2,10 @@
 using BattleTech.UI;
 using Harmony;
 
-namespace IRTweaks {
+namespace IRTweaks.Modules.Combat {
+    public static class FlexibleSensorLock {
 
-    [HarmonyPatch(typeof(SelectionStateSensorLock))]
-    [HarmonyPatch("ConsumesFiring", MethodType.Getter)]
-    public static class SelectionStateSensorLock_ConsumesFiring {
-
-        public static void Postfix(SelectionStateSensorLock __instance, ref bool __result) {
-            Mod.Log.Trace("SSSL:CF:GET entered");
-            __result = false;
-        }
-    }
-
-    [HarmonyPatch(typeof(SelectionStateSensorLock))]
-    [HarmonyPatch("ConsumesMovement", MethodType.Getter)]
-    public static class SelectionStateSensorLock_ConsumesMovement {
-
-        public static void Postfix(SelectionStateSensorLock __instance, ref bool __result) {
-            Mod.Log.Trace("SSSL:CM:GET entered");
-            __result = false;
-        }
-    }
-
-    [HarmonyPatch(typeof(SelectionStateSensorLock), "CanActorUseThisState")]
-    public static class SelectionStateSensorLock_CanActorUseThisState {
-
-        public static void Postfix(SelectionStateSensorLock __instance, AbstractActor actor, ref bool __result) {
+        public static void SelectionStateSensorLock_CanActorUseThisState_Postfix(SelectionStateSensorLock __instance, AbstractActor actor, ref bool __result) {
             Mod.Log.Trace("SSSL:CAUTS entered");
 
             if (actor != null && actor.GetPilot() != null) {
@@ -38,34 +16,16 @@ namespace IRTweaks {
                 __result = flag;
             }
         }
-    }
 
-    [HarmonyPatch(typeof(SelectionStateSensorLock), "CreateFiringOrders")]
-    public static class SelectionStateSensorLock_CreateFiringOrders {
-
-        public static void Postfix(SelectionStateSensorLock __instance, string button) {
+        public static void SelectionStateSensorLock_CreateFiringOrders_Postfix(SelectionStateSensorLock __instance, string button) {
             Mod.Log.Trace("SSSL:CFO entered");
 
             if (button == "BTN_FireConfirm" && __instance.HasTarget) {
                 State.SelectionStateSensorLock = __instance;
             }
         }
-    }
 
-
-    [HarmonyPatch(typeof(SelectionStateSensorLock), "OnInactivate")]
-    public static class SelectionStateSensorLock_OnInactivate {
-
-        public static void Postfix(SelectionStateSensorLock __instance) {
-            Mod.Log.Trace("SSSL:OI entered");
-        }
-    }
-
-    [HarmonyPatch(typeof(SensorLockSequence))]
-    [HarmonyPatch("CompleteOrders")]
-    public static class SensorLockSequence_CompleteOrders {
-
-        public static bool Prefix(SensorLockSequence __instance, AbstractActor ___owningActor) {
+        public static bool SensorLockSequence_CompleteOrders_Prefix(SensorLockSequence __instance, AbstractActor ___owningActor) {
             Mod.Log.Trace("SLS:CO entered, aborting invocation");
             //Mod.Log.Trace($"  oa:{___owningActor.DisplayName}_{___owningActor.GetPilot().Name} hasFired:{___owningActor.HasFiredThisRound} hasMoved:{___owningActor.HasMovedThisRound} hasActivated:{___owningActor.HasActivatedThisRound}");
 
@@ -88,43 +48,13 @@ namespace IRTweaks {
                     //State.SelectionStateSensorLock.BackOut();
 
                     State.SelectionStateSensorLock = null;
-
                 }
-
             }
 
             return false;
         }
-    }
 
-    [HarmonyPatch(typeof(SensorLockSequence))]
-    [HarmonyPatch("ConsumesFiring", MethodType.Getter)]
-    public static class SensorLockSequence_ConsumesFiring {
-
-        public static void Postfix(SensorLockSequence __instance, ref bool __result, AbstractActor ___owningActor) {
-            Mod.Log.Trace("SLS:CF:GET entered.");
-            Mod.Log.Trace($"    oa:{___owningActor.DisplayName}_{___owningActor.GetPilot().Name} hasFired:{___owningActor.HasFiredThisRound} hasMoved:{___owningActor.HasMovedThisRound} hasActivated:{___owningActor.HasActivatedThisRound}");
-            __result = false;
-        }
-    }
-
-    [HarmonyPatch(typeof(SensorLockSequence))]
-    [HarmonyPatch("ConsumesMovement", MethodType.Getter)]
-    public static class SensorLockSequence_ConsumesMovement {
-
-        public static void Postfix(SensorLockSequence __instance, ref bool __result, AbstractActor ___owningActor) {
-            Mod.Log.Trace("SLS:CM:GET entered.");
-            Mod.Log.Trace($"    oa:{___owningActor.DisplayName}_{___owningActor.GetPilot().Name} hasFired:{___owningActor.HasFiredThisRound} hasMoved:{___owningActor.HasMovedThisRound} hasActivated:{___owningActor.HasActivatedThisRound}");
-            __result = false;
-        }
-    }
-
-    [HarmonyPatch(typeof(OrderSequence))]
-    [HarmonyPatch("OnComplete")]
-    public static class OrderSequence_OnComplete {
-
-        public static bool Prefix(OrderSequence __instance, AbstractActor ___owningActor) {
-
+        public static bool OrderSequence_OnComplete_Prefix(OrderSequence __instance, AbstractActor ___owningActor) {
             if (__instance is SensorLockSequence) {
                 Mod.Log.Trace($"OS:OC entered, cm:{__instance.ConsumesMovement} cf:{__instance.ConsumesFiring}");
                 Mod.Log.Trace($"    oa:{___owningActor.DisplayName}_{___owningActor.GetPilot().Name} hasFired:{___owningActor.HasFiredThisRound} hasMoved:{___owningActor.HasMovedThisRound} hasActivated:{___owningActor.HasActivatedThisRound}");
@@ -140,7 +70,7 @@ namespace IRTweaks {
                 Traverse.Create(__instance).Method("ClearFocalPoint").GetValue();
                 if (__instance.CompletedCallback != null) {
                     Mod.Log.Trace(" Getting SequenceFinished");
-                    var seqFinished  = Traverse.Create(__instance).Property("CompletedCallback").GetValue<SequenceFinished>();
+                    var seqFinished = Traverse.Create(__instance).Property("CompletedCallback").GetValue<SequenceFinished>();
                 }
 
                 return true;
@@ -148,16 +78,9 @@ namespace IRTweaks {
                 //Mod.Log.Trace(" Not SensorLockSequence, continuing.");
                 return true;
             }
-
         }
-    }
 
-    [HarmonyPatch(typeof(OrderSequence))]
-    [HarmonyPatch("ConsumesActivation", MethodType.Getter)]
-    public static class OrderSequence_ConsumesActivation {
-
-        public static void Postfix(OrderSequence __instance, ref bool __result, AbstractActor ___owningActor) {
-
+        public static void OrderSequence_ConsumesActivation_Postfix(OrderSequence __instance, ref bool __result, AbstractActor ___owningActor) {
             if (__instance is SensorLockSequence) {
                 //Mod.Log.Trace($"SLS:CA entered, cm:{__instance.ConsumesMovement} cf:{__instance.ConsumesFiring}");
                 //Mod.Log.Trace($"    oa:{___owningActor.DisplayName}_{___owningActor.GetPilot().Name} hasFired:{___owningActor.HasFiredThisRound} hasMoved:{___owningActor.HasMovedThisRound} hasActivated:{___owningActor.HasActivatedThisRound}");
@@ -168,16 +91,10 @@ namespace IRTweaks {
                     //Mod.Log.Trace(" Returning false");
                     __result = false;
                 }
-            } 
-
+            }
         }
-    }
 
-    [HarmonyPatch(typeof(AIUtil), "EvaluateSensorLockQuality")]
-    public static class AIUtil_EvaluateSensorLockQuality {
-
-        public static bool Prefix(ref bool __result, AbstractActor movingUnit, ICombatant target, out float quality) {
-
+        public static bool AIUtil_EvaluateSensorLockQuality_Prefix(ref bool __result, AbstractActor movingUnit, ICombatant target, out float quality) {
             AbstractActor abstractActor = target as AbstractActor;
             if (abstractActor == null || movingUnit.DynamicUnitRole == UnitRole.LastManStanding || !abstractActor.HasActivatedThisRound || abstractActor.IsDead || abstractActor.EvasivePipsTotal == 0) {
                 quality = float.MinValue;
@@ -187,6 +104,9 @@ namespace IRTweaks {
             quality = float.MinValue;
             return true;
         }
-    }
 
+        public static void Returns_False_Postfix(ref bool __result) {
+            __result = false;
+        }
+    }
 }
