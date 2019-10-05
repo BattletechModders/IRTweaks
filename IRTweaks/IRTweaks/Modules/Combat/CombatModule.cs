@@ -3,6 +3,7 @@ using BattleTech.UI;
 using Harmony;
 using System;
 using System.Reflection;
+using static IRTweaks.Combat;
 
 namespace IRTweaks.Modules.Combat {
 
@@ -19,15 +20,15 @@ namespace IRTweaks.Modules.Combat {
                 try {
                     // Update the pilot stats to have a maximum greater than 10
                     if (Mod.Config.Fixes.ExtendedStats) {
-                        Mod.Log.Info("Activating ExtendedStats fix");
+                        Mod.Log.Info("Activating Fix: ExtendedStats");
                         MethodInfo pilot_ISV_MI = AccessTools.Method(typeof(Pilot), "InitStatValidators");
                         HarmonyMethod psv_ISV_HM = new HarmonyMethod(typeof(PilotStatValidators), "Pilot_InitStatValidators_Prefix");
-                        harmony.Patch(pilot_ISV_MI, null, psv_ISV_HM, null);
+                        harmony.Patch(pilot_ISV_MI, psv_ISV_HM, null, null);
                     }
 
                     // Headshot patches - prevent headshot without appropriate equipment
-                    if (Mod.Config.Fixes.PreventCalledShots) {
-                        Mod.Log.Info("Activating PreventCalledShots fix");
+                    if (Mod.Config.Fixes.PreventHeadShots) {
+                        Mod.Log.Info("Activating Fix: PreventCalledShots");
                         MethodInfo aa_IES_MI = AccessTools.Method(typeof(AbstractActor), "InitEffectStats");
                         HarmonyMethod cs_aa_IES_Post = new HarmonyMethod(typeof(CalledShots), "AbstractActor_InitEffectStats_Postfix");
                         harmony.Patch(aa_IES_MI, null, cs_aa_IES_Post, null);
@@ -58,7 +59,7 @@ namespace IRTweaks.Modules.Combat {
                     }
 
                     if (Mod.Config.Fixes.FlexibleSensorLock) {
-                        Mod.Log.Info("Activating FlexibleSensorLock fix");
+                        Mod.Log.Info("Activating Fix: FlexibleSensorLock");
                         // TODO: Add in sensor probe sequence. Limit to once per turn.
                         HarmonyMethod slc_r_f_post = new HarmonyMethod(typeof(FlexibleSensorLock), "Returns_False_Postfix");
 
@@ -97,6 +98,18 @@ namespace IRTweaks.Modules.Combat {
                         MethodInfo aiu_eslq = AccessTools.Method(typeof(AIUtil), "EvaluateSensorLockQuality");
                         HarmonyMethod fsl_aiu_eslq_pre = new HarmonyMethod(typeof(FlexibleSensorLock), "AIUtil_EvaluateSensorLockQuality_Prefix");
                         harmony.Patch(aiu_eslq, fsl_aiu_eslq_pre, null, null);
+                    }
+
+                    if (Mod.Config.Fixes.SpawnProtection) {
+                        Mod.Log.Info("Activating Fix: SpawnProtection");
+
+                        MethodInfo t_au = AccessTools.Method(typeof(Team), "AddUnit");
+                        HarmonyMethod sp_t_au_post = new HarmonyMethod(typeof(SpawnProtection), "Team_AddUnit_Postfix");
+                        harmony.Patch(t_au, null, sp_t_au_post, null);
+
+                        MethodInfo td_bnr = AccessTools.Method(typeof(TurnDirector), "BeginNewRound");
+                        HarmonyMethod sp_td_bnr_post = new HarmonyMethod(typeof(SpawnProtection), "TurnDirector_BeginNewRound_Postfix");
+                        harmony.Patch(td_bnr, null, sp_td_bnr_post, null);
                     }
 
                 }

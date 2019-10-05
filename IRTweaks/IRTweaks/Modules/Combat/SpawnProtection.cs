@@ -1,10 +1,6 @@
 ﻿using BattleTech;
 using IRTweaks.Helper;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using us.frostraptor.modUtils;
 
 namespace IRTweaks.Modules.Combat {
@@ -34,7 +30,7 @@ namespace IRTweaks.Modules.Combat {
             }
         }
 
-        static void TurnDirector_BeginNewRound_Postfix(TurnDirector __instance) {
+        public static void TurnDirector_BeginNewRound_Postfix(TurnDirector __instance) {
             Mod.Log.Info($"Protecting lances on firstContact during first round:{__instance.CurrentRound}");
             if (__instance.CurrentRound == 1) {
                 ProtectionHelper.ProtectOnFirstRound();

@@ -40,14 +40,14 @@ namespace IRTweaks {
     }
 
     public class FixesFlags {
+        public bool BulkPurchasing = true;
         public bool DisableCombatSaves = true;
         public bool ExtendedStats = true;
         public bool FlexibleSensorLock = true;
-        public bool PreventCalledShots = true;
+        public bool PreventHeadShots = true;
         public bool RandomStartByDifficulty = true;
         public bool SkirmishReset = true;
         public bool SpawnProtection = true;
-        public bool StoreQOL = true;
         public bool WeaponTooltip = true;
     }
 
@@ -58,23 +58,36 @@ namespace IRTweaks {
         // If true, all logs will be printed
         public bool Trace = false;
 
-        public StoreOpts Store = new StoreOpts();
-        public Combat Combat = new Combat();
         public FixesFlags Fixes = new FixesFlags();
+
+        public Combat Combat = new Combat();
+        public StoreOpts Store = new StoreOpts();
 
         public void LogConfig() {
             Mod.Log.Info("=== MOD CONFIG BEGIN ===");
             Mod.Log.Info($"  DEBUG:{this.Debug} Trace:{this.Trace}");
 
             Mod.Log.Info("  -- Fixes --");
-            Mod.Log.Info($"  ExtendedStats: {this.Fixes.ExtendedStats} PreventCalledShots: {this.Fixes.PreventCalledShots} " +
-                $"StorePatches: {this.Fixes.StoreQOL} WeaponTooltips:{this.Fixes.WeaponTooltip}");
+            Mod.Log.Info($"  BulkPurchasing:{this.Fixes.BulkPurchasing}  DisableCombatSaves:{this.Fixes.DisableCombatSaves}  " +
+                $"ExtendedStats: {this.Fixes.ExtendedStats}  FlexibleSensorLock:{this.Fixes.FlexibleSensorLock}  " +
+                $"PreventCalledShots: {this.Fixes.PreventHeadShots}  RandomStartByDifficulty:{this.Fixes.RandomStartByDifficulty}  " +
+                $"SkirmishReset: {this.Fixes.SkirmishReset}  SpawnProtection:{this.Fixes.SpawnProtection}" +
+                $"WeaponTooltips:{this.Fixes.WeaponTooltip}");
 
-            Mod.Log.Info("  -- To Hit --");
+            Mod.Log.Info("  -- Called Shot --");
             Mod.Log.Info($"   CalledShotDefaultMod:{Combat.CalledShot.Modifier}");
             foreach (KeyValuePair<string, int> kvp in Combat.CalledShot.PilotTags) {
                 Mod.Log.Info($"   CalledShotPilotModifier - tag:{kvp.Key} modifier:{kvp.Value}");
             }
+            Mod.Log.Info($"   CalledShotDefaultMod:{Combat.CalledShot.Modifier}");
+
+            Mod.Log.Info("  -- Spawn Protection --");
+            Mod.Log.Info($"   ApplyGuard:{Combat.SpawnProtection.ApplyGuard}  EvasionPips:{Combat.SpawnProtection.EvasionPips}");
+            Mod.Log.Info($"   ApplyToEnemies:{Combat.SpawnProtection.ApplyToEnemies}  ApplyToAllies:{Combat.SpawnProtection.ApplyToAllies}  ApplyToNeutrals:{Combat.SpawnProtection.ApplyToNeutrals}  ");
+            Mod.Log.Info($"   ApplyToReinforcements:{Combat.SpawnProtection.ApplyToReinforcements}");
+
+            Mod.Log.Info("  -- Store --");
+            Mod.Log.Info($"   QuantityOnShift:{Store.QuantityOnShift}  QuantityOnControl:{Store.QuantityOnControl}");
 
             Mod.Log.Info("=== MOD CONFIG END ===");
         }

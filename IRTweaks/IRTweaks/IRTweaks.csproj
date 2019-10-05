@@ -23,6 +23,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -101,6 +102,6 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy "$(TargetDir)$(TargetFileName)" "$(BattleTechGame)\Mods\IRTweaks" /y</PostBuildEvent>
+    <PostBuildEvent>xcopy "$(TargetDir)$(TargetFileName)" "%25userprofile%25\Documents\My Games\BattleTech\mods\IRTweaks" /y</PostBuildEvent>
   </PropertyGroup>
 </Project>

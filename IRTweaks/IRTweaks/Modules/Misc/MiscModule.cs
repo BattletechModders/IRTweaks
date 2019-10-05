@@ -14,7 +14,7 @@ namespace IRTweaks.Modules.Misc {
                 try {
                     // Update the pilot stats to have a maximum greater than 10
                     if (Mod.Config.Fixes.RandomStartByDifficulty) {
-                        Mod.Log.Info("Activating RandomStartByDifficulty fix");
+                        Mod.Log.Info("Activating Fix: RandomStartByDifficulty");
                         MethodInfo sgs_arsm = AccessTools.Method(typeof(SimGameState), "AddRandomStartingMechs");
                         HarmonyMethod rsbd_sgs_arsm_pre = new HarmonyMethod(typeof(RandomStartByDifficulty), "SimGameState_AddRandomStartingMechs_Prefix");
                         harmony.Patch(sgs_arsm, rsbd_sgs_arsm_pre, null, null);
@@ -29,7 +29,7 @@ namespace IRTweaks.Modules.Misc {
                     }
 
                     if (Mod.Config.Fixes.SkirmishReset) {
-                        Mod.Log.Info("Activating SkirmishReset fix");
+                        Mod.Log.Info("Activating Fix: SkirmishReset");
                         MethodInfo cus_pd = AccessTools.Method(typeof(CloudUserSettings), "PostDeserialize");
                         HarmonyMethod sr_cus_pd_pre = new HarmonyMethod(typeof(SkirmishReset), "CloudUserSettings_PostDeserialize_Prefix");
                         harmony.Patch(cus_pd, sr_cus_pd_pre, null, null);
