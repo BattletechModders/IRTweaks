@@ -1,4 +1,5 @@
-﻿using BattleTech.UI;
+﻿using BattleTech;
+using BattleTech.UI;
 using BattleTech.UI.Tooltips;
 using Harmony;
 using IRTweaks.Modules.UI;
@@ -12,14 +13,6 @@ namespace IRTweaks.Modules.Tooltip {
         public static void InitModule(HarmonyInstance harmony) {
             if (!Initialized) {
                 try {
-                    // Update the pilot stats to have a maximum greater than 10
-                    if (Mod.Config.Fixes.WeaponTooltip) {
-                        Mod.Log.Info("Activating Fix: WeaponTooltip");
-                        MethodInfo tooltipPrefab_Weapon_SetData = AccessTools.Method(typeof(TooltipPrefab_Weapon), "SetData");
-                        HarmonyMethod tm_tp_w_sd_post = new HarmonyMethod(typeof(WeaponTooltips), "TooltipPrefab_Weapon_SetData_Postfix");
-                        harmony.Patch(tooltipPrefab_Weapon_SetData, null, tm_tp_w_sd_post, null);
-                    }
-
                     // Updates the purchase and selling dialogs to allow multiple items to be purchased and sold at once
                     if (Mod.Config.Fixes.BulkPurchasing) {
                         Mod.Log.Info("Activating Fix: BulkPurchasing");
@@ -36,6 +29,39 @@ namespace IRTweaks.Modules.Tooltip {
                         harmony.Patch(ss_ReceiveButtonPress, ss_RBP_Pre, null, null);
                     }
 
+                    // Enable the CombatLog
+                    if (Mod.Config.Fixes.CombatLog) {
+                        Mod.Log.Info("Activating Fix: CombatLog");
+                        MethodInfo combatHUD_Init_MI = AccessTools.Method(typeof(CombatHUD), "Init", new Type[] { typeof(CombatGameState) });
+                        HarmonyMethod cl_chud_i_post = new HarmonyMethod(typeof(CombatLog), "CombatHUD_Init_Postfix");
+                        harmony.Patch(combatHUD_Init_MI, null, cl_chud_i_post, null);
+
+                        MethodInfo chud_ocgd_mi = AccessTools.Method(typeof(CombatHUD), "OnCombatGameDestroyed");
+                        HarmonyMethod cl_chud_ocgd_post = new HarmonyMethod(typeof(CombatLog), "CombatHUD_OnCombatGameDestroyed_Postfix");
+                        harmony.Patch(chud_ocgd_mi, null, cl_chud_ocgd_post, null);
+
+                        MethodInfo chud_u_mi = AccessTools.Method(typeof(CombatHUD), "Update");
+                        HarmonyMethod chud_u_post = new HarmonyMethod(typeof(CombatLog), "CombatHUD_Update_Postfix");
+                        harmony.Patch(chud_u_mi, null, chud_u_post, null);
+
+                        MethodInfo ccm_i_mi = AccessTools.Method(typeof(CombatChatModule), "Init");
+                        HarmonyMethod cl_i_post = new HarmonyMethod(typeof(CombatLog), "CombatChatModule_Init_Postfix");
+                        harmony.Patch(ccm_i_mi, null, cl_i_post, null);
+
+                        MethodInfo ccm_ci_mi = AccessTools.Method(typeof(CombatChatModule), "CombatInit");
+                        HarmonyMethod cl_ci_post = new HarmonyMethod(typeof(CombatLog), "CombatChatModule_CombatInit_Postfix");
+                        harmony.Patch(ccm_ci_mi, null, cl_ci_post, null);
+
+                        MethodInfo ccm_ocm_mi = AccessTools.Method(typeof(CombatChatModule), "OnChatMessage", new Type[] { typeof(MessageCenterMessage) });
+                        HarmonyMethod cl_ccm_ocm_pre = new HarmonyMethod(typeof(CombatLog), "CombatChatModule_OnChatMessage_Prefix");
+                        harmony.Patch(ccm_ocm_mi, cl_ccm_ocm_pre, null, null);
+
+                        MethodInfo clvi_sd_mi = AccessTools.Method(typeof(ChatListViewItem), "SetData", new Type[] { typeof(ChatMessage), typeof(int?) });
+                        HarmonyMethod cl_clvi_sd_pre = new HarmonyMethod(typeof(CombatLog), "ChatListViewItem_SetData_Prefix");
+                        harmony.Patch(clvi_sd_mi, cl_clvi_sd_pre, null, null);
+
+                    }
+
                     // Disables the ability to save in combat
                     if (Mod.Config.Fixes.DisableCombatSaves) {
                         Mod.Log.Info("Activating Fix: DisableCombatSaves");
@@ -48,9 +74,18 @@ namespace IRTweaks.Modules.Tooltip {
                         harmony.Patch(sgom_sstt, null, cs_sgom_sstt_postfix, null);
                     }
 
+                    // Update the pilot stats to have a maximum greater than 10
+                    if (Mod.Config.Fixes.WeaponTooltip) {
+                        Mod.Log.Info("Activating Fix: WeaponTooltip");
+                        MethodInfo tooltipPrefab_Weapon_SetData = AccessTools.Method(typeof(TooltipPrefab_Weapon), "SetData");
+                        HarmonyMethod tm_tp_w_sd_post = new HarmonyMethod(typeof(WeaponTooltips), "TooltipPrefab_Weapon_SetData_Postfix");
+                        harmony.Patch(tooltipPrefab_Weapon_SetData, null, tm_tp_w_sd_post, null);
+                    }
+
                 } catch (Exception e) {
                     Mod.Log.Error($"Failed to load patches due to: {e.Message}");
-                    Mod.Log.Error(e);
+                    Mod.Log.Error(e.StackTrace);
+                    Mod.Log.Error(e.ToString());
                 }
             }
             Initialized = true;

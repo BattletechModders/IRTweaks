@@ -41,6 +41,7 @@ namespace IRTweaks {
 
     public class FixesFlags {
         public bool BulkPurchasing = true;
+        public bool CombatLog = true;
         public bool DisableCombatSaves = true;
         public bool ExtendedStats = true;
         public bool FlexibleSensorLock = true;
@@ -68,7 +69,7 @@ namespace IRTweaks {
             Mod.Log.Info($"  DEBUG:{this.Debug} Trace:{this.Trace}");
 
             Mod.Log.Info("  -- Fixes --");
-            Mod.Log.Info($"  BulkPurchasing:{this.Fixes.BulkPurchasing}  DisableCombatSaves:{this.Fixes.DisableCombatSaves}  " +
+            Mod.Log.Info($"  BulkPurchasing:{this.Fixes.BulkPurchasing}  CombatLog:{this.Fixes.CombatLog}  DisableCombatSaves:{this.Fixes.DisableCombatSaves}  " +
                 $"ExtendedStats: {this.Fixes.ExtendedStats}  FlexibleSensorLock:{this.Fixes.FlexibleSensorLock}  " +
                 $"PreventCalledShots: {this.Fixes.PreventHeadShots}  RandomStartByDifficulty:{this.Fixes.RandomStartByDifficulty}  " +
                 $"SkirmishReset: {this.Fixes.SkirmishReset}  SpawnProtection:{this.Fixes.SpawnProtection}" +
