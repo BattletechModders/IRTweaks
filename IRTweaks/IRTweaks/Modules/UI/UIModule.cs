@@ -40,10 +40,6 @@ namespace IRTweaks.Modules.Tooltip {
                         HarmonyMethod cl_chud_ocgd_post = new HarmonyMethod(typeof(CombatLog), "CombatHUD_OnCombatGameDestroyed_Postfix");
                         harmony.Patch(chud_ocgd_mi, null, cl_chud_ocgd_post, null);
 
-                        MethodInfo chud_u_mi = AccessTools.Method(typeof(CombatHUD), "Update");
-                        HarmonyMethod chud_u_post = new HarmonyMethod(typeof(CombatLog), "CombatHUD_Update_Postfix");
-                        harmony.Patch(chud_u_mi, null, chud_u_post, null);
-
                         MethodInfo ccm_i_mi = AccessTools.Method(typeof(CombatChatModule), "Init");
                         HarmonyMethod cl_i_post = new HarmonyMethod(typeof(CombatLog), "CombatChatModule_Init_Postfix");
                         harmony.Patch(ccm_i_mi, null, cl_i_post, null);
@@ -68,13 +64,13 @@ namespace IRTweaks.Modules.Tooltip {
                         HarmonyMethod cl_chudai_stm_post = new HarmonyMethod(typeof(CombatLog), "CombatHUDActorInfo_SubscribeToMessages_Postfix");
                         harmony.Patch(chudai_stm_mi, null, cl_chudai_stm_post, null);
 
-                        MethodInfo chudp_i_mi = AccessTools.Method(typeof(CombatHUDPortrait), "Init");
-                        HarmonyMethod chudp_i_post = new HarmonyMethod(typeof(CombatLog), "CombatHUDPortrait_Init_Postfix");
-                        harmony.Patch(chudp_i_mi, null, chudp_i_post, null);
-
                         MethodInfo chudiwem_afm_mi = AccessTools.Method(typeof(CombatHUDInWorldElementMgr), "AddFloatieMessage");
                         HarmonyMethod chudiwem_afm_pre = new HarmonyMethod(typeof(CombatLog), "CombatHUDInWorldElementMgr_AddFloatieMessage_Prefix");
                         harmony.Patch(chudiwem_afm_mi, chudiwem_afm_pre, null, null);
+
+                        MethodInfo mc_rs_mi = AccessTools.Method(typeof(MessageCenter), "RemoveSubscriber");
+                        HarmonyMethod cl_mc_rs_pre = new HarmonyMethod(typeof(CombatLog), "MessageCenter_RemoveSubscriber_Prefix");
+                        harmony.Patch(mc_rs_mi, cl_mc_rs_pre, null, null);
 
                         // Initialize the helpers
                         CombatLog.InitModule();

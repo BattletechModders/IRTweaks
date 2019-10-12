@@ -5,11 +5,11 @@ using DG.Tweening;
 using Harmony;
 using HBS;
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
 using UnityEngine;
 using UnityEngine.UI;
-using us.frostraptor.modUtils;
 
 namespace IRTweaks.Modules.UI {
     public static class CombatLog {
@@ -89,12 +89,6 @@ namespace IRTweaks.Modules.UI {
             Mod.Log.Info("Combat game destroyed, cleaning up");
             combat = null;
             messageCenter = null;
-        }
-
-        public static void CombatHUD_Update_Postfix(CombatHUD __instance) {
-            if (__instance.Combat.TurnDirector.GameHasBegun) {
-                // TODO: Remove?
-            }
         }
 
         public static void CombatChatModule_Init_Postfix(CombatChatModule __instance, MessageCenter ____messageCenter,
@@ -219,13 +213,13 @@ namespace IRTweaks.Modules.UI {
             string expandedSender = message.SenderName.Replace("&gt;", ">");
             expandedSender = expandedSender.Replace("&lt;", "<");
             string senderText = $"{expandedSender}";
-            Mod.Log.Info($"Message senderName: '{message.SenderName}'  expandedSender: '{expandedSender}'  senderText: '{senderText}'");
+            Mod.Log.Debug($"Message senderName: '{message.SenderName}'  expandedSender: '{expandedSender}'  senderText: '{senderText}'");
 
             string messageColor = "#" + ColorUtility.ToHtmlStringRGBA(LazySingletonBehavior<UIManager>.Instance.UIColorRefs.whiteHalf);
             string expandedMessage = message.Message.Replace("&gt;", ">");
             expandedMessage = expandedMessage.Replace("&lt;", "<");
             string messageText = $"<{messageColor}>{expandedMessage}</color>";
-            Mod.Log.Info($"Message text: '{expandedMessage}'");
+            Mod.Log.Debug($"Message text: '{expandedMessage}'");
 
             ____chatMessage.text = "<size=-3>" + senderText + " " + messageText + "</size>";
             
@@ -247,12 +241,16 @@ namespace IRTweaks.Modules.UI {
             __instance.Combat.MessageCenter.RemoveSubscriber(MessageCenterMessageType.FloatieMessage, (ReceiveMessageCenterMessage)onFloatieDelegate);
         }
 
-        public static void CombatHUDPortrait_Init_Postfix(CombatHUDPortrait __instance, CombatGameState Combat) {
-            // Unsubscribe immediately so we don't process messages
-            MethodInfo onFloatieMI = AccessTools.Method(typeof(CombatHUDPortrait), "OnFloatie", new Type[] { typeof(MessageCenterMessage) }, null);
-            Delegate onFloatieDelegate = onFloatieMI.CreateDelegate(typeof(ReceiveMessageCenterMessage), __instance);
-            Mod.Log.Info("Unsubscribing from CombatHUDPortrait:OnFloatie messages.");
-            Combat.MessageCenter.RemoveSubscriber(MessageCenterMessageType.FloatieMessage, (ReceiveMessageCenterMessage)onFloatieDelegate);
+        public static void MessageCenter_RemoveSubscriber_Prefix(MessageCenter __instance, MessageCenterMessageType GUID, ReceiveMessageCenterMessage subscriber,
+            Dictionary<MessageCenterMessageType, List<MessageSubscription>> ___messageTable) {
+
+            if (GUID == MessageCenterMessageType.FloatieMessage) {
+                List<MessageSubscription> list = ___messageTable[GUID];
+                Mod.Log.Info($"MCMT subscription list is size: {list.Count}");
+
+            } else {
+                Mod.Log.Info("MCMT not floatie, skipping.");
+            }
         }
 
         public static bool CombatHUDInWorldElementMgr_AddFloatieMessage_Prefix(CombatHUDInWorldElementMgr __instance, MessageCenterMessage message, CombatGameState ___combat) {
