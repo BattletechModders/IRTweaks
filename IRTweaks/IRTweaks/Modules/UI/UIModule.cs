@@ -56,10 +56,28 @@ namespace IRTweaks.Modules.Tooltip {
                         HarmonyMethod cl_ccm_ocm_pre = new HarmonyMethod(typeof(CombatLog), "CombatChatModule_OnChatMessage_Prefix");
                         harmony.Patch(ccm_ocm_mi, cl_ccm_ocm_pre, null, null);
 
+                        MethodInfo ccm_u_mi = AccessTools.Method(typeof(CombatChatModule), "Update");
+                        HarmonyMethod ccm_u_pre = new HarmonyMethod(typeof(CombatLog), "CombatChatModule_Update_Prefix");
+                        harmony.Patch(ccm_u_mi, ccm_u_pre, null, null);
+
                         MethodInfo clvi_sd_mi = AccessTools.Method(typeof(ChatListViewItem), "SetData", new Type[] { typeof(ChatMessage), typeof(int?) });
                         HarmonyMethod cl_clvi_sd_pre = new HarmonyMethod(typeof(CombatLog), "ChatListViewItem_SetData_Prefix");
                         harmony.Patch(clvi_sd_mi, cl_clvi_sd_pre, null, null);
 
+                        MethodInfo chudai_stm_mi = AccessTools.Method(typeof(CombatHUDActorInfo), "SubscribeToMessages");
+                        HarmonyMethod cl_chudai_stm_post = new HarmonyMethod(typeof(CombatLog), "CombatHUDActorInfo_SubscribeToMessages_Postfix");
+                        harmony.Patch(chudai_stm_mi, null, cl_chudai_stm_post, null);
+
+                        MethodInfo chudp_i_mi = AccessTools.Method(typeof(CombatHUDPortrait), "Init");
+                        HarmonyMethod chudp_i_post = new HarmonyMethod(typeof(CombatLog), "CombatHUDPortrait_Init_Postfix");
+                        harmony.Patch(chudp_i_mi, null, chudp_i_post, null);
+
+                        MethodInfo chudiwem_afm_mi = AccessTools.Method(typeof(CombatHUDInWorldElementMgr), "AddFloatieMessage");
+                        HarmonyMethod chudiwem_afm_pre = new HarmonyMethod(typeof(CombatLog), "CombatHUDInWorldElementMgr_AddFloatieMessage_Prefix");
+                        harmony.Patch(chudiwem_afm_mi, chudiwem_afm_pre, null, null);
+
+                        // Initialize the helpers
+                        CombatLog.InitModule();
                     }
 
                     // Disables the ability to save in combat

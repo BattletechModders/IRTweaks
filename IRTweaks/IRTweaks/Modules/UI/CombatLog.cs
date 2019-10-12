@@ -5,8 +5,11 @@ using DG.Tweening;
 using Harmony;
 using HBS;
 using System;
+using System.Reflection;
+using System.Reflection.Emit;
 using UnityEngine;
 using UnityEngine.UI;
+using us.frostraptor.modUtils;
 
 namespace IRTweaks.Modules.UI {
     public static class CombatLog {
@@ -14,10 +17,28 @@ namespace IRTweaks.Modules.UI {
         private static CombatHUDInfoSidePanel infoSidePanel;
         private static CombatChatModule combatChatModule;
 
-        private static bool messagesSent = false;
-
         private static CombatGameState combat;
         private static MessageCenter messageCenter;
+
+        private static Action<CombatChatModule> CombatChatModule_UIModule_Update;
+
+        // Shamelessly stolen from https://github.com/janxious/BT-WeaponRealizer/blob/7422573fa69893ae7c16a9d192d85d2152f90fa2/NumberOfShotsEnabler.cs#L32
+        public static bool InitModule() {
+            // build a call to WeaponEffect.OnComplete() so it can be called
+            // a la base.OnComplete() from the context of a BallisticEffect
+            // https://blogs.msdn.microsoft.com/rmbyers/2008/08/16/invoking-a-virtual-method-non-virtually/
+            // https://docs.microsoft.com/en-us/dotnet/api/system.activator?view=netframework-3.5
+            // https://docs.microsoft.com/en-us/dotnet/api/system.reflection.emit.dynamicmethod.-ctor?view=netframework-3.5#System_Reflection_Emit_DynamicMethod__ctor_System_String_System_Type_System_Type___System_Type_
+            // https://stackoverflow.com/a/4358250/1976
+            var method = typeof(UIModule).GetMethod("Update", AccessTools.all);
+            var dm = new DynamicMethod("CombatChatModule_UIModule_Update", null, new Type[] { typeof(CombatChatModule) }, typeof(CombatChatModule));
+            var gen = dm.GetILGenerator();
+            gen.Emit(OpCodes.Ldarg_0);
+            gen.Emit(OpCodes.Call, method);
+            gen.Emit(OpCodes.Ret);
+            CombatChatModule_UIModule_Update = (Action<CombatChatModule>)dm.CreateDelegate(typeof(Action<CombatChatModule>));
+            return true;
+        }
 
         public static void CombatHUD_Init_Postfix(CombatHUD __instance, CombatGameState Combat) {
 
@@ -41,11 +62,24 @@ namespace IRTweaks.Modules.UI {
 
             Vector3 newPos = CombatLog.combatChatModule.gameObject.transform.position;
             newPos.x = __instance.RetreatEscMenu.gameObject.transform.position.x * 1.25f;
-            newPos.y = __instance.RetreatEscMenu.gameObject.transform.position.y - 100f;
+            newPos.y = __instance.RetreatEscMenu.gameObject.transform.position.y - 120f;
             //newPos.z = __instance.WeaponPanel.gameObject.transform.position.z;
 
             CombatLog.combatChatModule.gameObject.transform.position = newPos;
             Mod.Log.Info($"new CombatChatModule pos: {newPos}");
+
+            // Move the chat button into the menu
+            Transform chatBtnT = CombatLog.combatChatModule.gameObject.transform.Find("Representation/chat_panel/uixPrf_chatButton");
+            Mod.Log.Info($"ChatButton base  pos: {newPos}");
+            if (chatBtnT != null) {
+                //chatBtnT.localPosition = new Vector3(0f, 0f, 0f);
+                newPos.x -= 610f;
+                newPos.y += 80f;
+                chatBtnT.position = newPos;
+                Mod.Log.Info($"ChatButton new  pos: {newPos}");
+            } else {
+                Mod.Log.Info("Could not find chatButton to change position!");
+            }
 
             combat = Combat;
         }
@@ -57,19 +91,7 @@ namespace IRTweaks.Modules.UI {
 
         public static void CombatHUD_Update_Postfix(CombatHUD __instance) {
             if (__instance.Combat.TurnDirector.GameHasBegun) {
-
-                if (!CombatLog.messagesSent) {
-                    Mod.Log.Info("On update - sending messages ");
-                    __instance.Combat.MessageCenter.PublishMessage(new ChatMessage("AIM", "foo1", false));
-                    __instance.Combat.MessageCenter.PublishMessage(new ChatMessage("AIM", "foo2", false));
-                    __instance.Combat.MessageCenter.PublishMessage(new ChatMessage("AIM", "foo3", false));
-
-                    __instance.Combat.MessageCenter.PublishMessage(new ChatMessage("CAC", "foo1", false));
-                    __instance.Combat.MessageCenter.PublishMessage(new ChatMessage("CAC", "foo2", false));
-                    __instance.Combat.MessageCenter.PublishMessage(new ChatMessage("CAC", "foo3", false));
-
-                    CombatLog.messagesSent = true;
-                }
+                // TODO: Remove?
             }
         }
 
@@ -79,15 +101,6 @@ namespace IRTweaks.Modules.UI {
             ____chatBtn.gameObject.SetActive(false);
             ____muteBtn.enabled = false;
             ____muteBtn.gameObject.SetActive(false);
-
-            Traverse chatListRectTransT = Traverse.Create(____activeChatList).Field("containerTransform");
-            RectTransform chatListRectTrans = chatListRectTransT.GetValue<RectTransform>();
-            Mod.Log.Info($"ChatList transform pos: {chatListRectTrans.position}");
-
-            Rect origRect = chatListRectTrans.rect;
-            Mod.Log.Info($"ChatList original dims: {origRect.height}h x {origRect.width}w");
-            origRect.height += 50;
-            Mod.Log.Info($"ChatList new      dims: {origRect.height}h x {origRect.width}w");
 
             ____messageCenter.AddSubscriber(MessageCenterMessageType.FloatieMessage, OnFloatie);
             messageCenter = ____messageCenter;
@@ -102,7 +115,21 @@ namespace IRTweaks.Modules.UI {
             FloatieMessage floatieMessage = (FloatieMessage)message;
 
             AbstractActor target = combat.FindActorByGUID(floatieMessage.affectedObjectGuid);
-            messageCenter.PublishMessage(new ChatMessage(target.DisplayName, floatieMessage.text.ToString(), false));
+
+            string senderColor;
+            if (combat.HostilityMatrix.IsLocalPlayerEnemy(target.TeamId)) {
+                senderColor = "#" + ColorUtility.ToHtmlStringRGBA(LazySingletonBehavior<UIManager>.Instance.UIColorRefs.redHalf);
+            } else if (combat.HostilityMatrix.IsLocalPlayerNeutral(target.TeamId)) {
+                senderColor = "#" + ColorUtility.ToHtmlStringRGBA(LazySingletonBehavior<UIManager>.Instance.UIColorRefs.blueHalf);
+            } else {
+                senderColor = "#" + ColorUtility.ToHtmlStringRGBA(LazySingletonBehavior<UIManager>.Instance.UIColorRefs.greenHalf);
+            }
+
+            string sender = (target.IsPilotable && target.GetPilot() != null) ? $"{target.DisplayName}-{target.GetPilot().Name}" : $"{target.DisplayName}";
+            string senderWithColor = $"< {senderColor} >{sender}</ color >";
+            Mod.Log.Info($"ChatMessage senderWithColor: '{senderWithColor}'");
+
+            messageCenter.PublishMessage(new ChatMessage(senderWithColor, floatieMessage.text.ToString(), false));
         }
 
         public static void CombatChatModule_CombatInit_Postfix(CombatChatModule __instance, MessageCenter ____messageCenter,
@@ -138,14 +165,14 @@ namespace IRTweaks.Modules.UI {
                 Rect ibRect = imageBackgroundRT.rect;
                 Mod.Log.Info($"Background image size: {ibRect.height}h x {ibRect.width}");
                 Vector3 newPos = imageBackgroundRT.position;
-                newPos.y += 10;
+                newPos.y += 20f;
+                //newPos.y -= 10;
                 imageBackgroundRT.position = newPos;
-                imageBackgroundRT.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, ibRect.height - 40);
+                imageBackgroundRT.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, ibRect.height - 20);
                 imageBackgroundRT.ForceUpdateRectTransforms();
             } else {
                 Mod.Log.Info("Could not find imageBackground to change size!");
             }
-
 
         }
 
@@ -166,15 +193,33 @@ namespace IRTweaks.Modules.UI {
             return false;
         }
 
+        public static bool CombatChatModule_Update_Prefix(CombatChatModule __instance) {
+            // Invoke base.Update()
+            CombatChatModule_UIModule_Update.Invoke(__instance);
+
+            // Remove the [T] from the chat button
+            Transform chatBtnT = __instance.gameObject.transform.Find("Representation/chat_panel/uixPrf_chatButton");
+            if (chatBtnT != null) {
+                LocalizableText chatBtnLT = chatBtnT.GetComponentInChildren<LocalizableText>();
+                chatBtnLT.SetText(" ");
+
+            } else {
+                Mod.Log.Info("Could not find chat button");
+            }
+
+            return false;
+        }
+
         public static bool ChatListViewItem_SetData_Prefix(ChatListViewItem __instance, ChatMessage message,
             LocalizableText ____chatMessage) {
 
-            string tagColor = "#" + ColorUtility.ToHtmlStringRGBA(LazySingletonBehavior<UIManager>.Instance.UIColorRefs.gold);
             string messageColor = "#" + ColorUtility.ToHtmlStringRGBA(LazySingletonBehavior<UIManager>.Instance.UIColorRefs.whiteHalf);
-            ____chatMessage.text = "<line-height=50%>" +
-                $"<size=-2><{tagColor}>{message.SenderName}</color></size>  " +
-                $"<size=-3><{messageColor}>{message.Message}</color></size>" +
-                "";
+            string messageText = $"<size=-3><{messageColor}>{message.Message}</color></size>";
+            Mod.Log.Info($"Message senderName: '{message.SenderName}'");
+            Mod.Log.Info($"Message text: '{messageText}'");
+
+            ____chatMessage.text = message.SenderName + messageText;
+            
             
             DOTweenAnimation componentInChildren = ____chatMessage.GetComponentInChildren<DOTweenAnimation>();
             if (componentInChildren != null) {
@@ -185,5 +230,41 @@ namespace IRTweaks.Modules.UI {
 
             return false;
         }
+
+        public static void CombatHUDActorInfo_SubscribeToMessages_Postfix(CombatHUDActorInfo __instance) {
+            // Unsubscribe immediately so we don't process messages
+            MethodInfo onFloatieMI = AccessTools.Method(typeof(CombatHUDActorInfo), "OnFloatie", new Type[] { typeof(MessageCenterMessage) }, null);
+            Delegate onFloatieDelegate = onFloatieMI.CreateDelegate(typeof(ReceiveMessageCenterMessage), __instance);
+            Mod.Log.Info("Unsubscribing from CombatHUDActorInfo:OnFloatie messages.");
+            __instance.Combat.MessageCenter.RemoveSubscriber(MessageCenterMessageType.FloatieMessage, (ReceiveMessageCenterMessage)onFloatieDelegate);
+        }
+
+        public static void CombatHUDPortrait_Init_Postfix(CombatHUDPortrait __instance, CombatGameState Combat) {
+            // Unsubscribe immediately so we don't process messages
+            MethodInfo onFloatieMI = AccessTools.Method(typeof(CombatHUDPortrait), "OnFloatie", new Type[] { typeof(MessageCenterMessage) }, null);
+            Delegate onFloatieDelegate = onFloatieMI.CreateDelegate(typeof(ReceiveMessageCenterMessage), __instance);
+            Mod.Log.Info("Unsubscribing from CombatHUDPortrait:OnFloatie messages.");
+            Combat.MessageCenter.RemoveSubscriber(MessageCenterMessageType.FloatieMessage, (ReceiveMessageCenterMessage)onFloatieDelegate);
+        }
+
+        public static bool CombatHUDInWorldElementMgr_AddFloatieMessage_Prefix(CombatHUDInWorldElementMgr __instance, MessageCenterMessage message, CombatGameState ___combat) {
+
+            FloatieMessage floatieMessage = message as FloatieMessage;
+            switch (floatieMessage.nature) {
+                case FloatieMessage.MessageNature.Miss:
+                case FloatieMessage.MessageNature.MeleeMiss:
+                case FloatieMessage.MessageNature.ArmorDamage:
+                case FloatieMessage.MessageNature.StructureDamage:
+                case FloatieMessage.MessageNature.Dodge:
+                    //__instance.ShowFloatie(floatieMessage);
+                    break;
+                default:
+                    //__instance.ShowStackedFloatie(floatieMessage);
+                    break;
+            }
+
+            return false;
+        }
+
     }
 }
