@@ -4,6 +4,14 @@ This mod for the [HBS BattleTech](http://battletechgame.com/) game includes misc
 * **Nuanced Called Shot Modifier**: The modifier for called shots (aka offensive push) is driven by the pilot's tactics skill, ability, and pilot tags. It can also be influenced by gear.
 * **Restrict Called Shots to Head**: You can only select the head on a called shot if the target is shutdown, prone, or you have special equipment.
 * **Sensor Lock Freedom**: Using a Sensor Lock action does not count as movement or firing. This allows it to be combined with actions in a unit's activation.
+* **SkirmishReset**: This fix is a modder's resource. Skirmish saves the mechDefs that were customized, which can result in an ever-spinny when itemDefs are changed or mods are disabled. When enabled, this fix will always reset the Skirmish lances and mech definitions to the base state by deleting all customizations.
+
+This mod replaces the following mods, which used to be stand-alone:
+
+* *BTRandomStartByDifficultyMenu*
+* *CombatSaveDisabler*
+* *IRUITweaks*
+* *SpawnProtection*
 
 ## Nuanced Called Shot Modifier
 
