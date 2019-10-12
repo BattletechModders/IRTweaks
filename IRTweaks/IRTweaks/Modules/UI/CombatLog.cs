@@ -17,6 +17,7 @@ namespace IRTweaks.Modules.UI {
         private static CombatHUDInfoSidePanel infoSidePanel;
         private static CombatChatModule combatChatModule;
 
+        // Static instance pointers from the various components 
         private static CombatGameState combat;
         private static MessageCenter messageCenter;
 
@@ -73,7 +74,7 @@ namespace IRTweaks.Modules.UI {
             Mod.Log.Info($"ChatButton base  pos: {newPos}");
             if (chatBtnT != null) {
                 //chatBtnT.localPosition = new Vector3(0f, 0f, 0f);
-                newPos.x -= 610f;
+                newPos.x -= 620f;
                 newPos.y += 80f;
                 chatBtnT.position = newPos;
                 Mod.Log.Info($"ChatButton new  pos: {newPos}");
@@ -87,6 +88,7 @@ namespace IRTweaks.Modules.UI {
         public static void CombatHUD_OnCombatGameDestroyed_Postfix() {
             Mod.Log.Info("Combat game destroyed, cleaning up");
             combat = null;
+            messageCenter = null;
         }
 
         public static void CombatHUD_Update_Postfix(CombatHUD __instance) {
@@ -126,14 +128,16 @@ namespace IRTweaks.Modules.UI {
             }
 
             string sender = (target.IsPilotable && target.GetPilot() != null) ? $"{target.DisplayName}-{target.GetPilot().Name}" : $"{target.DisplayName}";
-            string senderWithColor = $"< {senderColor} >{sender}</ color >";
+            string senderWithColor = $"&lt;{senderColor}&gt;{sender}&lt;/color&gt;";
             Mod.Log.Info($"ChatMessage senderWithColor: '{senderWithColor}'");
 
             messageCenter.PublishMessage(new ChatMessage(senderWithColor, floatieMessage.text.ToString(), false));
         }
 
         public static void CombatChatModule_CombatInit_Postfix(CombatChatModule __instance, MessageCenter ____messageCenter,
-            HBSDOTweenButton ____chatBtn, HBSDOTweenButton ____muteBtn, HBS_InputField ____inputField, GameObject ____activeChatWindow) {
+            HBSDOTweenButton ____chatBtn, HBSDOTweenButton ____muteBtn, HBS_InputField ____inputField, 
+            GameObject ____activeChatWindow, ActiveChatListView ____activeChatList) {
+
             ____chatBtn.enabled = true;
             ____chatBtn.gameObject.SetActive(true);
             ____muteBtn.enabled = false;
@@ -173,7 +177,6 @@ namespace IRTweaks.Modules.UI {
             } else {
                 Mod.Log.Info("Could not find imageBackground to change size!");
             }
-
         }
 
         public static bool CombatChatModule_OnChatMessage_Prefix(CombatChatModule __instance, MessageCenterMessage message,
@@ -213,13 +216,18 @@ namespace IRTweaks.Modules.UI {
         public static bool ChatListViewItem_SetData_Prefix(ChatListViewItem __instance, ChatMessage message,
             LocalizableText ____chatMessage) {
 
-            string messageColor = "#" + ColorUtility.ToHtmlStringRGBA(LazySingletonBehavior<UIManager>.Instance.UIColorRefs.whiteHalf);
-            string messageText = $"<size=-3><{messageColor}>{message.Message}</color></size>";
-            Mod.Log.Info($"Message senderName: '{message.SenderName}'");
-            Mod.Log.Info($"Message text: '{messageText}'");
+            string expandedSender = message.SenderName.Replace("&gt;", ">");
+            expandedSender = expandedSender.Replace("&lt;", "<");
+            string senderText = $"{expandedSender}";
+            Mod.Log.Info($"Message senderName: '{message.SenderName}'  expandedSender: '{expandedSender}'  senderText: '{senderText}'");
 
-            ____chatMessage.text = message.SenderName + messageText;
-            
+            string messageColor = "#" + ColorUtility.ToHtmlStringRGBA(LazySingletonBehavior<UIManager>.Instance.UIColorRefs.whiteHalf);
+            string expandedMessage = message.Message.Replace("&gt;", ">");
+            expandedMessage = expandedMessage.Replace("&lt;", "<");
+            string messageText = $"<{messageColor}>{expandedMessage}</color>";
+            Mod.Log.Info($"Message text: '{expandedMessage}'");
+
+            ____chatMessage.text = "<size=-3>" + senderText + " " + messageText + "</size>";
             
             DOTweenAnimation componentInChildren = ____chatMessage.GetComponentInChildren<DOTweenAnimation>();
             if (componentInChildren != null) {
