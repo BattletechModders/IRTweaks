@@ -48,6 +48,10 @@ namespace IRTweaks.Modules.Tooltip {
                         HarmonyMethod cl_ci_post = new HarmonyMethod(typeof(CombatLog), "CombatChatModule_CombatInit_Postfix");
                         harmony.Patch(ccm_ci_mi, null, cl_ci_post, null);
 
+                        MethodInfo ccm_a_oe = AccessTools.Method(typeof(CombatChatModule), "Active_OnEnter", new Type[] { });
+                        HarmonyMethod cl_ccm_a_oe_post = new HarmonyMethod(typeof(CombatLog), "CombatChatModule_Active_OnEnter_Postfix");
+                        harmony.Patch(ccm_a_oe, null, cl_ccm_a_oe_post, null);
+
                         MethodInfo ccm_ocm_mi = AccessTools.Method(typeof(CombatChatModule), "OnChatMessage", new Type[] { typeof(MessageCenterMessage) });
                         HarmonyMethod cl_ccm_ocm_pre = new HarmonyMethod(typeof(CombatLog), "CombatChatModule_OnChatMessage_Prefix");
                         harmony.Patch(ccm_ocm_mi, cl_ccm_ocm_pre, null, null);
@@ -60,9 +64,9 @@ namespace IRTweaks.Modules.Tooltip {
                         HarmonyMethod cl_clvi_sd_pre = new HarmonyMethod(typeof(CombatLog), "ChatListViewItem_SetData_Prefix");
                         harmony.Patch(clvi_sd_mi, cl_clvi_sd_pre, null, null);
 
-                        MethodInfo chudai_stm_mi = AccessTools.Method(typeof(CombatHUDActorInfo), "SubscribeToMessages");
-                        HarmonyMethod cl_chudai_stm_post = new HarmonyMethod(typeof(CombatLog), "CombatHUDActorInfo_SubscribeToMessages_Postfix");
-                        harmony.Patch(chudai_stm_mi, null, cl_chudai_stm_post, null);
+                        //MethodInfo chudai_stm_mi = AccessTools.Method(typeof(CombatHUDActorInfo), "SubscribeToMessages");
+                        //HarmonyMethod cl_chudai_stm_post = new HarmonyMethod(typeof(CombatLog), "CombatHUDActorInfo_SubscribeToMessages_Postfix");
+                        //harmony.Patch(chudai_stm_mi, null, cl_chudai_stm_post, null);
 
                         MethodInfo chudiwem_afm_mi = AccessTools.Method(typeof(CombatHUDInWorldElementMgr), "AddFloatieMessage");
                         HarmonyMethod chudiwem_afm_pre = new HarmonyMethod(typeof(CombatLog), "CombatHUDInWorldElementMgr_AddFloatieMessage_Prefix");
