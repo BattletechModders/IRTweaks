@@ -58,9 +58,11 @@ The pilot's tags determine the `CalledShotPilotTagsMod`. Every tag defined in `T
 
 Units that have `IRTCalledShotMod` in their _StatCollection_ will take this modifier as the `CalledShotUnitMod `. The _StatCollection_ assumes an int value.
 
-## Random Start By Difficulty menu
+## Random Start By Difficulty
 
 This tweak allows you to define difficulty settings that impact the Career starts. This is useful for mods like RogueTech, which customizes your starting lance and faction reputation based upon a difficulty menu selection. The mod looks for two custom *DifficultyConstants*, each with a different behavior.
+
+This tweak is enabled if `Fixes.RandomStartByDifficulty=true` is set to true in _mod.json_. Customizations are only expressed through the difficulty constants described below.
 
 ### StartingRandomMechLists
 
