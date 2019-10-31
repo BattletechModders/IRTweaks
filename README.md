@@ -58,6 +58,64 @@ The pilot's tags determine the `CalledShotPilotTagsMod`. Every tag defined in `T
 
 Units that have `IRTCalledShotMod` in their _StatCollection_ will take this modifier as the `CalledShotUnitMod `. The _StatCollection_ assumes an int value.
 
+## Random Start By Difficulty menu
+
+This tweak allows you to define difficulty settings that impact the Career starts. This is useful for mods like RogueTech, which customizes your starting lance and faction reputation based upon a difficulty menu selection. The mod looks for two custom *DifficultyConstants*, each with a different behavior.
+
+### StartingRandomMechLists
+
+A comma separated list of lancedefs that should be used to randomize the starting mech selections. It's only useful when 'random mechs' are selected as an option. An example value would be:
+
+```json
+{
+                    "ID": "diff_myDiff",
+                    "Name": "UI Label To display",
+                    "DifficultyValue": 0,
+                    "DifficultyConstants": [
+                        {
+                            "ConstantType": "CareerMode",
+                            "ConstantName": "StartingSystems",
+                            "ConstantValue": "UrCruinne"
+                        },
+                        {
+                            "ConstantType": "CareerMode",
+                            "ConstantName": "StartingRandomMechLists",
+                            "ConstantValue":
+                            "itemCollection_Mechs_Starting_0,itemCollection_Mechs_Starting_1,itemCollection_Mechs_Starting_2"
+                        }
+                    ]
+                },
+```
+
+
+
+### FactionReputation
+
+A comma separated list of factions and reputation bonuses to apply. Each faction is and bonus is joined by a colon, like `Steiner:20`. Should accept both positive and negative modifiers.
+
+Example:
+
+```json
+{
+                    "ID": "diff_myDiff",
+                    "Name": "UI Label To display",
+                    "DifficultyValue": 0,
+                    "DifficultyConstants": [
+                        {
+                            "ConstantType": "CareerMode",
+                            "ConstantName": "StartingSystems",
+                            "ConstantValue": "UrCruinne"
+                        },
+                        {
+                            "ConstantType": "CareerMode",
+                            "ConstantName": "FactionReputation",
+                            "ConstantValue":
+                            "Davion:20,Liao:-20,Kurita:-20,Steiner:10"
+                        }
+                    ]
+                },
+```
+
 ## Restrict Called Shots to Head
 
 This tweak changes the called shot dialog to disallow selecting the head unless the target unit is shutdown or prone. This only applies to mech targets; vehicle and building targets may be targeted normally.
