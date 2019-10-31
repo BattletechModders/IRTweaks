@@ -1,10 +1,17 @@
 # IRTweaks
-This mod for the [HBS BattleTech](http://battletechgame.com/) game includes miscellaneous tweaks and changes that aren't large enough to justify a separate mod. They cover a wide range of effects, and can be selectively enabled as you like. A summary of current features includes:
+This is a mod for the [HBS BattleTech](http://battletechgame.com/) game that includes a variety of tweaks, changes, and modifications to the base game. A wide range of effects is covered, and all of the options can be selectively enabled. A short summary of the features includes:
 
+* **Combat Log**: Provides an in-game log that captures text from floaties and preserves them in a readable format.
+* **Combat Saves Disabler**: Combat saves are prone to errors during vanilla gameplay, but especially so during modded gameplay. This disables the UI selection that allows in-combat saves to be made.
+* **Flexible Sensor Lock**: Using a Sensor Lock action does not count as movement or firing. This allows it to be combined with actions in a unit's activation.
 * **Nuanced Called Shot Modifier**: The modifier for called shots (aka offensive push) is driven by the pilot's tactics skill, ability, and pilot tags. It can also be influenced by gear.
-* **Restrict Called Shots to Head**: You can only select the head on a called shot if the target is shutdown, prone, or you have special equipment.
-* **Sensor Lock Freedom**: Using a Sensor Lock action does not count as movement or firing. This allows it to be combined with actions in a unit's activation.
+* **Random Start by Difficulty Menu**: Allows an option in the new-game difficulty menu to be associated with user-created lists of starting mechs.
+* **Restrict Called Shots to Head**: You can only select the head on a called shot if the target is shutdown, prone, or you have special equipmenst.
+* **Pilot Statistics Validator Override**: Allows pilots to be assigned Statistic values outside the normal bounds of 1-10.
 * **SkirmishReset**: This fix is a modder's resource. Skirmish saves the mechDefs that were customized, which can result in an ever-spinny when itemDefs are changed or mods are disabled. When enabled, this fix will always reset the Skirmish lances and mech definitions to the base state by deleting all customizations.
+* **Spawn Protection**: Provides high evasion, braced, and guarded status to units when they spawn. This can prevent first-turn damage during mission start, or to reinforcements that spawn close to the player.
+* **Store Quantities**: Provides buttons and keyboard shortcuts that allow bulk purchasing and selling of items in the store.
+* **Weapon Tooltips**: Modifies the weapon tooltips to more accurately report damage when a weapon uses extensions provided by [CustomAmmoCategories](https://github.com/CMiSSioN/CustomAmmoCategories).
 
 This mod replaces the following mods, which used to be stand-alone:
 
@@ -35,7 +42,7 @@ A MechWarriors's **Tactics** skill adds a flat modifier to the base initiative d
 
 The pilot's tags determine the `CalledShotPilotTagsMod`. Every tag defined in `ToHitCfg.CalledShotPilotTags` (in _mod.json_) applies a specific modifier if the pilot also possesses that tag. The modifiers from all applicable tags are summed into `CalledShotPilotTagsMod`.
 
-> Example: ToHitCfg.CalledShotPilotTags is { "pilot_drunk" : 2, "pilot_reckless" : 1, pilot_assassin": -2,  }. If the pilot has both the pilot_drunk and pilot_reckless and tags, their CalledShotPilotTagsMod would be +3. 
+> Example: ToHitCfg.CalledShotPilotTags is { "pilot_drunk" : 2, "pilot_reckless" : 1, pilot_assassin": -2,  }. If the pilot has both the pilot_drunk and pilot_reckless and tags, their CalledShotPilotTagsMod would be +3.
 
 #### Unit Modifier
 
@@ -47,10 +54,27 @@ This tweak changes the called shot dialog to disallow selecting the head unless 
 
 Units that have `IRTCalledShotAlwaysAllow : true` in their _StatCollection_ can select heads even if the target is shutdown or prone. This would typically come in through equipment and similar effects.
 
-This tweak has no customization. 
+This tweak has no customization.
 
 ## Sensor Lock Freedom
 
 This tweak changes the SensorLock behaviors such that using the action doesn't end your turn. This previously occurred because SensorLock actions counted as both movement and firing (in a very weird way). When this tweak is enabled, you can sensor lock at any point during your activation.
 
-This tweak has no customization. 
+This tweak has no customization.
+
+## Spawn Protection
+
+This tweak provides significant defensive bonuses to units when they spawn. Units can be marked to receive a specific number of evasive pips and to be marked as braced. This makes for a better play experience on small maps where the player could be pummeled before they could even move. Mechs and Vehicles receive this protection, but Turrets do not. (Turrets cannot move and thus the modifiers never go away if they are applied to Turrets).
+
+This has been extracted from CWolf's amazing [Mission Control](https://github.com/CWolfs/MissionControl) mod - check it out!
+
+### Configuration
+
+This tweak is enabled if `Fixes.SpawnProtection=true` is set to true in _mod.json_. The following configuration options can further customize this tweak's behavior:
+
+* `Combat.SpawnProtection.ApplyGuard`: If true, the protected unit will be Braced and thus gain the Guarded state. Defaults to true.
+* `Combat.SpawnProtection.EvasionPips`: The number of evasion pips to add to the target unit. Defaults to 6.
+* `Combat.SpawnProtection.ApplyToEnemies`: If true, enemies will be protected when they spawn as well. Defaults to true.
+* `Combat.SpawnProtection.ApplyToNeutrals`: If true, neutrals will be protected when they spawn as well. Defaults to true.
+* `Combat.SpawnProtection.ApplyToAllies`: If true, allies will be protected when they spawn as well. Defaults to true.
+* `Combat.SpawnProtection.ApplyToReinforcements`: If true, enemies that spawn during a mission (i.e. are not present on the first turn) will be protected. Defaults to true.
