@@ -1,6 +1,7 @@
 # IRTweaks
 This is a mod for the [HBS BattleTech](http://battletechgame.com/) game that includes a variety of tweaks, changes, and modifications to the base game. A wide range of effects is covered, and all of the options can be selectively enabled. A short summary of the features includes:
 
+* **Bulk Purchasing**: Provides buttons and keyboard shortcuts that allow bulk purchasing and selling of items in the store.
 * **Combat Log**: Provides an in-game log that captures text from floaties and preserves them in a readable format.
 * **Combat Saves Disabler**: Combat saves are prone to errors during vanilla gameplay, but especially so during modded gameplay. This disables the UI selection that allows in-combat saves to be made.
 * **Flexible Sensor Lock**: Using a Sensor Lock action does not count as movement or firing. This allows it to be combined with actions in a unit's activation.
@@ -10,7 +11,6 @@ This is a mod for the [HBS BattleTech](http://battletechgame.com/) game that inc
 * **Pilot Statistics Validator Override**: Allows pilots to be assigned Statistic values outside the normal bounds of 1-10.
 * **SkirmishReset**: This fix is a modder's resource. Skirmish saves the mechDefs that were customized, which can result in an ever-spinny when itemDefs are changed or mods are disabled. When enabled, this fix will always reset the Skirmish lances and mech definitions to the base state by deleting all customizations.
 * **Spawn Protection**: Provides high evasion, braced, and guarded status to units when they spawn. This can prevent first-turn damage during mission start, or to reinforcements that spawn close to the player.
-* **Store Quantities**: Provides buttons and keyboard shortcuts that allow bulk purchasing and selling of items in the store.
 * **Weapon Tooltips**: Modifies the weapon tooltips to more accurately report damage when a weapon uses extensions provided by [CustomAmmoCategories](https://github.com/CMiSSioN/CustomAmmoCategories).
 
 This mod replaces the following mods, which used to be stand-alone:
@@ -19,6 +19,16 @@ This mod replaces the following mods, which used to be stand-alone:
 * *CombatSaveDisabler*
 * *IRUITweaks*
 * *SpawnProtection*
+
+## Bulk Purchasing
+
+This tweak makes minor changes to the store UI elements:
+
+* Enables bulk-purchase for items in the mech store
+* Allows shift+click on the -/+ in the bulk-purchase and bulk-sell screens to increment the count by -/+5
+* Allows control+click on the -/+ in the bulk-purchase and bulk-sell screens to increment the count by -/+20
+
+This tweak is enabled if `Fixes.BulkPurchasing=true` is set to true in _mod.json_. There are no customizations for this tweak.
 
 ## Nuanced Called Shot Modifier
 
@@ -78,3 +88,11 @@ This tweak is enabled if `Fixes.SpawnProtection=true` is set to true in _mod.jso
 * `Combat.SpawnProtection.ApplyToNeutrals`: If true, neutrals will be protected when they spawn as well. Defaults to true.
 * `Combat.SpawnProtection.ApplyToAllies`: If true, allies will be protected when they spawn as well. Defaults to true.
 * `Combat.SpawnProtection.ApplyToReinforcements`: If true, enemies that spawn during a mission (i.e. are not present on the first turn) will be protected. Defaults to true.
+
+## Weapon tooltips
+
+This tweak makes minor changes to the tooltips shown when hovering over weapons:
+
+* Overrides damage calculation on weapon display to show full damage potential (shots * projectiles)
+
+This tweak is enabled if `Fixes.WeaponTooltip=true` is set to true in _mod.json_. There are no customizations for this tweak.
