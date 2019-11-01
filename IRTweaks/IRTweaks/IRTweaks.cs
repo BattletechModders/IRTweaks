@@ -56,6 +56,8 @@ namespace IRTweaks {
             MiscFixes.InitModule(harmony);
             UIFixes.InitModule(harmony);
 
+            harmony.PatchAll(Assembly.GetExecutingAssembly());
+
             // Setup the diag for me 
             //Helper.DiagnosticLogger.PatchAllMethods();
         }

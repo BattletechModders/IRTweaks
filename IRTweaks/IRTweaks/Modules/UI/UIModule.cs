@@ -92,6 +92,44 @@ namespace IRTweaks.Modules.Tooltip {
                         harmony.Patch(sgom_sstt, null, cs_sgom_sstt_postfix, null);
                     }
 
+                    // Makes the main menu a smoother as there are fewer
+                    if (Mod.Config.Fixes.StreamlinedMainMenu) {
+                        Mod.Log.Info("Activating Fix: StreamlinedMainMenu");
+
+                        MethodInfo sgnb_rftp_mi = AccessTools.Method(typeof(SGNavigationButton), "ResetFlyoutsToPrefab");
+                        HarmonyMethod smm_sgnb_pftp = new HarmonyMethod(typeof(StreamlinedMainMenu), "SGNavigationButton_ResetFlyoutsToPrefab");
+                        harmony.Patch(sgnb_rftp_mi, null, smm_sgnb_pftp, null);
+
+                        MethodInfo sgnb_ssatsd_mi = AccessTools.Method(typeof(SGNavigationButton), "SetStateAccordingToSimDropship");
+                        HarmonyMethod smm_sgnb_ssatsd = new HarmonyMethod(typeof(StreamlinedMainMenu), "SGNavigationButton_SetStateAccordingToSimDropship");
+                        harmony.Patch(sgnb_ssatsd_mi, null, smm_sgnb_ssatsd, null);
+
+                        //MethodInfo sgnb_afb_mi = AccessTools.Method(typeof(SGNavigationButton), "AddFlyoutButton");
+                        //HarmonyMethod smm_sgnb_afb = new HarmonyMethod(typeof(StreamlinedMainMenu), "SGNavigationButton_AddFlyoutButton");
+                        //harmony.Patch(sgnb_afb_mi, null, smm_sgnb_afb, null);
+
+                        //MethodInfo sgnb_fc_mi = AccessTools.Method(typeof(SGNavigationButton), "FlyoutClicked");
+                        //HarmonyMethod smm_sgnb_fc = new HarmonyMethod(typeof(StreamlinedMainMenu), "SGNavigationButton_FlyoutClicked");
+                        //harmony.Patch(sgnb_fc_mi, null, smm_sgnb_fc, null);
+
+                        MethodInfo sgnb_oc_mi = AccessTools.Method(typeof(SGNavigationButton), "OnClick");
+                        HarmonyMethod smm_sgnb_oc = new HarmonyMethod(typeof(StreamlinedMainMenu), "SGNavigationButton_OnClick");
+                        harmony.Patch(sgnb_oc_mi, smm_sgnb_oc, null, null);
+
+                        MethodInfo sgnb_ope_mi = AccessTools.Method(typeof(SGNavigationButton), "OnPointerEnter");
+                        HarmonyMethod smm_sgnb_ope = new HarmonyMethod(typeof(StreamlinedMainMenu), "SGNavigationButton_OnPointerEnter");
+                        harmony.Patch(sgnb_ope_mi, null, smm_sgnb_ope, null);
+
+                        MethodInfo sgnb_se_mi = AccessTools.Method(typeof(SGNavigationButton), "SetupElement");
+                        HarmonyMethod smm_sgnb_se = new HarmonyMethod(typeof(StreamlinedMainMenu), "SGNavigationButton_SetupElement");
+                        harmony.Patch(sgnb_se_mi, null, smm_sgnb_se, null);
+
+                        //MethodInfo sgnwl_i_mi = AccessTools.Method(typeof(SGNavigationWidgetLeft), "Init");
+                        //HarmonyMethod smm_sgnwl_i = new HarmonyMethod(typeof(StreamlinedMainMenu), "SGNavigationWidgetLeft_Init");
+                        //harmony.Patch(sgnwl_i_mi, null, smm_sgnwl_i, null);
+
+                    }
+
                     // Update the pilot stats to have a maximum greater than 10
                     if (Mod.Config.Fixes.WeaponTooltip) {
                         Mod.Log.Info("Activating Fix: WeaponTooltip");

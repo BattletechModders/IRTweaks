@@ -49,6 +49,7 @@ namespace IRTweaks {
         public bool RandomStartByDifficulty = true;
         public bool SkirmishReset = true;
         public bool SpawnProtection = true;
+        public bool StreamlinedMainMenu = true;
         public bool WeaponTooltip = true;
     }
 
