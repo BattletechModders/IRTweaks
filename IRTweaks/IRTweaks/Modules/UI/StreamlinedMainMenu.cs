@@ -3,7 +3,6 @@ using BattleTech.UI;
 using BattleTech.UI.TMProWrapper;
 using Harmony;
 using HBS;
-using SVGImporter;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -12,75 +11,108 @@ using UnityEngine.EventSystems;
 namespace IRTweaks.Modules.UI {
     public static class StreamlinedMainMenu {
 
-        public static void SGNavigationButton_ResetFlyoutsToPrefab(SGNavigationButton __instance, LocalizableText ___text, List<SGNavFlyoutButton> ___FlyoutButtonList,
-            int ___flyoutButtonCount) {
-            Mod.Log.Info($"SGNB:RFTP - entered button {___text.GetParsedText()} with {___flyoutButtonCount} flyout buttons for ID: {__instance.ID}");
-            if (__instance.ID != DropshipLocation.CPT_QUARTER && !___text.text.Contains("CMD Staff") && !___text.text.Contains("Memorial")) {
-                Mod.Log.Info($"Clearing flyouts from ID: {__instance.ID}");
-                foreach (SGNavFlyoutButton flyoutButton in ___FlyoutButtonList) {
-                    // Mod.Log.Info($" -- Disabling flyoutButton: {flyoutButton.name}");
-                    flyoutButton.gameObject.SetActive(false);
+
+        [HarmonyPatch(typeof(SGContractsWidget), "Init")]
+        [HarmonyPatch(new Type[] { typeof(SimGameState), typeof(Action<bool>) })]
+        public static class SGContractsWidget_Init {
+            static bool Prepare() { return Mod.Config.Fixes.StreamlinedMainMenu; }
+
+            static void Postfix(SGContractsWidget __instance, GameObject ___ContractList) {
+                Mod.Log.Trace($"SGCW:I - entered.");
+
+                RectTransform clRT = ___ContractList.GetComponent<RectTransform>();
+                if (clRT != null) {
+                    Vector3 ns = clRT.sizeDelta;
+                    ns.y += 260;
+                    clRT.sizeDelta = ns;
+                } else {
+                    Mod.Log.Info("ContractList rectTransform is null!");
                 }
             }
         }
 
-        public static void SGNavigationButton_SetStateAccordingToSimDropship(SGNavigationButton __instance, DropshipType shipType, List<SGNavFlyoutButton> ___FlyoutButtonList, LocalizableText ___text) {
-            Mod.Log.Info($"SGNB:SSATSD - entered shipType:{shipType} for ID: {__instance.ID}");
-            if (__instance.ID != DropshipLocation.CPT_QUARTER && !___text.text.Contains("CMD Staff") && !___text.text.Contains("Memorial")) {
-                Mod.Log.Info($"Clearing flyouts from ID: {__instance.ID}");
-                foreach (SGNavFlyoutButton flyoutButton in ___FlyoutButtonList) {
-                    // Mod.Log.Info($" --- Disabling flyoutButton: {flyoutButton.name}");
-                    flyoutButton.gameObject.SetActive(false);
+        [HarmonyPatch(typeof(SGNavigationButton), "ResetFlyoutsToPrefab")]
+        public static class SGNavigationButton_ResetFlyoutsToPrefab {
+            static bool Prepare() { return Mod.Config.Fixes.StreamlinedMainMenu; }
+
+            static void Postfix(SGNavigationButton __instance, LocalizableText ___text, List<SGNavFlyoutButton> ___FlyoutButtonList, int ___flyoutButtonCount) {
+                Mod.Log.Trace($"SGNB:RFTP - entered button {___text.GetParsedText()} with {___flyoutButtonCount} flyout buttons for ID: {__instance.ID}");
+                if (__instance.ID != DropshipLocation.CPT_QUARTER && !___text.text.Contains("CMD Staff")) {
+                    foreach (SGNavFlyoutButton flyoutButton in ___FlyoutButtonList) {
+                        flyoutButton.gameObject.SetActive(false);
+                    }
                 }
             }
         }
 
-        //public static void SGNavigationButton_AddFlyoutButton(SGNavigationButton __instance, string FlyoutLabel, DropshipMenuType FlyoutType) {
-        //    Mod.Log.Info($"SGNB:AFB - adding button with label:{FlyoutLabel} and type:{FlyoutType} for ID: {__instance.ID}");
-        //}
+        [HarmonyPatch(typeof(SGNavigationButton), "SetStateAccordingToSimDropship")]
+        public static class SGNavigationButton_SetStateAccordingToSimDropship {
+            static bool Prepare() { return Mod.Config.Fixes.StreamlinedMainMenu; }
 
-        //public static void SGNavigationButton_FlyoutClicked(SGNavigationButton __instance, DropshipMenuType buttonID) {
-        //    Mod.Log.Info($"SGNB:FC - flyoutClicked for buttonID:{buttonID} for ID: {__instance.ID}");
-        //}
-
-        public static void SGNavigationButton_OnClick(SGNavigationButton __instance, SGNavigationList ___buttonParent) {
-            Mod.Log.Info($"SGNB:OC - button clicked for ID: {__instance.ID}");
-
-            switch (__instance.ID) {
-                case DropshipLocation.CMD_CENTER:
-                    ___buttonParent.navParent.SetQueuedUIActivationID(DropshipMenuType.Contract, __instance.ID);
-                    break;
-                case DropshipLocation.BARRACKS:
-                    ___buttonParent.navParent.SetQueuedUIActivationID(DropshipMenuType.Mechwarrior, __instance.ID);
-                    break;
-                case DropshipLocation.ENGINEERING:
-                    ___buttonParent.navParent.SetQueuedUIActivationID(DropshipMenuType.ShipUpgrade, __instance.ID);
-                    break;
-                case DropshipLocation.MECH_BAY:
-                    ___buttonParent.navParent.SetQueuedUIActivationID(DropshipMenuType.MechBay, __instance.ID);
-                    break;
-                case DropshipLocation.NAVIGATION:
-                    ___buttonParent.navParent.SetQueuedUIActivationID(DropshipMenuType.Navigation, __instance.ID);
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        public static void SGNavigationButton_OnPointerEnter(SGNavigationButton __instance, PointerEventData eventData, List<SGNavFlyoutButton> ___FlyoutButtonList, LocalizableText ___text) {
-            Mod.Log.Info($"SGNB:OPE - entered.");
-            if (__instance.ID != DropshipLocation.CPT_QUARTER && !___text.text.Contains("CMD Staff") && !___text.text.Contains("Memorial") ) {
-                Mod.Log.Info($"Clearing flyouts from ID: {__instance.ID} with text:{___text.text}");
-                foreach (SGNavFlyoutButton flyoutButton in ___FlyoutButtonList) {
-                    // Mod.Log.Info($" ---- Disabling flyoutButton: {flyoutButton.name}");
-                    flyoutButton.gameObject.SetActive(false);
+            static void Postfix(SGNavigationButton __instance, DropshipType shipType, List<SGNavFlyoutButton> ___FlyoutButtonList, LocalizableText ___text) {
+                Mod.Log.Trace($"SGNB:SSATSD - entered shipType:{shipType} for ID: {__instance.ID}");
+                if (__instance.ID != DropshipLocation.CPT_QUARTER && !___text.text.Contains("CMD Staff")) {
+                    foreach (SGNavFlyoutButton flyoutButton in ___FlyoutButtonList) {
+                        flyoutButton.gameObject.SetActive(false);
+                    }
                 }
             }
         }
 
-        public static void SGNavigationButton_SetupElement(SGNavigationButton __instance, SGNavigationList listWidget, 
-            HBSRadioSet radioSet, string labelText, SVGAsset Icon, SimGameState simGameState, SVGImage ___flyoutContainer) {
-            Mod.Log.Info($"SGNB:SE - setup element invoked for instance: {__instance.ID}");
+        [HarmonyPatch(typeof(SGNavigationButton), "OnPointerEnter")]
+        public static class SGNavigationButton_OnPointerEnter {
+            static bool Prepare() { return Mod.Config.Fixes.StreamlinedMainMenu; }
+
+            static void Postfix(SGNavigationButton __instance, PointerEventData eventData, List<SGNavFlyoutButton> ___FlyoutButtonList, LocalizableText ___text) {
+                Mod.Log.Trace($"SGNB:OPE - entered.");
+                if (__instance.ID != DropshipLocation.CPT_QUARTER && !___text.text.Contains("CMD Staff")) {
+                    foreach (SGNavFlyoutButton flyoutButton in ___FlyoutButtonList) {
+                        flyoutButton.gameObject.SetActive(false);
+                    }
+                }
+            }
+        }
+
+        [HarmonyPatch(typeof(SGNavigationButton), "OnClick")]
+        public static class SGNavigationButton_OnClick {
+            static bool Prepare() { return Mod.Config.Fixes.StreamlinedMainMenu; }
+
+            static void Postfix(SGNavigationButton __instance, SGNavigationList ___buttonParent, LocalizableText ___text) {
+                Mod.Log.Debug($"SGNB:OC - button clicked for ID: {__instance.ID}");
+
+                switch (__instance.ID) {
+                    case DropshipLocation.CMD_CENTER:
+                        ___buttonParent.navParent.SetQueuedUIActivationID(DropshipMenuType.Contract, __instance.ID);
+                        break;
+                    case DropshipLocation.BARRACKS:
+                        ___buttonParent.navParent.SetQueuedUIActivationID(DropshipMenuType.Mechwarrior, __instance.ID);
+                        break;
+                    case DropshipLocation.ENGINEERING:
+                        ___buttonParent.navParent.SetQueuedUIActivationID(DropshipMenuType.ShipUpgrade, __instance.ID);
+                        break;
+                    case DropshipLocation.MECH_BAY:
+                        ___buttonParent.navParent.SetQueuedUIActivationID(DropshipMenuType.MechBay, __instance.ID);
+                        break;
+                    case DropshipLocation.NAVIGATION:
+                        ___buttonParent.navParent.SetQueuedUIActivationID(DropshipMenuType.Navigation, __instance.ID);
+                        break;
+                    default:
+                        break;
+                }
+
+                SimGameState simulation = UnityGameInstance.BattleTechGame.Simulation;
+                if (___text.text.Contains("Store")) {
+                    if (simulation.CurRoomState != DropshipLocation.SHOP) {
+                        ___buttonParent.ArgoButtonFlyoutChangeRoom(DropshipLocation.SHOP);
+                    }
+                    ___buttonParent.navParent.SetQueuedUIActivationID(DropshipMenuType.Shop, DropshipLocation.SHOP);
+                } else if (___text.text.Contains("Memorial")) {
+                    if (simulation.CurRoomState != DropshipLocation.BARRACKS) {
+                        ___buttonParent.ArgoButtonFlyoutChangeRoom(DropshipLocation.BARRACKS);
+                    }
+                    ___buttonParent.navParent.SetQueuedUIActivationID(DropshipMenuType.MemorialWall, DropshipLocation.BARRACKS);
+                }
+            }
         }
 
         [HarmonyPatch(typeof(SGNavigationWidgetLeft), "Init")]
@@ -94,12 +126,12 @@ namespace IRTweaks.Modules.UI {
                 ___shipMap.gameObject.SetActive(false);
 
                 Vector3 startPos = ___locationList.transform.position;
-                startPos.y += 100;
+                startPos.y += 200;
                 ___locationList.transform.position = startPos;
             }
         }
 
-        [HarmonyPatch(typeof(SGNavigationButton), "FlyoutClicked")]
+        [HarmonyPatch(typeof(SGNavigationButton), "FlyoutClicked")] 
         public static class SGNavigationButton_FlyoutClicked {
             static bool Prepare() { return Mod.Config.Fixes.StreamlinedMainMenu; }
 
@@ -109,35 +141,68 @@ namespace IRTweaks.Modules.UI {
 
                 SimGameState simulation = UnityGameInstance.BattleTechGame.Simulation;
                 if (___text.text.Contains("CMD Staff")) {
-                    if (buttonID == DropshipMenuType.Darius && simulation.CurRoomState != DropshipLocation.CMD_CENTER) {
-                        ___buttonParent.ArgoButtonFlyoutChangeRoom(DropshipLocation.CMD_CENTER);
-                    } else if (buttonID == DropshipMenuType.Yang && simulation.CurRoomState != DropshipLocation.MECH_BAY) {
-                        ___buttonParent.ArgoButtonFlyoutChangeRoom(DropshipLocation.MECH_BAY);
-                    } else if (buttonID == DropshipMenuType.Sumire && simulation.CurRoomState != DropshipLocation.NAVIGATION) {
-                        ___buttonParent.ArgoButtonFlyoutChangeRoom(DropshipLocation.NAVIGATION);
-                    } else if (buttonID == DropshipMenuType.Farah && simulation.CurRoomState != DropshipLocation.ENGINEERING) {
-                        ___buttonParent.ArgoButtonFlyoutChangeRoom(DropshipLocation.ENGINEERING);
+                    switch (buttonID) {
+                        case DropshipMenuType.Darius:
+                        case DropshipMenuType.Alexander:
+                            if (simulation.CurRoomState != DropshipLocation.CMD_CENTER) {
+                                ___buttonParent.ArgoButtonFlyoutChangeRoom(DropshipLocation.CMD_CENTER);
+                            }
+                            ___buttonParent.navParent.SetQueuedUIActivationID(buttonID, DropshipLocation.CMD_CENTER);
+                            break;
+                        case DropshipMenuType.Yang:
+                            if (simulation.CurRoomState != DropshipLocation.MECH_BAY) {
+                                ___buttonParent.ArgoButtonFlyoutChangeRoom(DropshipLocation.MECH_BAY);
+                            }
+                            ___buttonParent.navParent.SetQueuedUIActivationID(buttonID, DropshipLocation.MECH_BAY);
+                            break;
+                        case DropshipMenuType.Sumire:
+                            if (simulation.CurRoomState != DropshipLocation.NAVIGATION) {
+                                ___buttonParent.ArgoButtonFlyoutChangeRoom(DropshipLocation.NAVIGATION);
+                            }
+                            ___buttonParent.navParent.SetQueuedUIActivationID(buttonID, DropshipLocation.NAVIGATION);
+                            break;
+                        case DropshipMenuType.Farah:
+                            if (simulation.CurRoomState != DropshipLocation.ENGINEERING) {
+                                ___buttonParent.ArgoButtonFlyoutChangeRoom(DropshipLocation.ENGINEERING);
+                            }
+                            ___buttonParent.navParent.SetQueuedUIActivationID(buttonID, DropshipLocation.ENGINEERING);
+                            break;
+                        default:
+                            break;
                     }
-                } 
+                } else if (___text.text.Contains("Memorial")) {
+                    if (simulation.CurRoomState != DropshipLocation.BARRACKS) {
+                        ___buttonParent.ArgoButtonFlyoutChangeRoom(DropshipLocation.BARRACKS);
+                    }
+                    ___buttonParent.navParent.SetQueuedUIActivationID(buttonID, DropshipLocation.BARRACKS);
+                }
+            }
+        }
 
-                //if (__instance.ID == DropshipLocation.SHIP) {
-                //    if (buttonID == DropshipMenuType.HiringHall) {
-                //        if (this.simState.CurRoomState != DropshipLocation.HIRING) {
-                //            this.buttonParent.ArgoButtonFlyoutChangeRoom(DropshipLocation.HIRING);
-                //            return;
-                //        }
-                //    } else if (buttonID == DropshipMenuType.Shop && this.simState.CurRoomState != DropshipLocation.SHOP) {
-                //        this.buttonParent.ArgoButtonFlyoutChangeRoom(DropshipLocation.SHOP);
-                //        return;
-                //    }
-                //} else if (this.buttonParent.navParent.SetQueuedUIActivationID(buttonID, this.ID)) {
-                //    this.OnClick();
-                //}
+        [HarmonyPatch(typeof(SGNavigationList), "RefreshButtonStates")]
+        public static class SGNavigationList_RefreshButtonStates {
+            static bool Prepare() { return Mod.Config.Fixes.StreamlinedMainMenu; }
+
+            static void Postfix(SGNavigationList __instance, SimGameState simState) {
+
+                if (SGNavigationList_Start.storeButton != null) {
+                    Faction owner = simState.CurSystem.Owner;
+                    int reputation = (int)simState.GetReputation(owner);
+                    if (reputation <= -3) {
+                        Mod.Log.Info("Faction reputation too low, disabling store button.");
+                        SGNavigationList_Start.storeButton.SetState(ButtonState.Disabled);
+                    }
+                }
             }
         }
 
         [HarmonyPatch(typeof(SGNavigationList), "Start")]
         public static class SGNavigationList_Start {
+
+            public static SGNavigationButton storeButton;
+            public static SGNavigationButton staffButton;
+            public static SGNavigationButton memorialButton;
+
             static bool Prepare() { return Mod.Config.Fixes.StreamlinedMainMenu; }
 
             static void Postfix(SGNavigationList __instance, HBSRadioSet ___radioSet, SGNavigationButton ___argoButton) {
@@ -146,16 +211,31 @@ namespace IRTweaks.Modules.UI {
                     SimGameState simulation = UnityGameInstance.BattleTechGame.Simulation;
 
                     try {
+                        // Create the store button
+                        Mod.Log.Info(" - Creating store button");
+                        GameObject storeButtonGO = GameObject.Instantiate(___argoButton.gameObject);
+                        storeButtonGO.SetActive(true);
+                        storeButtonGO.transform.position = ___argoButton.gameObject.transform.position;
+                        storeButtonGO.transform.SetParent(___argoButton.gameObject.transform.parent);
+                        storeButtonGO.transform.localScale = Vector3.one;
+                        storeButtonGO.transform.SetSiblingIndex(1);
+
+                        storeButton = storeButtonGO.GetComponent<SGNavigationButton>();
+                        Traverse storeButtonT = Traverse.Create(storeButton).Field("id");
+                        storeButtonT.SetValue(DropshipLocation.SHIP);
+                        storeButton.SetupElement(__instance, ___radioSet, "Store",
+                            LazySingletonBehavior<UIManager>.Instance.UILookAndColorConstants.DropshipRoomCaptainsQuartersIcon, simulation);
+
                         // Create the staff button
                         Mod.Log.Info(" - Creating staff button");
-                        var staffButtonGO = GameObject.Instantiate(___argoButton.gameObject);
+                        GameObject staffButtonGO = GameObject.Instantiate(___argoButton.gameObject);
                         staffButtonGO.SetActive(true);
                         staffButtonGO.transform.position = ___argoButton.gameObject.transform.position;
                         staffButtonGO.transform.SetParent(___argoButton.gameObject.transform.parent);
                         staffButtonGO.transform.localScale = Vector3.one;
+                        staffButtonGO.transform.SetSiblingIndex(7);
 
-                        var staffButton = staffButtonGO.GetComponent<SGNavigationButton>();
-                        Mod.Log.Info($"StaffRoom id is: {staffButton.ID}");
+                        staffButton = staffButtonGO.GetComponent<SGNavigationButton>();
                         Traverse staffButtonT = Traverse.Create(staffButton).Field("id");
                         staffButtonT.SetValue(DropshipLocation.CMD_CENTER);
 
@@ -169,26 +249,22 @@ namespace IRTweaks.Modules.UI {
                             staffButton.AddFlyoutButton("Alexander", DropshipMenuType.Alexander);
                         }
 
-                        ___radioSet.AddButtonToRadioSet(staffButton);
-
                         // Create the memorial button
                         Mod.Log.Info(" - Creating memorial button");
-                        var memorialButtonGO = GameObject.Instantiate(___argoButton.gameObject);
+                        GameObject memorialButtonGO = GameObject.Instantiate(___argoButton.gameObject);
                         memorialButtonGO.SetActive(true);
                         memorialButtonGO.transform.position = ___argoButton.gameObject.transform.position;
                         memorialButtonGO.transform.SetParent(___argoButton.gameObject.transform.parent);
                         memorialButtonGO.transform.localScale = Vector3.one;
+                        memorialButtonGO.transform.SetSiblingIndex(9);
 
-                        var memorialButton = memorialButtonGO.GetComponent<SGNavigationButton>();
-                        Mod.Log.Info($"MemorialButton id is: {memorialButton.ID}");
+                        memorialButton = memorialButtonGO.GetComponent<SGNavigationButton>();
                         Traverse memorialButtonT = Traverse.Create(memorialButton).Field("id");
                         memorialButtonT.SetValue(DropshipLocation.BARRACKS);
 
                         memorialButton.SetupElement(__instance, ___radioSet, "Memorial",
                             LazySingletonBehavior<UIManager>.Instance.UILookAndColorConstants.DropshipRoomBarracksIcon, simulation);
-                        memorialButton.AddFlyoutButton("Memorial Wall", DropshipMenuType.MemorialWall);
-
-                        ___radioSet.AddButtonToRadioSet(memorialButton);
+                        //memorialButton.AddFlyoutButton("Memorial Wall", DropshipMenuType.MemorialWall);
 
                     } catch (Exception e) {
                         Mod.Log.Info("Error: " + e.Message);
