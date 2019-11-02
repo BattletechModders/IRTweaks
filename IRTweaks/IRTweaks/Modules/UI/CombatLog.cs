@@ -8,6 +8,9 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Threading;
+using System.Threading.Tasks;
+using Unity.Jobs;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -22,8 +25,6 @@ namespace IRTweaks.Modules.UI {
         private static MessageCenter messageCenter;
 
         private static Action<CombatChatModule> CombatChatModule_UIModule_Update;
-
-        private static int activeChatMessages = 0;
 
         // Shamelessly stolen from https://github.com/janxious/BT-WeaponRealizer/blob/7422573fa69893ae7c16a9d192d85d2152f90fa2/NumberOfShotsEnabler.cs#L32
         public static bool InitModule() {
@@ -44,8 +45,7 @@ namespace IRTweaks.Modules.UI {
         }
 
         public static void CombatHUD_Init_Postfix(CombatHUD __instance, CombatGameState Combat) {
-
-            Mod.Log.Info("Initialization of CombatHUD");
+            Mod.Log.Trace("CHUD:I:post - entered.");
 
             CombatLog.infoSidePanel = LazySingletonBehavior<UIManager>.Instance.GetOrCreateUIModule<CombatHUDInfoSidePanel>("", true);
             infoSidePanel.Init();
@@ -88,14 +88,12 @@ namespace IRTweaks.Modules.UI {
             }
 
             combat = Combat;
-            activeChatMessages = 0;
         }
 
         public static void CombatHUD_OnCombatGameDestroyed_Postfix() {
             Mod.Log.Info("Combat game destroyed, cleaning up");
             combat = null;
             messageCenter = null;
-            activeChatMessages = 0;
         }
 
         public static void CombatChatModule_Init_Postfix(CombatChatModule __instance, MessageCenter ____messageCenter,
@@ -130,7 +128,7 @@ namespace IRTweaks.Modules.UI {
 
             string sender = (target.IsPilotable && target.GetPilot() != null) ? $"{target.DisplayName}-{target.GetPilot().Name}" : $"{target.DisplayName}";
             string senderWithColor = $"&lt;{senderColor}&gt;{sender}&lt;/color&gt;";
-            Mod.Log.Info($"ChatMessage senderWithColor: '{senderWithColor}'");
+            Mod.Log.Debug($"ChatMessage senderWithColor: '{senderWithColor}'");
 
             string logMessage = floatieMessage.text.ToString();
             switch (floatieMessage.nature) {
@@ -196,7 +194,7 @@ namespace IRTweaks.Modules.UI {
             ActiveChatListView ____activeChatList, PassiveChatListView ____passiveChatList) {
 
             ChatMessage chatMessage = (ChatMessage)message;
-            Mod.Log.Info($"Chat message is: '{chatMessage.Message}'");
+            Mod.Log.Debug($"Chat message is: '{chatMessage.Message}'");
             try {
                 ____activeChatList.Add(chatMessage);
                 ____activeChatList.ScrollToBottom();
@@ -215,30 +213,37 @@ namespace IRTweaks.Modules.UI {
             BTInput.Instance.DynamicActions.Enabled = true;
         }
 
-        public static bool CombatChatModule_Update_Prefix(CombatChatModule __instance, ActiveChatListView ____activeChatList) {
-            // Invoke base.Update()
-            CombatChatModule_UIModule_Update.Invoke(__instance);
+        [HarmonyPatch(typeof(CombatChatModule), "Update")]
+        public static class CombatChatModule_Update {
+            static bool Prepare() { return Mod.Config.Fixes.CombatLog; }
 
-            // Remove the [T] from the chat button
-            Transform chatBtnT = __instance.gameObject.transform.Find("Representation/chat_panel/uixPrf_chatButton");
-            if (chatBtnT != null) {
-                LocalizableText chatBtnLT = chatBtnT.GetComponentInChildren<LocalizableText>();
-                chatBtnLT.SetText(" ");
+            static bool Prefix(CombatChatModule __instance, ActiveChatListView ____activeChatList) {
+                //Mod.Log.Info(" -- CCM:Update:pre invoked");
+                // Invoke base.Update()
+                CombatChatModule_UIModule_Update.Invoke(__instance);
 
-            } else {
-                Mod.Log.Info("Could not find chat button");
-            }
-
-            if (____activeChatList != null && ____activeChatList.Count > 0) {
-                if (____activeChatList.Count != activeChatMessages) {
-                    // Someone's added a message. Force a redraw
-                    Mod.Log.Info("Forcing an immediate redraw");
-                    __instance.ForceRefreshImmediate();
-                    activeChatMessages = ____activeChatList.Count;
+                // Remove the [T] from the chat button
+                Transform chatBtnT = __instance.gameObject.transform.Find("Representation/chat_panel/uixPrf_chatButton");
+                if (chatBtnT != null) {
+                    LocalizableText chatBtnLT = chatBtnT.GetComponentInChildren<LocalizableText>();
+                    chatBtnLT.SetText(" ");
+                } else {
+                    Mod.Log.Info("Could not find chat button");
                 }
-            }
 
-            return false;
+                return false;
+            }
+        }
+
+        [HarmonyPatch(typeof(OrderSequence), "OnComplete")]
+        public static class OrderSequence_OnComplete {
+            static bool Prepare() { return Mod.Config.Fixes.CombatLog; }
+
+            static void Postfix(OrderSequence __instance) {
+                if (CombatLog.combatChatModule != null) {
+                    CombatLog.combatChatModule.ForceRefreshImmediate();
+                } 
+            }
         }
 
         public static bool ChatListViewItem_SetData_Prefix(ChatListViewItem __instance, ChatMessage message,
@@ -293,10 +298,8 @@ namespace IRTweaks.Modules.UI {
             switch (floatieMessage.nature) {
                 case FloatieMessage.MessageNature.ArmorDamage:
                 case FloatieMessage.MessageNature.StructureDamage:
-                    Mod.Log.Info("Showing floatie for message: " + floatieMessage.text);
                     Traverse showFloatieT = Traverse.Create(__instance).Method("ShowFloatie", new Type[] { typeof(FloatieMessage) } );
                     showFloatieT.GetValue(new object[] { floatieMessage });
-                    Mod.Log.Info(" -- Invoked Traverse");
                     break;
                 case FloatieMessage.MessageNature.Miss:
                 case FloatieMessage.MessageNature.MeleeMiss:
