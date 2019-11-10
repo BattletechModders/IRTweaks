@@ -24,15 +24,20 @@ namespace IRTweaks.Modules.UI {
             int value = ___costPerUnit * ___quantityBeingSold;
             Mod.Log.Debug($"SG_S_MPP:R   value:{value} = costPerUnit:{___costPerUnit} x quantityBeingSold:{___quantityBeingSold}.");
 
+            string actionS = "??";
             if (State.StoreIsBuying) {
-                ___TitleText.SetText($"BUY: {___itemName}", new object[] { });
-                ___DescriptionText.SetText($"BUY FOR <color=#F79B26>{SimGameState.GetCBillString(value)}</color>", new object[] { });
-                ___ConfirmButton.SetText("BUY");
+                actionS = "BUY";
             } else if (State.StoreIsSelling) {
-                ___TitleText.SetText("SELL: {___itemName}", new object[] { });
-                ___DescriptionText.SetText($"SELL FOR <color=#F79B26>{SimGameState.GetCBillString(value)}</color>", new object[] { });
-                ___ConfirmButton.SetText("SELL");
+                actionS = "SELL";
             }
+
+            Text titleT = new Text($"{actionS}: {___itemName}");
+            ___TitleText.SetText(titleT.ToString(), new object[] { });
+
+            Text descT = new Text($"{actionS} FOR <color=#F79B26>{SimGameState.GetCBillString(value)}</color>");
+            ___DescriptionText.SetText(descT.ToString(), new object[] { });
+
+            ___ConfirmButton.SetText(actionS);
 
         }
 

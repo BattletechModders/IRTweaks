@@ -260,7 +260,8 @@ namespace IRTweaks.Modules.UI {
             string messageText = $"<{messageColor}>{expandedMessage}</color>";
             Mod.Log.Debug($"Message text: '{expandedMessage}'");
 
-            ____chatMessage.text = "<size=-3>" + senderText + " " + messageText + "</size>";
+            Localize.Text translatedText = new Localize.Text("<size=-3>" + senderText + " " + messageText + "</size>");
+            ____chatMessage.text = translatedText.ToString();
             
             DOTweenAnimation componentInChildren = ____chatMessage.GetComponentInChildren<DOTweenAnimation>();
             if (componentInChildren != null) {

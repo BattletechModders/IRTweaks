@@ -9,10 +9,10 @@ namespace IRTweaks.Modules.UI {
         public static void SimGameOptionsMenu_CanSave_Postfix(GameInstance gameInstance, SaveReason saveReason, bool ironmanPreventsSave, bool logDetails, ref bool __result) {
             CombatGameState combatGameState = UnityGameInstance.BattleTechGame.Combat;
             if (combatGameState != null && !combatGameState.TurnDirector.IsMissionOver && combatGameState.TurnDirector.GameHasBegun) {
-                Mod.Log.Debug("SGOM:CS - in combat.");
+                Mod.Log.Trace("SGOM:CS - in combat.");
                 __result = false;
             } else {
-                Mod.Log.Debug("SGOM:CS - outside of combat.");
+                Mod.Log.Trace("SGOM:CS - outside of combat.");
             }
         }
 

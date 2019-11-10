@@ -79,38 +79,75 @@ namespace IRTweaks.Modules.UI {
 
             static void Postfix(SGNavigationButton __instance, SGNavigationList ___buttonParent, LocalizableText ___text) {
                 Mod.Log.Debug($"SGNB:OC - button clicked for ID: {__instance.ID}");
+                SimGameState simulation = UnityGameInstance.BattleTechGame.Simulation;
 
                 switch (__instance.ID) {
                     case DropshipLocation.CMD_CENTER:
-                        ___buttonParent.navParent.SetQueuedUIActivationID(DropshipMenuType.Contract, __instance.ID);
+                        QueueOrForceActivation(DropshipMenuType.Contract, __instance.ID, ___buttonParent.navParent, simulation);
+                        if (SGNavigationButton_FlyoutClicked.ClickedID != DropshipMenuType.INVALID_UNSET) {
+                            if (___text.text.Contains("CMD Staff")) {
+                                switch (SGNavigationButton_FlyoutClicked.ClickedID) {
+                                    case DropshipMenuType.Darius:
+                                    case DropshipMenuType.Alexander:
+                                        QueueOrForceActivation(SGNavigationButton_FlyoutClicked.ClickedID, DropshipLocation.CMD_CENTER, ___buttonParent.navParent, simulation);
+                                        break;
+                                    case DropshipMenuType.Yang:
+                                        QueueOrForceActivation(SGNavigationButton_FlyoutClicked.ClickedID, DropshipLocation.MECH_BAY, ___buttonParent.navParent, simulation);
+                                        break;
+                                    case DropshipMenuType.Sumire:
+                                        QueueOrForceActivation(SGNavigationButton_FlyoutClicked.ClickedID, DropshipLocation.NAVIGATION, ___buttonParent.navParent, simulation);
+                                        break;
+                                    case DropshipMenuType.Farah:
+                                        QueueOrForceActivation(SGNavigationButton_FlyoutClicked.ClickedID, DropshipLocation.ENGINEERING, ___buttonParent.navParent, simulation);
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            } else if (___text.text.Contains("Memorial")) {
+                                QueueOrForceActivation(SGNavigationButton_FlyoutClicked.ClickedID, DropshipLocation.BARRACKS, ___buttonParent.navParent, simulation);
+                            }
+                            SGNavigationButton_FlyoutClicked.ClickedID = DropshipMenuType.INVALID_UNSET;
+                        }
                         break;
                     case DropshipLocation.BARRACKS:
-                        ___buttonParent.navParent.SetQueuedUIActivationID(DropshipMenuType.Mechwarrior, __instance.ID);
+                        QueueOrForceActivation(DropshipMenuType.Mechwarrior, __instance.ID, ___buttonParent.navParent, simulation);
                         break;
                     case DropshipLocation.ENGINEERING:
-                        ___buttonParent.navParent.SetQueuedUIActivationID(DropshipMenuType.ShipUpgrade, __instance.ID);
+                        QueueOrForceActivation(DropshipMenuType.ShipUpgrade, __instance.ID, ___buttonParent.navParent, simulation);
                         break;
                     case DropshipLocation.MECH_BAY:
-                        ___buttonParent.navParent.SetQueuedUIActivationID(DropshipMenuType.MechBay, __instance.ID);
+                        QueueOrForceActivation(DropshipMenuType.MechBay, __instance.ID, ___buttonParent.navParent, simulation);
                         break;
                     case DropshipLocation.NAVIGATION:
-                        ___buttonParent.navParent.SetQueuedUIActivationID(DropshipMenuType.Navigation, __instance.ID);
+                        QueueOrForceActivation(DropshipMenuType.Navigation, __instance.ID, ___buttonParent.navParent, simulation);
                         break;
                     default:
                         break;
                 }
 
-                SimGameState simulation = UnityGameInstance.BattleTechGame.Simulation;
                 if (___text.text.Contains("Store")) {
                     if (simulation.CurRoomState != DropshipLocation.SHOP) {
                         ___buttonParent.ArgoButtonFlyoutChangeRoom(DropshipLocation.SHOP);
                     }
-                    ___buttonParent.navParent.SetQueuedUIActivationID(DropshipMenuType.Shop, DropshipLocation.SHOP);
+                    QueueOrForceActivation(DropshipMenuType.Shop, DropshipLocation.SHOP, ___buttonParent.navParent, simulation);
                 } else if (___text.text.Contains("Memorial")) {
                     if (simulation.CurRoomState != DropshipLocation.BARRACKS) {
                         ___buttonParent.ArgoButtonFlyoutChangeRoom(DropshipLocation.BARRACKS);
                     }
-                    ___buttonParent.navParent.SetQueuedUIActivationID(DropshipMenuType.MemorialWall, DropshipLocation.BARRACKS);
+                    QueueOrForceActivation(DropshipMenuType.MemorialWall, DropshipLocation.BARRACKS, ___buttonParent.navParent, simulation);
+                }
+            }
+
+            private static void QueueOrForceActivation(DropshipMenuType menuType, DropshipLocation location, SGNavigationWidgetLeft sgnwl, SimGameState sgs) {
+                if (sgs.CameraController.betweenRoomTransitionTime == 0f && sgs.CameraController.inRoomTransitionTime == 0f) {
+                    // Check for a 0 animation time on SGRoomManager; if set, BTPerfFix is active and we need to force a transition
+                    Mod.Log.Info($"DEBUG - calling SetSubroom for location:{location} and menuType:{menuType}!");
+                    sgs.RoomManager.ChangeRoom(location);
+                    sgs.RoomManager.SetSubRoom(location, menuType);
+                } else {
+                    // Let the animation happen via the queued activation
+                    Mod.Log.Info("DEBUG - calling SetQueuedUIActivationID!");
+                    sgnwl.SetQueuedUIActivationID(menuType, location);
                 }
             }
         }
@@ -133,50 +170,30 @@ namespace IRTweaks.Modules.UI {
 
         [HarmonyPatch(typeof(SGNavigationButton), "FlyoutClicked")] 
         public static class SGNavigationButton_FlyoutClicked {
+            public static DropshipMenuType ClickedID = DropshipMenuType.INVALID_UNSET;
+
             static bool Prepare() { return Mod.Config.Fixes.StreamlinedMainMenu; }
 
             static void Prefix(SGNavigationButton __instance, DropshipMenuType buttonID, LocalizableText ___text, SGNavigationList ___buttonParent) {
+                Mod.Log.Debug($"SGNB:FC - button clicked for ID: {__instance.ID} for menuType:{buttonID} with transition:{SimGameCameraController.TransitionInProgress}");
                 // Skip if there's already a transition in progress
                 if (SimGameCameraController.TransitionInProgress) { return; }
 
-                SimGameState simulation = UnityGameInstance.BattleTechGame.Simulation;
-                if (___text.text.Contains("CMD Staff")) {
-                    switch (buttonID) {
-                        case DropshipMenuType.Darius:
-                        case DropshipMenuType.Alexander:
-                            if (simulation.CurRoomState != DropshipLocation.CMD_CENTER) {
-                                ___buttonParent.ArgoButtonFlyoutChangeRoom(DropshipLocation.CMD_CENTER);
-                            }
-                            ___buttonParent.navParent.SetQueuedUIActivationID(buttonID, DropshipLocation.CMD_CENTER);
-                            break;
-                        case DropshipMenuType.Yang:
-                            if (simulation.CurRoomState != DropshipLocation.MECH_BAY) {
-                                ___buttonParent.ArgoButtonFlyoutChangeRoom(DropshipLocation.MECH_BAY);
-                            }
-                            ___buttonParent.navParent.SetQueuedUIActivationID(buttonID, DropshipLocation.MECH_BAY);
-                            break;
-                        case DropshipMenuType.Sumire:
-                            if (simulation.CurRoomState != DropshipLocation.NAVIGATION) {
-                                ___buttonParent.ArgoButtonFlyoutChangeRoom(DropshipLocation.NAVIGATION);
-                            }
-                            ___buttonParent.navParent.SetQueuedUIActivationID(buttonID, DropshipLocation.NAVIGATION);
-                            break;
-                        case DropshipMenuType.Farah:
-                            if (simulation.CurRoomState != DropshipLocation.ENGINEERING) {
-                                ___buttonParent.ArgoButtonFlyoutChangeRoom(DropshipLocation.ENGINEERING);
-                            }
-                            ___buttonParent.navParent.SetQueuedUIActivationID(buttonID, DropshipLocation.ENGINEERING);
-                            break;
-                        default:
-                            break;
-                    }
-                } else if (___text.text.Contains("Memorial")) {
-                    if (simulation.CurRoomState != DropshipLocation.BARRACKS) {
-                        ___buttonParent.ArgoButtonFlyoutChangeRoom(DropshipLocation.BARRACKS);
-                    }
-                    ___buttonParent.navParent.SetQueuedUIActivationID(buttonID, DropshipLocation.BARRACKS);
-                }
+                ClickedID = buttonID;
             }
+
+            //private static void QueueOrForceActivation(DropshipMenuType menuType, DropshipLocation location, SGNavigationWidgetLeft sgnwl, SimGameState sgs) {
+            //    if (sgs.CameraController.betweenRoomTransitionTime == 0f && sgs.CameraController.inRoomTransitionTime == 0f) {
+            //        // Check for a 0 animation time on SGRoomManager; if set, BTPerfFix is active and we need to force a transition
+            //        Mod.Log.Info($"DEBUG - calling SetSubroom for location:{location} and menuType:{menuType}!");
+            //        sgs.RoomManager.ChangeRoom(location);
+            //        sgs.RoomManager.SetSubRoom(location, menuType);
+            //    } else {
+            //        // Let the animation happen via the queued activation
+            //        Mod.Log.Info("DEBUG - calling SetQueuedUIActivationID!");
+            //        sgnwl.SetQueuedUIActivationID(menuType, location);
+            //    }
+            //}
         }
 
         [HarmonyPatch(typeof(SGNavigationList), "RefreshButtonStates")]
