@@ -30,10 +30,8 @@ namespace IRTweaks.Modules.Misc {
                         string factionId = factionSplit[0];
                         int factionRep = int.Parse(factionSplit[1]);
                         Mod.Log.Info($"Applying rep: {factionRep} to faction: ({factionId})");
-                        //FactionDef factionDef = FactionDef.GetFactionDefByEnum(__instance.DataManager, factionId);
-                        //__instance.AddReputation(factionDef.FactionValue, factionRep, false);
-                        Faction faction = (Faction)Enum.Parse(typeof(Faction), factionId);
-                        __instance.AddReputation(faction, factionRep, false);
+                        FactionDef factionDef = FactionDef.GetFactionDefByEnum(__instance.DataManager, factionId);
+                        __instance.AddReputation(factionDef.FactionValue, factionRep, false);
                     }
                 } else {
                     Mod.Log.Debug($"key: {ModStats.RandomMechs} not found");

@@ -203,7 +203,7 @@ namespace IRTweaks.Modules.UI {
             static void Postfix(SGNavigationList __instance, SimGameState simState) {
 
                 if (SGNavigationList_Start.storeButton != null) {
-                    Faction owner = simState.CurSystem.Owner;
+                    FactionValue owner = simState.CurSystem.OwnerValue;
                     int reputation = (int)simState.GetReputation(owner);
                     if (reputation <= -3) {
                         Mod.Log.Info("Faction reputation too low, disabling store button.");
