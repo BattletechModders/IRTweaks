@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using Unity.Jobs;
 using UnityEngine;
 using UnityEngine.UI;
+using static BattleTech.FloatieMessage;
 
 namespace IRTweaks.Modules.UI {
     public static class CombatLog {
@@ -295,16 +296,18 @@ namespace IRTweaks.Modules.UI {
 
         public static bool CombatHUDInWorldElementMgr_AddFloatieMessage_Prefix(CombatHUDInWorldElementMgr __instance, MessageCenterMessage message, CombatGameState ___combat) {
 
+            Traverse showFloatieT = Traverse.Create(__instance).Method("ShowFloatie", new Type[] { typeof(FloatieMessage) });
             FloatieMessage floatieMessage = message as FloatieMessage;
             switch (floatieMessage.nature) {
-                case FloatieMessage.MessageNature.ArmorDamage:
-                case FloatieMessage.MessageNature.StructureDamage:
-                    Traverse showFloatieT = Traverse.Create(__instance).Method("ShowFloatie", new Type[] { typeof(FloatieMessage) } );
+                case MessageNature.ArmorDamage:
+                case MessageNature.StructureDamage:
+                case MessageNature.Buff:
+                case MessageNature.Debuff:
                     showFloatieT.GetValue(new object[] { floatieMessage });
                     break;
-                case FloatieMessage.MessageNature.Miss:
-                case FloatieMessage.MessageNature.MeleeMiss:
-                case FloatieMessage.MessageNature.Dodge:
+                case MessageNature.Miss:
+                case MessageNature.MeleeMiss:
+                case MessageNature.Dodge:
                     //__instance.ShowFloatie(floatieMessage);
                     break;
                 default:
