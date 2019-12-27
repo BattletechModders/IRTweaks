@@ -20,6 +20,8 @@ This mod replaces the following mods, which used to be stand-alone:
 * *IRUITweaks*
 * *SpawnProtection*
 
+This mod requires [https://github.com/iceraptor/IRBTModUtils/]. Grab the latest release of __IRBTModUtils__ and extract it in your Mods/ directory alongside of this mod.
+
 ## Bulk Purchasing
 
 This tweak makes minor changes to the store UI elements:
