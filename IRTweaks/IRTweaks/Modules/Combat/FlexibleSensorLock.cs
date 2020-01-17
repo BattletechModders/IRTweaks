@@ -21,7 +21,7 @@ namespace IRTweaks.Modules.Combat {
             Mod.Log.Trace("SSSL:CFO entered");
 
             if (button == "BTN_FireConfirm" && __instance.HasTarget) {
-                State.SelectionStateSensorLock = __instance;
+                ModState.SelectionStateSensorLock = __instance;
             }
         }
 
@@ -40,14 +40,14 @@ namespace IRTweaks.Modules.Combat {
 
                 Mod.Log.Debug($"  Clearing all sequences");
 
-                if (State.SelectionStateSensorLock != null) {
+                if (ModState.SelectionStateSensorLock != null) {
                     Mod.Log.Debug($"  Calling clearTargetedActor");
-                    Traverse traverse = Traverse.Create(State.SelectionStateSensorLock).Method("ClearTargetedActor");
+                    Traverse traverse = Traverse.Create(ModState.SelectionStateSensorLock).Method("ClearTargetedActor");
                     traverse.GetValue();
 
                     //State.SelectionStateSensorLock.BackOut();
 
-                    State.SelectionStateSensorLock = null;
+                    ModState.SelectionStateSensorLock = null;
                 }
             }
 
