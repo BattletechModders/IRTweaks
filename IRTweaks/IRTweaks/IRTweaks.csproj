@@ -97,6 +97,7 @@
     <Compile Include="Modules\Misc\DisableCampaign.cs" />
     <Compile Include="Modules\Misc\MiscModule.cs" />
     <Compile Include="Modules\Misc\RandomStartByDifficulty.cs" />
+    <Compile Include="Modules\Misc\ReduceSaveCompression.cs" />
     <Compile Include="Modules\Misc\SkirmishReset.cs" />
     <Compile Include="Modules\UI\CombatLog.cs" />
     <Compile Include="Modules\UI\CombatSaves.cs" />

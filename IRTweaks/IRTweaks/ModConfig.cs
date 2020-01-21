@@ -53,6 +53,7 @@ namespace IRTweaks {
         public bool StreamlinedMainMenu = true;
         public bool WeaponTooltip = true;
         public bool SkipDeleteSavePopup = true;
+        public bool ReduceSaveCompression = true;
     }
 
     public class ModConfig {
@@ -73,11 +74,12 @@ namespace IRTweaks {
 
             Mod.Log.Info("  -- Fixes --");
             Mod.Log.Info($"  BulkPurchasing:{this.Fixes.BulkPurchasing}  CombatLog:{this.Fixes.CombatLog}  DisableCombatSaves:{this.Fixes.DisableCombatSaves}  " +
-                $"ExtendedStats: {this.Fixes.ExtendedStats}  FlexibleSensorLock:{this.Fixes.FlexibleSensorLock}  " +
-                $"PreventCalledShots: {this.Fixes.PreventHeadShots}  RandomStartByDifficulty:{this.Fixes.RandomStartByDifficulty}  " +
-                $"SkirmishReset: {this.Fixes.SkirmishReset}  SpawnProtection:{this.Fixes.SpawnProtection}" +
-                $"WeaponTooltips:{this.Fixes.WeaponTooltip}" +
-                $"SkipDeleteSavePopup:{this.Fixes.SkipDeleteSavePopup}");
+                         $"ExtendedStats: {this.Fixes.ExtendedStats}  FlexibleSensorLock:{this.Fixes.FlexibleSensorLock}  " +
+                         $"PreventCalledShots: {this.Fixes.PreventHeadShots}  RandomStartByDifficulty:{this.Fixes.RandomStartByDifficulty}  " +
+                         $"SkirmishReset: {this.Fixes.SkirmishReset}  SpawnProtection:{this.Fixes.SpawnProtection}" +
+                         $"WeaponTooltips:{this.Fixes.WeaponTooltip}" +
+                         $"SkipDeleteSavePopup:{this.Fixes.SkipDeleteSavePopup}" +
+                         $"ReduceSaveCompression:{this.Fixes.ReduceSaveCompression}");
 
             Mod.Log.Info("  -- Called Shot --");
             Mod.Log.Info($"   CalledShotDefaultMod:{Combat.CalledShot.Modifier}");
