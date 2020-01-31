@@ -117,33 +117,41 @@ namespace IRTweaks.Modules.UI {
             FloatieMessage floatieMessage = (FloatieMessage)message;
 
             AbstractActor target = combat.FindActorByGUID(floatieMessage.affectedObjectGuid);
+            if (target == null) { return;  }
 
-            string senderColor;
-            if (combat.HostilityMatrix.IsLocalPlayerEnemy(target.TeamId)) {
-                senderColor = "#" + ColorUtility.ToHtmlStringRGBA(LazySingletonBehavior<UIManager>.Instance.UIColorRefs.redHalf);
-            } else if (combat.HostilityMatrix.IsLocalPlayerNeutral(target.TeamId)) {
-                senderColor = "#" + ColorUtility.ToHtmlStringRGBA(LazySingletonBehavior<UIManager>.Instance.UIColorRefs.blueHalf);
-            } else {
-                senderColor = "#" + ColorUtility.ToHtmlStringRGBA(LazySingletonBehavior<UIManager>.Instance.UIColorRefs.greenHalf);
+            if (floatieMessage.text == null) { return; }
+
+            try {
+                string senderColor;
+                if (combat.HostilityMatrix.IsLocalPlayerEnemy(target.TeamId)) {
+                    senderColor = "#" + ColorUtility.ToHtmlStringRGBA(LazySingletonBehavior<UIManager>.Instance.UIColorRefs.redHalf);
+                } else if (combat.HostilityMatrix.IsLocalPlayerNeutral(target.TeamId)) {
+                    senderColor = "#" + ColorUtility.ToHtmlStringRGBA(LazySingletonBehavior<UIManager>.Instance.UIColorRefs.blueHalf);
+                } else {
+                    senderColor = "#" + ColorUtility.ToHtmlStringRGBA(LazySingletonBehavior<UIManager>.Instance.UIColorRefs.greenHalf);
+                }
+
+                string sender = (target.IsPilotable && target.GetPilot() != null) ? $"{target.DisplayName}-{target.GetPilot().Name}" : $"{target.DisplayName}";
+                string senderWithColor = $"&lt;{senderColor}&gt;{sender}&lt;/color&gt;";
+                Mod.Log.Debug($"ChatMessage senderWithColor: '{senderWithColor}'");
+
+                string logMessage = floatieMessage.text.ToString();
+                switch (floatieMessage.nature) {
+                    case FloatieMessage.MessageNature.ArmorDamage:
+                        logMessage = $"{logMessage} armor damage";
+                        break;
+                    case FloatieMessage.MessageNature.StructureDamage:
+                        logMessage = $"{logMessage} structure damage";
+                        break;
+                    default:
+                        break;
+                }
+
+                messageCenter.PublishMessage(new ChatMessage(senderWithColor, logMessage, false));
+            } catch (Exception e) {
+                Mod.Log.Error($"Failed to send floatieMessage: {floatieMessage}");
+                Mod.Log.Error(e);
             }
-
-            string sender = (target.IsPilotable && target.GetPilot() != null) ? $"{target.DisplayName}-{target.GetPilot().Name}" : $"{target.DisplayName}";
-            string senderWithColor = $"&lt;{senderColor}&gt;{sender}&lt;/color&gt;";
-            Mod.Log.Debug($"ChatMessage senderWithColor: '{senderWithColor}'");
-
-            string logMessage = floatieMessage.text.ToString();
-            switch (floatieMessage.nature) {
-                case FloatieMessage.MessageNature.ArmorDamage:
-                    logMessage = $"{logMessage} armor damage";
-                    break;
-                case FloatieMessage.MessageNature.StructureDamage:
-                    logMessage = $"{logMessage} structure damage";
-                    break;
-                default:
-                    break;
-            }
-
-            messageCenter.PublishMessage(new ChatMessage(senderWithColor, logMessage, false));
         }
 
         public static void CombatChatModule_CombatInit_Postfix(CombatChatModule __instance, MessageCenter ____messageCenter,
