@@ -34,6 +34,12 @@ namespace IRTweaks.Modules.Misc {
                         HarmonyMethod sr_cus_pd_pre = new HarmonyMethod(typeof(SkirmishReset), "CloudUserSettings_PostDeserialize_Prefix");
                         harmony.Patch(cus_pd, sr_cus_pd_pre, null, null);
                     }
+
+                    // Makes the main menu a smoother as there are fewer
+                    if (Mod.Config.Fixes.MultiTargetStat) {
+                        Mod.Log.Info("Activating Fix: MultiTargetStat");
+                    }
+
                 } catch (Exception e) {
                     Mod.Log.Error($"Failed to load patches due to: {e.Message}");
                     Mod.Log.Error(e);
