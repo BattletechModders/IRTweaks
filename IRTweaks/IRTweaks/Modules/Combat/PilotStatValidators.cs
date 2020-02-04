@@ -4,7 +4,7 @@ using UnityEngine;
 namespace IRTweaks.Modules.Combat {
     public static class PilotStatValidators {
         public static bool Pilot_InitStatValidators_Prefix(Pilot __instance, StatCollection ___statCollection) {
-            Mod.Log.Debug("P:ISV entered.");
+            Mod.Log.Trace("P:ISV entered.");
 
             ___statCollection.SetValidator<int>("Piloting", new Statistic.Validator<int>(CustomPilotAttributeValidator<int>));
             ___statCollection.SetValidator<int>("Gunnery", new Statistic.Validator<int>(CustomPilotAttributeValidator<int>));
