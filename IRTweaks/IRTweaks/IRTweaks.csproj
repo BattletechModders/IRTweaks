@@ -93,9 +93,12 @@
     <Compile Include="Modules\Combat\PilotStatValidators.cs" />
     <Compile Include="Modules\Combat\FlexibleSensorLock.cs" />
     <Compile Include="Modules\Combat\SpawnProtection.cs" />
+    <Compile Include="Modules\Misc\PilotEffects.cs" />
+    <Compile Include="Modules\Misc\SkipDeleteSavePopup.cs" />
     <Compile Include="Modules\Misc\DisableCampaign.cs" />
     <Compile Include="Modules\Misc\MiscModule.cs" />
     <Compile Include="Modules\Misc\RandomStartByDifficulty.cs" />
+    <Compile Include="Modules\Misc\ReduceSaveCompression.cs" />
     <Compile Include="Modules\Misc\SkirmishReset.cs" />
     <Compile Include="Modules\UI\CombatLog.cs" />
     <Compile Include="Modules\UI\CombatSaves.cs" />

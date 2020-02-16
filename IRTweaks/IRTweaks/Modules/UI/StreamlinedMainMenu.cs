@@ -11,7 +11,6 @@ using UnityEngine.EventSystems;
 namespace IRTweaks.Modules.UI {
     public static class StreamlinedMainMenu {
 
-
         [HarmonyPatch(typeof(SGContractsWidget), "Init")]
         [HarmonyPatch(new Type[] { typeof(SimGameState), typeof(Action<bool>) })]
         public static class SGContractsWidget_Init {

@@ -3,7 +3,7 @@ using BattleTech.UI;
 using Harmony;
 using System;
 using System.Reflection;
-using static IRTweaks.Combat;
+using static IRTweaks.CombatOpts;
 
 namespace IRTweaks.Modules.Combat {
 

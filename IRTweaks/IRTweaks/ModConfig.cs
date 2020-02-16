@@ -6,9 +6,15 @@ namespace IRTweaks {
         public const string CalledShowAlwaysAllow = "IRTCalledShotAlwaysAllow";
         public const string CalledShotMod = "IRTCalledShotMod";
 
+        public const string EnableMultiTarget = "IRAllowMultiTarget";
+
         public const string RandomMechs = "StartingRandomMechLists";
         public const string FactionRep = "FactionReputation";
         public const string StrayShotValidTargets = "StrayShotValidTargets";
+    }
+
+    public class AbilityOpts {
+        public string MultiTargetId = "AbilityDefG5";
     }
 
     public class StoreOpts {
@@ -16,7 +22,7 @@ namespace IRTweaks {
         public int QuantityOnControl = 20;
     }
 
-    public class Combat {
+    public class CombatOpts {
         public int PilotAttributesMax = 13;
 
         public CalledShotOpts CalledShot = new CalledShotOpts();
@@ -46,12 +52,15 @@ namespace IRTweaks {
         public bool DisableCombatSaves = true;
         public bool ExtendedStats = true;
         public bool FlexibleSensorLock = true;
+        public bool MultiTargetStat = true;
         public bool PreventHeadShots = true;
         public bool RandomStartByDifficulty = true;
         public bool SkirmishReset = true;
         public bool SpawnProtection = true;
         public bool StreamlinedMainMenu = true;
         public bool WeaponTooltip = true;
+        public bool SkipDeleteSavePopup = true;
+        public bool ReduceSaveCompression = true;
     }
 
     public class ModConfig {
@@ -63,7 +72,8 @@ namespace IRTweaks {
 
         public FixesFlags Fixes = new FixesFlags();
 
-        public Combat Combat = new Combat();
+        public AbilityOpts Abilities = new AbilityOpts();
+        public CombatOpts Combat = new CombatOpts();
         public StoreOpts Store = new StoreOpts();
 
         public void LogConfig() {
@@ -72,10 +82,12 @@ namespace IRTweaks {
 
             Mod.Log.Info("  -- Fixes --");
             Mod.Log.Info($"  BulkPurchasing:{this.Fixes.BulkPurchasing}  CombatLog:{this.Fixes.CombatLog}  DisableCombatSaves:{this.Fixes.DisableCombatSaves}  " +
-                $"ExtendedStats: {this.Fixes.ExtendedStats}  FlexibleSensorLock:{this.Fixes.FlexibleSensorLock}  " +
-                $"PreventCalledShots: {this.Fixes.PreventHeadShots}  RandomStartByDifficulty:{this.Fixes.RandomStartByDifficulty}  " +
-                $"SkirmishReset: {this.Fixes.SkirmishReset}  SpawnProtection:{this.Fixes.SpawnProtection}" +
-                $"WeaponTooltips:{this.Fixes.WeaponTooltip}");
+                         $"ExtendedStats: {this.Fixes.ExtendedStats}  FlexibleSensorLock:{this.Fixes.FlexibleSensorLock}  " +
+                         $"PreventCalledShots: {this.Fixes.PreventHeadShots}  RandomStartByDifficulty:{this.Fixes.RandomStartByDifficulty}  " +
+                         $"SkirmishReset: {this.Fixes.SkirmishReset}  SpawnProtection:{this.Fixes.SpawnProtection}" +
+                         $"WeaponTooltips:{this.Fixes.WeaponTooltip}" +
+                         $"SkipDeleteSavePopup:{this.Fixes.SkipDeleteSavePopup}" +
+                         $"ReduceSaveCompression:{this.Fixes.ReduceSaveCompression}");
 
             Mod.Log.Info("  -- Called Shot --");
             Mod.Log.Info($"   CalledShotDefaultMod:{Combat.CalledShot.Modifier}");
