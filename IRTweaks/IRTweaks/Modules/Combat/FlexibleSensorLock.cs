@@ -3,12 +3,14 @@ using BattleTech.UI;
 using Harmony;
 
 namespace IRTweaks.Modules.Combat {
+    using System.Linq;
+
     public static class FlexibleSensorLock {
 
         public static void SelectionStateSensorLock_CanActorUseThisState_Postfix(SelectionStateSensorLock __instance, AbstractActor actor, ref bool __result) {
             Mod.Log.Trace("SSSL:CAUTS entered");
 
-            if (actor != null && actor.GetPilot() != null) {
+            if (PilotHasFreeSensorLockAbility(actor)) {
                 Pilot pilot = actor?.GetPilot();
                 Ability activeAbility = pilot.GetActiveAbility(ActiveAbilityID.SensorLock);
                 bool flag = (activeAbility != null && activeAbility.IsAvailable);
@@ -30,7 +32,7 @@ namespace IRTweaks.Modules.Combat {
             //Mod.Log.Trace($"  oa:{___owningActor.DisplayName}_{___owningActor.GetPilot().Name} hasFired:{___owningActor.HasFiredThisRound} hasMoved:{___owningActor.HasMovedThisRound} hasActivated:{___owningActor.HasActivatedThisRound}");
 
             // Force the ability to be on cooldown
-            if (___owningActor != null && ___owningActor.GetPilot() != null) {
+            if (PilotHasFreeSensorLockAbility(___owningActor)) {
                 Pilot pilot = ___owningActor.GetPilot();
                 Ability ability = pilot.GetActiveAbility(ActiveAbilityID.SensorLock);
                 Mod.Log.Debug($"  On sensor lock complete, cooldown is:{ability.CurrentCooldown}");
@@ -55,7 +57,7 @@ namespace IRTweaks.Modules.Combat {
         }
 
         public static bool OrderSequence_OnComplete_Prefix(OrderSequence __instance, AbstractActor ___owningActor) {
-            if (__instance is SensorLockSequence) {
+            if (__instance is SensorLockSequence && PilotHasFreeSensorLockAbility(___owningActor)) {
                 Mod.Log.Trace($"OS:OC entered, cm:{__instance.ConsumesMovement} cf:{__instance.ConsumesFiring}");
                 Mod.Log.Trace($"    oa:{___owningActor.DisplayName}_{___owningActor.GetPilot().Name} hasFired:{___owningActor.HasFiredThisRound} hasMoved:{___owningActor.HasMovedThisRound} hasActivated:{___owningActor.HasActivatedThisRound}");
                 Mod.Log.Trace($"    ca:{__instance.ConsumesActivation} fae:{__instance.ForceActivationEnd}");
@@ -81,17 +83,39 @@ namespace IRTweaks.Modules.Combat {
         }
 
         public static void OrderSequence_ConsumesActivation_Postfix(OrderSequence __instance, ref bool __result, AbstractActor ___owningActor) {
-            if (__instance is SensorLockSequence) {
-                //Mod.Log.Trace($"SLS:CA entered, cm:{__instance.ConsumesMovement} cf:{__instance.ConsumesFiring}");
-                //Mod.Log.Trace($"    oa:{___owningActor.DisplayName}_{___owningActor.GetPilot().Name} hasFired:{___owningActor.HasFiredThisRound} hasMoved:{___owningActor.HasMovedThisRound} hasActivated:{___owningActor.HasActivatedThisRound}");
-                if (___owningActor.HasFiredThisRound && ___owningActor.HasMovedThisRound) {
-                    Mod.Log.Debug(" Owner has moved and fired, returning true.");
-                    __result = false;
-                } else {
-                    //Mod.Log.Trace(" Returning false");
+            if (__instance is SensorLockSequence)
+            {
+                __result = true;
+                if (!Mod.Config.Combat.FlexibleSensorLock.FreeActionWithAbility)
+                {
+                    Mod.Log.Debug(" OrderSequence_ConsumesActivation_Postfix - Sensor Lock is always a free ability, setting __result to false...");
+                    // If we're in this method and haven't set sensor lock to be free with an ability, FlexibleSensorLock has been enabled and patched, so we always return false.
                     __result = false;
                 }
+                else
+                {
+                    // Check if the pilot has the associated ability ID, and return true if so...
+                    Mod.Log.Debug($" OrderSequence_ConsumesActivation_Postfix - Sensor Lock is paired with ability [{Mod.Config.Combat.FlexibleSensorLock.AbilityId}], checking pilot...");
+                    if (PilotHasFreeSensorLockAbility(___owningActor?.GetPilot()))
+                    {
+                        Mod.Log.Debug($" OrderSequence_ConsumesActivation_Postfix - Sensor Lock paired ability [{Mod.Config.Combat.FlexibleSensorLock.AbilityId}] found, setting true...");
+                        __result = false;
+                    }
+                }
+                Mod.Log.Debug($" OrderSequence_ConsumesActivation_Postfix - returning [{__result}].");
             }
+        }
+
+        private static bool PilotHasFreeSensorLockAbility(AbstractActor actor)
+        {
+            return actor != null && PilotHasFreeSensorLockAbility(actor.GetPilot());
+        }
+
+        private static bool PilotHasFreeSensorLockAbility(Pilot pilot)
+        {
+            Mod.Log.Debug($"pilot = [{pilot}]\r\n" 
+                          + $"abilities = [{string.Join(",", pilot?.Abilities.Select(ability => ability.Def.Id))}]");
+            return Mod.Config.Combat.FlexibleSensorLock.FreeActionWithAbility == false || (pilot?.Abilities?.Exists(ability => ability.Def.Id == Mod.Config.Combat.FlexibleSensorLock.AbilityId) ?? false);
         }
 
         public static bool AIUtil_EvaluateSensorLockQuality_Prefix(ref bool __result, AbstractActor movingUnit, ICombatant target, out float quality) {

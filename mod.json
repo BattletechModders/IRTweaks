@@ -48,6 +48,10 @@
                 "ApplyToAllies" : true,
                 "ApplyToNeutrals" : true,
                 "ApplyToReinforcements" : true
+            },
+            "FlexibleSensorLock" : {
+                "FreeActionWithAbility" : true,
+                "AbilityId" : "AbilityDefT8A"
             }
         },
         "Store" : {
