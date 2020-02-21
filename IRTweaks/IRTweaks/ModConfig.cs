@@ -32,6 +32,30 @@ namespace IRTweaks {
             public Dictionary<string, int> PilotTags = new Dictionary<string, int>();
         }
 
+        public FlexibleSensorLockOptions FlexibleSensorLock = new FlexibleSensorLockOptions();
+        public class FlexibleSensorLockOptions {
+            public bool FreeActionWithAbility = false;
+
+            // Default to Master Tactician
+            public string AbilityId = "AbilityDefT8A";
+        }
+
+        public PainToleranceOpts PainTolerance = new PainToleranceOpts();
+        public class PainToleranceOpts {
+            public float ResistPerGuts = 10.0f;
+            public float PenaltyPerHeadDamage = 5.0f;
+
+            // Reduces resist by this multiplied the capacity ratio of an ammo explosion
+            public float PenaltyPerAmmoExplosionRatio = 1.0f;
+
+            // Reduces resist by this multiplied the capacity ratio of an head damage injury
+            public float PenaltyPerHeatDamageInjuryRatio = 1.0f;
+            
+            public float KnockdownDamage = 6f;
+            public float TorsoDestroyedDamage = 10f;
+            public float HeadHitArmorOnlyMulti = 0.5f;
+        }
+
         public SpawnProtectionOpts SpawnProtection = new SpawnProtectionOpts();
         public class SpawnProtectionOpts {
             public bool ApplyGuard = true;
@@ -45,14 +69,6 @@ namespace IRTweaks {
             public bool ApplyToReinforcements = false;
         }
 
-        public FlexibleSensorLockOptions FlexibleSensorLock = new FlexibleSensorLockOptions();
-        public class FlexibleSensorLockOptions
-        {
-            public bool FreeActionWithAbility = false;
-
-            // Default to Master Tactician
-            public string AbilityId = "AbilityDefT8A";
-        }
     }
 
     public class FixesFlags {
@@ -63,15 +79,16 @@ namespace IRTweaks {
         public bool ExtendedStats = true;
         public bool FlexibleSensorLock = true;
         public bool MultiTargetStat = true;
+        public bool PainTolerance = true;
         public bool PreventHeadShots = true;
         public bool RandomStartByDifficulty = true;
+        public bool ReduceSaveCompression = true;
+        public bool ShowAllArgoUpgrades = true;
         public bool SkirmishReset = true;
+        public bool SkipDeleteSavePopup = true;
         public bool SpawnProtection = true;
         public bool StreamlinedMainMenu = true;
         public bool WeaponTooltip = true;
-        public bool SkipDeleteSavePopup = true;
-        public bool ReduceSaveCompression = true;
-        public bool ShowAllArgoUpgrades = true;
     }
 
     public class ModConfig {
@@ -94,12 +111,9 @@ namespace IRTweaks {
             Mod.Log.Info("  -- Fixes --");
             Mod.Log.Info($"  BulkPurchasing:{this.Fixes.BulkPurchasing}  CombatLog:{this.Fixes.CombatLog}  DisableCombatSaves:{this.Fixes.DisableCombatSaves}  " +
                          $"ExtendedStats: {this.Fixes.ExtendedStats}  FlexibleSensorLock:{this.Fixes.FlexibleSensorLock}  " +
-                         $"PreventCalledShots: {this.Fixes.PreventHeadShots}  RandomStartByDifficulty:{this.Fixes.RandomStartByDifficulty}  " +
-                         $"SkirmishReset: {this.Fixes.SkirmishReset}  SpawnProtection:{this.Fixes.SpawnProtection}" +
-                         $"WeaponTooltips:{this.Fixes.WeaponTooltip}" +
-                         $"SkipDeleteSavePopup:{this.Fixes.SkipDeleteSavePopup}" +
-                         $"ReduceSaveCompression:{this.Fixes.ReduceSaveCompression}" +
-                         $"ShowAllArgoUpgrades:{this.Fixes.ShowAllArgoUpgrades}");
+                         $"PreventCalledShots: {this.Fixes.PreventHeadShots}  RandomStartByDifficulty:{this.Fixes.RandomStartByDifficulty}  ReduceSaveCompression:{this.Fixes.ReduceSaveCompression}  " +
+                         $"SkirmishReset: {this.Fixes.SkirmishReset}  SkipDeleteSavePopup:{this.Fixes.SkipDeleteSavePopup} ShowAllArgoUpgrades:{this.Fixes.ShowAllArgoUpgrades}  " +
+                         $"SpawnProtection:{this.Fixes.SpawnProtection}  WeaponTooltips:{this.Fixes.WeaponTooltip}");
 
             Mod.Log.Info("  -- Called Shot --");
             Mod.Log.Info($"   CalledShotDefaultMod:{Combat.CalledShot.Modifier}");

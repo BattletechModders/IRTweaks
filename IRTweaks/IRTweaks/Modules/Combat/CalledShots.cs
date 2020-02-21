@@ -75,7 +75,7 @@ namespace IRTweaks.Modules.Combat {
                 Mod.Log.Trace("TH:GAM entered.");
 
                 // Calculate called shot modifier
-                int pilotValue = PilotHelper.GetCalledShotModifier(attacker.GetPilot());
+                int pilotValue = CalledShotHelper.GetCalledShotModifier(attacker.GetPilot());
 
                 int unitMod = 0;
                 if (attacker.StatCollection.ContainsStatistic(ModStats.CalledShotMod)) {
@@ -94,7 +94,7 @@ namespace IRTweaks.Modules.Combat {
                 Mod.Log.Trace("TH:GAMD entered.");
 
                 // Calculate called shot modifier
-                int pilotValue = PilotHelper.GetCalledShotModifier(attacker.GetPilot());
+                int pilotValue = CalledShotHelper.GetCalledShotModifier(attacker.GetPilot());
 
                 int unitMod = 0;
                 if (attacker.StatCollection.ContainsStatistic(ModStats.CalledShotMod)) {
@@ -117,7 +117,7 @@ namespace IRTweaks.Modules.Combat {
                 AbstractActor attacker = ___HUD.SelectedActor;
 
                 // Calculate called shot modifier
-                int pilotValue = PilotHelper.GetCalledShotModifier(___HUD.SelectedActor.GetPilot());
+                int pilotValue = CalledShotHelper.GetCalledShotModifier(___HUD.SelectedActor.GetPilot());
 
                 int unitMod = 0;
                 if (attacker.StatCollection.ContainsStatistic(ModStats.CalledShotMod)) {
