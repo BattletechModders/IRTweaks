@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 
 namespace IRTweaks {
+    using IRTweaks.Modules.Combat;
 
     public static class ModStats {
         public const string CalledShowAlwaysAllow = "IRTCalledShotAlwaysAllow";
@@ -43,6 +44,15 @@ namespace IRTweaks {
 
             public bool ApplyToReinforcements = false;
         }
+
+        public FlexibleSensorLockOptions FlexibleSensorLock = new FlexibleSensorLockOptions();
+        public class FlexibleSensorLockOptions
+        {
+            public bool FreeActionWithAbility = false;
+
+            // Default to Master Tactician
+            public string AbilityId = "AbilityDefT8A";
+        }
     }
 
     public class FixesFlags {
@@ -61,6 +71,7 @@ namespace IRTweaks {
         public bool WeaponTooltip = true;
         public bool SkipDeleteSavePopup = true;
         public bool ReduceSaveCompression = true;
+        public bool ShowAllArgoUpgrades = true;
     }
 
     public class ModConfig {
@@ -87,7 +98,8 @@ namespace IRTweaks {
                          $"SkirmishReset: {this.Fixes.SkirmishReset}  SpawnProtection:{this.Fixes.SpawnProtection}" +
                          $"WeaponTooltips:{this.Fixes.WeaponTooltip}" +
                          $"SkipDeleteSavePopup:{this.Fixes.SkipDeleteSavePopup}" +
-                         $"ReduceSaveCompression:{this.Fixes.ReduceSaveCompression}");
+                         $"ReduceSaveCompression:{this.Fixes.ReduceSaveCompression}" +
+                         $"ShowAllArgoUpgrades:{this.Fixes.ShowAllArgoUpgrades}");
 
             Mod.Log.Info("  -- Called Shot --");
             Mod.Log.Info($"   CalledShotDefaultMod:{Combat.CalledShot.Modifier}");
@@ -103,6 +115,9 @@ namespace IRTweaks {
 
             Mod.Log.Info("  -- Store --");
             Mod.Log.Info($"   QuantityOnShift:{Store.QuantityOnShift}  QuantityOnControl:{Store.QuantityOnControl}");
+
+            Mod.Log.Info("  -- Flexible Sensor Lock Options --");
+            Mod.Log.Info($"   FreeActionWithAbility:{this.Combat.FlexibleSensorLock.FreeActionWithAbility}  AbilityId:{this.Combat.FlexibleSensorLock.AbilityId}");
 
             Mod.Log.Info("=== MOD CONFIG END ===");
         }
