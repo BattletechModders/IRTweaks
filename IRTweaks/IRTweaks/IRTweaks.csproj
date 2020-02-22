@@ -106,6 +106,7 @@
     <Compile Include="Modules\Misc\SkirmishReset.cs" />
     <Compile Include="Modules\UI\CombatLog.cs" />
     <Compile Include="Modules\UI\CombatSaves.cs" />
+    <Compile Include="Modules\UI\SkirmishFilter.cs" />
     <Compile Include="Modules\UI\StreamlinedMainMenu.cs" />
     <Compile Include="Modules\UI\StoreHelper.cs" />
     <Compile Include="Modules\UI\StoreQuantities.cs" />

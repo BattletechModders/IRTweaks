@@ -1,7 +1,7 @@
 {
     "Name": "IRTweaks",
     "Enabled": true,
-    "Version": "0.6.0",
+    "Version": "0.6.1",
     "Description": "Miscellaneous Tweaks and Fixes",
     "Author": "IceRaptor",
     "Website": "https://github.com/IceRaptor/IRTweaks",
@@ -9,8 +9,8 @@
     "DLL": "IRTweaks.dll",
     "DependsOn" : [ "IRBTModUtils" ],
     "Settings": {
-        "Debug" : false,
-        "Trace" : false,
+        "Debug" : true,
+        "Trace" : true,
         "Fixes" : {
             "BulkPurchasing" : true,
             "CombatLog" : true,
@@ -24,6 +24,7 @@
             "RandomStartByDifficulty" : true,
             "ReduceSaveCompression" : true,
             "ShowAllArgoUpgrades" : true,
+            "SkirmishAlwaysUnlimited" : true,
             "SkirmishReset" : true,
             "SkipDeleteSavePopup" : true,
             "SpawnProtection" : true,

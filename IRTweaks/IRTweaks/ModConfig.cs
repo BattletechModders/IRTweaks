@@ -85,6 +85,7 @@ namespace IRTweaks {
         public bool ReduceSaveCompression = true;
         public bool ShowAllArgoUpgrades = true;
         public bool SkirmishReset = true;
+        public bool SkirmishAlwaysUnlimited = true;
         public bool SkipDeleteSavePopup = true;
         public bool SpawnProtection = true;
         public bool StreamlinedMainMenu = true;
@@ -112,7 +113,8 @@ namespace IRTweaks {
             Mod.Log.Info($"  BulkPurchasing:{this.Fixes.BulkPurchasing}  CombatLog:{this.Fixes.CombatLog}  DisableCombatSaves:{this.Fixes.DisableCombatSaves}  " +
                          $"ExtendedStats: {this.Fixes.ExtendedStats}  FlexibleSensorLock:{this.Fixes.FlexibleSensorLock}  " +
                          $"PreventCalledShots: {this.Fixes.PreventHeadShots}  RandomStartByDifficulty:{this.Fixes.RandomStartByDifficulty}  ReduceSaveCompression:{this.Fixes.ReduceSaveCompression}  " +
-                         $"SkirmishReset: {this.Fixes.SkirmishReset}  SkipDeleteSavePopup:{this.Fixes.SkipDeleteSavePopup} ShowAllArgoUpgrades:{this.Fixes.ShowAllArgoUpgrades}  " +
+                         $"SkirmishReset: {this.Fixes.SkirmishReset}  SkirmishAlwaysUnlimited:{this.Fixes.SkirmishAlwaysUnlimited}  " +
+                         $"SkipDeleteSavePopup:{this.Fixes.SkipDeleteSavePopup} ShowAllArgoUpgrades:{this.Fixes.ShowAllArgoUpgrades}  " +
                          $"SpawnProtection:{this.Fixes.SpawnProtection}  WeaponTooltips:{this.Fixes.WeaponTooltip}");
 
             Mod.Log.Info("  -- Called Shot --");
