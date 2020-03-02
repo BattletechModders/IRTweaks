@@ -61,6 +61,8 @@ namespace IRTweaks {
         public bool WeaponTooltip = true;
         public bool SkipDeleteSavePopup = true;
         public bool ReduceSaveCompression = true;
+        public bool ShowAllArgoUpgrades = true;
+        public bool BlueBuildingDamage = true;
     }
 
     public class ModConfig {
@@ -87,7 +89,9 @@ namespace IRTweaks {
                          $"SkirmishReset: {this.Fixes.SkirmishReset}  SpawnProtection:{this.Fixes.SpawnProtection}" +
                          $"WeaponTooltips:{this.Fixes.WeaponTooltip}" +
                          $"SkipDeleteSavePopup:{this.Fixes.SkipDeleteSavePopup}" +
-                         $"ReduceSaveCompression:{this.Fixes.ReduceSaveCompression}");
+                         $"ReduceSaveCompression:{this.Fixes.ReduceSaveCompression}" +
+                         $"ShowAllArgoUpgrades:{this.Fixes.ShowAllArgoUpgrades}" +
+                         $"BlueBuildDamage:{this.Fixes.BlueBuildingDamage}");
 
             Mod.Log.Info("  -- Called Shot --");
             Mod.Log.Info($"   CalledShotDefaultMod:{Combat.CalledShot.Modifier}");
