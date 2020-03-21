@@ -80,6 +80,7 @@ namespace IRTweaks {
         public bool FlexibleSensorLock = true;
         public bool MultiTargetStat = true;
         public bool PainTolerance = true;
+        public bool PathfinderTeamFix = true;
         public bool PreventHeadShots = true;
         public bool RandomStartByDifficulty = true;
         public bool ReduceSaveCompression = true;
@@ -111,7 +112,7 @@ namespace IRTweaks {
 
             Mod.Log.Info("  -- Fixes --");
             Mod.Log.Info($"  BulkPurchasing:{this.Fixes.BulkPurchasing}  CombatLog:{this.Fixes.CombatLog}  DisableCombatSaves:{this.Fixes.DisableCombatSaves}  " +
-                         $"ExtendedStats: {this.Fixes.ExtendedStats}  FlexibleSensorLock:{this.Fixes.FlexibleSensorLock}  " +
+                         $"ExtendedStats: {this.Fixes.ExtendedStats}  FlexibleSensorLock:{this.Fixes.FlexibleSensorLock}  PathfinderTeamFix:{this.Fixes.PathfinderTeamFix}" +
                          $"PreventCalledShots: {this.Fixes.PreventHeadShots}  RandomStartByDifficulty:{this.Fixes.RandomStartByDifficulty}  ReduceSaveCompression:{this.Fixes.ReduceSaveCompression}  " +
                          $"SkirmishReset: {this.Fixes.SkirmishReset}  SkirmishAlwaysUnlimited:{this.Fixes.SkirmishAlwaysUnlimited}  " +
                          $"SkipDeleteSavePopup:{this.Fixes.SkipDeleteSavePopup} ShowAllArgoUpgrades:{this.Fixes.ShowAllArgoUpgrades}  " +

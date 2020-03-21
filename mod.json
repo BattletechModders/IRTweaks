@@ -10,7 +10,7 @@
     "DependsOn" : [ "IRBTModUtils" ],
     "Settings": {
         "Debug" : true,
-        "Trace" : true,
+        "Trace" : false,
         "Fixes" : {
             "BulkPurchasing" : true,
             "CombatLog" : true,
@@ -20,7 +20,8 @@
             "FlexibleSensorLock" : true,
             "MultiTargetStat" : true,
             "PainTolerance" : true,
-            "PreventHeadShots" : true,
+            "PathfinderTeamFix" : true,
+            "PreventHeadShots" : true,          
             "RandomStartByDifficulty" : true,
             "ReduceSaveCompression" : true,
             "ShowAllArgoUpgrades" : true,
