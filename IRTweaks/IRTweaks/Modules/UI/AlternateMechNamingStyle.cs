@@ -29,7 +29,7 @@ namespace IRTweaks.Modules.UI
 
         public static bool IsEnabled()
         {
-            return Mod.Config.Fixes.MechNameChanges;
+            return Mod.Config.Fixes.AlternateMechNamingStyle;
         }
     }
 

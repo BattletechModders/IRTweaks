@@ -19,7 +19,7 @@
             "ExtendedStats" : true,
             "FlexibleSensorLock" : true,
             "MultiTargetStat" : true,
-			"MechNameChanges" : true,
+	    "AlternateMechNamingStyle" : true,
             "PainTolerance" : true,
             "PathfinderTeamFix" : true,
             "PreventHeadShots" : true,          

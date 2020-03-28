@@ -78,7 +78,7 @@ namespace IRTweaks {
         public bool DisableCombatSaves = true;
         public bool ExtendedStats = true;
         public bool FlexibleSensorLock = true;
-        public bool MechNameChanges = true;
+        public bool AlternateMechNamingStyle = true;
         public bool MultiTargetStat = true;
         public bool PainTolerance = true;
         public bool PathfinderTeamFix = true;
@@ -113,7 +113,7 @@ namespace IRTweaks {
 
             Mod.Log.Info("  -- Fixes --");
             Mod.Log.Info($"  BulkPurchasing:{this.Fixes.BulkPurchasing}  CombatLog:{this.Fixes.CombatLog}  DisableCombatSaves:{this.Fixes.DisableCombatSaves}  " +
-                         $"ExtendedStats: {this.Fixes.ExtendedStats}  FlexibleSensorLock:{this.Fixes.FlexibleSensorLock}  MechNameChanges:{this.Fixes.MechNameChanges} PathfinderTeamFix:{this.Fixes.PathfinderTeamFix}" +
+                         $"ExtendedStats: {this.Fixes.ExtendedStats}  FlexibleSensorLock:{this.Fixes.FlexibleSensorLock}  AlternateMechNamingStyle:{this.Fixes.AlternateMechNamingStyle} PathfinderTeamFix:{this.Fixes.PathfinderTeamFix}" +
                          $"PreventCalledShots: {this.Fixes.PreventHeadShots}  RandomStartByDifficulty:{this.Fixes.RandomStartByDifficulty}  ReduceSaveCompression:{this.Fixes.ReduceSaveCompression}  " +
                          $"SkirmishReset: {this.Fixes.SkirmishReset}  SkirmishAlwaysUnlimited:{this.Fixes.SkirmishAlwaysUnlimited}  " +
                          $"SkipDeleteSavePopup:{this.Fixes.SkipDeleteSavePopup} ShowAllArgoUpgrades:{this.Fixes.ShowAllArgoUpgrades}  " +
