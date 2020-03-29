@@ -105,6 +105,7 @@
     <Compile Include="Modules\Misc\RandomStartByDifficulty.cs" />
     <Compile Include="Modules\Misc\ReduceSaveCompression.cs" />
     <Compile Include="Modules\Misc\SkirmishReset.cs" />
+    <Compile Include="Modules\UI\AlternateMechNamingStyle.cs" />
     <Compile Include="Modules\UI\CombatLog.cs" />
     <Compile Include="Modules\UI\CombatSaves.cs" />
     <Compile Include="Modules\UI\SkirmishFilter.cs" />
