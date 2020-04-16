@@ -92,6 +92,7 @@ namespace IRTweaks {
         public bool SpawnProtection = true;
         public bool StreamlinedMainMenu = true;
         public bool WeaponTooltip = true;
+        public bool OneShotDamagePerPallet = false;
     }
 
     public class ModConfig {
