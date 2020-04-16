@@ -1,7 +1,7 @@
 {
     "Name": "IRTweaks",
     "Enabled": true,
-    "Version": "0.6.1",
+    "Version": "0.6.4",
     "Description": "Miscellaneous Tweaks and Fixes",
     "Author": "IceRaptor",
     "Website": "https://github.com/IceRaptor/IRTweaks",
@@ -9,8 +9,8 @@
     "DLL": "IRTweaks.dll",
     "DependsOn" : [ "IRBTModUtils" ],
     "Settings": {
-        "Debug" : true,
-        "Trace" : true,
+        "Debug" : false,
+        "Trace" : false,
         "Fixes" : {
             "BulkPurchasing" : true,
             "CombatLog" : true,
@@ -19,8 +19,10 @@
             "ExtendedStats" : true,
             "FlexibleSensorLock" : true,
             "MultiTargetStat" : true,
+	        "AlternateMechNamingStyle" : true,
             "PainTolerance" : true,
-            "PreventHeadShots" : true,
+            "PathfinderTeamFix" : true,
+            "PreventHeadShots" : true,          
             "RandomStartByDifficulty" : true,
             "ReduceSaveCompression" : true,
             "ShowAllArgoUpgrades" : true,
