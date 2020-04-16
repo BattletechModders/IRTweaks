@@ -28,7 +28,7 @@ namespace IRTweaks.Modules.UI {
                 } else if (weaponDef.ProjectilesPerShot != 1 && !Mod.Config.Fixes.OneShotDamagePerPallet) {
                     ___damage.SetText($"{weaponDef.Damage.ToString()} x {weaponDef.ProjectilesPerShot.ToString()} = {totalDamage}");
                 } else if (weaponDef.ShotsWhenFired == 1 && weaponDef.ProjectilesPerShot != 1 && Mod.Config.Fixes.OneShotDamagePerPallet) {
-                    ___damage.SetText($"{(weaponDef.Damage / weaponDef.ProjectilesPerShot).ToString()} x {weaponDef.ProjectilesPerShot.ToString()} shots = {weaponDef.Damage}");
+                    ___damage.SetText($"{(weaponDef.Damage / weaponDef.ProjectilesPerShot).ToString()} x {weaponDef.ProjectilesPerShot.ToString()} (p) = {weaponDef.Damage}");
                 }  else {
                     ___damage.SetText($"{weaponDef.Damage.ToString()}");
                 }
