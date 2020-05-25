@@ -111,6 +111,7 @@ namespace IRTweaks.Modules.UI {
                         BuyHelper buyHelper = new BuyHelper(__instance, ___selectedController, ___simState);
 
                         int maxCanPurchase = (int)Math.Floor(___simState.Funds / (double)price);
+                        if (maxCanPurchase < 0) { maxCanPurchase = 99; }
                         Mod.Log.Debug($"SG_S_S:RBP - maxCanPurchase:{maxCanPurchase} = funds:{___simState.Funds} / price:{price}.");
                         int popupQuantity = maxCanPurchase < ___selectedController.quantity ? maxCanPurchase : ___selectedController.quantity;
                         Mod.Log.Debug($"SG_S_S:RBP - maxCanPurchase:{maxCanPurchase} controllerQuantity:{___selectedController.quantity} -> popupQuantity:{popupQuantity}.");
