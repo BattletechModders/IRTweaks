@@ -60,6 +60,7 @@ namespace IRTweaks {
     }
 
     public class FixesFlags {
+        public bool BraceOnMeleeWithJuggernaut = true;
         public bool BulkPurchasing = true;
         public bool CombatLog = true;
         public bool DisableCampaign = true;
@@ -101,6 +102,7 @@ namespace IRTweaks {
             Mod.Log.Info($"  DEBUG:{this.Debug} Trace:{this.Trace}");
 
             Mod.Log.Info("  -- Fixes --");
+            Mod.Log.Info($"  BraceOnMeleeWithJuggernaut:{this.Fixes.BraceOnMeleeWithJuggernaut}");
             Mod.Log.Info($"  BulkPurchasing:{this.Fixes.BulkPurchasing}");
             Mod.Log.Info($"  CombatLog:{this.Fixes.CombatLog}");
             Mod.Log.Info($"  DisableCampaign:{this.Fixes.DisableCampaign}");
