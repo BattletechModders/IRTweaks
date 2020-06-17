@@ -1,17 +1,14 @@
 ﻿using BattleTech;
 using Harmony;
+using IRBTModUtils;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace IRTweaks.Modules.Combat {
 
     [HarmonyAfter(new string[] { "MechEngineer" })]
     [HarmonyPatch(typeof(Mech), "DamageLocation")]
     public static class Mech_DamageLocation {
-        static bool Prepare() { return Mod.Config.Fixes.PainTolerance; }
+        static bool Prepare() => Mod.Config.Fixes.PainTolerance;
 
         public static void Prefix(Mech __instance, WeaponHitInfo hitInfo, ArmorLocation aLoc, Weapon weapon, float totalArmorDamage, float directStructureDamage,
             int hitIndex, AttackImpactQuality impactQuality, DamageType damageType) {
@@ -44,10 +41,31 @@ namespace IRTweaks.Modules.Combat {
     [HarmonyAfter(new string[] { "MechEngineer" })]
     [HarmonyPatch(typeof(AmmunitionBox), "DamageComponent")]
     public static class AmmunitionBox_DamageComponent {
-        static bool Prepare() { return Mod.Config.Fixes.PainTolerance; }
+        static bool Prepare() => Mod.Config.Fixes.PainTolerance;
 
-        public static void Prefix(AmmunitionBox __instance, WeaponHitInfo hitInfo, ComponentDamageLevel damageLevel, bool applyEffects, CombatGameState ___combat) {
-            if (applyEffects && damageLevel == ComponentDamageLevel.Destroyed && ___combat.Constants.PilotingConstants.InjuryFromAmmoExplosion) {
+        public static void Prefix(AmmunitionBox __instance, ComponentDamageLevel damageLevel, bool applyEffects) 
+        {
+
+            if (__instance == null || SharedState.Combat == null) return; // We cannot do anything
+
+            if (SharedState.Combat?.Constants?.PilotingConstants == null)
+            {
+                Mod.Log.Error("Piloting Constants is somehow null! This should not happen!");
+                return;
+            }
+
+            if (!__instance.StatCollection.ContainsStatistic(ModStats.HBS_AmmoBox_CurrentAmmo) ||
+                __instance.ammunitionBoxDef == null ||
+                __instance.ammunitionBoxDef.Capacity == 0)
+            {
+                Mod.Log.Warn($"Invalid ammoBox '{__instance.UIName}' detected. It does not contain CurrentAmmo stat, has no ammunitionBoxDef, or has 0 capacity.");
+                return;
+            }
+
+            bool explosionsCauseInjuries = SharedState.Combat?.Constants?.PilotingConstants != null ?
+                SharedState.Combat.Constants.PilotingConstants.InjuryFromAmmoExplosion : false;
+            if (applyEffects && damageLevel == ComponentDamageLevel.Destroyed &&  explosionsCauseInjuries) 
+            {
                 int value = __instance.StatCollection.GetValue<int>("CurrentAmmo");
                 int capacity = __instance.ammunitionBoxDef.Capacity;
                 float ratio = (float)value / (float)capacity;
@@ -67,7 +85,7 @@ namespace IRTweaks.Modules.Combat {
 
     [HarmonyPatch(typeof(Pilot), "SetNeedsInjury")]
     public static class Pilot_SetNeedsInjury {
-        static bool Prepare() { return Mod.Config.Fixes.PainTolerance; }
+        static bool Prepare() => Mod.Config.Fixes.PainTolerance;
 
         // Set state to true if needsInjury is already set; otherwise we override the value back to false.
         public static void Prefix(Pilot __instance, bool __state, bool ___needsInjury) {
@@ -153,7 +171,7 @@ namespace IRTweaks.Modules.Combat {
 
     [HarmonyPatch(typeof(TurnDirector), "OnTurnActorActivateComplete")]
     public static class TurnDirectror_OnTurnActorActivateComplete {
-        static bool Prepare() { return Mod.Config.Fixes.PainTolerance; }
+        static bool Prepare() => Mod.Config.Fixes.PainTolerance;
 
         public static void Postfix(TurnDirector __instance) {
             // Reset the attack penalty in case we've flipped actors.
