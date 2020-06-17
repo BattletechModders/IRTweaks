@@ -12,18 +12,18 @@ namespace IRTweaks.Modules.Misc {
 
             if (sgco.ConstantOverrides.ContainsKey("CareerMode")) {
                 // Patch starting mechs
-                if (sgco.ConstantOverrides["CareerMode"].ContainsKey(ModStats.RandomMechs)) {
-                    string startingMechsS = sgco.ConstantOverrides["CareerMode"][ModStats.RandomMechs];
+                if (sgco.ConstantOverrides["CareerMode"].ContainsKey(ModStats.HBS_RandomMechs)) {
+                    string startingMechsS = sgco.ConstantOverrides["CareerMode"][ModStats.HBS_RandomMechs];
                     Mod.Log.Info($"Replacing starting random mechs with:{startingMechsS}");
                     string[] startingMechs = startingMechsS.Split(',');
                     __instance.Constants.CareerMode.StartingRandomMechLists = startingMechs;
                 } else {
-                    Mod.Log.Debug($"key: {ModStats.RandomMechs} not found");
+                    Mod.Log.Debug($"key: {ModStats.HBS_RandomMechs} not found");
                 }
 
                 // Patch faction reputation
-                if (sgco.ConstantOverrides["CareerMode"].ContainsKey(ModStats.FactionRep)) {
-                    string factionRepS = sgco.ConstantOverrides["CareerMode"][ModStats.FactionRep];
+                if (sgco.ConstantOverrides["CareerMode"].ContainsKey(ModStats.HBS_FactionRep)) {
+                    string factionRepS = sgco.ConstantOverrides["CareerMode"][ModStats.HBS_FactionRep];
                     string[] factions = factionRepS.Split(',');
                     foreach (string factionToken in factions) {
                         string[] factionSplit = factionToken.Split(':');
@@ -34,7 +34,7 @@ namespace IRTweaks.Modules.Misc {
                         __instance.AddReputation(factionDef.FactionValue, factionRep, false);
                     }
                 } else {
-                    Mod.Log.Debug($"key: {ModStats.RandomMechs} not found");
+                    Mod.Log.Debug($"key: {ModStats.HBS_RandomMechs} not found");
                 }
 
             } else if (!sgco.ConstantOverrides.ContainsKey("CareerMode")) {
@@ -46,7 +46,7 @@ namespace IRTweaks.Modules.Misc {
         public static void SimGameConstantOverride_ApplyOverride_Postfix(SimGameConstantOverride __instance, string constantType, string constantName, SimGameState ___simState) {
             Mod.Log.Trace("SGCO:AO entered.");
 
-            if (constantName != null && constantName.ToLower().Equals(ModStats.StrayShotValidTargets.ToLower())) {
+            if (constantName != null && constantName.ToLower().Equals(ModStats.HBS_StrayShotValidTargets.ToLower())) {
                 string value = __instance.ConstantOverrides[constantType][constantName];
                 Mod.Log.Debug($" Setting StrayShotValidTargets to {value} ");
                 ToHitConstantsDef thcd = ___simState.CombatConstants.ToHit;

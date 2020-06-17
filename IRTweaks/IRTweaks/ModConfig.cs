@@ -1,18 +1,6 @@
 ﻿using System.Collections.Generic;
 
 namespace IRTweaks {
-    using IRTweaks.Modules.Combat;
-
-    public static class ModStats {
-        public const string CalledShowAlwaysAllow = "IRTCalledShotAlwaysAllow";
-        public const string CalledShotMod = "IRTCalledShotMod";
-
-        public const string EnableMultiTarget = "IRAllowMultiTarget";
-
-        public const string RandomMechs = "StartingRandomMechLists";
-        public const string FactionRep = "FactionReputation";
-        public const string StrayShotValidTargets = "StrayShotValidTargets";
-    }
 
     public class AbilityOpts {
         public string MultiTargetId = "AbilityDefG5";
@@ -113,12 +101,25 @@ namespace IRTweaks {
             Mod.Log.Info($"  DEBUG:{this.Debug} Trace:{this.Trace}");
 
             Mod.Log.Info("  -- Fixes --");
-            Mod.Log.Info($"  BulkPurchasing:{this.Fixes.BulkPurchasing}  CombatLog:{this.Fixes.CombatLog}  DisableCombatSaves:{this.Fixes.DisableCombatSaves}  " +
-                         $"ExtendedStats: {this.Fixes.ExtendedStats}  FlexibleSensorLock:{this.Fixes.FlexibleSensorLock}  AlternateMechNamingStyle:{this.Fixes.AlternateMechNamingStyle} PathfinderTeamFix:{this.Fixes.PathfinderTeamFix}" +
-                         $"PreventCalledShots: {this.Fixes.PreventHeadShots}  RandomStartByDifficulty:{this.Fixes.RandomStartByDifficulty}  ReduceSaveCompression:{this.Fixes.ReduceSaveCompression}  " +
-                         $"SkirmishReset: {this.Fixes.SkirmishReset}  SkirmishAlwaysUnlimited:{this.Fixes.SkirmishAlwaysUnlimited}  " +
-                         $"SkipDeleteSavePopup:{this.Fixes.SkipDeleteSavePopup} ShowAllArgoUpgrades:{this.Fixes.ShowAllArgoUpgrades}  " +
-                         $"SpawnProtection:{this.Fixes.SpawnProtection}  WeaponTooltips:{this.Fixes.WeaponTooltip}");
+            Mod.Log.Info($"  BulkPurchasing:{this.Fixes.BulkPurchasing}");
+            Mod.Log.Info($"  CombatLog:{this.Fixes.CombatLog}");
+            Mod.Log.Info($"  DisableCampaign:{this.Fixes.DisableCampaign}");
+            Mod.Log.Info($"  DisableCombatSaves:{this.Fixes.DisableCombatSaves}");
+            Mod.Log.Info($"  DisableMPHashCalculation:{this.Fixes.DisableMPHashCalculation}");
+            Mod.Log.Info($"  ExtendedStats: {this.Fixes.ExtendedStats}");
+            Mod.Log.Info($"  FlexibleSensorLock:{this.Fixes.FlexibleSensorLock}");
+            Mod.Log.Info($"  AlternateMechNamingStyle:{this.Fixes.AlternateMechNamingStyle}");
+            Mod.Log.Info($"  PathfinderTeamFix:{this.Fixes.PathfinderTeamFix}");
+            Mod.Log.Info($"  PreventHeadShots: {this.Fixes.PreventHeadShots}");
+            Mod.Log.Info($"  RandomStartByDifficulty:{this.Fixes.RandomStartByDifficulty}");
+            Mod.Log.Info($"  ReduceSaveCompression:{this.Fixes.ReduceSaveCompression}");
+            Mod.Log.Info($"  ShowAllArgoUpgrades:{this.Fixes.ShowAllArgoUpgrades}");
+            Mod.Log.Info($"  SkirmishReset: {this.Fixes.SkirmishReset}");
+            Mod.Log.Info($"  SkirmishAlwaysUnlimited:{this.Fixes.SkirmishAlwaysUnlimited}");
+            Mod.Log.Info($"  SkipDeleteSavePopup:{this.Fixes.SkipDeleteSavePopup}");
+            Mod.Log.Info($"  SpawnProtection:{this.Fixes.SpawnProtection}");
+            Mod.Log.Info($"  StreamlinedMainMenu:{this.Fixes.StreamlinedMainMenu}");
+            Mod.Log.Info($"  WeaponTooltips:{this.Fixes.WeaponTooltip}");
 
             Mod.Log.Info("  -- Called Shot --");
             Mod.Log.Info($"   CalledShotDefaultMod:{Combat.CalledShot.Modifier}");

@@ -89,6 +89,7 @@
     <Compile Include="Helper\DiagnosticLogger.cs" />
     <Compile Include="Helper\PainHelper.cs" />
     <Compile Include="Helper\ProtectionHelper.cs" />
+    <Compile Include="ModConstants.cs" />
     <Compile Include="ModInit.cs" />
     <Compile Include="Modules\Combat\CalledShots.cs" />
     <Compile Include="Modules\Combat\CombatModule.cs" />
