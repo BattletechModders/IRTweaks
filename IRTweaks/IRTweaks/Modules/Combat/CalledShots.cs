@@ -1,6 +1,7 @@
 ﻿using BattleTech;
 using BattleTech.UI;
 using Harmony;
+using IRBTModUtils.Extension;
 using IRTweaks.Helper;
 using Localize;
 using System;
@@ -16,6 +17,11 @@ namespace IRTweaks.Modules.Combat {
         }
 
         public static void HUDMechArmorReadout_SetHoveredArmor_Postfix(HUDMechArmorReadout __instance, ArmorLocation location, Mech ___displayedMech) {
+
+            if (__instance == null || __instance.HUD == null || 
+                __instance.HUD.SelectedActor == null || __instance.HUD.SelectedTarget == null) 
+                return; // nothing to do
+
             if (__instance.UseForCalledShots && location == ArmorLocation.Head) {
                 Mod.Log.Trace("HUDMAR:SHA entered");
 
@@ -28,7 +34,7 @@ namespace IRTweaks.Modules.Combat {
                 }
                 bool canBeTargeted = __instance.HUD.SelectedTarget.IsShutDown || __instance.HUD.SelectedTarget.IsProne || canAlwaysCalledShot;
 
-                Mod.Log.Debug($"  Hover - target:({___displayedMech.DisplayName}_{___displayedMech.GetPilot()?.Name}) canBeTargeted:{canBeTargeted} by attacker:({__instance.HUD.SelectedActor.DisplayName})");
+                Mod.Log.Debug($"  Hover - target:({___displayedMech.DistinctId()}) canBeTargeted:{canBeTargeted} by attacker:({__instance.HUD.SelectedActor.DistinctId()})");
                 Mod.Log.Debug($"      isShutdown:{___displayedMech.IsShutDown} isProne:{___displayedMech.IsProne} canAlwaysCalledShot:{canAlwaysCalledShot}");
 
                 if (!canBeTargeted) {

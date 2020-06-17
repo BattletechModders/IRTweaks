@@ -93,6 +93,7 @@
     <Compile Include="ModInit.cs" />
     <Compile Include="Modules\Combat\CalledShots.cs" />
     <Compile Include="Modules\Combat\CombatModule.cs" />
+    <Compile Include="Modules\Combat\BraceOnMeleeWithJuggernaut.cs" />
     <Compile Include="Modules\Combat\PainTolerance.cs" />
     <Compile Include="Modules\Combat\PathfinderTeamFix.cs" />
     <Compile Include="Modules\Combat\PilotStatValidators.cs" />

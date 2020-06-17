@@ -4,7 +4,6 @@ using System;
 using System.Diagnostics;
 using System.Reflection;
 using us.frostraptor.modUtils.logging;
-using IRTweaks.Modules.StoreUI;
 using IRTweaks.Modules.Combat;
 using IRTweaks.Modules.Tooltip;
 using IRTweaks.Modules.Misc;
