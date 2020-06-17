@@ -97,6 +97,7 @@
     <Compile Include="Modules\Combat\PilotStatValidators.cs" />
     <Compile Include="Modules\Combat\FlexibleSensorLock.cs" />
     <Compile Include="Modules\Combat\SpawnProtection.cs" />
+    <Compile Include="Modules\Misc\DisableMPHash.cs" />
     <Compile Include="Modules\Misc\PilotEffects.cs" />
     <Compile Include="Modules\Misc\ShowAllArgoUpgrades.cs" />
     <Compile Include="Modules\Misc\SkipDeleteSavePopup.cs" />

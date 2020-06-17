@@ -76,6 +76,7 @@ namespace IRTweaks {
         public bool CombatLog = true;
         public bool DisableCampaign = true;
         public bool DisableCombatSaves = true;
+        public bool DisableMPHashCalculation = true;
         public bool ExtendedStats = true;
         public bool FlexibleSensorLock = true;
         public bool AlternateMechNamingStyle = true;
