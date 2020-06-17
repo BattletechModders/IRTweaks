@@ -8,6 +8,7 @@ using Harmony;
 
 namespace IRTweaks.Modules.Misc
 {
+    // Shows all possible Argo updates, but greys them out
     [HarmonyPatch(typeof(SGEngineeringScreen), "PopulateUpgradeDictionary")]
     public static class SGEngineeringScreen_PopulateUpgradeDictionary_Patch
     {
