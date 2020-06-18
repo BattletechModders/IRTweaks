@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>IRTweaks</RootNamespace>
     <AssemblyName>IRTweaks</AssemblyName>
-    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
     <TargetFrameworkProfile />
@@ -46,6 +46,9 @@
     <Reference Include="Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>E:\steam\SteamApps\common\BATTLETECH\BattleTech_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
+    </Reference>
+    <Reference Include="CustomAmmoCategories">
+      <HintPath>E:\steam\SteamApps\common\BATTLETECH\Mods\CustomAmmoCategories\CustomAmmoCategories.dll</HintPath>
     </Reference>
     <Reference Include="DOTweenPro, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -111,6 +114,7 @@
     <Compile Include="Modules\UI\AlternateMechNamingStyle.cs" />
     <Compile Include="Modules\UI\CombatLog.cs" />
     <Compile Include="Modules\UI\CombatSaves.cs" />
+    <Compile Include="Modules\UI\MechBayChanges.cs" />
     <Compile Include="Modules\UI\SkirmishFilter.cs" />
     <Compile Include="Modules\UI\StreamlinedMainMenu.cs" />
     <Compile Include="Modules\UI\StoreHelper.cs" />
