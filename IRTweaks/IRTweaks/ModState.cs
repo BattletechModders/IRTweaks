@@ -13,11 +13,13 @@ namespace IRTweaks {
         // Tracks an attack sequence that creates an injury
         public static float InjuryResistPenalty = -1f;
 
+        public static List<int> ExplosionSequences = new List<int>();
+
         public static void Reset() {
             // Reinitialize state
             PilotCalledShotModifiers.Clear();
             InjuryResistPenalty = -1f;
-
+            ExplosionSequences.Clear();
         }
     }
 

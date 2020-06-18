@@ -12,7 +12,10 @@ This is a mod for the [HBS BattleTech](http://battletechgame.com/) game that inc
 * **Nuanced Called Shot Modifier**: The modifier for called shots (aka offensive push) is driven by the pilot's tactics skill, ability, and pilot tags. It can also be influenced by gear.
 * **Random Start by Difficulty Menu**: Allows an option in the new-game difficulty menu to be associated with user-created lists of starting mechs.
 * **Restrict Called Shots to Head**: You can only select the head on a called shot if the target is shutdown, prone, or you have special equipment.
+* **ShowAllArgoUpgrades**: Shows all available argo upgrades, instead of hiding the ones that require additional unlocks.
+* **SimGameDifficultyLabelsReplacer**: Allows customization of the labels on the 'difficulty' bar when you start a new career or campaign game. 
 * **SkirmishReset**: This fix is a modder's resource. Skirmish saves the mechDefs that were customized, which can result in an ever-spinny when itemDefs are changed or mods are disabled. When enabled, this fix will always reset the Skirmish lances and mech definitions to the base state by deleting all customizations.
+* **SkipDeleteSavePopup**: Disables the 'are you sure' prompt when you delete save games.
 * **Spawn Protection**: Provides high evasion, braced, and guarded status to units when they spawn. This can prevent first-turn damage during mission start, or to reinforcements that spawn close to the player.
 * **Weapon Tooltips**: Modifies the weapon tooltips to more accurately report damage when a weapon uses extensions provided by [CustomAmmoCategories](https://github.com/CMiSSioN/CustomAmmoCategories).
 
@@ -140,6 +143,10 @@ This tweak has no customization.
 This tweak changes the SensorLock behaviors such that using the action doesn't end your turn. This previously occurred because SensorLock actions counted as both movement and firing (in a very weird way). When this tweak is enabled, you can sensor lock at any point during your activation.
 
 This tweak has no customization.
+
+## **SimGameDifficultyLabelsReplacer**
+
+Copy `StreamingAssets\data\descriptions\CareerMode\TooltipScoreTotalMultiplier.json` into `Mods\IRTweaks\StreamingAssets\data\descriptions\CareerMode` to customize the tooltip text that pops up.
 
 ## Spawn Protection
 
