@@ -12,6 +12,7 @@ namespace IRTweaks.Modules.Combat
     [HarmonyPatch(MethodType.Constructor)]
     static class ArtilleryObjectiveSequence_Ctor
     {
+        static bool Prepare() => Mod.Config.Fixes.UrbanExplosionsFix;
 
         static void Postfix(ArtilleryObjectiveSequence __instance, ArtilleryVFXType ___artilleryVFXType)
         {
@@ -45,6 +46,8 @@ namespace IRTweaks.Modules.Combat
     [HarmonyPatch(typeof(ArtilleryObjectiveSequence), "AttackNextTarget")]
     static class ArtilleryObjectiveSequence_AttackNextTarget
     {
+        static bool Prepare() => Mod.Config.Fixes.UrbanExplosionsFix;
+
         static void Prefix(ArtilleryObjectiveSequence __instance)
         {
             if (__instance != null && ModState.ExplosionSequences.Contains(__instance.SequenceGUID))
