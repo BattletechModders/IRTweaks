@@ -102,6 +102,7 @@
     <Compile Include="Modules\Combat\PilotStatValidators.cs" />
     <Compile Include="Modules\Combat\FlexibleSensorLock.cs" />
     <Compile Include="Modules\Combat\SpawnProtection.cs" />
+    <Compile Include="Modules\Combat\UrbanExplosionsFix.cs" />
     <Compile Include="Modules\Misc\DisableMPHash.cs" />
     <Compile Include="Modules\Misc\PilotEffects.cs" />
     <Compile Include="Modules\Misc\ShowAllArgoUpgrades.cs" />
@@ -115,6 +116,7 @@
     <Compile Include="Modules\UI\CombatLog.cs" />
     <Compile Include="Modules\UI\CombatSaves.cs" />
     <Compile Include="Modules\UI\MechBayChanges.cs" />
+    <Compile Include="Modules\UI\SkirmishDifficultyPanelRelabel.cs" />
     <Compile Include="Modules\UI\SkirmishFilter.cs" />
     <Compile Include="Modules\UI\StreamlinedMainMenu.cs" />
     <Compile Include="Modules\UI\StoreHelper.cs" />

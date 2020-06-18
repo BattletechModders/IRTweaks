@@ -77,11 +77,13 @@ namespace IRTweaks {
         public bool RandomStartByDifficulty = true;
         public bool ReduceSaveCompression = true;
         public bool ShowAllArgoUpgrades = true;
+        public bool SimGameDifficultyLabelsReplacer = true;
         public bool SkirmishReset = true;
         public bool SkirmishAlwaysUnlimited = true;
         public bool SkipDeleteSavePopup = true;
         public bool SpawnProtection = true;
         public bool StreamlinedMainMenu = true;
+        public bool UrbanExplosionsFix = true;
         public bool WeaponTooltip = true;
     }
 
@@ -97,6 +99,14 @@ namespace IRTweaks {
         public AbilityOpts Abilities = new AbilityOpts();
         public CombatOpts Combat = new CombatOpts();
         public StoreOpts Store = new StoreOpts();
+
+        public const string SimGameDifficultyString_Desc = "DESCRIPTION";
+        public const string SimGameDifficultyString_Label = "LABEL";
+        public Dictionary<string, string> SimGameDifficultyStrings = new Dictionary<string, string>()
+        {
+            { SimGameDifficultyString_Desc, "Overall Difficulty" },
+            { SimGameDifficultyString_Label, "Difficulty" },
+        };
 
         public void LogConfig() {
             Mod.Log.Info("=== MOD CONFIG BEGIN ===");
@@ -123,6 +133,7 @@ namespace IRTweaks {
             Mod.Log.Info($"  SkipDeleteSavePopup:{this.Fixes.SkipDeleteSavePopup}");
             Mod.Log.Info($"  SpawnProtection:{this.Fixes.SpawnProtection}");
             Mod.Log.Info($"  StreamlinedMainMenu:{this.Fixes.StreamlinedMainMenu}");
+            Mod.Log.Info($"  UrbanExplosionsFix:{this.Fixes.UrbanExplosionsFix}");
             Mod.Log.Info($"  WeaponTooltips:{this.Fixes.WeaponTooltip}");
 
             Mod.Log.Info("  -- Called Shot --");
