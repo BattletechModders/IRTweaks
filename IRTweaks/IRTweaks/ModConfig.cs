@@ -60,6 +60,7 @@ namespace IRTweaks {
     }
 
     public class FixesFlags {
+        public bool AlternateMechNamingStyle = true;
         public bool BraceOnMeleeWithJuggernaut = true;
         public bool BulkPurchasing = true;
         public bool CombatLog = true;
@@ -68,7 +69,7 @@ namespace IRTweaks {
         public bool DisableMPHashCalculation = true;
         public bool ExtendedStats = true;
         public bool FlexibleSensorLock = true;
-        public bool AlternateMechNamingStyle = true;
+        public bool MechbayLayout = true;
         public bool MultiTargetStat = true;
         public bool PainTolerance = true;
         public bool PathfinderTeamFix = true;
@@ -102,6 +103,7 @@ namespace IRTweaks {
             Mod.Log.Info($"  DEBUG:{this.Debug} Trace:{this.Trace}");
 
             Mod.Log.Info("  -- Fixes --");
+            Mod.Log.Info($"  AlternateMechNamingStyle:{this.Fixes.AlternateMechNamingStyle}");
             Mod.Log.Info($"  BraceOnMeleeWithJuggernaut:{this.Fixes.BraceOnMeleeWithJuggernaut}");
             Mod.Log.Info($"  BulkPurchasing:{this.Fixes.BulkPurchasing}");
             Mod.Log.Info($"  CombatLog:{this.Fixes.CombatLog}");
@@ -110,7 +112,7 @@ namespace IRTweaks {
             Mod.Log.Info($"  DisableMPHashCalculation:{this.Fixes.DisableMPHashCalculation}");
             Mod.Log.Info($"  ExtendedStats: {this.Fixes.ExtendedStats}");
             Mod.Log.Info($"  FlexibleSensorLock:{this.Fixes.FlexibleSensorLock}");
-            Mod.Log.Info($"  AlternateMechNamingStyle:{this.Fixes.AlternateMechNamingStyle}");
+            Mod.Log.Info($"  MechbayLayoutFix:{this.Fixes.MechbayLayout}");
             Mod.Log.Info($"  PathfinderTeamFix:{this.Fixes.PathfinderTeamFix}");
             Mod.Log.Info($"  PreventHeadShots: {this.Fixes.PreventHeadShots}");
             Mod.Log.Info($"  RandomStartByDifficulty:{this.Fixes.RandomStartByDifficulty}");

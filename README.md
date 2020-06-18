@@ -1,14 +1,17 @@
 # IRTweaks
 This is a mod for the [HBS BattleTech](http://battletechgame.com/) game that includes a variety of tweaks, changes, and modifications to the base game. A wide range of effects is covered, and all of the options can be selectively enabled. A short summary of the features includes:
 
+* **BraceOnMeleeWithJuggernaut**: If a pilot has the Guts 8 ability (typically Juggernaut), braces the unit after a melee or DFA attack. A direct copy of [RealityMachina's Better-Juggernaut](https://github.com/RealityMachina/Better-Juggernaut).
 * **Bulk Purchasing**: Provides buttons and keyboard shortcuts that allow bulk purchasing and selling of items in the store.
 * **Combat Log**: Provides an in-game log that captures text from floaties and preserves them in a readable format.
+* **Campaign Disabler**: Disables the HBS campaign button, to prevent errors with various mod packs.
 * **Combat Saves Disabler**: Combat saves are prone to errors during vanilla gameplay, but especially so during modded gameplay. This disables the UI selection that allows in-combat saves to be made.
+* **Multiplayer Hash Disabler**: Disables a mod-hash calculated on startup that's only used to validate multiplayer games are compatible. Saves 2-3s of load time.
+* **Extended Stats**: Allows pilots to be assigned Statistic values above the normal bounds of 1-10.
 * **Flexible Sensor Lock**: Using a Sensor Lock action does not count as movement or firing. This allows it to be combined with actions in a unit's activation.
 * **Nuanced Called Shot Modifier**: The modifier for called shots (aka offensive push) is driven by the pilot's tactics skill, ability, and pilot tags. It can also be influenced by gear.
 * **Random Start by Difficulty Menu**: Allows an option in the new-game difficulty menu to be associated with user-created lists of starting mechs.
-* **Restrict Called Shots to Head**: You can only select the head on a called shot if the target is shutdown, prone, or you have special equipmenst.
-* **Pilot Statistics Validator Override**: Allows pilots to be assigned Statistic values outside the normal bounds of 1-10.
+* **Restrict Called Shots to Head**: You can only select the head on a called shot if the target is shutdown, prone, or you have special equipment.
 * **SkirmishReset**: This fix is a modder's resource. Skirmish saves the mechDefs that were customized, which can result in an ever-spinny when itemDefs are changed or mods are disabled. When enabled, this fix will always reset the Skirmish lances and mech definitions to the base state by deleting all customizations.
 * **Spawn Protection**: Provides high evasion, braced, and guarded status to units when they spawn. This can prevent first-turn damage during mission start, or to reinforcements that spawn close to the player.
 * **Weapon Tooltips**: Modifies the weapon tooltips to more accurately report damage when a weapon uses extensions provided by [CustomAmmoCategories](https://github.com/CMiSSioN/CustomAmmoCategories).
@@ -19,8 +22,12 @@ This mod replaces the following mods, which used to be stand-alone:
 * *CombatSaveDisabler*
 * *IRUITweaks*
 * *SpawnProtection*
+* *Better-Juggernaut / Mighty-Juggernaut*
 
-This mod requires [https://github.com/iceraptor/IRBTModUtils/]. Grab the latest release of __IRBTModUtils__ and extract it in your Mods/ directory alongside of this mod.
+This mod requires the latest releases of the following mods:
+
+* [IRBTModUtils](https://github.com/iceraptor/IRBTModUtils/) - a collection of common utilities used in all my mods.
+* [Custom Ammo Categories](https://github.com/BattletechModders/CustomBundle/releases) - for enhanced weapon tooltips
 
 ## Bulk Purchasing
 
