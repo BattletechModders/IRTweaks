@@ -20,8 +20,4 @@ namespace IRTweaks
         public const string HBS_AmmoBox_CurrentAmmo = "CurrentAmmo";
     }
 
-    public static class ModConstants
-    {
-        public const string Ability_Def_Guts_8 = "AbilityDefGu8";
-    }
 }

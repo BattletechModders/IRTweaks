@@ -100,6 +100,8 @@ namespace IRTweaks {
         public CombatOpts Combat = new CombatOpts();
         public StoreOpts Store = new StoreOpts();
 
+        public string JuggernautAbilityId = "AbilityDefGu8";
+
         public const string SimGameDifficultyString_Desc = "DESCRIPTION";
         public const string SimGameDifficultyString_Label = "LABEL";
         public Dictionary<string, string> SimGameDifficultyStrings = new Dictionary<string, string>()

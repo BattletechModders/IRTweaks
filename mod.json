@@ -2,7 +2,7 @@
 	"Name": "IRTweaks",
 	"Enabled": true,
 	"Hidden": true,
-	"Version": "0.6.6",
+	"Version": "0.6.7",
 	"Description": "Miscellaneous Tweaks and Fixes",
 	"Author": "IceRaptor",
 	"Website": "https://github.com/IceRaptor/IRTweaks",
@@ -65,6 +65,7 @@
 				"ApplyToReinforcements": true
 			}
 		},
+        "JuggernautAbilityId" : "AbilityDefGu8",
 		"Store": {
 			"QuantityOnShift": 5,
 			"QuantityOnControl": 20
