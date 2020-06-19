@@ -3,6 +3,8 @@
 namespace IRTweaks {
 
     public class AbilityOpts {
+        public string FlexibleSensorLockId = "AbilityDefT8A";
+        public string JuggernautId = "AbilityDefGu8";
         public string MultiTargetId = "AbilityDefG5";
     }
 
@@ -23,9 +25,6 @@ namespace IRTweaks {
         public FlexibleSensorLockOptions FlexibleSensorLock = new FlexibleSensorLockOptions();
         public class FlexibleSensorLockOptions {
             public bool FreeActionWithAbility = false;
-
-            // Default to Master Tactician
-            public string AbilityId = "AbilityDefT8A";
         }
 
         public PainToleranceOpts PainTolerance = new PainToleranceOpts();
@@ -100,8 +99,6 @@ namespace IRTweaks {
         public CombatOpts Combat = new CombatOpts();
         public StoreOpts Store = new StoreOpts();
 
-        public string JuggernautAbilityId = "AbilityDefGu8";
-
         public const string SimGameDifficultyString_Desc = "DESCRIPTION";
         public const string SimGameDifficultyString_Label = "LABEL";
         public Dictionary<string, string> SimGameDifficultyStrings = new Dictionary<string, string>()
@@ -154,7 +151,7 @@ namespace IRTweaks {
             Mod.Log.Info($"   QuantityOnShift:{Store.QuantityOnShift}  QuantityOnControl:{Store.QuantityOnControl}");
 
             Mod.Log.Info("  -- Flexible Sensor Lock Options --");
-            Mod.Log.Info($"   FreeActionWithAbility:{this.Combat.FlexibleSensorLock.FreeActionWithAbility}  AbilityId:{this.Combat.FlexibleSensorLock.AbilityId}");
+            Mod.Log.Info($"   FreeActionWithAbility:{this.Combat.FlexibleSensorLock.FreeActionWithAbility}  AbilityId:{this.Abilities.FlexibleSensorLockId}");
 
             Mod.Log.Info("=== MOD CONFIG END ===");
         }

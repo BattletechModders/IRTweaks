@@ -123,6 +123,7 @@
     <Compile Include="Modules\UI\StoreQuantities.cs" />
     <Compile Include="Modules\UI\UIModule.cs" />
     <Compile Include="Modules\UI\WeaponTooltips.cs" />
+    <Compile Include="Patches\CombatGameStatePatches.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ModConfig.cs" />
     <Compile Include="ModState.cs" />
