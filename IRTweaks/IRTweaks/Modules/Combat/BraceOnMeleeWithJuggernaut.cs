@@ -23,7 +23,7 @@ namespace IRTweaks.Modules.Combat
             {
                 foreach (Ability ability in passives)
                 {
-                    if (ability.Def.Description.Id.Equals(Mod.Config.JuggernautAbilityId, StringComparison.InvariantCultureIgnoreCase))
+                    if (ability.Def.Description.Id.Equals(Mod.Config.Abilities.JuggernautId, StringComparison.InvariantCultureIgnoreCase))
                     {
                         Mod.Log.Info("Pilot has Juggernaut, bracing after melee attack.");
                         __instance.OwningMech.BracedLastRound = true;
@@ -51,7 +51,7 @@ namespace IRTweaks.Modules.Combat
             {
                 foreach (Ability ability in passives)
                 {
-                    if (ability.Def.Description.Id.Equals(Mod.Config.JuggernautAbilityId, StringComparison.InvariantCultureIgnoreCase))
+                    if (ability.Def.Description.Id.Equals(Mod.Config.Abilities.JuggernautId, StringComparison.InvariantCultureIgnoreCase))
                     {
                         Mod.Log.Info("Pilot has Juggernaut, bracing after DFA attack.");
                         __instance.OwningMech.BracedLastRound = true;

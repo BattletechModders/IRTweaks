@@ -95,10 +95,10 @@ namespace IRTweaks.Modules.Combat {
                 else
                 {
                     // Check if the pilot has the associated ability ID, and return true if so...
-                    Mod.Log.Debug($" OrderSequence_ConsumesActivation_Postfix - Sensor Lock is paired with ability [{Mod.Config.Combat.FlexibleSensorLock.AbilityId}], checking pilot...");
+                    Mod.Log.Debug($" OrderSequence_ConsumesActivation_Postfix - Sensor Lock is paired with ability [{Mod.Config.Abilities.FlexibleSensorLockId}], checking pilot...");
                     if (PilotHasFreeSensorLockAbility(___owningActor?.GetPilot()))
                     {
-                        Mod.Log.Debug($" OrderSequence_ConsumesActivation_Postfix - Sensor Lock paired ability [{Mod.Config.Combat.FlexibleSensorLock.AbilityId}] found, setting true...");
+                        Mod.Log.Debug($" OrderSequence_ConsumesActivation_Postfix - Sensor Lock paired ability [{Mod.Config.Abilities.FlexibleSensorLockId}] found, setting true...");
                         __result = false;
                     }
                 }
@@ -115,7 +115,7 @@ namespace IRTweaks.Modules.Combat {
         {
             Mod.Log.Debug($"pilot = [{pilot}]\r\n" 
                           + $"abilities = [{string.Join(",", pilot?.Abilities.Select(ability => ability.Def.Id))}]");
-            return Mod.Config.Combat.FlexibleSensorLock.FreeActionWithAbility == false || (pilot?.Abilities?.Exists(ability => ability.Def.Id == Mod.Config.Combat.FlexibleSensorLock.AbilityId) ?? false);
+            return Mod.Config.Combat.FlexibleSensorLock.FreeActionWithAbility == false || (pilot?.Abilities?.Exists(ability => ability.Def.Id == Mod.Config.Abilities.FlexibleSensorLockId) ?? false);
         }
 
         public static bool AIUtil_EvaluateSensorLockQuality_Prefix(ref bool __result, AbstractActor movingUnit, ICombatant target, out float quality) {

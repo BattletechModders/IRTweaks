@@ -2,7 +2,7 @@
 	"Name": "IRTweaks",
 	"Enabled": true,
 	"Hidden": true,
-	"Version": "0.6.7",
+	"Version": "0.6.8",
 	"Description": "Miscellaneous Tweaks and Fixes",
 	"Author": "IceRaptor",
 	"Website": "https://github.com/IceRaptor/IRTweaks",
@@ -39,12 +39,13 @@
 			"WeaponTooltip": true
 		},
 		"Abilities": {
+            "FlexibleSensorLockId": "AbilityDefT8A",
+            "JuggernautId" : "AbilityDefGu8",
 			"MultiTargetId": "AbilityDefG5"
 		},
 		"Combat": {
 			"FlexibleSensorLock": {
-				"FreeActionWithAbility": false,
-				"AbilityId": "AbilityDefT8A"
+				"FreeActionWithAbility": false
 			},
 			"PainTolerance": {
 				"ResistPerGuts": 10,
@@ -65,7 +66,6 @@
 				"ApplyToReinforcements": true
 			}
 		},
-        "JuggernautAbilityId" : "AbilityDefGu8",
 		"Store": {
 			"QuantityOnShift": 5,
 			"QuantityOnControl": 20
