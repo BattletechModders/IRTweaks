@@ -24,8 +24,8 @@ namespace IRTweaks.Modules.UI {
         // Static instance pointers from the various components 
         private static CombatGameState combat;
         private static MessageCenter messageCenter;
-
         private static Action<CombatChatModule> CombatChatModule_UIModule_Update;
+        private static ActiveChatListView _activeChatList;
 
         // Shamelessly stolen from https://github.com/janxious/BT-WeaponRealizer/blob/7422573fa69893ae7c16a9d192d85d2152f90fa2/NumberOfShotsEnabler.cs#L32
         public static bool InitModule() {
@@ -59,6 +59,9 @@ namespace IRTweaks.Modules.UI {
             } else {
                 CombatLog.combatChatModule.CombatInit();
                 CombatLog.infoSidePanel.BumpUp();
+                System.Reflection.FieldInfo receivedObject = typeof(CombatChatModule).GetField("_activeChatList", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+
+                _activeChatList = (ActiveChatListView)receivedObject.GetValue(combatChatModule);
             }
 
             Mod.Log.Info($"CombatChatModule pos: {CombatLog.combatChatModule.gameObject.transform.position}");
@@ -135,7 +138,7 @@ namespace IRTweaks.Modules.UI {
                 string senderWithColor = $"&lt;{senderColor}&gt;{sender}&lt;/color&gt;";
                 Mod.Log.Debug($"ChatMessage senderWithColor: '{senderWithColor}'");
 
-                string logMessage = floatieMessage.text.ToString();
+                string logMessage = floatieMessage.text.ToString()+'^';
                 switch (floatieMessage.nature) {
                     case FloatieMessage.MessageNature.ArmorDamage:
                         logMessage = $"{logMessage} armor damage";
@@ -147,8 +150,20 @@ namespace IRTweaks.Modules.UI {
                         break;
                 }
 
-                messageCenter.PublishMessage(new ChatMessage(senderWithColor, logMessage, false));
-            } catch (Exception e) {
+
+                ChatMessage chatMessage = new ChatMessage(senderWithColor, logMessage, false);
+                Mod.Log.Debug($"Chat message is: '{chatMessage.Message}'");
+                try
+                {
+                    _activeChatList.Add(chatMessage);
+                }
+                catch (Exception e)
+                {
+                    Mod.Log.Error($"Failed to send a message:{e.Message}");
+                    Mod.Log.Error($"{e.StackTrace}");
+                }
+            }
+            catch (Exception e) {
                 Mod.Log.Error($"Failed to send floatieMessage: {floatieMessage}");
                 Mod.Log.Error(e);
             }
@@ -250,6 +265,8 @@ namespace IRTweaks.Modules.UI {
 
             static void Postfix(OrderSequence __instance) {
                 if (CombatLog.combatChatModule != null) {
+                    _activeChatList.ScrollToBottom();
+                    _activeChatList.Refresh();
                     CombatLog.combatChatModule.ForceRefreshImmediate();
                 } 
             }
