@@ -165,9 +165,8 @@ namespace IRTweaks.Modules.UI {
                     ChatListViewItem view = _views.GetOrCreateView(i);
                     view.ItemIndex = i;
                     ChatListViewItem_SetData(view, chatMessage,(LocalizableText) lt_field_info.GetValue(view));
-                    LayoutRebuilder.ForceRebuildLayoutImmediate(view.gameObject.GetComponent<RectTransform>());
                     foreach (RectTransform componentsInChild in _activeChatList.gameObject.GetComponentsInChildren<RectTransform>())
-                        LayoutRebuilder.ForceRebuildLayoutImmediate(componentsInChild);
+                        LayoutRebuilder.MarkLayoutForRebuild(componentsInChild);
                     _activeChatList.ScrollToBottom();
                 }
                 catch (Exception e)
