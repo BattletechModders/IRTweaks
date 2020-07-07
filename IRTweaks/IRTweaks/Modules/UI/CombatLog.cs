@@ -30,7 +30,8 @@ namespace IRTweaks.Modules.UI {
         private static IViewDataSource<ChatListViewItem> _views;
         private static int clog_count;
         private static  FieldInfo lt_field_info = typeof(ChatListViewItem).GetField("_chatMessage", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-        private static List<RectTransform> layoutcomponents = new List<RectTransform>(1024*8);
+        private static int max_messages = 512;
+        private static List<RectTransform> layoutcomponents = new List<RectTransform>(max_messages+64);
 
         // Shamelessly stolen from https://github.com/janxious/BT-WeaponRealizer/blob/7422573fa69893ae7c16a9d192d85d2152f90fa2/NumberOfShotsEnabler.cs#L32
         public static bool InitModule() {
@@ -167,6 +168,8 @@ namespace IRTweaks.Modules.UI {
                     view.ItemIndex = i;
                     ChatListViewItem_SetData(view, chatMessage,(LocalizableText) lt_field_info.GetValue(view));
                     layoutcomponents.Clear();
+                    if (i >= max_messages)
+                        _views.Pool(i - max_messages);
                     _activeChatList.gameObject.GetComponentsInChildren<RectTransform>(false,layoutcomponents);
                     foreach (RectTransform componentsInChild in layoutcomponents)
                         LayoutRebuilder.MarkLayoutForRebuild(componentsInChild);
