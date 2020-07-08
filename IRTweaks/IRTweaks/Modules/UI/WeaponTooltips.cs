@@ -49,6 +49,15 @@ namespace IRTweaks.Modules.UI {
                         Only working with ImprovedBallistic true, ballistic weapon effect and HasShels false
                                     Damage will be divided by ProjectilesPerShot value, heat damage and stable damage too. 
                     */
+
+                    /*
+                        PER HARKONNEN HALLOWED BY THINE NAME
+                        If ImprovedBallistic = false OR
+                           ImprovedBallistic = true AND (HasShells = true or BallisticDamageperPellet = false) - > damage x shots
+                        If ImprovedBallistic = true and BallisticDamageperPellet = true and DamageNotDivided = true > damage x projectiles x shots
+                        If ImprovedBallistic = true and BallisticDamageperPellet = true and DamageNotDivided = false > (damage/projectiles) x  projectiles x shots
+                    */
+
                     if (extDef.ImprovedBallistic)
                     {
                         // Damage is damage * shotsWhenFired (each shot = volley of projectiles, projectiles are visual only)
@@ -60,35 +69,29 @@ namespace IRTweaks.Modules.UI {
                             ___damage.SetText(localText);
                         }
 
-                        /*
-                            "BallisticDamagePerPallet": true - if true damage inflicted per pallet instead of per shot. 
-                            Only working with ImprovedBallistic true, ballistic weapon effect and HasShels false
-                                        Damage will be divided by ProjectilesPerShot value, heat damage and stable damage too. 
-                        */
-                        if (extDef.HasShells != TripleBoolean.True && extDef.BallisticDamagePerPallet == TripleBoolean.True)
+                        if (extDef.HasShells == TripleBoolean.True || extDef.BallisticDamagePerPallet != TripleBoolean.True)
                         {
-                            // Damage is per pellet, instead of per shot. Heat, stability, damage all divided by projectiles per shot
-                            //   so: (damage / projectilesPerShot) x (shotsWhenFired) x (projectilesPerShot) = {totalDamage}
-                            float damagePerPellet = weaponDef.Damage / weaponDef.ProjectilesPerShot;
-                            totalDamage = damagePerPellet * weaponDef.ShotsWhenFired * weaponDef.ProjectilesPerShot;
-                            string localText = $"{damagePerPellet} x {weaponDef.ShotsWhenFired} x {weaponDef.ProjectilesPerShot} = {totalDamage}";
-                            Mod.Log.Debug($"ImprovedBallistic + BallisticDamagePerPallet weapon damage set to: {localText}");
+                            // damage x shots = total
+                            totalDamage = weaponDef.Damage * weaponDef.ShotsWhenFired;
+                            string localText = $"{weaponDef.Damage} x {weaponDef.ShotsWhenFired} = {totalDamage}";
+                            Mod.Log.Debug($"ImprovedBallistic + HasShells || !BallisticDamagePerPallet weapon damage set to: {localText}");
                             ___damage.SetText(localText);
                         }
 
-                        /*
-                            "HasShells": true/false, if defined determinate has shots shrapnel effect or not. If defined can't be overriden by ammo or mode. 
-                            Shells count is effective ProjectilesPerShot for this weapon/ammo/mode.
-                            Damage per shell - full damage per projectile / ProjectilesPerShot
-                            Only for missiles, ballistic and gauss effects. Should not be used with AoE.
-                            NOTE! If ImprovedBallistic is false HasShells considered as false too no matter real value. 
-                        */
-                        if (extDef.HasShells == TripleBoolean.True)
+                        if (extDef.BallisticDamagePerPallet == TripleBoolean.True && extDef.DamageNotDivided == TripleBoolean.True)
                         {
-                            // Per Harkonnen, sensible thing to do is just damage x shots
-                            totalDamage = weaponDef.Damage * weaponDef.ShotsWhenFired;
-                            string localText = $"{weaponDef.Damage} x {weaponDef.ShotsWhenFired} = {totalDamage}";
-                            Mod.Log.Debug($"ImprovedBallistic + HasShells weapon damage set to: {localText}");
+                            totalDamage = weaponDef.Damage * weaponDef.ProjectilesPerShot * weaponDef.ShotsWhenFired;
+                            string localText = $"{weaponDef.Damage} x {weaponDef.ProjectilesPerShot} x {weaponDef.ShotsWhenFired} = {totalDamage}";
+                            Mod.Log.Debug($"ImprovedBallistic + BallisticDamagePerPallet + DamageNotDivided weapon damage set to: {localText}");
+                            ___damage.SetText(localText);
+                        }
+
+                        if (extDef.BallisticDamagePerPallet == TripleBoolean.True && extDef.DamageNotDivided != TripleBoolean.True)
+                        {
+                            float damagePerPellet = weaponDef.Damage / weaponDef.ProjectilesPerShot;
+                            totalDamage = damagePerPellet * weaponDef.ShotsWhenFired * weaponDef.ProjectilesPerShot;
+                            string localText = $"{damagePerPellet} x {weaponDef.ShotsWhenFired} x {weaponDef.ProjectilesPerShot} = {totalDamage}";
+                            Mod.Log.Debug($"ImprovedBallistic + BallisticDamagePerPallet + !DamageNotDivided weapon damage set to: {localText}");
                             ___damage.SetText(localText);
                         }
 
