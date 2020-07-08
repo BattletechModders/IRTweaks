@@ -15,6 +15,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using static BattleTech.FloatieMessage;
 using BattleTech.UI.ObjectModel;
+using HBS.Pooling;
 
 namespace IRTweaks.Modules.UI {
     public static class CombatLog {
@@ -65,7 +66,7 @@ namespace IRTweaks.Modules.UI {
             } else {
                 CombatLog.combatChatModule.CombatInit();
                 CombatLog.infoSidePanel.BumpUp();
-                clog_count = 0;
+                clog_count = 1;
                 _activeChatList = (ActiveChatListView)typeof(CombatChatModule).GetField("_activeChatList", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).GetValue(combatChatModule);
                 _views = (IViewDataSource<ChatListViewItem>)typeof(ActiveChatListView).BaseType.GetField("_views", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).GetValue(_activeChatList);
             }
@@ -165,11 +166,16 @@ namespace IRTweaks.Modules.UI {
                 {
                     int i = clog_count++;
                     ChatListViewItem view = _views.GetOrCreateView(i);
+                    view.gameObject.transform.SetAsLastSibling();
                     view.ItemIndex = i;
                     ChatListViewItem_SetData(view, chatMessage,(LocalizableText) lt_field_info.GetValue(view));
+
+                    if (i > max_messages)
+                    {
+                        int p = i - max_messages;
+                        _views.Pool(p);
+                    }
                     layoutcomponents.Clear();
-                    if (i >= max_messages)
-                        _views.Pool(i - max_messages);
                     _activeChatList.gameObject.GetComponentsInChildren<RectTransform>(false,layoutcomponents);
                     foreach (RectTransform componentsInChild in layoutcomponents)
                         LayoutRebuilder.MarkLayoutForRebuild(componentsInChild);
