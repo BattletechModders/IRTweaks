@@ -1,22 +1,24 @@
 ﻿using BattleTech.UI;
 using Harmony;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace IRTweaks.Modules.Misc {
 
     [HarmonyPatch(typeof(MainMenu), "Init")]
     public static class MainMenu_Init {
 
-        static bool Prepare() { return Mod.Config.Fixes.DisableCampaign; }
+        static bool Prepare() => Mod.Config.Fixes.DisableCampaign;
 
-        public static void Prefix(MainMenu __instance, HBSRadioSet ___topLevelMenu) {
+        public static void Prefix(HBSRadioSet ___topLevelMenu) {
+            Mod.Log.Info($"Disabling the campaign button on the main menu.");
             try {
-                ___topLevelMenu.RadioButtons.Find((HBSButton x) => x.GetText() == "Campaign")
-                    .gameObject.SetActive(false);
+                foreach (HBSButton button in ___topLevelMenu.RadioButtons)
+                {
+                    if (button.gameObject != null && button.gameObject.name == "button-CAMPAIGN")
+                    {
+                        button.gameObject.SetActive(false);
+                    }
+                }
             } catch (Exception e) {
                 Mod.Log.Error("Failed to disable the campaign!");
                 Mod.Log.Error(e);

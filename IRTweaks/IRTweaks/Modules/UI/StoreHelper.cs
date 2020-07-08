@@ -69,7 +69,7 @@ namespace IRTweaks.Modules.StoreUI {
 
             for (int i = 0; i < quantityBought; i++) {
                 // Decrement the price
-                simGameState.AddFunds(-itemPrice);
+                simGameState.AddFunds(-itemPrice, null, true, true);
                 simGameState.AddFromShopDefItem(storeSDI, false, itemPrice, SimGamePurchaseMessage.TransactionType.Purchase);
                 Mod.Log.Debug($"BH:BMI - Reducing funds by -{itemPrice} and adding 1 of {storeSDI.ID}");
 

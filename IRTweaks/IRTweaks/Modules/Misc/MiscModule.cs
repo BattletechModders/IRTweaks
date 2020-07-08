@@ -28,13 +28,6 @@ namespace IRTweaks.Modules.Misc {
                         harmony.Patch(sgdso_ccm, rsbd_sgdso_ccm_pre, null, null);
                     }
 
-                    if (Mod.Config.Fixes.SkirmishReset) {
-                        Mod.Log.Info("Activating Fix: SkirmishReset");
-                        MethodInfo cus_pd = AccessTools.Method(typeof(CloudUserSettings), "PostDeserialize");
-                        HarmonyMethod sr_cus_pd_pre = new HarmonyMethod(typeof(SkirmishReset), "CloudUserSettings_PostDeserialize_Prefix");
-                        harmony.Patch(cus_pd, sr_cus_pd_pre, null, null);
-                    }
-
                     // Makes the main menu a smoother as there are fewer
                     if (Mod.Config.Fixes.MultiTargetStat) {
                         Mod.Log.Info("Activating Fix: MultiTargetStat");

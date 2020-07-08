@@ -72,6 +72,10 @@ namespace IRTweaks.Modules.Tooltip {
                         CombatLog.InitModule();
                     }
 
+                    if (Mod.Config.Fixes.SkirmishAlwaysUnlimited) {
+                        Mod.Log.Info("Activating Fix: SkirmishAlwaysUnlimited");
+                    }
+
                     // Disables the ability to save in combat
                     if (Mod.Config.Fixes.DisableCombatSaves) {
                         Mod.Log.Info("Activating Fix: DisableCombatSaves");
