@@ -84,6 +84,7 @@ namespace IRTweaks {
         public bool StreamlinedMainMenu = true;
         public bool UrbanExplosionsFix = true;
         public bool WeaponTooltip = true;
+        public bool BlueBuildingDamage = true;
     }
 
     public class ModConfig {
@@ -113,6 +114,7 @@ namespace IRTweaks {
 
             Mod.Log.Info("  -- Fixes --");
             Mod.Log.Info($"  AlternateMechNamingStyle:{this.Fixes.AlternateMechNamingStyle}");
+            Mod.Log.Info($"  BlueBuildDamage:{this.Fixes.BlueBuildingDamage}");
             Mod.Log.Info($"  BraceOnMeleeWithJuggernaut:{this.Fixes.BraceOnMeleeWithJuggernaut}");
             Mod.Log.Info($"  BulkPurchasing:{this.Fixes.BulkPurchasing}");
             Mod.Log.Info($"  CombatLog:{this.Fixes.CombatLog}");
