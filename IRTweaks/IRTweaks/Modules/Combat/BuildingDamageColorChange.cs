@@ -8,7 +8,7 @@ namespace IRTweaks.Modules.Combat
     [HarmonyPatch(typeof(CombatHUDFloatie), "Init")]
     public static class CombatHUDFloatie_Init_Patch {
         
-        public static bool Prepare() => Mod.Config.Fixes.BlueBuildingDamage;
+        public static bool Prepare() => Mod.Config.Fixes.BuildingDamageColorChange;
         
         public static void Postfix(CombatHUDFloatie __instance) {
             CombatHUDFloatieAnchor anchor = __instance.GetComponentInParent<CombatHUDFloatieAnchor>();
