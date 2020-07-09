@@ -2,7 +2,7 @@
 	"Name": "IRTweaks",
 	"Enabled": true,
 	"Hidden": true,
-	"Version": "0.6.8",
+	"Version": "0.6.9",
 	"Description": "Miscellaneous Tweaks and Fixes",
 	"Author": "IceRaptor",
 	"Website": "https://github.com/IceRaptor/IRTweaks",
@@ -14,9 +14,10 @@
 		"Trace": false,
 		"Fixes": {
 			"AlternateMechNamingStyle": false,
+            "BuildingDamageColorChange" : true,
             "BraceOnMeleeWithJuggernaut" : true,
 			"BulkPurchasing": true,
-			"CombatLog": false,
+			"CombatLog": true,
 			"DisableCampaign": false,
 			"DisableCombatSaves": false,
             "DisableMPHashCalculation" : true,
@@ -36,7 +37,8 @@
 			"SkipDeleteSavePopup": true,
 			"SpawnProtection": false,
 			"StreamlinedMainMenu": true,
-			"WeaponTooltip": true
+            "UrbanExplosionsFix" : true,
+			"WeaponTooltip": true,
 		},
 		"Abilities": {
             "FlexibleSensorLockId": "AbilityDefT8A",
