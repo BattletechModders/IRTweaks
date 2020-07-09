@@ -14,6 +14,8 @@ using Unity.Jobs;
 using UnityEngine;
 using UnityEngine.UI;
 using static BattleTech.FloatieMessage;
+using BattleTech.UI.ObjectModel;
+using HBS.Pooling;
 
 namespace IRTweaks.Modules.UI {
     public static class CombatLog {
@@ -24,8 +26,13 @@ namespace IRTweaks.Modules.UI {
         // Static instance pointers from the various components 
         private static CombatGameState combat;
         private static MessageCenter messageCenter;
-
         private static Action<CombatChatModule> CombatChatModule_UIModule_Update;
+        private static ActiveChatListView _activeChatList;
+        private static IViewDataSource<ChatListViewItem> _views;
+        private static int clog_count;
+        private static  FieldInfo lt_field_info = typeof(ChatListViewItem).GetField("_chatMessage", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        private static int max_messages = 512;
+        private static List<RectTransform> layoutcomponents = new List<RectTransform>(max_messages+64);
 
         // Shamelessly stolen from https://github.com/janxious/BT-WeaponRealizer/blob/7422573fa69893ae7c16a9d192d85d2152f90fa2/NumberOfShotsEnabler.cs#L32
         public static bool InitModule() {
@@ -59,6 +66,9 @@ namespace IRTweaks.Modules.UI {
             } else {
                 CombatLog.combatChatModule.CombatInit();
                 CombatLog.infoSidePanel.BumpUp();
+                clog_count = 1;
+                _activeChatList = (ActiveChatListView)typeof(CombatChatModule).GetField("_activeChatList", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).GetValue(combatChatModule);
+                _views = (IViewDataSource<ChatListViewItem>)typeof(ActiveChatListView).BaseType.GetField("_views", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).GetValue(_activeChatList);
             }
 
             Mod.Log.Info($"CombatChatModule pos: {CombatLog.combatChatModule.gameObject.transform.position}");
@@ -95,6 +105,8 @@ namespace IRTweaks.Modules.UI {
             Mod.Log.Info("Combat game destroyed, cleaning up");
             combat = null;
             messageCenter = null;
+            _activeChatList = null;
+            _views = null;
         }
 
         public static void CombatChatModule_Init_Postfix(CombatChatModule __instance, MessageCenter ____messageCenter,
@@ -147,8 +159,38 @@ namespace IRTweaks.Modules.UI {
                         break;
                 }
 
-                messageCenter.PublishMessage(new ChatMessage(senderWithColor, logMessage, false));
-            } catch (Exception e) {
+
+                ChatMessage chatMessage = new ChatMessage(senderWithColor, logMessage, false);
+                Mod.Log.Debug($"Chat message is: '{chatMessage.Message}'");
+                try
+                {
+                    int i = clog_count++;
+                    ChatListViewItem view = _views.GetOrCreateView(i);
+                    view.gameObject.transform.SetAsLastSibling();
+                    view.ItemIndex = i;
+                    ChatListViewItem_SetData(view, chatMessage,(LocalizableText) lt_field_info.GetValue(view));
+
+                    if (i > max_messages)
+                    {
+                        int p = i - max_messages;
+                        _views.Pool(p);
+                    }
+                    if (!CanvasUpdateRegistry.IsRebuildingLayout())
+                    {
+                        _activeChatList.gameObject.GetComponentsInChildren<RectTransform>(false, layoutcomponents);
+                        foreach (RectTransform componentsInChild in layoutcomponents)
+                            LayoutRebuilder.MarkLayoutForRebuild(componentsInChild);
+                        layoutcomponents.Clear();
+                    }
+                    _activeChatList.ScrollToBottom();
+                }
+                catch (Exception e)
+                {
+                    Mod.Log.Error($"Failed to send a message:{e.Message}");
+                    Mod.Log.Error($"{e.StackTrace}");
+                }
+            }
+            catch (Exception e) {
                 Mod.Log.Error($"Failed to send floatieMessage: {floatieMessage}");
                 Mod.Log.Error(e);
             }
@@ -199,23 +241,6 @@ namespace IRTweaks.Modules.UI {
             }
         }
 
-        public static bool CombatChatModule_OnChatMessage_Prefix(CombatChatModule __instance, MessageCenterMessage message,
-            ActiveChatListView ____activeChatList, PassiveChatListView ____passiveChatList) {
-
-            ChatMessage chatMessage = (ChatMessage)message;
-            Mod.Log.Debug($"Chat message is: '{chatMessage.Message}'");
-            try {
-                ____activeChatList.Add(chatMessage);
-                ____activeChatList.ScrollToBottom();
-                ____activeChatList.Refresh();
-            } catch (Exception e) {
-                Mod.Log.Error($"Failed to send a message:{e.Message}");
-                Mod.Log.Error($"{e.StackTrace}");
-            }
-
-            return false;
-        }
-
         // Re-enable keyboard input (don't block out wasd)
         public static void CombatChatModule_Active_OnEnter_Postfix(CombatChatModule __instance, HBS_InputField ____inputField) {
             ____inputField.DeactivateInputField();
@@ -244,18 +269,7 @@ namespace IRTweaks.Modules.UI {
             }
         }
 
-        [HarmonyPatch(typeof(OrderSequence), "OnComplete")]
-        public static class OrderSequence_OnComplete {
-            static bool Prepare() { return Mod.Config.Fixes.CombatLog; }
-
-            static void Postfix(OrderSequence __instance) {
-                if (CombatLog.combatChatModule != null) {
-                    CombatLog.combatChatModule.ForceRefreshImmediate();
-                } 
-            }
-        }
-
-        public static bool ChatListViewItem_SetData_Prefix(ChatListViewItem __instance, ChatMessage message,
+        private static void ChatListViewItem_SetData(ChatListViewItem __instance, ChatMessage message,
             LocalizableText ____chatMessage) {
 
             string expandedSender = message.SenderName.Replace("&gt;", ">");
@@ -271,15 +285,7 @@ namespace IRTweaks.Modules.UI {
 
             Localize.Text translatedText = new Localize.Text("<size=-3>" + senderText + " " + messageText + "</size>");
             ____chatMessage.text = translatedText.ToString();
-            
-            DOTweenAnimation componentInChildren = ____chatMessage.GetComponentInChildren<DOTweenAnimation>();
-            if (componentInChildren != null) {
-                componentInChildren.delay = 50;
-                componentInChildren.CreateTween();
-                componentInChildren.DOPlay();
-            }
 
-            return false;
         }
 
         public static void CombatHUDActorInfo_SubscribeToMessages_Postfix(CombatHUDActorInfo __instance) {
