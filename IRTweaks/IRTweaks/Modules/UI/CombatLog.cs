@@ -175,11 +175,13 @@ namespace IRTweaks.Modules.UI {
                         int p = i - max_messages;
                         _views.Pool(p);
                     }
-                    layoutcomponents.Clear();
-                    _activeChatList.gameObject.GetComponentsInChildren<RectTransform>(false,layoutcomponents);
-                    foreach (RectTransform componentsInChild in layoutcomponents)
-                        LayoutRebuilder.MarkLayoutForRebuild(componentsInChild);
-                    layoutcomponents.Clear();
+                    if (!CanvasUpdateRegistry.IsRebuildingLayout())
+                    {
+                        _activeChatList.gameObject.GetComponentsInChildren<RectTransform>(false, layoutcomponents);
+                        foreach (RectTransform componentsInChild in layoutcomponents)
+                            LayoutRebuilder.MarkLayoutForRebuild(componentsInChild);
+                        layoutcomponents.Clear();
+                    }
                     _activeChatList.ScrollToBottom();
                 }
                 catch (Exception e)
