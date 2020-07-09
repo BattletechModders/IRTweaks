@@ -77,9 +77,10 @@ namespace IRTweaks.Modules.Combat
                 // Destroy the buildings immediately
                 foreach (BattleTech.Building building in ModState.ExplosionBuildingTargets)
                 {
+                    Mod.Log.Info($"Applying damage to target building: {building.DistinctId()}");
                     if (__instance.damageEachLocation > 0f)
                     {
-                        Mod.Log.Info($" -- applying {__instance.damageEachLocation} damage to all target locations.");
+                        Mod.Log.Info($" -- applying {__instance.damageEachLocation} damage to all locations.");
                         DamageOrderUtility.ApplyDamageToAllLocations("ArtillerySequence", __instance.SequenceGUID, __instance.RootSequenceGUID,
                             building, (int)__instance.damageEachLocation, (int)__instance.damageEachLocation, 
                             AttackDirection.FromArtillery, DamageType.Artillery);
@@ -87,13 +88,13 @@ namespace IRTweaks.Modules.Combat
 
                     if (__instance.heatDamage != 0)
                     {
-                        Mod.Log.Info($" -- applying {__instance.damageEachLocation} heat to all target locations.");
+                        Mod.Log.Info($" -- applying {__instance.damageEachLocation} heat to all locations.");
                         DamageOrderUtility.ApplyHeatDamage(__instance.SequenceGUID, building, __instance.heatDamage);
                     }
 
                     if (__instance.stabilityDamage > 0)
                     {
-                        Mod.Log.Info($" -- applying {__instance.damageEachLocation} instability to all target locations.");
+                        Mod.Log.Info($" -- applying {__instance.damageEachLocation} instability to all locations.");
                         DamageOrderUtility.ApplyStabilityDamage(__instance.SequenceGUID, building, __instance.stabilityDamage);
                     }
 
@@ -108,4 +109,12 @@ namespace IRTweaks.Modules.Combat
         }
     }
 
+    [HarmonyPatch(typeof(AbstractActor), "OnRecomputePathing")]
+    static class AbstractActor_OnRecomputePathing
+    {
+        static void Prefix(AbstractActor __instance)
+        {
+            Mod.Log.Info($"Recomputing pathing for actor: {__instance.DistinctId()}");
+        }
+    }
 }
