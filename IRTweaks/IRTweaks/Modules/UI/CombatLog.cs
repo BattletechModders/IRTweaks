@@ -143,7 +143,7 @@ namespace IRTweaks.Modules.UI {
                     senderColor = "#" + ColorUtility.ToHtmlStringRGBA(LazySingletonBehavior<UIManager>.Instance.UIColorRefs.greenHalf);
                 }
 
-                string sender = (target.IsPilotable && target.GetPilot() != null) ? $"{target.DisplayName}-{target.GetPilot().Name}" : $"{target.DisplayName}";
+                string sender = (target.IsPilotable && target.GetPilot() != null) ? $"{target.GetPilot().Name}" : $"{target.DisplayName}";
                 string senderWithColor = $"&lt;{senderColor}&gt;{sender}&lt;/color&gt;";
                 Mod.Log.Debug($"ChatMessage senderWithColor: '{senderWithColor}'");
 
