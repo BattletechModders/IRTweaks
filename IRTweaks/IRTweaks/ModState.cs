@@ -14,12 +14,15 @@ namespace IRTweaks {
         public static float InjuryResistPenalty = -1f;
 
         public static List<int> ExplosionSequences = new List<int>();
+        public static List<BattleTech.Building> ExplosionBuildingTargets = new List<BattleTech.Building>();
 
         public static void Reset() {
             // Reinitialize state
             PilotCalledShotModifiers.Clear();
             InjuryResistPenalty = -1f;
+
             ExplosionSequences.Clear();
+            ExplosionBuildingTargets.Clear();
         }
     }
 
