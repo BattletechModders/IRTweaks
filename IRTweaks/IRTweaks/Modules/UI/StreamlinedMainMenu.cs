@@ -17,7 +17,7 @@ namespace IRTweaks.Modules.UI {
             static bool Prepare() { return Mod.Config.Fixes.StreamlinedMainMenu; }
 
             static void Postfix(SGContractsWidget __instance, GameObject ___ContractList) {
-                Mod.Log.Trace($"SGCW:I - entered.");
+                Mod.Log.Trace?.Write($"SGCW:I - entered.");
 
                 RectTransform clRT = ___ContractList.GetComponent<RectTransform>();
                 if (clRT != null) {
@@ -25,7 +25,7 @@ namespace IRTweaks.Modules.UI {
                     ns.y += 260;
                     clRT.sizeDelta = ns;
                 } else {
-                    Mod.Log.Info("ContractList rectTransform is null!");
+                    Mod.Log.Info?.Write("ContractList rectTransform is null!");
                 }
             }
         }
@@ -35,7 +35,7 @@ namespace IRTweaks.Modules.UI {
             static bool Prepare() { return Mod.Config.Fixes.StreamlinedMainMenu; }
 
             static void Postfix(SGNavigationButton __instance, LocalizableText ___text, List<SGNavFlyoutButton> ___FlyoutButtonList, int ___flyoutButtonCount) {
-                Mod.Log.Trace($"SGNB:RFTP - entered button {___text.GetParsedText()} with {___flyoutButtonCount} flyout buttons for ID: {__instance.ID}");
+                Mod.Log.Trace?.Write($"SGNB:RFTP - entered button {___text.GetParsedText()} with {___flyoutButtonCount} flyout buttons for ID: {__instance.ID}");
                 if (__instance.ID != DropshipLocation.CPT_QUARTER && !___text.text.Contains("CMD Staff")) {
                     foreach (SGNavFlyoutButton flyoutButton in ___FlyoutButtonList) {
                         flyoutButton.gameObject.SetActive(false);
@@ -49,7 +49,7 @@ namespace IRTweaks.Modules.UI {
             static bool Prepare() { return Mod.Config.Fixes.StreamlinedMainMenu; }
 
             static void Postfix(SGNavigationButton __instance, DropshipType shipType, List<SGNavFlyoutButton> ___FlyoutButtonList, LocalizableText ___text) {
-                Mod.Log.Trace($"SGNB:SSATSD - entered shipType:{shipType} for ID: {__instance.ID}");
+                Mod.Log.Trace?.Write($"SGNB:SSATSD - entered shipType:{shipType} for ID: {__instance.ID}");
                 if (__instance.ID != DropshipLocation.CPT_QUARTER && !___text.text.Contains("CMD Staff")) {
                     foreach (SGNavFlyoutButton flyoutButton in ___FlyoutButtonList) {
                         flyoutButton.gameObject.SetActive(false);
@@ -63,7 +63,7 @@ namespace IRTweaks.Modules.UI {
             static bool Prepare() { return Mod.Config.Fixes.StreamlinedMainMenu; }
 
             static void Postfix(SGNavigationButton __instance, PointerEventData eventData, List<SGNavFlyoutButton> ___FlyoutButtonList, LocalizableText ___text) {
-                Mod.Log.Trace($"SGNB:OPE - entered.");
+                Mod.Log.Trace?.Write($"SGNB:OPE - entered.");
                 if (__instance.ID != DropshipLocation.CPT_QUARTER && !___text.text.Contains("CMD Staff")) {
                     foreach (SGNavFlyoutButton flyoutButton in ___FlyoutButtonList) {
                         flyoutButton.gameObject.SetActive(false);
@@ -77,7 +77,7 @@ namespace IRTweaks.Modules.UI {
             static bool Prepare() { return Mod.Config.Fixes.StreamlinedMainMenu; }
 
             static void Postfix(SGNavigationButton __instance, SGNavigationList ___buttonParent, LocalizableText ___text) {
-                Mod.Log.Debug($"SGNB:OC - button clicked for ID: {__instance.ID}");
+                Mod.Log.Debug?.Write($"SGNB:OC - button clicked for ID: {__instance.ID}");
                 SimGameState simulation = UnityGameInstance.BattleTechGame.Simulation;
 
                 switch (__instance.ID) {
@@ -140,12 +140,12 @@ namespace IRTweaks.Modules.UI {
             private static void QueueOrForceActivation(DropshipMenuType menuType, DropshipLocation location, SGNavigationWidgetLeft sgnwl, SimGameState sgs) {
                 if (sgs.CameraController.betweenRoomTransitionTime == 0f && sgs.CameraController.inRoomTransitionTime == 0f) {
                     // Check for a 0 animation time on SGRoomManager; if set, BTPerfFix is active and we need to force a transition
-                    Mod.Log.Info($"DEBUG - calling SetSubroom for location:{location} and menuType:{menuType}!");
+                    Mod.Log.Info?.Write($"DEBUG - calling SetSubroom for location:{location} and menuType:{menuType}!");
                     sgs.RoomManager.ChangeRoom(location);
                     sgs.RoomManager.SetSubRoom(location, menuType);
                 } else {
                     // Let the animation happen via the queued activation
-                    Mod.Log.Info("DEBUG - calling SetQueuedUIActivationID!");
+                    Mod.Log.Info?.Write("DEBUG - calling SetQueuedUIActivationID!");
                     sgnwl.SetQueuedUIActivationID(menuType, location);
                 }
             }
@@ -157,7 +157,7 @@ namespace IRTweaks.Modules.UI {
             static bool Prepare() { return Mod.Config.Fixes.StreamlinedMainMenu; }
 
             static void Postfix(SGNavigationWidgetLeft __instance, SGShipMap ___shipMap, SGNavigationList ___locationList) {
-                Mod.Log.Info($"SGNWL:I - entered with instanceType: {__instance.GetType()}.");
+                Mod.Log.Info?.Write($"SGNWL:I - entered with instanceType: {__instance.GetType()}.");
 
                 ___shipMap.gameObject.SetActive(false);
 
@@ -174,7 +174,7 @@ namespace IRTweaks.Modules.UI {
             static bool Prepare() { return Mod.Config.Fixes.StreamlinedMainMenu; }
 
             static void Prefix(SGNavigationButton __instance, DropshipMenuType buttonID, LocalizableText ___text, SGNavigationList ___buttonParent) {
-                Mod.Log.Debug($"SGNB:FC - button clicked for ID: {__instance.ID} for menuType:{buttonID} with transition:{SimGameCameraController.TransitionInProgress}");
+                Mod.Log.Debug?.Write($"SGNB:FC - button clicked for ID: {__instance.ID} for menuType:{buttonID} with transition:{SimGameCameraController.TransitionInProgress}");
                 // Skip if there's already a transition in progress
                 if (SimGameCameraController.TransitionInProgress) { return; }
 
@@ -184,12 +184,12 @@ namespace IRTweaks.Modules.UI {
             //private static void QueueOrForceActivation(DropshipMenuType menuType, DropshipLocation location, SGNavigationWidgetLeft sgnwl, SimGameState sgs) {
             //    if (sgs.CameraController.betweenRoomTransitionTime == 0f && sgs.CameraController.inRoomTransitionTime == 0f) {
             //        // Check for a 0 animation time on SGRoomManager; if set, BTPerfFix is active and we need to force a transition
-            //        Mod.Log.Info($"DEBUG - calling SetSubroom for location:{location} and menuType:{menuType}!");
+            //        Mod.Log.Info?.Write($"DEBUG - calling SetSubroom for location:{location} and menuType:{menuType}!");
             //        sgs.RoomManager.ChangeRoom(location);
             //        sgs.RoomManager.SetSubRoom(location, menuType);
             //    } else {
             //        // Let the animation happen via the queued activation
-            //        Mod.Log.Info("DEBUG - calling SetQueuedUIActivationID!");
+            //        Mod.Log.Info?.Write("DEBUG - calling SetQueuedUIActivationID!");
             //        sgnwl.SetQueuedUIActivationID(menuType, location);
             //    }
             //}
@@ -205,7 +205,7 @@ namespace IRTweaks.Modules.UI {
                     FactionValue owner = simState.CurSystem.OwnerValue;
                     int reputation = (int)simState.GetReputation(owner);
                     if (reputation <= -3) {
-                        Mod.Log.Info("Faction reputation too low, disabling store button.");
+                        Mod.Log.Info?.Write("Faction reputation too low, disabling store button.");
                         SGNavigationList_Start.storeButton.SetState(ButtonState.Disabled);
                     }
                 }
@@ -223,12 +223,12 @@ namespace IRTweaks.Modules.UI {
 
             static void Postfix(SGNavigationList __instance, HBSRadioSet ___radioSet, SGNavigationButton ___argoButton) {
                 if (__instance.navParent != null) {
-                    Mod.Log.Info($"SGNL:Start - adding new button.");
+                    Mod.Log.Info?.Write($"SGNL:Start - adding new button.");
                     SimGameState simulation = UnityGameInstance.BattleTechGame.Simulation;
 
                     try {
                         // Create the store button
-                        Mod.Log.Info(" - Creating store button");
+                        Mod.Log.Info?.Write(" - Creating store button");
                         GameObject storeButtonGO = GameObject.Instantiate(___argoButton.gameObject);
                         storeButtonGO.SetActive(true);
                         storeButtonGO.transform.position = ___argoButton.gameObject.transform.position;
@@ -243,7 +243,7 @@ namespace IRTweaks.Modules.UI {
                             LazySingletonBehavior<UIManager>.Instance.UILookAndColorConstants.DropshipRoomCaptainsQuartersIcon, simulation);
 
                         // Create the staff button
-                        Mod.Log.Info(" - Creating staff button");
+                        Mod.Log.Info?.Write(" - Creating staff button");
                         GameObject staffButtonGO = GameObject.Instantiate(___argoButton.gameObject);
                         staffButtonGO.SetActive(true);
                         staffButtonGO.transform.position = ___argoButton.gameObject.transform.position;
@@ -266,7 +266,7 @@ namespace IRTweaks.Modules.UI {
                         }
 
                         // Create the memorial button
-                        Mod.Log.Info(" - Creating memorial button");
+                        Mod.Log.Info?.Write(" - Creating memorial button");
                         GameObject memorialButtonGO = GameObject.Instantiate(___argoButton.gameObject);
                         memorialButtonGO.SetActive(true);
                         memorialButtonGO.transform.position = ___argoButton.gameObject.transform.position;
@@ -283,7 +283,7 @@ namespace IRTweaks.Modules.UI {
                         //memorialButton.AddFlyoutButton("Memorial Wall", DropshipMenuType.MemorialWall);
 
                     } catch (Exception e) {
-                        Mod.Log.Info("Error: " + e.Message);
+                        Mod.Log.Info?.Write("Error: " + e.Message);
                     }
 
                 }

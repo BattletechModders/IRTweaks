@@ -20,7 +20,7 @@ namespace IRTweaks.Modules.Combat {
                 try {
                     // Update the pilot stats to have a maximum greater than 10
                     if (Mod.Config.Fixes.ExtendedStats) {
-                        Mod.Log.Info("Activating Fix: ExtendedStats");
+                        Mod.Log.Info?.Write("Activating Fix: ExtendedStats");
                         MethodInfo pilot_ISV_MI = AccessTools.Method(typeof(Pilot), "InitStatValidators");
                         HarmonyMethod psv_ISV_HM = new HarmonyMethod(typeof(PilotStatValidators), "Pilot_InitStatValidators_Prefix");
                         harmony.Patch(pilot_ISV_MI, psv_ISV_HM, null, null);
@@ -28,7 +28,7 @@ namespace IRTweaks.Modules.Combat {
 
                     // Headshot patches - prevent headshot without appropriate equipment
                     if (Mod.Config.Fixes.PreventHeadShots) {
-                        Mod.Log.Info("Activating Fix: PreventCalledShots");
+                        Mod.Log.Info?.Write("Activating Fix: PreventCalledShots");
                         MethodInfo aa_IES_MI = AccessTools.Method(typeof(AbstractActor), "InitEffectStats");
                         HarmonyMethod cs_aa_IES_Post = new HarmonyMethod(typeof(CalledShots), "AbstractActor_InitEffectStats_Postfix");
                         harmony.Patch(aa_IES_MI, null, cs_aa_IES_Post, null);
@@ -59,7 +59,7 @@ namespace IRTweaks.Modules.Combat {
                     }
 
                     if (Mod.Config.Fixes.FlexibleSensorLock) {
-                        Mod.Log.Info("Activating Fix: FlexibleSensorLock");
+                        Mod.Log.Info?.Write("Activating Fix: FlexibleSensorLock");
                         // TODO: Add in sensor probe sequence. Limit to once per turn.
                         HarmonyMethod slc_r_f_post = new HarmonyMethod(typeof(FlexibleSensorLock), "Returns_False_Postfix");
 
@@ -101,7 +101,7 @@ namespace IRTweaks.Modules.Combat {
                     }
 
                     if (Mod.Config.Fixes.SpawnProtection) {
-                        Mod.Log.Info("Activating Fix: SpawnProtection");
+                        Mod.Log.Info?.Write("Activating Fix: SpawnProtection");
 
                         MethodInfo t_au = AccessTools.Method(typeof(Team), "AddUnit");
                         HarmonyMethod sp_t_au_post = new HarmonyMethod(typeof(SpawnProtection), "Team_AddUnit_Postfix");
@@ -114,8 +114,8 @@ namespace IRTweaks.Modules.Combat {
 
                 }
                 catch (Exception e) {
-                    Mod.Log.Error($"Failed to load patches due to: {e.Message}");
-                    Mod.Log.Error(e);
+                    Mod.Log.Error?.Write($"Failed to load patches due to: {e.Message}");
+                    Mod.Log.Error?.Write(e);
                 }
             }
             Initialized = true;

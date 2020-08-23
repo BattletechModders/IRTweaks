@@ -53,7 +53,7 @@ namespace IRTweaks.Modules.UI {
         }
 
         public static void CombatHUD_Init_Postfix(CombatHUD __instance, CombatGameState Combat) {
-            Mod.Log.Trace("CHUD:I:post - entered.");
+            Mod.Log.Trace?.Write("CHUD:I:post - entered.");
 
             CombatLog.infoSidePanel = LazySingletonBehavior<UIManager>.Instance.GetOrCreateUIModule<CombatHUDInfoSidePanel>("", true);
             infoSidePanel.Init();
@@ -62,7 +62,7 @@ namespace IRTweaks.Modules.UI {
             // Combat Chat module
             CombatLog.combatChatModule = LazySingletonBehavior<UIManager>.Instance.GetOrCreateUIModule<CombatChatModule>("", true);
             if (CombatLog.combatChatModule == null) {
-                Mod.Log.Error("Error creating combat chat module");
+                Mod.Log.Error?.Write("Error creating combat chat module");
             } else {
                 CombatLog.combatChatModule.CombatInit();
                 CombatLog.infoSidePanel.BumpUp();
@@ -71,8 +71,8 @@ namespace IRTweaks.Modules.UI {
                 _views = (IViewDataSource<ChatListViewItem>)typeof(ActiveChatListView).BaseType.GetField("_views", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).GetValue(_activeChatList);
             }
 
-            Mod.Log.Info($"CombatChatModule pos: {CombatLog.combatChatModule.gameObject.transform.position}");
-            Mod.Log.Info($"RetreatEscMenu pos: {__instance.RetreatEscMenu.gameObject.transform.position}");
+            Mod.Log.Info?.Write($"CombatChatModule pos: {CombatLog.combatChatModule.gameObject.transform.position}");
+            Mod.Log.Info?.Write($"RetreatEscMenu pos: {__instance.RetreatEscMenu.gameObject.transform.position}");
 
             Vector3 newPos = CombatLog.combatChatModule.gameObject.transform.position;
             newPos.x = __instance.RetreatEscMenu.gameObject.transform.position.x * 1.25f;
@@ -80,11 +80,11 @@ namespace IRTweaks.Modules.UI {
             //newPos.z = __instance.WeaponPanel.gameObject.transform.position.z;
 
             CombatLog.combatChatModule.gameObject.transform.position = newPos;
-            Mod.Log.Info($"new CombatChatModule pos: {newPos}");
+            Mod.Log.Info?.Write($"new CombatChatModule pos: {newPos}");
 
             // Move the chat button into the menu
             Transform chatBtnT = CombatLog.combatChatModule.gameObject.transform.Find("Representation/chat_panel/uixPrf_chatButton");
-            Mod.Log.Info($"ChatButton base  pos: {newPos}");
+            Mod.Log.Info?.Write($"ChatButton base  pos: {newPos}");
             if (chatBtnT != null) {
                 if (__instance.Combat.BattleTechGame.Simulation == null) { 
                     newPos.x -= 620f; // skirmish, no withdraw button
@@ -93,16 +93,16 @@ namespace IRTweaks.Modules.UI {
                 }
                 newPos.y += 80f;
                 chatBtnT.position = newPos;
-                Mod.Log.Info($"ChatButton new  pos: {newPos}");
+                Mod.Log.Info?.Write($"ChatButton new  pos: {newPos}");
             } else {
-                Mod.Log.Info("Could not find chatButton to change position!");
+                Mod.Log.Info?.Write("Could not find chatButton to change position!");
             }
 
             combat = Combat;
         }
 
         public static void CombatHUD_OnCombatGameDestroyed_Postfix() {
-            Mod.Log.Info("Combat game destroyed, cleaning up");
+            Mod.Log.Info?.Write("Combat game destroyed, cleaning up");
             combat = null;
             messageCenter = null;
             _activeChatList = null;
@@ -145,7 +145,7 @@ namespace IRTweaks.Modules.UI {
 
                 string sender = (target.IsPilotable && target.GetPilot() != null) ? $"{target.DisplayName}-{target.GetPilot().Name}" : $"{target.DisplayName}";
                 string senderWithColor = $"&lt;{senderColor}&gt;{sender}&lt;/color&gt;";
-                Mod.Log.Debug($"ChatMessage senderWithColor: '{senderWithColor}'");
+                Mod.Log.Debug?.Write($"ChatMessage senderWithColor: '{senderWithColor}'");
 
                 string logMessage = floatieMessage.text.ToString();
                 switch (floatieMessage.nature) {
@@ -161,7 +161,7 @@ namespace IRTweaks.Modules.UI {
 
 
                 ChatMessage chatMessage = new ChatMessage(senderWithColor, logMessage, false);
-                Mod.Log.Debug($"Chat message is: '{chatMessage.Message}'");
+                Mod.Log.Debug?.Write($"Chat message is: '{chatMessage.Message}'");
                 try
                 {
                     int i = clog_count++;
@@ -186,13 +186,13 @@ namespace IRTweaks.Modules.UI {
                 }
                 catch (Exception e)
                 {
-                    Mod.Log.Error($"Failed to send a message:{e.Message}");
-                    Mod.Log.Error($"{e.StackTrace}");
+                    Mod.Log.Error?.Write($"Failed to send a message:{e.Message}");
+                    Mod.Log.Error?.Write($"{e.StackTrace}");
                 }
             }
             catch (Exception e) {
-                Mod.Log.Error($"Failed to send floatieMessage: {floatieMessage}");
-                Mod.Log.Error(e);
+                Mod.Log.Error?.Write($"Failed to send floatieMessage: {floatieMessage}");
+                Mod.Log.Error?.Write(e);
             }
         }
 
@@ -213,7 +213,7 @@ namespace IRTweaks.Modules.UI {
             if (sendButtonT != null) {
                 sendButtonT.gameObject.SetActive(false);
             } else {
-                Mod.Log.Info("Could not find send button to disable!");
+                Mod.Log.Info?.Write("Could not find send button to disable!");
             }
 
             // Set the scroll spacing to 0
@@ -222,7 +222,7 @@ namespace IRTweaks.Modules.UI {
                 VerticalLayoutGroup scrollListVLG = scrollListT.gameObject.GetComponent<VerticalLayoutGroup>();
                 scrollListVLG.spacing = 0;
             } else {
-                Mod.Log.Info("Could not find scrollList to change spacing!");
+                Mod.Log.Info?.Write("Could not find scrollList to change spacing!");
             }
 
             // Resize the image background
@@ -230,14 +230,14 @@ namespace IRTweaks.Modules.UI {
             if (imageBackgroundT != null) {
                 RectTransform imageBackgroundRT = imageBackgroundT.gameObject.GetComponent<RectTransform>();
                 Rect ibRect = imageBackgroundRT.rect;
-                Mod.Log.Info($"Background image size: {ibRect.height}h x {ibRect.width}");
+                Mod.Log.Info?.Write($"Background image size: {ibRect.height}h x {ibRect.width}");
                 Vector3 newPos = imageBackgroundRT.position;
                 newPos.y += 20f;
                 imageBackgroundRT.position = newPos;
                 imageBackgroundRT.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, ibRect.height - 20);
                 imageBackgroundRT.ForceUpdateRectTransforms();
             } else {
-                Mod.Log.Info("Could not find imageBackground to change size!");
+                Mod.Log.Info?.Write("Could not find imageBackground to change size!");
             }
         }
 
@@ -252,7 +252,7 @@ namespace IRTweaks.Modules.UI {
             static bool Prepare() { return Mod.Config.Fixes.CombatLog; }
 
             static bool Prefix(CombatChatModule __instance, ActiveChatListView ____activeChatList) {
-                //Mod.Log.Info(" -- CCM:Update:pre invoked");
+                //Mod.Log.Info?.Write(" -- CCM:Update:pre invoked");
                 // Invoke base.Update()
                 CombatChatModule_UIModule_Update.Invoke(__instance);
 
@@ -262,7 +262,7 @@ namespace IRTweaks.Modules.UI {
                     LocalizableText chatBtnLT = chatBtnT.GetComponentInChildren<LocalizableText>();
                     chatBtnLT.SetText(" ");
                 } else {
-                    Mod.Log.Info("Could not find chat button");
+                    Mod.Log.Info?.Write("Could not find chat button");
                 }
 
                 return false;
@@ -275,13 +275,13 @@ namespace IRTweaks.Modules.UI {
             string expandedSender = message.SenderName.Replace("&gt;", ">");
             expandedSender = expandedSender.Replace("&lt;", "<");
             string senderText = $"{expandedSender}";
-            Mod.Log.Debug($"Message senderName: '{message.SenderName}'  expandedSender: '{expandedSender}'  senderText: '{senderText}'");
+            Mod.Log.Debug?.Write($"Message senderName: '{message.SenderName}'  expandedSender: '{expandedSender}'  senderText: '{senderText}'");
 
             string messageColor = "#" + ColorUtility.ToHtmlStringRGBA(LazySingletonBehavior<UIManager>.Instance.UIColorRefs.whiteHalf);
             string expandedMessage = message.Message.Replace("&gt;", ">");
             expandedMessage = expandedMessage.Replace("&lt;", "<");
             string messageText = $"<{messageColor}>{expandedMessage}</color>";
-            Mod.Log.Debug($"Message text: '{expandedMessage}'");
+            Mod.Log.Debug?.Write($"Message text: '{expandedMessage}'");
 
             Localize.Text translatedText = new Localize.Text("<size=-3>" + senderText + " " + messageText + "</size>");
             ____chatMessage.text = translatedText.ToString();
@@ -292,7 +292,7 @@ namespace IRTweaks.Modules.UI {
             // Unsubscribe immediately so we don't process messages
             MethodInfo onFloatieMI = AccessTools.Method(typeof(CombatHUDActorInfo), "OnFloatie", new Type[] { typeof(MessageCenterMessage) }, null);
             Delegate onFloatieDelegate = onFloatieMI.CreateDelegate(typeof(ReceiveMessageCenterMessage), __instance);
-            Mod.Log.Info("Unsubscribing from CombatHUDActorInfo:OnFloatie messages.");
+            Mod.Log.Info?.Write("Unsubscribing from CombatHUDActorInfo:OnFloatie messages.");
             __instance.Combat.MessageCenter.RemoveSubscriber(MessageCenterMessageType.FloatieMessage, (ReceiveMessageCenterMessage)onFloatieDelegate);
         }
 
@@ -301,10 +301,10 @@ namespace IRTweaks.Modules.UI {
 
             if (GUID == MessageCenterMessageType.FloatieMessage) {
                 List<MessageSubscription> list = ___messageTable[GUID];
-                Mod.Log.Info($"MCMT subscription list is size: {list.Count}");
+                Mod.Log.Info?.Write($"MCMT subscription list is size: {list.Count}");
             }
             //} else {
-            //    Mod.Log.Info("MCMT not floatie, skipping.");
+            //    Mod.Log.Info?.Write("MCMT not floatie, skipping.");
             //}
         }
 

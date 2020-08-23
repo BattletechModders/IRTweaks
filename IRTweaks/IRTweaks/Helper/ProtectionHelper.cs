@@ -7,7 +7,7 @@ using us.frostraptor.modUtils;
 namespace IRTweaks.Helper {
     public static class ProtectionHelper {
         public static void ProtectOnFirstRound() {
-            Mod.Log.Info($"Protecting units on first turn'");
+            Mod.Log.Info?.Write($"Protecting units on first turn'");
             CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
             HostilityMatrix hm = combatState.HostilityMatrix;
             Team playerTeam = combatState.LocalPlayerTeam;
@@ -43,7 +43,7 @@ namespace IRTweaks.Helper {
             foreach (AbstractActor actor in actors) {
                 // Turrets don't get protection
                 if (actor.GetType() != typeof(Turret)) {
-                    Mod.Log.Info($"Applying braced state to actor:{CombatantUtils.Label(actor)} of type:{actor.GetType()}");
+                    Mod.Log.Info?.Write($"Applying braced state to actor:{CombatantUtils.Label(actor)} of type:{actor.GetType()}");
                     actor.ApplyBraced();
                 }
 
@@ -57,7 +57,7 @@ namespace IRTweaks.Helper {
             foreach (AbstractActor actor in actors) {
                 // Turrets don't get protection
                 if (actor.GetType() != typeof(Turret)) {
-                    Mod.Log.Info($"Adding '{evasionToAdd}' evasion pips to actor:{CombatantUtils.Label(actor)} of type:{actor.GetType()}");
+                    Mod.Log.Info?.Write($"Adding '{evasionToAdd}' evasion pips to actor:{CombatantUtils.Label(actor)} of type:{actor.GetType()}");
 
                     actor.EvasivePipsCurrent += evasionToAdd;
                     AccessTools.Property(typeof(AbstractActor), "EvasivePipsTotal").SetValue(actor, actor.EvasivePipsCurrent, null);

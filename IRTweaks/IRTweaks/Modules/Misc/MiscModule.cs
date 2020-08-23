@@ -14,7 +14,7 @@ namespace IRTweaks.Modules.Misc {
                 try {
                     // Update the pilot stats to have a maximum greater than 10
                     if (Mod.Config.Fixes.RandomStartByDifficulty) {
-                        Mod.Log.Info("Activating Fix: RandomStartByDifficulty");
+                        Mod.Log.Info?.Write("Activating Fix: RandomStartByDifficulty");
                         MethodInfo sgs_arsm = AccessTools.Method(typeof(SimGameState), "AddRandomStartingMechs");
                         HarmonyMethod rsbd_sgs_arsm_pre = new HarmonyMethod(typeof(RandomStartByDifficulty), "SimGameState_AddRandomStartingMechs_Prefix");
                         harmony.Patch(sgs_arsm, rsbd_sgs_arsm_pre, null, null);
@@ -30,12 +30,12 @@ namespace IRTweaks.Modules.Misc {
 
                     // Makes the main menu a smoother as there are fewer
                     if (Mod.Config.Fixes.MultiTargetStat) {
-                        Mod.Log.Info("Activating Fix: MultiTargetStat");
+                        Mod.Log.Info?.Write("Activating Fix: MultiTargetStat");
                     }
 
                 } catch (Exception e) {
-                    Mod.Log.Error($"Failed to load patches due to: {e.Message}");
-                    Mod.Log.Error(e);
+                    Mod.Log.Error?.Write($"Failed to load patches due to: {e.Message}");
+                    Mod.Log.Error?.Write(e);
                 }
             }
             Initialized = true;

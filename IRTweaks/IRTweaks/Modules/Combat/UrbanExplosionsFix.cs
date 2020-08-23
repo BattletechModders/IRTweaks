@@ -21,12 +21,12 @@ namespace IRTweaks.Modules.Combat
                 (___artilleryVFXType == ArtilleryVFXType.ElectricTransformerExplosion || ___artilleryVFXType == ArtilleryVFXType.CoolantExplosion)
                 )
             {
-                Mod.Log.Info($"ELECTRICAL EXPLOSION FOUND WITH SEQUENCE GUID {__instance.SequenceGUID}");
-                Mod.Log.Info($"  - damageEachLocation: {__instance.damageEachLocation}  heat: {__instance.heatDamage}  stability: {__instance.stabilityDamage}");
+                Mod.Log.Info?.Write($"ELECTRICAL EXPLOSION FOUND WITH SEQUENCE GUID {__instance.SequenceGUID}");
+                Mod.Log.Info?.Write($"  - damageEachLocation: {__instance.damageEachLocation}  heat: {__instance.heatDamage}  stability: {__instance.stabilityDamage}");
 
                 foreach (Vector3 targetPos in __instance.TargetPositions)
                 {
-                    Mod.Log.Info($"  -- target position: {targetPos}");
+                    Mod.Log.Info?.Write($"  -- target position: {targetPos}");
                 }
 
                 Traverse allTargetsT = Traverse.Create(__instance).Property("AllTargets");
@@ -37,7 +37,7 @@ namespace IRTweaks.Modules.Combat
                 List<AbstractActor> actorTargets = new List<AbstractActor>();
                 foreach (ICombatant target in allTargets)
                 {
-                    Mod.Log.Info($"  -- target: {target.DistinctId()}");
+                    Mod.Log.Info?.Write($"  -- target: {target.DistinctId()}");
                     if (target is BattleTech.Building building)
                     {
                         ModState.ExplosionBuildingTargets.Add(building);
@@ -77,10 +77,10 @@ namespace IRTweaks.Modules.Combat
                 // Destroy the buildings immediately
                 foreach (BattleTech.Building building in ModState.ExplosionBuildingTargets)
                 {
-                    Mod.Log.Info($"Applying damage to target building: {building.DistinctId()}");
+                    Mod.Log.Info?.Write($"Applying damage to target building: {building.DistinctId()}");
                     if (__instance.damageEachLocation > 0f)
                     {
-                        Mod.Log.Info($" -- applying {__instance.damageEachLocation} damage to all locations.");
+                        Mod.Log.Info?.Write($" -- applying {__instance.damageEachLocation} damage to all locations.");
                         DamageOrderUtility.ApplyDamageToAllLocations("ArtillerySequence", __instance.SequenceGUID, __instance.RootSequenceGUID,
                             building, (int)__instance.damageEachLocation, (int)__instance.damageEachLocation, 
                             AttackDirection.FromArtillery, DamageType.Artillery);
@@ -88,13 +88,13 @@ namespace IRTweaks.Modules.Combat
 
                     if (__instance.heatDamage != 0)
                     {
-                        Mod.Log.Info($" -- applying {__instance.damageEachLocation} heat to all locations.");
+                        Mod.Log.Info?.Write($" -- applying {__instance.damageEachLocation} heat to all locations.");
                         DamageOrderUtility.ApplyHeatDamage(__instance.SequenceGUID, building, __instance.heatDamage);
                     }
 
                     if (__instance.stabilityDamage > 0)
                     {
-                        Mod.Log.Info($" -- applying {__instance.damageEachLocation} instability to all locations.");
+                        Mod.Log.Info?.Write($" -- applying {__instance.damageEachLocation} instability to all locations.");
                         DamageOrderUtility.ApplyStabilityDamage(__instance.SequenceGUID, building, __instance.stabilityDamage);
                     }
 
@@ -114,7 +114,7 @@ namespace IRTweaks.Modules.Combat
     {
         static void Prefix(AbstractActor __instance)
         {
-            Mod.Log.Info($"Recomputing pathing for actor: {__instance.DistinctId()}");
+            Mod.Log.Info?.Write($"Recomputing pathing for actor: {__instance.DistinctId()}");
         }
     }
 }

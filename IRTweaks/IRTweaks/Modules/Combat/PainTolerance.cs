@@ -14,26 +14,26 @@ namespace IRTweaks.Modules.Combat {
             int hitIndex, AttackImpactQuality impactQuality, DamageType damageType) {
 
             if (aLoc == ArmorLocation.Head) {
-                Mod.Log.Info($"Head hit from weapon:{weapon?.UIName} for {totalArmorDamage} armor damage and {directStructureDamage} structure damage. " +
+                Mod.Log.Info?.Write($"Head hit from weapon:{weapon?.UIName} for {totalArmorDamage} armor damage and {directStructureDamage} structure damage. " +
                     $"Quality was:{impactQuality} with type:{damageType}");
 
                 float currHeadArmor = __instance.GetCurrentArmor(aLoc);
                 int damageMod = (int)Math.Ceiling(totalArmorDamage);
                 float damageThroughArmor = totalArmorDamage - currHeadArmor;
-                Mod.Log.Debug($"TotalArmorDamage:{totalArmorDamage} - Head armor:{currHeadArmor} = throughArmor:{damageThroughArmor}");
+                Mod.Log.Debug?.Write($"TotalArmorDamage:{totalArmorDamage} - Head armor:{currHeadArmor} = throughArmor:{damageThroughArmor}");
 
                 if (totalArmorDamage - currHeadArmor <= 0) {
                     damageMod = (int)Math.Floor(damageMod * Mod.Config.Combat.PainTolerance.HeadHitArmorOnlyMulti);
-                    Mod.Log.Info($"Head hit impacted armor only, reduced damage to:{damageMod}");
+                    Mod.Log.Info?.Write($"Head hit impacted armor only, reduced damage to:{damageMod}");
                 }
 
                 if (directStructureDamage != 0) {
-                    Mod.Log.Debug($"Attack inflicted ${directStructureDamage}, adding to total resist damage.");
+                    Mod.Log.Debug?.Write($"Attack inflicted ${directStructureDamage}, adding to total resist damage.");
                     damageMod += (int)Math.Ceiling(directStructureDamage);
                 }
 
                 ModState.InjuryResistPenalty = damageMod * Mod.Config.Combat.PainTolerance.PenaltyPerHeadDamage;
-                Mod.Log.Info($"Setting resist penalty to:{damageMod} x {Mod.Config.Combat.PainTolerance.PenaltyPerHeadDamage} = {ModState.InjuryResistPenalty}");
+                Mod.Log.Info?.Write($"Setting resist penalty to:{damageMod} x {Mod.Config.Combat.PainTolerance.PenaltyPerHeadDamage} = {ModState.InjuryResistPenalty}");
             }
         }
     }
@@ -50,7 +50,7 @@ namespace IRTweaks.Modules.Combat {
 
             if (SharedState.Combat?.Constants?.PilotingConstants == null)
             {
-                Mod.Log.Error("Piloting Constants is somehow null! This should not happen!");
+                Mod.Log.Error?.Write("Piloting Constants is somehow null! This should not happen!");
                 return;
             }
 
@@ -58,7 +58,7 @@ namespace IRTweaks.Modules.Combat {
                 __instance.ammunitionBoxDef == null ||
                 __instance.ammunitionBoxDef.Capacity == 0)
             {
-                Mod.Log.Warn($"Invalid ammoBox '{__instance.UIName}' detected. It does not contain CurrentAmmo stat, has no ammunitionBoxDef, or has 0 capacity.");
+                Mod.Log.Warn?.Write($"Invalid ammoBox '{__instance.UIName}' detected. It does not contain CurrentAmmo stat, has no ammunitionBoxDef, or has 0 capacity.");
                 return;
             }
 
@@ -69,14 +69,14 @@ namespace IRTweaks.Modules.Combat {
                 int value = __instance.StatCollection.GetValue<int>("CurrentAmmo");
                 int capacity = __instance.ammunitionBoxDef.Capacity;
                 float ratio = (float)value / (float)capacity;
-                Mod.Log.Debug($"Ammo explosion ratio:{ratio} = current:{value} / capacity:{capacity}");
+                Mod.Log.Debug?.Write($"Ammo explosion ratio:{ratio} = current:{value} / capacity:{capacity}");
                 int resistPenalty = (int)Math.Floor(ratio * Mod.Config.Combat.PainTolerance.PenaltyPerAmmoExplosionRatio);
-                Mod.Log.Debug($"Ammo explosion resist penalty:{resistPenalty} = " +
+                Mod.Log.Debug?.Write($"Ammo explosion resist penalty:{resistPenalty} = " +
                     $"Floor( ratio:{ratio}% * penaltyPerAmmoExplosion:{Mod.Config.Combat.PainTolerance.PenaltyPerAmmoExplosionRatio} )");
 
                 if (ratio >= 0.5f) {
                     ModState.InjuryResistPenalty = resistPenalty;
-                    Mod.Log.Debug($"Ammo explosion will reduce resist by: {resistPenalty}");
+                    Mod.Log.Debug?.Write($"Ammo explosion will reduce resist by: {resistPenalty}");
                 }
 
             }
@@ -98,16 +98,16 @@ namespace IRTweaks.Modules.Combat {
             if (__instance?.ParentActor?.GetType() == typeof(Mech)) {
                 Mech mech = (Mech)__instance.ParentActor;
                 Statistic receiveHeatDamageInjuryStat = mech.StatCollection.GetStatistic("ReceiveHeatDamageInjury");
-                Mod.Log.Debug($"Checking actor with injuryReason:{reason} and receiveHeatDamageInjury:{receiveHeatDamageInjuryStat}");
+                Mod.Log.Debug?.Write($"Checking actor with injuryReason:{reason} and receiveHeatDamageInjury:{receiveHeatDamageInjuryStat}");
 
                 // If the below is true, we likely are coming from a ME patch - 
                 // see https://github.com/BattletechModders/MechEngineer/blob/master/source/Features/ShutdownInjuryProtection/Patches/Mech_CheckForHeatDamage_Patch.cs
                 if (reason == InjuryReason.NotSet && mech.IsOverheated && mech.StatCollection.GetStatistic("ReceiveHeatDamageInjury") != null) {
-                    Mod.Log.Debug($"Actor received a heatDamage injury, computing overheat ratio.");
+                    Mod.Log.Debug?.Write($"Actor received a heatDamage injury, computing overheat ratio.");
                     float overheatRatio = PainHelper.CalculateOverheatRatio(mech);
 
                     int overheatPenalty = (int)Math.Floor(overheatRatio * Mod.Config.Combat.PainTolerance.PenaltyPerHeatDamageInjuryRatio);
-                    Mod.Log.Debug($"overheatPenalty:{overheatPenalty} = " +
+                    Mod.Log.Debug?.Write($"overheatPenalty:{overheatPenalty} = " +
                         $"Floor( overheatRatio:{overheatRatio} * penaltyPerOverheatDamage{Mod.Config.Combat.PainTolerance.PenaltyPerHeatDamageInjuryRatio} )");
                     ModState.InjuryResistPenalty = overheatPenalty;
                 }
@@ -125,7 +125,7 @@ namespace IRTweaks.Modules.Combat {
                 if (success) {
                     // If the state value is true, then there was already an injury set on the pilot. Do nothign.
                     if (__state) {
-                        Mod.Log.Info($"Pilot has an outstanding injury, not ignoring!");
+                        Mod.Log.Info?.Write($"Pilot has an outstanding injury, not ignoring!");
                     } else {
                         ___needsInjury = false;
                         ___injuryReason = InjuryReason.NotSet;
@@ -147,12 +147,12 @@ namespace IRTweaks.Modules.Combat {
 
         public static void Prefix(Pilot __instance, ref int dmg, DamageType damageType) {
             if (damageType == DamageType.Overheat || damageType == DamageType.OverheatSelf) {
-                Mod.Log.Debug($"Pilot:{__instance?.Name} will be injured by overheating.");
+                Mod.Log.Debug?.Write($"Pilot:{__instance?.Name} will be injured by overheating.");
 
                 Mech mech = __instance?.ParentActor as Mech;
                 float overheatRatio = PainHelper.CalculateOverheatRatio(mech);
                 int overheatPenalty = (int)Math.Floor(overheatRatio * Mod.Config.Combat.PainTolerance.PenaltyPerHeatDamageInjuryRatio);
-                Mod.Log.Debug($"overheatPenalty:{overheatPenalty} = " +
+                Mod.Log.Debug?.Write($"overheatPenalty:{overheatPenalty} = " +
                     $"Floor( overheatRatio:{overheatRatio} * penaltyPerOverheatDamage{Mod.Config.Combat.PainTolerance.PenaltyPerHeatDamageInjuryRatio}");
                 ModState.InjuryResistPenalty = overheatPenalty;
 

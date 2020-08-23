@@ -109,53 +109,53 @@ namespace IRTweaks {
         };
 
         public void LogConfig() {
-            Mod.Log.Info("=== MOD CONFIG BEGIN ===");
-            Mod.Log.Info($"  DEBUG: {this.Debug} Trace: {this.Trace}");
+            Mod.Log.Info?.Write("=== MOD CONFIG BEGIN ===");
+            Mod.Log.Info?.Write($"  DEBUG: {this.Debug} Trace: {this.Trace}");
 
-            Mod.Log.Info("  -- Fixes --");
-            Mod.Log.Info($"  AlternateMechNamingStyle:    {this.Fixes.AlternateMechNamingStyle}");
-            Mod.Log.Info($"  BuildingDamageColorChange:   {this.Fixes.BuildingDamageColorChange}");
-            Mod.Log.Info($"  BraceOnMeleeWithJuggernaut:  {this.Fixes.BraceOnMeleeWithJuggernaut}");
-            Mod.Log.Info($"  BulkPurchasing:              {this.Fixes.BulkPurchasing}");
-            Mod.Log.Info($"  CombatLog:                   {this.Fixes.CombatLog}");
-            Mod.Log.Info($"  DisableCampaign:             {this.Fixes.DisableCampaign}");
-            Mod.Log.Info($"  DisableCombatSaves:          {this.Fixes.DisableCombatSaves}");
-            Mod.Log.Info($"  DisableMPHashCalculation:    {this.Fixes.DisableMPHashCalculation}");
-            Mod.Log.Info($"  ExtendedStats:               {this.Fixes.ExtendedStats}");
-            Mod.Log.Info($"  FlexibleSensorLock:          {this.Fixes.FlexibleSensorLock}");
-            Mod.Log.Info($"  MechbayLayoutFix:            {this.Fixes.MechbayLayout}");
-            Mod.Log.Info($"  PathfinderTeamFix:           {this.Fixes.PathfinderTeamFix}");
-            Mod.Log.Info($"  PreventHeadShots:            {this.Fixes.PreventHeadShots}");
-            Mod.Log.Info($"  RandomStartByDifficulty:     {this.Fixes.RandomStartByDifficulty}");
-            Mod.Log.Info($"  ReduceSaveCompression:       {this.Fixes.ReduceSaveCompression}");
-            Mod.Log.Info($"  ShowAllArgoUpgrades:         {this.Fixes.ShowAllArgoUpgrades}");
-            Mod.Log.Info($"  SkirmishReset:               {this.Fixes.SkirmishReset}");
-            Mod.Log.Info($"  SkirmishAlwaysUnlimited:     {this.Fixes.SkirmishAlwaysUnlimited}");
-            Mod.Log.Info($"  SkipDeleteSavePopup:         {this.Fixes.SkipDeleteSavePopup}");
-            Mod.Log.Info($"  SpawnProtection:             {this.Fixes.SpawnProtection}");
-            Mod.Log.Info($"  StreamlinedMainMenu:         {this.Fixes.StreamlinedMainMenu}");
-            Mod.Log.Info($"  UrbanExplosionsFix:          {this.Fixes.UrbanExplosionsFix}");
-            Mod.Log.Info($"  WeaponTooltips:              {this.Fixes.WeaponTooltip}");
+            Mod.Log.Info?.Write("  -- Fixes --");
+            Mod.Log.Info?.Write($"  AlternateMechNamingStyle:    {this.Fixes.AlternateMechNamingStyle}");
+            Mod.Log.Info?.Write($"  BuildingDamageColorChange:   {this.Fixes.BuildingDamageColorChange}");
+            Mod.Log.Info?.Write($"  BraceOnMeleeWithJuggernaut:  {this.Fixes.BraceOnMeleeWithJuggernaut}");
+            Mod.Log.Info?.Write($"  BulkPurchasing:              {this.Fixes.BulkPurchasing}");
+            Mod.Log.Info?.Write($"  CombatLog:                   {this.Fixes.CombatLog}");
+            Mod.Log.Info?.Write($"  DisableCampaign:             {this.Fixes.DisableCampaign}");
+            Mod.Log.Info?.Write($"  DisableCombatSaves:          {this.Fixes.DisableCombatSaves}");
+            Mod.Log.Info?.Write($"  DisableMPHashCalculation:    {this.Fixes.DisableMPHashCalculation}");
+            Mod.Log.Info?.Write($"  ExtendedStats:               {this.Fixes.ExtendedStats}");
+            Mod.Log.Info?.Write($"  FlexibleSensorLock:          {this.Fixes.FlexibleSensorLock}");
+            Mod.Log.Info?.Write($"  MechbayLayoutFix:            {this.Fixes.MechbayLayout}");
+            Mod.Log.Info?.Write($"  PathfinderTeamFix:           {this.Fixes.PathfinderTeamFix}");
+            Mod.Log.Info?.Write($"  PreventHeadShots:            {this.Fixes.PreventHeadShots}");
+            Mod.Log.Info?.Write($"  RandomStartByDifficulty:     {this.Fixes.RandomStartByDifficulty}");
+            Mod.Log.Info?.Write($"  ReduceSaveCompression:       {this.Fixes.ReduceSaveCompression}");
+            Mod.Log.Info?.Write($"  ShowAllArgoUpgrades:         {this.Fixes.ShowAllArgoUpgrades}");
+            Mod.Log.Info?.Write($"  SkirmishReset:               {this.Fixes.SkirmishReset}");
+            Mod.Log.Info?.Write($"  SkirmishAlwaysUnlimited:     {this.Fixes.SkirmishAlwaysUnlimited}");
+            Mod.Log.Info?.Write($"  SkipDeleteSavePopup:         {this.Fixes.SkipDeleteSavePopup}");
+            Mod.Log.Info?.Write($"  SpawnProtection:             {this.Fixes.SpawnProtection}");
+            Mod.Log.Info?.Write($"  StreamlinedMainMenu:         {this.Fixes.StreamlinedMainMenu}");
+            Mod.Log.Info?.Write($"  UrbanExplosionsFix:          {this.Fixes.UrbanExplosionsFix}");
+            Mod.Log.Info?.Write($"  WeaponTooltips:              {this.Fixes.WeaponTooltip}");
 
-            Mod.Log.Info("  -- Called Shot --");
-            Mod.Log.Info($"   CalledShotDefaultMod:{Combat.CalledShot.Modifier}");
+            Mod.Log.Info?.Write("  -- Called Shot --");
+            Mod.Log.Info?.Write($"   CalledShotDefaultMod:{Combat.CalledShot.Modifier}");
             foreach (KeyValuePair<string, int> kvp in Combat.CalledShot.PilotTags) {
-                Mod.Log.Info($"   CalledShotPilotModifier - tag:{kvp.Key} modifier:{kvp.Value}");
+                Mod.Log.Info?.Write($"   CalledShotPilotModifier - tag:{kvp.Key} modifier:{kvp.Value}");
             }
-            Mod.Log.Info($"   CalledShotDefaultMod:{Combat.CalledShot.Modifier}");
+            Mod.Log.Info?.Write($"   CalledShotDefaultMod:{Combat.CalledShot.Modifier}");
 
-            Mod.Log.Info("  -- Spawn Protection --");
-            Mod.Log.Info($"   ApplyGuard:{Combat.SpawnProtection.ApplyGuard}  EvasionPips:{Combat.SpawnProtection.EvasionPips}");
-            Mod.Log.Info($"   ApplyToEnemies:{Combat.SpawnProtection.ApplyToEnemies}  ApplyToAllies:{Combat.SpawnProtection.ApplyToAllies}  ApplyToNeutrals:{Combat.SpawnProtection.ApplyToNeutrals}  ");
-            Mod.Log.Info($"   ApplyToReinforcements:{Combat.SpawnProtection.ApplyToReinforcements}");
+            Mod.Log.Info?.Write("  -- Spawn Protection --");
+            Mod.Log.Info?.Write($"   ApplyGuard:{Combat.SpawnProtection.ApplyGuard}  EvasionPips:{Combat.SpawnProtection.EvasionPips}");
+            Mod.Log.Info?.Write($"   ApplyToEnemies:{Combat.SpawnProtection.ApplyToEnemies}  ApplyToAllies:{Combat.SpawnProtection.ApplyToAllies}  ApplyToNeutrals:{Combat.SpawnProtection.ApplyToNeutrals}  ");
+            Mod.Log.Info?.Write($"   ApplyToReinforcements:{Combat.SpawnProtection.ApplyToReinforcements}");
 
-            Mod.Log.Info("  -- Store --");
-            Mod.Log.Info($"   QuantityOnShift:{Store.QuantityOnShift}  QuantityOnControl:{Store.QuantityOnControl}");
+            Mod.Log.Info?.Write("  -- Store --");
+            Mod.Log.Info?.Write($"   QuantityOnShift:{Store.QuantityOnShift}  QuantityOnControl:{Store.QuantityOnControl}");
 
-            Mod.Log.Info("  -- Flexible Sensor Lock Options --");
-            Mod.Log.Info($"   FreeActionWithAbility:{this.Combat.FlexibleSensorLock.FreeActionWithAbility}  AbilityId:{this.Abilities.FlexibleSensorLockId}");
+            Mod.Log.Info?.Write("  -- Flexible Sensor Lock Options --");
+            Mod.Log.Info?.Write($"   FreeActionWithAbility:{this.Combat.FlexibleSensorLock.FreeActionWithAbility}  AbilityId:{this.Abilities.FlexibleSensorLockId}");
 
-            Mod.Log.Info("=== MOD CONFIG END ===");
+            Mod.Log.Info?.Write("=== MOD CONFIG END ===");
         }
     }
 }

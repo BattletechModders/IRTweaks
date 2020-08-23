@@ -11,7 +11,7 @@ namespace IRTweaks.Modules.UI {
     public static class WeaponTooltips {
         public static void TooltipPrefab_Weapon_SetData_Postfix(TooltipPrefab_Weapon __instance, object data, 
             TextMeshProUGUI ___rangeType, TextMeshProUGUI ___damage) {
-            Mod.Log.Debug("TP_W:SD entered.");
+            Mod.Log.Debug?.Write("TP_W:SD entered.");
 
             ___rangeType.enabled = false;
             Transform rangeLabelT = ___rangeType.gameObject.transform.parent;
@@ -24,15 +24,15 @@ namespace IRTweaks.Modules.UI {
             WeaponDef weaponDef = (WeaponDef)data;
             if (weaponDef != null)
             {
-                Mod.Log.Debug($"  Updating tooltip for weapon: {weaponDef.Description.UIName}");
+                Mod.Log.Debug?.Write($"  Updating tooltip for weapon: {weaponDef.Description.UIName}");
                 if (CustomAmmoCategories.isRegistredWeapon(weaponDef.Description.Id))
                 {
                     // Is a CAC weapon, use HasShells
                     ExtWeaponDef extDef = CustomAmmoCategories.getExtWeaponDef(weaponDef.Description.Id);
-                    Mod.Log.Debug($" Found CAC extension for weapon.");
+                    Mod.Log.Debug?.Write($" Found CAC extension for weapon.");
                     if (extDef == null)
                     {
-                        Mod.Log.Warn($"Failed to load CAC ExtWeaponDef for {weaponDef.Description.Id}, but it was registered!");
+                        Mod.Log.Warn?.Write($"Failed to load CAC ExtWeaponDef for {weaponDef.Description.Id}, but it was registered!");
                         return;
                     }
 
@@ -65,7 +65,7 @@ namespace IRTweaks.Modules.UI {
                         if (weaponDef.ShotsWhenFired != 1)
                         {
                             string localText = $"{weaponDef.Damage} x {weaponDef.ShotsWhenFired} = {totalDamage}";
-                            Mod.Log.Debug($"ImprovedBallistic weapon damage set to: {localText}<page>");
+                            Mod.Log.Debug?.Write($"ImprovedBallistic weapon damage set to: {localText}<page>");
                             ___damage.SetText(localText);
                         }
 
@@ -74,7 +74,7 @@ namespace IRTweaks.Modules.UI {
                             // damage x shots = total
                             totalDamage = weaponDef.Damage * weaponDef.ShotsWhenFired;
                             string localText = $"{weaponDef.Damage} x {weaponDef.ShotsWhenFired} = {totalDamage}";
-                            Mod.Log.Debug($"ImprovedBallistic + HasShells || !BallisticDamagePerPallet weapon damage set to: {localText}");
+                            Mod.Log.Debug?.Write($"ImprovedBallistic + HasShells || !BallisticDamagePerPallet weapon damage set to: {localText}");
                             ___damage.SetText(localText);
                         }
 
@@ -82,7 +82,7 @@ namespace IRTweaks.Modules.UI {
                         {
                             totalDamage = weaponDef.Damage * weaponDef.ProjectilesPerShot * weaponDef.ShotsWhenFired;
                             string localText = $"{weaponDef.Damage} x {weaponDef.ProjectilesPerShot} x {weaponDef.ShotsWhenFired} = {totalDamage}";
-                            Mod.Log.Debug($"ImprovedBallistic + BallisticDamagePerPallet + DamageNotDivided weapon damage set to: {localText}");
+                            Mod.Log.Debug?.Write($"ImprovedBallistic + BallisticDamagePerPallet + DamageNotDivided weapon damage set to: {localText}");
                             ___damage.SetText(localText);
                         }
 
@@ -91,7 +91,7 @@ namespace IRTweaks.Modules.UI {
                             float damagePerPellet = weaponDef.Damage / weaponDef.ProjectilesPerShot;
                             totalDamage = damagePerPellet * weaponDef.ShotsWhenFired * weaponDef.ProjectilesPerShot;
                             string localText = $"{damagePerPellet} x {weaponDef.ShotsWhenFired} x {weaponDef.ProjectilesPerShot} = {totalDamage}";
-                            Mod.Log.Debug($"ImprovedBallistic + BallisticDamagePerPallet + !DamageNotDivided weapon damage set to: {localText}");
+                            Mod.Log.Debug?.Write($"ImprovedBallistic + BallisticDamagePerPallet + !DamageNotDivided weapon damage set to: {localText}");
                             ___damage.SetText(localText);
                         }
 
@@ -103,13 +103,13 @@ namespace IRTweaks.Modules.UI {
                         if (weaponDef.ShotsWhenFired != 1)
                         {
                             string localText = $"{weaponDef.Damage} x {weaponDef.ShotsWhenFired} shots = {totalDamage}";
-                            Mod.Log.Debug($"Vanilla + ShotsWhenFire > 1 weapon damage set to: {localText}");
+                            Mod.Log.Debug?.Write($"Vanilla + ShotsWhenFire > 1 weapon damage set to: {localText}");
                             ___damage.SetText(localText);
                         }
                         else
                         {
                             string localText = $"{weaponDef.Damage}";
-                            Mod.Log.Debug($"Vanilla + 1 ShotsWhenFired weapon damage set to: {localText}");
+                            Mod.Log.Debug?.Write($"Vanilla + 1 ShotsWhenFired weapon damage set to: {localText}");
                             ___damage.SetText(localText);
                         }
                     }
@@ -134,13 +134,13 @@ namespace IRTweaks.Modules.UI {
                     if (weaponDef.ShotsWhenFired != 1)
                     {
                         string localText = $"{weaponDef.Damage} x {weaponDef.ShotsWhenFired} shots = {totalDamage}";
-                        Mod.Log.Debug($"Vanilla + ShotsWhenFire > 1 weapon damage set to: {localText}");
+                        Mod.Log.Debug?.Write($"Vanilla + ShotsWhenFire > 1 weapon damage set to: {localText}");
                         ___damage.SetText(localText);
                     }
                     else
                     {
                         string localText = $"{weaponDef.Damage}";
-                        Mod.Log.Debug($"Vanilla + 1 ShotsWhenFired weapon damage set to: {localText}");
+                        Mod.Log.Debug?.Write($"Vanilla + 1 ShotsWhenFired weapon damage set to: {localText}");
                         ___damage.SetText(localText);
                     }
                 }

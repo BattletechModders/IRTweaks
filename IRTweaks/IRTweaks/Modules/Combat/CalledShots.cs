@@ -11,7 +11,7 @@ namespace IRTweaks.Modules.Combat {
     public static class CalledShots {
 
         public static void AbstractActor_InitEffectStats_Postfix(AbstractActor __instance) {
-            Mod.Log.Trace("AA:IES entered.");
+            Mod.Log.Trace?.Write("AA:IES entered.");
             __instance.StatCollection.AddStatistic<Int32>(ModStats.CalledShotMod, 0);
             __instance.StatCollection.AddStatistic<bool>(ModStats.CalledShowAlwaysAllow, false);
         }
@@ -23,7 +23,7 @@ namespace IRTweaks.Modules.Combat {
                 return; // nothing to do
 
             if (__instance.UseForCalledShots && location == ArmorLocation.Head) {
-                Mod.Log.Trace("HUDMAR:SHA entered");
+                Mod.Log.Trace?.Write("HUDMAR:SHA entered");
 
                 bool canAlwaysCalledShot = false;
                 List<Statistic> customStats = ActorHelper.FindCustomStatistic(ModStats.CalledShowAlwaysAllow, __instance.HUD.SelectedActor);
@@ -34,24 +34,24 @@ namespace IRTweaks.Modules.Combat {
                 }
                 bool canBeTargeted = __instance.HUD.SelectedTarget.IsShutDown || __instance.HUD.SelectedTarget.IsProne || canAlwaysCalledShot;
 
-                Mod.Log.Debug($"  Hover - target:({___displayedMech.DistinctId()}) canBeTargeted:{canBeTargeted} by attacker:({__instance.HUD.SelectedActor.DistinctId()})");
-                Mod.Log.Debug($"      isShutdown:{___displayedMech.IsShutDown} isProne:{___displayedMech.IsProne} canAlwaysCalledShot:{canAlwaysCalledShot}");
+                Mod.Log.Debug?.Write($"  Hover - target:({___displayedMech.DistinctId()}) canBeTargeted:{canBeTargeted} by attacker:({__instance.HUD.SelectedActor.DistinctId()})");
+                Mod.Log.Debug?.Write($"      isShutdown:{___displayedMech.IsShutDown} isProne:{___displayedMech.IsProne} canAlwaysCalledShot:{canAlwaysCalledShot}");
 
                 if (!canBeTargeted) {
-                    Mod.Log.Debug("  preventing targeting of head.");
+                    Mod.Log.Debug?.Write("  preventing targeting of head.");
                     __instance.ClearHoveredArmor(ArmorLocation.Head);
                 }
                 else {
-                    Mod.Log.Debug("  target head can be targeted.");
+                    Mod.Log.Debug?.Write("  target head can be targeted.");
                 }
             }
         }
 
         public static void SelectionStateFire_SetCalledShot_Postfix(SelectionStateFire __instance, ArmorLocation location) {
-            Mod.Log.Trace("SSF:SCS entered");
+            Mod.Log.Trace?.Write("SSF:SCS entered");
 
             if (location == ArmorLocation.Head) {
-                Mod.Log.Debug("  SCS Checking if headshot should be prevented.");
+                Mod.Log.Debug?.Write("  SCS Checking if headshot should be prevented.");
 
                 bool canAlwaysCalledShot = false;
                 List<Statistic> customStats = ActorHelper.FindCustomStatistic(ModStats.CalledShowAlwaysAllow, __instance.SelectedActor);
@@ -62,11 +62,11 @@ namespace IRTweaks.Modules.Combat {
                 }
 
                 bool canBeTargeted = __instance.TargetedCombatant.IsShutDown || __instance.TargetedCombatant.IsProne || canAlwaysCalledShot;
-                Mod.Log.Debug($"  Select - target:{__instance.TargetedCombatant.DisplayName}_{__instance.TargetedCombatant.GetPilot()?.Name} canBeTargeted:{canBeTargeted} by attacker:{__instance.SelectedActor}");
-                Mod.Log.Debug($"      isShutdown:{__instance.TargetedCombatant.IsShutDown} isProne:{__instance.TargetedCombatant.IsProne} canAlwaysCalledShot:{canAlwaysCalledShot}");
+                Mod.Log.Debug?.Write($"  Select - target:{__instance.TargetedCombatant.DisplayName}_{__instance.TargetedCombatant.GetPilot()?.Name} canBeTargeted:{canBeTargeted} by attacker:{__instance.SelectedActor}");
+                Mod.Log.Debug?.Write($"      isShutdown:{__instance.TargetedCombatant.IsShutDown} isProne:{__instance.TargetedCombatant.IsProne} canAlwaysCalledShot:{canAlwaysCalledShot}");
 
                 if (!canBeTargeted) {
-                    Mod.Log.Debug("  Disabling headshot.");
+                    Mod.Log.Debug?.Write("  Disabling headshot.");
                     Traverse.Create(__instance).Method("ClearCalledShot").GetValue();
                 }
             }
@@ -78,7 +78,7 @@ namespace IRTweaks.Modules.Combat {
 
         public static void ToHit_GetAllModifiers_Postfix(ToHit __instance, ref float __result, bool isCalledShot, AbstractActor attacker, Weapon weapon, ICombatant target) {
             if (isCalledShot) {
-                Mod.Log.Trace("TH:GAM entered.");
+                Mod.Log.Trace?.Write("TH:GAM entered.");
 
                 // Calculate called shot modifier
                 int pilotValue = CalledShotHelper.GetCalledShotModifier(attacker.GetPilot());
@@ -89,7 +89,7 @@ namespace IRTweaks.Modules.Combat {
                 }
 
                 int calledShotMod = pilotValue + unitMod;
-                Mod.Log.Debug($"   Called Shot from pilot:{attacker.GetPilot().Name} => pilotValue:{pilotValue} + unitMod:{unitMod} = calledShotMod:{calledShotMod}");
+                Mod.Log.Debug?.Write($"   Called Shot from pilot:{attacker.GetPilot().Name} => pilotValue:{pilotValue} + unitMod:{unitMod} = calledShotMod:{calledShotMod}");
 
                 __result = __result + calledShotMod;
             }
@@ -97,7 +97,7 @@ namespace IRTweaks.Modules.Combat {
 
         public static void ToHit_GetAllModifiersDescription_Postfix(ToHit __instance, ref string __result, bool isCalledShot, AbstractActor attacker, Weapon weapon, ICombatant target) {
             if (isCalledShot) {
-                Mod.Log.Trace("TH:GAMD entered.");
+                Mod.Log.Trace?.Write("TH:GAMD entered.");
 
                 // Calculate called shot modifier
                 int pilotValue = CalledShotHelper.GetCalledShotModifier(attacker.GetPilot());
@@ -108,7 +108,7 @@ namespace IRTweaks.Modules.Combat {
                 }
 
                 int calledShotMod = pilotValue + unitMod;
-                Mod.Log.Debug($"   Called Shot from pilot:{attacker.GetPilot().Name} => pilotValue:{pilotValue} + unitMod:{unitMod} = calledShotMod:{calledShotMod}");
+                Mod.Log.Debug?.Write($"   Called Shot from pilot:{attacker.GetPilot().Name} => pilotValue:{pilotValue} + unitMod:{unitMod} = calledShotMod:{calledShotMod}");
 
                 if (calledShotMod != 0) {
                     __result = string.Format("{0}CALLED-SHOT {1:+#;-#}; ", __result, (int)calledShotMod);
@@ -118,7 +118,7 @@ namespace IRTweaks.Modules.Combat {
 
         public static void CombatHUDWeaponSlot_UpdateToolTipsFiring_Postfix(CombatHUDWeaponSlot __instance, ICombatant target, CombatGameState ___Combat, CombatHUD ___HUD, int ___modifier) {
             if (___HUD.SelectionHandler.ActiveState.SelectionType == SelectionType.FireMorale) {
-                Mod.Log.Trace("CHUDWS:UTTF:Post entered.");
+                Mod.Log.Trace?.Write("CHUDWS:UTTF:Post entered.");
 
                 AbstractActor attacker = ___HUD.SelectedActor;
 
@@ -131,7 +131,7 @@ namespace IRTweaks.Modules.Combat {
                 }
 
                 int calledShotMod = pilotValue + unitMod;
-                Mod.Log.Debug($"   Called Shot from pilot:{attacker.GetPilot().Name} => pilotValue:{pilotValue} + unitMod:0 = calledShotMod:{calledShotMod}");
+                Mod.Log.Debug?.Write($"   Called Shot from pilot:{attacker.GetPilot().Name} => pilotValue:{pilotValue} + unitMod:0 = calledShotMod:{calledShotMod}");
 
                 if (calledShotMod != 0) {
                     AddMoraleToolTip(__instance, ___Combat.Constants.CombatUIConstants.MoraleAttackDescription.Name, calledShotMod);
@@ -140,7 +140,7 @@ namespace IRTweaks.Modules.Combat {
         }
 
         private static void AddMoraleToolTip(CombatHUDWeaponSlot instance, string description, int modifier) {
-            Mod.Log.Trace($"CHUDWS:UTTF:AMTT - adding desc:{description} with modifier:{modifier}.");
+            Mod.Log.Trace?.Write($"CHUDWS:UTTF:AMTT - adding desc:{description} with modifier:{modifier}.");
             if (modifier < 0) {
                 instance.ToolTipHoverElement.BuffStrings.Add(new Text("{0} {1:+0;-#}", new object[] { description, modifier }));
             }

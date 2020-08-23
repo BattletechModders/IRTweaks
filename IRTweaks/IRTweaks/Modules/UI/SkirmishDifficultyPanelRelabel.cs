@@ -34,18 +34,18 @@ namespace IRTweaks.Modules.UI
                         LocalizableText localText = diffTotalGO.GetComponent<LocalizableText>();
                         if (localText != null)
                         {
-                            Mod.Log.Info("UPDATED LABEL");
+                            Mod.Log.Info?.Write("UPDATED LABEL");
                             localText.SetText(Mod.Config.SimGameDifficultyStrings[ModConfig.SimGameDifficultyString_Label]);
                         }
                         else
                         {
-                            Mod.Log.Warn("FAILED TO FIND LocalizableText COMP FOR `diffTotal-text`");
+                            Mod.Log.Warn?.Write("FAILED TO FIND LocalizableText COMP FOR `diffTotal-text`");
                         }
 
                     }
                     else
                     {
-                        Mod.Log.Warn("FAILED TO FIND `diffTotal-text` CHILD OF `OBJ_difficultyTotal`!");
+                        Mod.Log.Warn?.Write("FAILED TO FIND `diffTotal-text` CHILD OF `OBJ_difficultyTotal`!");
                     }
                 }
             }

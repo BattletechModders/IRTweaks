@@ -3,10 +3,10 @@ using Newtonsoft.Json;
 using System;
 using System.Diagnostics;
 using System.Reflection;
-using us.frostraptor.modUtils.logging;
 using IRTweaks.Modules.Combat;
 using IRTweaks.Modules.Tooltip;
 using IRTweaks.Modules.Misc;
+using IRBTModUtils.Logging;
 
 namespace IRTweaks {
 
@@ -15,7 +15,7 @@ namespace IRTweaks {
         public const string HarmonyPackage = "us.frostraptor.IRTweaks";
         public const string LogName = "ir_tweaks";
 
-        public static IntraModLogger Log;
+        public static DeferringLogger Log;
         public static string ModDir;
         public static ModConfig Config;
 
@@ -32,20 +32,20 @@ namespace IRTweaks {
                 Mod.Config = new ModConfig();
             }
 
-            Log = new IntraModLogger(modDirectory, LogName, Config.Debug, Config.Trace);
+            Log = new DeferringLogger(modDirectory, LogName, Config.Debug, Config.Trace);
 
             Assembly asm = Assembly.GetExecutingAssembly();
             FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(asm.Location);
-            Log.Info($"Assembly version: {fvi.ProductVersion}");
+            Log.Info?.Write($"Assembly version: {fvi.ProductVersion}");
 
-            Log.Debug($"ModDir is:{modDirectory}");
-            Log.Debug($"mod.json settings are:({settingsJSON})");
+            Log.Debug?.Write($"ModDir is:{modDirectory}");
+            Log.Debug?.Write($"mod.json settings are:({settingsJSON})");
             Mod.Config.LogConfig();
 
             if (settingsE != null) {
-                Log.Info($"ERROR reading settings file! Error was: {settingsE}");
+                Log.Info?.Write($"ERROR reading settings file! Error was: {settingsE}");
             } else {
-                Log.Info($"INFO: No errors reading settings file.");
+                Log.Info?.Write($"INFO: No errors reading settings file.");
             }
 
             var harmony = HarmonyInstance.Create(HarmonyPackage);

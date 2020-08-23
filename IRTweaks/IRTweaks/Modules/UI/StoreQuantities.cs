@@ -20,9 +20,9 @@ namespace IRTweaks.Modules.UI {
     public static class StoreQuantities {
         public static void MultiPurchasePopup_Refresh_Postfix(SG_Stores_MultiPurchasePopup __instance, int ___costPerUnit, int ___quantityBeingSold,
             LocalizableText ___TitleText, LocalizableText ___DescriptionText, string ___itemName, HBSDOTweenButton ___ConfirmButton) {
-            Mod.Log.Debug("SG_S_MPP:R entered.");
+            Mod.Log.Debug?.Write("SG_S_MPP:R entered.");
             int value = ___costPerUnit * ___quantityBeingSold;
-            Mod.Log.Debug($"SG_S_MPP:R   value:{value} = costPerUnit:{___costPerUnit} x quantityBeingSold:{___quantityBeingSold}.");
+            Mod.Log.Debug?.Write($"SG_S_MPP:R   value:{value} = costPerUnit:{___costPerUnit} x quantityBeingSold:{___quantityBeingSold}.");
 
             string actionS = "??";
             if (State.StoreIsBuying) {
@@ -42,7 +42,7 @@ namespace IRTweaks.Modules.UI {
         }
 
         public static bool MultiPurchasePopup_ReceiveButtonPress_Prefix(SG_Stores_MultiPurchasePopup __instance, string button, ref int ___quantityBeingSold, int ___maxYouCanSell) {
-            Mod.Log.Debug("SG_S_MPP:RCP entered.");
+            Mod.Log.Debug?.Write("SG_S_MPP:RCP entered.");
             if (button == "Cancel" || button == "Confirm") { return true; }
 
             var shiftIsPressed = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
@@ -54,26 +54,26 @@ namespace IRTweaks.Modules.UI {
 
             if (button == "Up") {
                 int newQuantity = ___quantityBeingSold + quantity;
-                Mod.Log.Debug($"  UP raw newQuantity:{newQuantity} = quantityBeingSold:{___quantityBeingSold} + quantity:{quantity}");
+                Mod.Log.Debug?.Write($"  UP raw newQuantity:{newQuantity} = quantityBeingSold:{___quantityBeingSold} + quantity:{quantity}");
                 if (newQuantity <= ___maxYouCanSell) {
                     ___quantityBeingSold = newQuantity;
                 } else {
                     ___quantityBeingSold = ___maxYouCanSell;
-                    Mod.Log.Debug($"  UP normalized quantity to:{___quantityBeingSold}");
+                    Mod.Log.Debug?.Write($"  UP normalized quantity to:{___quantityBeingSold}");
                 }
             } else if (button == "Down") {
                 int newQuantity = ___quantityBeingSold - quantity;
-                Mod.Log.Debug($"  DOWN raw newQuantity:{newQuantity} = quantityBeingSold:{___quantityBeingSold} - quantity:{quantity}");
+                Mod.Log.Debug?.Write($"  DOWN raw newQuantity:{newQuantity} = quantityBeingSold:{___quantityBeingSold} - quantity:{quantity}");
                 if (newQuantity > 1) {
                     ___quantityBeingSold = newQuantity;
                 } else {
                     ___quantityBeingSold = 1;
                 }
             } else if (button == "Max") {
-                Mod.Log.Debug($"  MAX newQuantity = maxYouCanSell:{___maxYouCanSell}");
+                Mod.Log.Debug?.Write($"  MAX newQuantity = maxYouCanSell:{___maxYouCanSell}");
                 ___quantityBeingSold = ___maxYouCanSell;
             } else if (button == "Min") {
-                Mod.Log.Debug($"  MIN newQuantity = 1");
+                Mod.Log.Debug?.Write($"  MIN newQuantity = 1");
                 ___quantityBeingSold = 1;
             }
 
@@ -86,7 +86,7 @@ namespace IRTweaks.Modules.UI {
         public static bool Shop_Screen_ReceiveButtonPress_Prefix(SG_Shop_Screen __instance, string button,
             InventoryDataObject_SHOP ___selectedController, bool ___isInBuyingState, SimGameState ___simState) {
 
-            Mod.Log.Debug($"SG_S_S:RBP entered with button:({button})");
+            Mod.Log.Debug?.Write($"SG_S_S:RBP entered with button:({button})");
 
             State.Reset();
             if (button != "Capitalism" || ___selectedController == null) {
@@ -94,7 +94,7 @@ namespace IRTweaks.Modules.UI {
             } else {
                 int cBillValue = ___selectedController.GetCBillValue();
                 if (___isInBuyingState) {
-                    Mod.Log.Debug($"SG_S_S:RBP - processing a purchase.");
+                    Mod.Log.Debug?.Write($"SG_S_S:RBP - processing a purchase.");
 
                     if (___simState.InMechLabStore() &&
                         (___selectedController.GetItemType() == MechLabDraggableItemType.StorePart ||
@@ -112,9 +112,9 @@ namespace IRTweaks.Modules.UI {
 
                         int maxCanPurchase = (int)Math.Floor(___simState.Funds / (double)price);
                         if (maxCanPurchase < 0) { maxCanPurchase = 99; }
-                        Mod.Log.Debug($"SG_S_S:RBP - maxCanPurchase:{maxCanPurchase} = funds:{___simState.Funds} / price:{price}.");
+                        Mod.Log.Debug?.Write($"SG_S_S:RBP - maxCanPurchase:{maxCanPurchase} = funds:{___simState.Funds} / price:{price}.");
                         int popupQuantity = maxCanPurchase < ___selectedController.quantity ? maxCanPurchase : ___selectedController.quantity;
-                        Mod.Log.Debug($"SG_S_S:RBP - maxCanPurchase:{maxCanPurchase} controllerQuantity:{___selectedController.quantity} -> popupQuantity:{popupQuantity}.");
+                        Mod.Log.Debug?.Write($"SG_S_S:RBP - maxCanPurchase:{maxCanPurchase} controllerQuantity:{___selectedController.quantity} -> popupQuantity:{popupQuantity}.");
 
                         SG_Stores_MultiPurchasePopup orCreatePopupModule =
                             LazySingletonBehavior<UIManager>.Instance.GetOrCreatePopupModule<SG_Stores_MultiPurchasePopup>(string.Empty);
@@ -130,7 +130,7 @@ namespace IRTweaks.Modules.UI {
                     }
 
                 } else {
-                    Mod.Log.Debug($"SG_S_S:RBP - processing a sale.");
+                    Mod.Log.Debug?.Write($"SG_S_S:RBP - processing a sale.");
                     State.StoreIsSelling = true;
                     int num = cBillValue;
                     if (___selectedController.quantity > 1) {

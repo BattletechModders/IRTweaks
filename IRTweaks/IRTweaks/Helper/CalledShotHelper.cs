@@ -13,12 +13,12 @@ namespace IRTweaks.Helper {
 
             string pilotKey = GetPilotKey(pilot);
             if (!ModState.PilotCalledShotModifiers.ContainsKey(pilotKey)) {
-                Mod.Log.Debug($" Calculating calledShotModifier for pilot:{pilotKey}");
+                Mod.Log.Debug?.Write($" Calculating calledShotModifier for pilot:{pilotKey}");
                 int defaultMod = Mod.Config.Combat.CalledShot.Modifier;
                 int tacticsMod = SkillUtils.GetTacticsModifier(pilot);
                 int tagsCSMod = SkillUtils.GetTagsModifier(pilot, Mod.Config.Combat.CalledShot.PilotTags);
                 int calledShotMod = defaultMod + (-1 * (tacticsMod + tagsCSMod));
-                Mod.Log.Debug($" Pilot:{pilotKey} has calledShotMod:{calledShotMod} = defaultMod:{defaultMod} + (-1 * (tacticsMod:{tacticsMod} + tagsCSMod:{tagsCSMod}))");
+                Mod.Log.Debug?.Write($" Pilot:{pilotKey} has calledShotMod:{calledShotMod} = defaultMod:{defaultMod} + (-1 * (tacticsMod:{tacticsMod} + tagsCSMod:{tagsCSMod}))");
                 ModState.PilotCalledShotModifiers[pilotKey] = calledShotMod;
             } else {
                 mod = ModState.PilotCalledShotModifiers[pilotKey];

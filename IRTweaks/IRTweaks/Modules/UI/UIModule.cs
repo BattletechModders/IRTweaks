@@ -15,7 +15,7 @@ namespace IRTweaks.Modules.Tooltip {
                 try {
                     // Updates the purchase and selling dialogs to allow multiple items to be purchased and sold at once
                     if (Mod.Config.Fixes.BulkPurchasing) {
-                        Mod.Log.Info("Activating Fix: BulkPurchasing");
+                        Mod.Log.Info?.Write("Activating Fix: BulkPurchasing");
                         MethodInfo refreshMI = AccessTools.Method(typeof(SG_Stores_MultiPurchasePopup), "Refresh");
                         HarmonyMethod mpp_R_Post = new HarmonyMethod(typeof(StoreQuantities), "MultiPurchasePopup_Refresh_Postfix");
                         harmony.Patch(refreshMI, null, mpp_R_Post, null);
@@ -31,7 +31,7 @@ namespace IRTweaks.Modules.Tooltip {
 
                     // Enable the CombatLog
                     if (Mod.Config.Fixes.CombatLog) {
-                        Mod.Log.Info("Activating Fix: CombatLog");
+                        Mod.Log.Info?.Write("Activating Fix: CombatLog");
                         MethodInfo combatHUD_Init_MI = AccessTools.Method(typeof(CombatHUD), "Init", new Type[] { typeof(CombatGameState) });
                         HarmonyMethod cl_chud_i_post = new HarmonyMethod(typeof(CombatLog), "CombatHUD_Init_Postfix");
                         harmony.Patch(combatHUD_Init_MI, null, cl_chud_i_post, null);
@@ -65,12 +65,12 @@ namespace IRTweaks.Modules.Tooltip {
                     }
 
                     if (Mod.Config.Fixes.SkirmishAlwaysUnlimited) {
-                        Mod.Log.Info("Activating Fix: SkirmishAlwaysUnlimited");
+                        Mod.Log.Info?.Write("Activating Fix: SkirmishAlwaysUnlimited");
                     }
 
                     // Disables the ability to save in combat
                     if (Mod.Config.Fixes.DisableCombatSaves) {
-                        Mod.Log.Info("Activating Fix: DisableCombatSaves");
+                        Mod.Log.Info?.Write("Activating Fix: DisableCombatSaves");
                         MethodInfo sgom_cs = AccessTools.Method(typeof(SimGameOptionsMenu), "CanSave");
                         HarmonyMethod cs_sgom_cs_post = new HarmonyMethod(typeof(CombatSaves), "SimGameOptionsMenu_CanSave_Postfix");
                         harmony.Patch(sgom_cs, null, cs_sgom_cs_post, null);
@@ -82,7 +82,7 @@ namespace IRTweaks.Modules.Tooltip {
 
                     // Makes the main menu a smoother as there are fewer
                     if (Mod.Config.Fixes.StreamlinedMainMenu) {
-                        Mod.Log.Info("Activating Fix: StreamlinedMainMenu");
+                        Mod.Log.Info?.Write("Activating Fix: StreamlinedMainMenu");
 
                         MethodInfo sgnb_rftp_mi = AccessTools.Method(typeof(SGNavigationButton), "ResetFlyoutsToPrefab");
                         HarmonyMethod smm_sgnb_pftp = new HarmonyMethod(typeof(StreamlinedMainMenu), "SGNavigationButton_ResetFlyoutsToPrefab");
@@ -108,16 +108,16 @@ namespace IRTweaks.Modules.Tooltip {
 
                     // Update the pilot stats to have a maximum greater than 10
                     if (Mod.Config.Fixes.WeaponTooltip) {
-                        Mod.Log.Info("Activating Fix: WeaponTooltip");
+                        Mod.Log.Info?.Write("Activating Fix: WeaponTooltip");
                         MethodInfo tooltipPrefab_Weapon_SetData = AccessTools.Method(typeof(TooltipPrefab_Weapon), "SetData");
                         HarmonyMethod tm_tp_w_sd_post = new HarmonyMethod(typeof(WeaponTooltips), "TooltipPrefab_Weapon_SetData_Postfix");
                         harmony.Patch(tooltipPrefab_Weapon_SetData, null, tm_tp_w_sd_post, null);
                     }
 
                 } catch (Exception e) {
-                    Mod.Log.Error($"Failed to load patches due to: {e.Message}");
-                    Mod.Log.Error(e.StackTrace);
-                    Mod.Log.Error(e.ToString());
+                    Mod.Log.Error?.Write($"Failed to load patches due to: {e.Message}");
+                    Mod.Log.Error?.Write(e.StackTrace);
+                    Mod.Log.Error?.Write(e.ToString());
                 }
             }
             Initialized = true;

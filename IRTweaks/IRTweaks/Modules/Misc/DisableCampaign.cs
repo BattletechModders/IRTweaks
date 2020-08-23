@@ -10,7 +10,7 @@ namespace IRTweaks.Modules.Misc {
         static bool Prepare() => Mod.Config.Fixes.DisableCampaign;
 
         public static void Prefix(HBSRadioSet ___topLevelMenu) {
-            Mod.Log.Info($"Disabling the campaign button on the main menu.");
+            Mod.Log.Info?.Write($"Disabling the campaign button on the main menu.");
             try {
                 foreach (HBSButton button in ___topLevelMenu.RadioButtons)
                 {
@@ -20,8 +20,8 @@ namespace IRTweaks.Modules.Misc {
                     }
                 }
             } catch (Exception e) {
-                Mod.Log.Error("Failed to disable the campaign!");
-                Mod.Log.Error(e);
+                Mod.Log.Error?.Write("Failed to disable the campaign!");
+                Mod.Log.Error?.Write(e);
             }
         }
     }
