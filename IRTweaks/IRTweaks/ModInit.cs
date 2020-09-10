@@ -7,6 +7,7 @@ using IRTweaks.Modules.Combat;
 using IRTweaks.Modules.Tooltip;
 using IRTweaks.Modules.Misc;
 using IRBTModUtils.Logging;
+using System.IO;
 
 namespace IRTweaks {
 
@@ -18,6 +19,7 @@ namespace IRTweaks {
         public static DeferringLogger Log;
         public static string ModDir;
         public static ModConfig Config;
+        public static ModText LocalizedText;
 
         public static readonly Random Random = new Random();
 
@@ -46,6 +48,19 @@ namespace IRTweaks {
                 Log.Info?.Write($"ERROR reading settings file! Error was: {settingsE}");
             } else {
                 Log.Info?.Write($"INFO: No errors reading settings file.");
+            }
+
+            // Read localization
+            string localizationPath = Path.Combine(ModDir, "./mod_localized_text.json");
+            try
+            {
+                string jsonS = File.ReadAllText(localizationPath);
+                Mod.LocalizedText = JsonConvert.DeserializeObject<ModText>(jsonS);
+            }
+            catch (Exception e)
+            {
+                Mod.LocalizedText = new ModText();
+                Log.Error?.Write(e, $"Failed to read localizations from: {localizationPath} due to error!");
             }
 
             var harmony = HarmonyInstance.Create(HarmonyPackage);

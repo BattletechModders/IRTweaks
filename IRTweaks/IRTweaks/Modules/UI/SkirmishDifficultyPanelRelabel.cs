@@ -1,8 +1,5 @@
-﻿using BattleTech;
-using BattleTech.UI;
+﻿using BattleTech.UI;
 using BattleTech.UI.TMProWrapper;
-using BattleTech.UI.Tooltips;
-using CustAmmoCategories;
 using Harmony;
 using HBS.Extensions;
 using Localize;

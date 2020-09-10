@@ -1,179 +1,171 @@
 ﻿using BattleTech;
+using BattleTech.UI.TMProWrapper;
 using Harmony;
 using IRBTModUtils;
+using Localize;
 using System;
 
-namespace IRTweaks.Modules.Combat {
+namespace IRTweaks.Modules.Combat
+{
 
-    [HarmonyAfter(new string[] { "MechEngineer" })]
+    [HarmonyAfter(new string[] { "MechEngineer.Features.ComponentExplosions", "io.mission.modreputation" })]
     [HarmonyPatch(typeof(Mech), "DamageLocation")]
-    public static class Mech_DamageLocation {
+    static class Mech_DamageLocation
+    {
         static bool Prepare() => Mod.Config.Fixes.PainTolerance;
 
-        public static void Prefix(Mech __instance, WeaponHitInfo hitInfo, ArmorLocation aLoc, Weapon weapon, float totalArmorDamage, float directStructureDamage,
-            int hitIndex, AttackImpactQuality impactQuality, DamageType damageType) {
+        static void Prefix(Mech __instance, ArmorLocation aLoc, Weapon weapon, float totalArmorDamage, float directStructureDamage)
+        {
 
-            if (aLoc == ArmorLocation.Head) {
-                Mod.Log.Info?.Write($"Head hit from weapon:{weapon?.UIName} for {totalArmorDamage} armor damage and {directStructureDamage} structure damage. " +
-                    $"Quality was:{impactQuality} with type:{damageType}");
+            Mod.Log.Trace?.Write("M:DL - entered");
+
+            if (aLoc == ArmorLocation.Head)
+            {
+                Mod.Log.Info?.Write($"Head hit from weapon:{weapon?.UIName} for {totalArmorDamage} armor damage and {directStructureDamage} structure damage.");
 
                 float currHeadArmor = __instance.GetCurrentArmor(aLoc);
                 int damageMod = (int)Math.Ceiling(totalArmorDamage);
                 float damageThroughArmor = totalArmorDamage - currHeadArmor;
                 Mod.Log.Debug?.Write($"TotalArmorDamage:{totalArmorDamage} - Head armor:{currHeadArmor} = throughArmor:{damageThroughArmor}");
 
-                if (totalArmorDamage - currHeadArmor <= 0) {
+                if (totalArmorDamage - currHeadArmor <= 0)
+                {
                     damageMod = (int)Math.Floor(damageMod * Mod.Config.Combat.PainTolerance.HeadHitArmorOnlyMulti);
                     Mod.Log.Info?.Write($"Head hit impacted armor only, reduced damage to:{damageMod}");
                 }
 
-                if (directStructureDamage != 0) {
+                if (directStructureDamage != 0)
+                {
                     Mod.Log.Debug?.Write($"Attack inflicted ${directStructureDamage}, adding to total resist damage.");
                     damageMod += (int)Math.Ceiling(directStructureDamage);
                 }
 
-                ModState.InjuryResistPenalty = damageMod * Mod.Config.Combat.PainTolerance.PenaltyPerHeadDamage;
-                Mod.Log.Info?.Write($"Setting resist penalty to:{damageMod} x {Mod.Config.Combat.PainTolerance.PenaltyPerHeadDamage} = {ModState.InjuryResistPenalty}");
+                ModState.InjuryResistPenalty = damageMod * Mod.Config.Combat.PainTolerance.HeadDamageResistPenaltyPerArmorPoint;
+                Mod.Log.Debug?.Write($"Headshot sets injury resist penalty to: {damageMod} x {Mod.Config.Combat.PainTolerance.HeadDamageResistPenaltyPerArmorPoint} = {ModState.InjuryResistPenalty}");
             }
         }
     }
 
-    [HarmonyAfter(new string[] { "MechEngineer" })]
     [HarmonyPatch(typeof(AmmunitionBox), "DamageComponent")]
-    public static class AmmunitionBox_DamageComponent {
+    static class AmmunitionBox_DamageComponent
+    {
         static bool Prepare() => Mod.Config.Fixes.PainTolerance;
 
-        public static void Prefix(AmmunitionBox __instance, ComponentDamageLevel damageLevel, bool applyEffects) 
+        static void Prefix(AmmunitionBox __instance, ComponentDamageLevel damageLevel, bool applyEffects)
         {
 
-            if (__instance == null || SharedState.Combat == null) return; // We cannot do anything
+            if (__instance == null || __instance.ammunitionBoxDef == null || SharedState.Combat?.Constants?.PilotingConstants == null) return; // Nothing to do
 
-            if (SharedState.Combat?.Constants?.PilotingConstants == null)
+            if (__instance.ammunitionBoxDef.Capacity == 0)
             {
-                Mod.Log.Error?.Write("Piloting Constants is somehow null! This should not happen!");
+                Mod.Log.Warn?.Write($"Invalid ammoBox '{__instance.UIName}' detected with 0 capacity. Skipping.");
                 return;
             }
 
-            if (!__instance.StatCollection.ContainsStatistic(ModStats.HBS_AmmoBox_CurrentAmmo) ||
-                __instance.ammunitionBoxDef == null ||
-                __instance.ammunitionBoxDef.Capacity == 0)
-            {
-                Mod.Log.Warn?.Write($"Invalid ammoBox '{__instance.UIName}' detected. It does not contain CurrentAmmo stat, has no ammunitionBoxDef, or has 0 capacity.");
-                return;
-            }
-
-            bool explosionsCauseInjuries = SharedState.Combat?.Constants?.PilotingConstants != null ?
-                SharedState.Combat.Constants.PilotingConstants.InjuryFromAmmoExplosion : false;
-            if (applyEffects && damageLevel == ComponentDamageLevel.Destroyed &&  explosionsCauseInjuries) 
+            bool explosionsCauseInjuries = SharedState.Combat.Constants.PilotingConstants.InjuryFromAmmoExplosion;
+            if (applyEffects && damageLevel == ComponentDamageLevel.Destroyed && explosionsCauseInjuries)
             {
                 int value = __instance.StatCollection.GetValue<int>("CurrentAmmo");
                 int capacity = __instance.ammunitionBoxDef.Capacity;
                 float ratio = (float)value / (float)capacity;
                 Mod.Log.Debug?.Write($"Ammo explosion ratio:{ratio} = current:{value} / capacity:{capacity}");
-                int resistPenalty = (int)Math.Floor(ratio * Mod.Config.Combat.PainTolerance.PenaltyPerAmmoExplosionRatio);
-                Mod.Log.Debug?.Write($"Ammo explosion resist penalty:{resistPenalty} = " +
-                    $"Floor( ratio:{ratio}% * penaltyPerAmmoExplosion:{Mod.Config.Combat.PainTolerance.PenaltyPerAmmoExplosionRatio} )");
+                int resistPenalty = (int)Math.Floor(ratio * Mod.Config.Combat.PainTolerance.AmmoExplosionResistPenaltyPerCapacityPercentile);
+                Mod.Log.Debug?.Write($"Ammo explosion resist penalty: {resistPenalty} = " +
+                    $"Floor( ratio: {ratio}% x penaltyPerAmmoExplosion: {Mod.Config.Combat.PainTolerance.AmmoExplosionResistPenaltyPerCapacityPercentile} )");
 
-                if (ratio >= 0.5f) {
-                    ModState.InjuryResistPenalty = resistPenalty;
-                    Mod.Log.Debug?.Write($"Ammo explosion will reduce resist by: {resistPenalty}");
-                }
-
+                // NOTE: Used to gate on ratio > 50%... why?
+                ModState.InjuryResistPenalty = resistPenalty;
+                Mod.Log.Debug?.Write($"Ammo explosion sets injury resist penalty to: {resistPenalty}");
             }
         }
     }
 
-    [HarmonyPatch(typeof(Pilot), "SetNeedsInjury")]
-    public static class Pilot_SetNeedsInjury {
+    [HarmonyAfter(new string[] { "co.uk.cwolf.MissionControl" })]
+    [HarmonyBefore(new string[] { "us.frostraptor.SkillBasedInit", "dZ.Zappo.Pilot_Quirks" })]
+    [HarmonyPatch(typeof(Pilot), "InjurePilot")]
+    static class Pilot_InjurePilot
+    {
+
         static bool Prepare() => Mod.Config.Fixes.PainTolerance;
 
-        // Set state to true if needsInjury is already set; otherwise we override the value back to false.
-        public static void Prefix(Pilot __instance, bool __state, bool ___needsInjury) {
-            __state = ___needsInjury ? true : false;
-        }
+        static bool Prefix(Pilot __instance, ref int dmg, DamageType damageType, ref bool ___needsInjury, ref InjuryReason ___injuryReason )
+        {
+            Mod.Log.Trace?.Write("P:SNI - entered");
 
-        public static void Postfix(Pilot __instance, InjuryReason reason, bool __state, ref bool ___needsInjury, ref InjuryReason ___injuryReason) {
+            if (__instance.ParentActor == null) return true;
 
-            // Check for ReceiveHeatDamageInjury
-            if (__instance?.ParentActor?.GetType() == typeof(Mech)) {
-                Mech mech = (Mech)__instance.ParentActor;
-                Statistic receiveHeatDamageInjuryStat = mech.StatCollection.GetStatistic("ReceiveHeatDamageInjury");
-                Mod.Log.Debug?.Write($"Checking actor with injuryReason:{reason} and receiveHeatDamageInjury:{receiveHeatDamageInjuryStat}");
-
-                // If the below is true, we likely are coming from a ME patch - 
-                // see https://github.com/BattletechModders/MechEngineer/blob/master/source/Features/ShutdownInjuryProtection/Patches/Mech_CheckForHeatDamage_Patch.cs
-                if (reason == InjuryReason.NotSet && mech.IsOverheated && mech.StatCollection.GetStatistic("ReceiveHeatDamageInjury") != null) {
-                    Mod.Log.Debug?.Write($"Actor received a heatDamage injury, computing overheat ratio.");
-                    float overheatRatio = PainHelper.CalculateOverheatRatio(mech);
-
-                    int overheatPenalty = (int)Math.Floor(overheatRatio * Mod.Config.Combat.PainTolerance.PenaltyPerHeatDamageInjuryRatio);
-                    Mod.Log.Debug?.Write($"overheatPenalty:{overheatPenalty} = " +
-                        $"Floor( overheatRatio:{overheatRatio} * penaltyPerOverheatDamage{Mod.Config.Combat.PainTolerance.PenaltyPerHeatDamageInjuryRatio} )");
-                    ModState.InjuryResistPenalty = overheatPenalty;
-                }
-
-                // Set explicit damage values for known damage types
-                if (reason == InjuryReason.Knockdown) {
-                    ModState.InjuryResistPenalty = Mod.Config.Combat.PainTolerance.KnockdownDamage;
-                } else if (reason == InjuryReason.SideTorsoDestroyed) {
-                    ModState.InjuryResistPenalty = Mod.Config.Combat.PainTolerance.TorsoDestroyedDamage;
-                }
+            // Compute the resist penalty for each damage type that we support
+            if (damageType == DamageType.HeadShot)
+            {
+                Mod.Log.Info?.Write($"Actor suffered a headshot, injury resist was set to: {ModState.InjuryResistPenalty}");
             }
-
-            if (ModState.InjuryResistPenalty != -1) {
-                bool success = PainHelper.MakeResistCheck(__instance);
-                if (success) {
-                    // If the state value is true, then there was already an injury set on the pilot. Do nothign.
-                    if (__state) {
-                        Mod.Log.Info?.Write($"Pilot has an outstanding injury, not ignoring!");
-                    } else {
-                        ___needsInjury = false;
-                        ___injuryReason = InjuryReason.NotSet;
-                    }
-                }
-
-                // Reset our mod state
-                ModState.InjuryResistPenalty = -1;
+            else if (damageType == DamageType.AmmoExplosion)
+            {
+                Mod.Log.Info?.Write($"Actor suffered an ammo explosion, injury resist was set to: {ModState.InjuryResistPenalty}");
             }
-        }
-    }
-
-    [HarmonyAfter(new string[] { "dZ.Zappo.Pilot_Quirks" })]
-    [HarmonyBefore(new string[] { "us.frostraptor.SkillBasedInit" })]
-    [HarmonyPatch(typeof(Pilot), "InjurePilot")]
-    public static class Pilot_InjurePilot {
-
-        static bool Prepare() { return Mod.Config.Fixes.PainTolerance; }
-
-        public static void Prefix(Pilot __instance, ref int dmg, DamageType damageType) {
-            if (damageType == DamageType.Overheat || damageType == DamageType.OverheatSelf) {
-                Mod.Log.Debug?.Write($"Pilot:{__instance?.Name} will be injured by overheating.");
-
-                Mech mech = __instance?.ParentActor as Mech;
-                float overheatRatio = PainHelper.CalculateOverheatRatio(mech);
-                int overheatPenalty = (int)Math.Floor(overheatRatio * Mod.Config.Combat.PainTolerance.PenaltyPerHeatDamageInjuryRatio);
+            else if (damageType == DamageType.Knockdown)
+            {
+                ModState.InjuryResistPenalty = Mod.Config.Combat.PainTolerance.KnockdownResistPenalty;
+                Mod.Log.Info?.Write($"Actor was knocked down, setting injury resist to: {ModState.InjuryResistPenalty}");
+            }
+            else if (damageType == DamageType.SideTorso)
+            {
+                ModState.InjuryResistPenalty = Mod.Config.Combat.PainTolerance.SideLocationDestroyedResistPenalty;
+                Mod.Log.Info?.Write($"Actor torso/side destroyed, setting injury resist to: {ModState.InjuryResistPenalty}");
+            }
+            else if (damageType == DamageType.Overheat || damageType == DamageType.OverheatSelf || 
+                "OVERHEATED".Equals(__instance.InjuryReasonDescription, StringComparison.InvariantCultureIgnoreCase))
+            {
+                // comparison string must match label in https://github.com/BattletechModders/MechEngineer/blob/master/source/Features/ShutdownInjuryProtection/Patches/Pilot_InjuryReasonDescription_Patch.cs
+                Mod.Log.Debug?.Write($"Actor damage from overheating or ME heatDamage injury, computing overheat ratio.");
+                float overheatRatio = PainHelper.CalculateOverheatRatio(__instance.ParentActor as Mech);
+                int overheatPenalty = (int)Math.Floor(overheatRatio * Mod.Config.Combat.PainTolerance.OverheatResistPenaltyPerHeatPercentile);
                 Mod.Log.Debug?.Write($"overheatPenalty:{overheatPenalty} = " +
-                    $"Floor( overheatRatio:{overheatRatio} * penaltyPerOverheatDamage{Mod.Config.Combat.PainTolerance.PenaltyPerHeatDamageInjuryRatio}");
+                    $"Floor( overheatRatio:{overheatRatio} * penaltyPerOverheatDamage{Mod.Config.Combat.PainTolerance.OverheatResistPenaltyPerHeatPercentile} )");
+                
                 ModState.InjuryResistPenalty = overheatPenalty;
+                Mod.Log.Info?.Write($"Actor overheated, setting injury resist to: {ModState.InjuryResistPenalty}");
+            }
 
+            // Need default resistance?
+
+            if (ModState.InjuryResistPenalty != -1)
+            {
                 bool success = PainHelper.MakeResistCheck(__instance);
-                if (success) {
-                    dmg = 0;
+                if (success)
+                {
+                    Mod.Log.Info?.Write($"Ignoring {__instance.InjuryReason} injury on pilot: {__instance.Name}");
+                    ___needsInjury = false;
+                    ___injuryReason = InjuryReason.NotSet;
+
+                    // Reset our mod state
+                    ModState.InjuryResistPenalty = -1;
+
+                    // Publish a floatie
+                    string localText = new Text(Mod.LocalizedText.Floaties[ModText.FT_InjuryResist], new object[] {}).ToString();
+                    IStackSequence stackSequence = new ShowActorInfoSequence(__instance.ParentActor, localText, FloatieMessage.MessageNature.PilotInjury, useCamera: false);
+                    SharedState.Combat.MessageCenter.PublishMessage(new AddSequenceToStackMessage(stackSequence));
+
+                    return false;
                 }
 
-                // Reset the mod state
-                ModState.InjuryResistPenalty = -1;
-
             }
+
+            return true;
         }
     }
 
 
     [HarmonyPatch(typeof(TurnDirector), "OnTurnActorActivateComplete")]
-    public static class TurnDirectror_OnTurnActorActivateComplete {
+    static class TurnDirector_OnTurnActorActivateComplete
+    {
         static bool Prepare() => Mod.Config.Fixes.PainTolerance;
 
-        public static void Postfix(TurnDirector __instance) {
+        static void Postfix(TurnDirector __instance)
+        {
+
+            Mod.Log.Trace?.Write("TD:OTAAC - entered");
+
             // Reset the attack penalty in case we've flipped actors.
             ModState.InjuryResistPenalty = -1;
         }

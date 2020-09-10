@@ -55,10 +55,8 @@ namespace IRTweaks.Modules.Combat
 
                 ModState.ExplosionSequences.Add(__instance.SequenceGUID);
             }
-
         }
     }
-
 
     // The HBS logic has a subtle bug here... it passes ICombatant but then tries a cast to AbstractActor 
     //   when it invokes ReapplyDesignMasks(). This will cause an NRE that allows the sequence to 'shortcircuit'.
@@ -106,15 +104,6 @@ namespace IRTweaks.Modules.Combat
             // One minor problem this can cause is that AttackNextTarget may have nothing to attack - which should work in theory, 
             //   but it's difficult to test.
             
-        }
-    }
-
-    [HarmonyPatch(typeof(AbstractActor), "OnRecomputePathing")]
-    static class AbstractActor_OnRecomputePathing
-    {
-        static void Prefix(AbstractActor __instance)
-        {
-            Mod.Log.Info?.Write($"Recomputing pathing for actor: {__instance.DistinctId()}");
         }
     }
 }

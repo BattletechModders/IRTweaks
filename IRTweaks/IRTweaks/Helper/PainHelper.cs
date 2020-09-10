@@ -1,7 +1,5 @@
 ﻿using BattleTech;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using us.frostraptor.modUtils;
 
 namespace IRTweaks {
@@ -34,7 +32,7 @@ namespace IRTweaks {
             if (success) {
                 Mod.Log.Info?.Write($"Pilot:{pilot?.Name} resisted injury with check:{check} <= resistChance:{resistChance}");
             } else {
-                Mod.Log.Debug?.Write($"Pilot failed to resist injury with check:{check} > resistChance:{resistChance}");
+                Mod.Log.Info?.Write($"Pilot failed to resist injury with check:{check} > resistChance:{resistChance}");
             }
 
             return success;

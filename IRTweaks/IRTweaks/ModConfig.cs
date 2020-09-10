@@ -30,17 +30,18 @@ namespace IRTweaks {
         public PainToleranceOpts PainTolerance = new PainToleranceOpts();
         public class PainToleranceOpts {
             public float ResistPerGuts = 10.0f;
-            public float PenaltyPerHeadDamage = 5.0f;
+
+            public float HeadDamageResistPenaltyPerArmorPoint = 5.0f;
+            public float HeadHitArmorOnlyResistPenaltyMulti = 0.5f;
 
             // Reduces resist by this multiplied the capacity ratio of an ammo explosion
-            public float PenaltyPerAmmoExplosionRatio = 1.0f;
-
+            public float AmmoExplosionResistPenaltyPerCapacityPercentile = 1.0f;
             // Reduces resist by this multiplied the capacity ratio of an head damage injury
-            public float PenaltyPerHeatDamageInjuryRatio = 1.0f;
+            public float OverheatResistPenaltyPerHeatPercentile = 1.0f;
             
-            public float KnockdownDamage = 6f;
-            public float TorsoDestroyedDamage = 10f;
-            public float HeadHitArmorOnlyMulti = 0.5f;
+            public float KnockdownResistPenalty = 6f;
+            public float SideLocationDestroyedResistPenalty = 10f;
+            
         }
 
         public SpawnProtectionOpts SpawnProtection = new SpawnProtectionOpts();
@@ -113,29 +114,31 @@ namespace IRTweaks {
             Mod.Log.Info?.Write($"  DEBUG: {this.Debug} Trace: {this.Trace}");
 
             Mod.Log.Info?.Write("  -- Fixes --");
-            Mod.Log.Info?.Write($"  AlternateMechNamingStyle:    {this.Fixes.AlternateMechNamingStyle}");
-            Mod.Log.Info?.Write($"  BuildingDamageColorChange:   {this.Fixes.BuildingDamageColorChange}");
-            Mod.Log.Info?.Write($"  BraceOnMeleeWithJuggernaut:  {this.Fixes.BraceOnMeleeWithJuggernaut}");
-            Mod.Log.Info?.Write($"  BulkPurchasing:              {this.Fixes.BulkPurchasing}");
-            Mod.Log.Info?.Write($"  CombatLog:                   {this.Fixes.CombatLog}");
-            Mod.Log.Info?.Write($"  DisableCampaign:             {this.Fixes.DisableCampaign}");
-            Mod.Log.Info?.Write($"  DisableCombatSaves:          {this.Fixes.DisableCombatSaves}");
-            Mod.Log.Info?.Write($"  DisableMPHashCalculation:    {this.Fixes.DisableMPHashCalculation}");
-            Mod.Log.Info?.Write($"  ExtendedStats:               {this.Fixes.ExtendedStats}");
-            Mod.Log.Info?.Write($"  FlexibleSensorLock:          {this.Fixes.FlexibleSensorLock}");
-            Mod.Log.Info?.Write($"  MechbayLayoutFix:            {this.Fixes.MechbayLayout}");
-            Mod.Log.Info?.Write($"  PathfinderTeamFix:           {this.Fixes.PathfinderTeamFix}");
-            Mod.Log.Info?.Write($"  PreventHeadShots:            {this.Fixes.PreventHeadShots}");
-            Mod.Log.Info?.Write($"  RandomStartByDifficulty:     {this.Fixes.RandomStartByDifficulty}");
-            Mod.Log.Info?.Write($"  ReduceSaveCompression:       {this.Fixes.ReduceSaveCompression}");
-            Mod.Log.Info?.Write($"  ShowAllArgoUpgrades:         {this.Fixes.ShowAllArgoUpgrades}");
-            Mod.Log.Info?.Write($"  SkirmishReset:               {this.Fixes.SkirmishReset}");
-            Mod.Log.Info?.Write($"  SkirmishAlwaysUnlimited:     {this.Fixes.SkirmishAlwaysUnlimited}");
-            Mod.Log.Info?.Write($"  SkipDeleteSavePopup:         {this.Fixes.SkipDeleteSavePopup}");
-            Mod.Log.Info?.Write($"  SpawnProtection:             {this.Fixes.SpawnProtection}");
-            Mod.Log.Info?.Write($"  StreamlinedMainMenu:         {this.Fixes.StreamlinedMainMenu}");
-            Mod.Log.Info?.Write($"  UrbanExplosionsFix:          {this.Fixes.UrbanExplosionsFix}");
-            Mod.Log.Info?.Write($"  WeaponTooltips:              {this.Fixes.WeaponTooltip}");
+            Mod.Log.Info?.Write($"  AlternateMechNamingStyle:           {this.Fixes.AlternateMechNamingStyle}");
+            Mod.Log.Info?.Write($"  BuildingDamageColorChange:          {this.Fixes.BuildingDamageColorChange}");
+            Mod.Log.Info?.Write($"  BraceOnMeleeWithJuggernaut:         {this.Fixes.BraceOnMeleeWithJuggernaut}");
+            Mod.Log.Info?.Write($"  BulkPurchasing:                     {this.Fixes.BulkPurchasing}");
+            Mod.Log.Info?.Write($"  CombatLog:                          {this.Fixes.CombatLog}");
+            Mod.Log.Info?.Write($"  DisableCampaign:                    {this.Fixes.DisableCampaign}");
+            Mod.Log.Info?.Write($"  DisableCombatSaves:                 {this.Fixes.DisableCombatSaves}");
+            Mod.Log.Info?.Write($"  DisableMPHashCalculation:           {this.Fixes.DisableMPHashCalculation}");
+            Mod.Log.Info?.Write($"  ExtendedStats:                      {this.Fixes.ExtendedStats}");
+            Mod.Log.Info?.Write($"  FlexibleSensorLock:                 {this.Fixes.FlexibleSensorLock}");
+            Mod.Log.Info?.Write($"  MechbayLayoutFix:                   {this.Fixes.MechbayLayout}");
+            Mod.Log.Info?.Write($"  PainTolerance:                      {this.Fixes.PainTolerance}");
+            Mod.Log.Info?.Write($"  PathfinderTeamFix:                  {this.Fixes.PathfinderTeamFix}");
+            Mod.Log.Info?.Write($"  PreventHeadShots:                   {this.Fixes.PreventHeadShots}");
+            Mod.Log.Info?.Write($"  RandomStartByDifficulty:            {this.Fixes.RandomStartByDifficulty}");
+            Mod.Log.Info?.Write($"  ReduceSaveCompression:              {this.Fixes.ReduceSaveCompression}");
+            Mod.Log.Info?.Write($"  ShowAllArgoUpgrades:                {this.Fixes.ShowAllArgoUpgrades}");
+            Mod.Log.Info?.Write($"  SkipDeleteSavePopup:                {this.Fixes.SkipDeleteSavePopup}");
+            Mod.Log.Info?.Write($"  SkirmishAlwaysUnlimited:            {this.Fixes.SkirmishAlwaysUnlimited}");
+            Mod.Log.Info?.Write($"  SkirmishReset:                      {this.Fixes.SkirmishReset}");
+            Mod.Log.Info?.Write($"  SimGameDifficultyLabelsReplacer:    {this.Fixes.SimGameDifficultyLabelsReplacer}");
+            Mod.Log.Info?.Write($"  SpawnProtection:                    {this.Fixes.SpawnProtection}");
+            Mod.Log.Info?.Write($"  StreamlinedMainMenu:                {this.Fixes.StreamlinedMainMenu}");
+            Mod.Log.Info?.Write($"  UrbanExplosionsFix:                 {this.Fixes.UrbanExplosionsFix}");
+            Mod.Log.Info?.Write($"  WeaponTooltips:                     {this.Fixes.WeaponTooltip}");
 
             Mod.Log.Info?.Write("  -- Called Shot --");
             Mod.Log.Info?.Write($"   CalledShotDefaultMod:{Combat.CalledShot.Modifier}");
