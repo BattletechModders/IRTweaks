@@ -30,7 +30,7 @@ namespace IRTweaks.Modules.Combat
 
                 if (totalArmorDamage - currHeadArmor <= 0)
                 {
-                    damageMod = (int)Math.Floor(damageMod * Mod.Config.Combat.PainTolerance.HeadHitArmorOnlyMulti);
+                    damageMod = (int)Math.Floor(damageMod * Mod.Config.Combat.PainTolerance.HeadHitArmorOnlyResistPenaltyMulti);
                     Mod.Log.Info?.Write($"Head hit impacted armor only, reduced damage to:{damageMod}");
                 }
 
