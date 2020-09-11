@@ -70,6 +70,8 @@ namespace IRTweaks {
             MiscFixes.InitModule(harmony);
             UIFixes.InitModule(harmony);
 
+            // Enable DEBUG below to print a log of emitted IL to the desktop. Useful for debugging transpilers
+            //HarmonyInstance.DEBUG = true;
             harmony.PatchAll(Assembly.GetExecutingAssembly());
 
             // Setup the diag for me 
