@@ -1,11 +1,10 @@
 ﻿using BattleTech;
-using BattleTech.UI.TMProWrapper;
 using Harmony;
 using IRBTModUtils;
+using IRBTModUtils.Extension;
 using Localize;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 
@@ -92,43 +91,45 @@ namespace IRTweaks.Modules.Combat
 
         static bool Prepare() => Mod.Config.Fixes.PainTolerance;
 
-        static bool Prefix(Pilot __instance, ref int dmg, DamageType damageType, ref bool ___needsInjury, ref InjuryReason ___injuryReason )
+        static bool Prefix(Pilot __instance, DamageType damageType, ref bool ___needsInjury, ref InjuryReason ___injuryReason )
         {
             Mod.Log.Trace?.Write("P:SNI - entered");
 
             if (__instance.ParentActor == null) return true;
 
+            Mod.Log.Info?.Write($"Checking pilot: {__instance.ParentActor.DistinctId()} to resist injury of type: {___injuryReason}");
+
             // Compute the resist penalty for each damage type that we support
             if (damageType == DamageType.HeadShot)
             {
-                Mod.Log.Info?.Write($"Actor suffered a headshot, injury resist was set to: {ModState.InjuryResistPenalty}");
+                Mod.Log.Info?.Write($"  Actor suffered a headshot, injury resist was set to: {ModState.InjuryResistPenalty}");
             }
             else if (damageType == DamageType.AmmoExplosion)
             {
-                Mod.Log.Info?.Write($"Actor suffered an ammo explosion, injury resist was set to: {ModState.InjuryResistPenalty}");
+                Mod.Log.Info?.Write($"  Actor suffered an ammo explosion, injury resist was set to: {ModState.InjuryResistPenalty}");
             }
-            else if (damageType == DamageType.Knockdown)
+            else if (damageType == DamageType.Knockdown || damageType == DamageType.KnockdownSelf)
             {
                 ModState.InjuryResistPenalty = Mod.Config.Combat.PainTolerance.KnockdownResistPenalty;
-                Mod.Log.Info?.Write($"Actor was knocked down, setting injury resist to: {ModState.InjuryResistPenalty}");
+                Mod.Log.Info?.Write($"  Actor was knocked down, setting injury resist to: {ModState.InjuryResistPenalty}");
             }
             else if (damageType == DamageType.SideTorso)
             {
                 ModState.InjuryResistPenalty = Mod.Config.Combat.PainTolerance.SideLocationDestroyedResistPenalty;
-                Mod.Log.Info?.Write($"Actor torso/side destroyed, setting injury resist to: {ModState.InjuryResistPenalty}");
+                Mod.Log.Info?.Write($"  Actor torso/side destroyed, setting injury resist to: {ModState.InjuryResistPenalty}");
             }
             else if (damageType == DamageType.Overheat || damageType == DamageType.OverheatSelf || 
                 "OVERHEATED".Equals(__instance.InjuryReasonDescription, StringComparison.InvariantCultureIgnoreCase))
             {
                 // comparison string must match label in https://github.com/BattletechModders/MechEngineer/blob/master/source/Features/ShutdownInjuryProtection/Patches/Pilot_InjuryReasonDescription_Patch.cs
-                Mod.Log.Debug?.Write($"Actor damage from overheating or ME heatDamage injury, computing overheat ratio.");
+                Mod.Log.Debug?.Write($"  Actor damage from overheating or ME heatDamage injury, computing overheat ratio.");
                 float overheatRatio = PainHelper.CalculateOverheatRatio(__instance.ParentActor as Mech);
                 int overheatPenalty = (int)Math.Floor(overheatRatio * Mod.Config.Combat.PainTolerance.OverheatResistPenaltyPerHeatPercentile);
-                Mod.Log.Debug?.Write($"overheatPenalty:{overheatPenalty} = " +
+                Mod.Log.Debug?.Write($"  overheatPenalty:{overheatPenalty} = " +
                     $"Floor( overheatRatio:{overheatRatio} * penaltyPerOverheatDamage{Mod.Config.Combat.PainTolerance.OverheatResistPenaltyPerHeatPercentile} )");
                 
                 ModState.InjuryResistPenalty = overheatPenalty;
-                Mod.Log.Info?.Write($"Actor overheated, setting injury resist to: {ModState.InjuryResistPenalty}");
+                Mod.Log.Info?.Write($"  Actor overheated, setting injury resist to: {ModState.InjuryResistPenalty}");
             }
 
             // Need default resistance?
@@ -138,20 +139,21 @@ namespace IRTweaks.Modules.Combat
                 bool success = PainHelper.MakeResistCheck(__instance);
                 if (success)
                 {
-                    Mod.Log.Info?.Write($"Ignoring {__instance.InjuryReason} injury on pilot: {__instance.Name}");
-                    ___needsInjury = false;
-                    ___injuryReason = InjuryReason.NotSet;
-
-                    // Reset our mod state
-                    ModState.InjuryResistPenalty = -1;
+                    Mod.Log.Info?.Write($"Ignoring {___injuryReason} injury on pilot.");
 
                     // Publish a floatie
-                    string localText = new Text(Mod.LocalizedText.Floaties[ModText.FT_InjuryResist], new object[] {}).ToString();
+                    string localText = new Text(Mod.LocalizedText.Floaties[ModText.FT_InjuryResist], new object[] { }).ToString();
                     IStackSequence stackSequence = new ShowActorInfoSequence(__instance.ParentActor, localText, FloatieMessage.MessageNature.PilotInjury, useCamera: false);
                     SharedState.Combat.MessageCenter.PublishMessage(new AddSequenceToStackMessage(stackSequence));
 
                     return false;
                 }
+                else
+                {
+                    Mod.Log.Info?.Write($"Pilot will suffer injury type: {___injuryReason}.");
+                }
+
+                ModState.InjuryResistPenalty = -1;
 
             }
 
@@ -197,12 +199,12 @@ namespace IRTweaks.Modules.Combat
                 if (instruction.opcode == OpCodes.Ldstr && "{0}: INJURY IGNORED".Equals((string)instruction.operand, StringComparison.InvariantCultureIgnoreCase))
                 {
                     injuryStrIdx = i;
-                    Mod.Log.Debug?.Write($"AA:CPSFA Found INJURY IGNORED instruction at idx: {i}");
+                    Mod.Log.Info?.Write($"AA:CPSFA Found INJURY IGNORED instruction at idx: {i}");
                 }
                 else if (instruction.opcode == OpCodes.Callvirt && (MethodInfo)instruction.operand == clearNeedsInjuryMI)
                 {
                     clearInjuryIdx = i;
-                    Mod.Log.Debug?.Write($"AA:CPSFA Found Pilot.ClearNeedsInjury instruction at idx: {i}");
+                    Mod.Log.Info?.Write($"AA:CPSFA Found Pilot.ClearNeedsInjury instruction at idx: {i}");
                 }
             }
 
@@ -233,7 +235,7 @@ namespace IRTweaks.Modules.Combat
                 if (instruction.opcode == OpCodes.Ldstr && "KNOCKDOWN: INJURY IGNORED".Equals((string)instruction.operand, StringComparison.InvariantCultureIgnoreCase))
                 {
                     targetIdx = i;
-                    Mod.Log.Debug?.Write($"M:CK Found INJURY IGNORED instruction at idx: {i}");
+                    Mod.Log.Info?.Write($"M:CK Found INJURY IGNORED instruction at idx: {i}");
                 }
             }
 
