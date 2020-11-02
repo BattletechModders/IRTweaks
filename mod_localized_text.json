@@ -1,5 +1,12 @@
 {
     "Floaties" : {
-        "INJURY_RESIST" : "INJURY RESISTED!"  
+        "INJURY_RESIST" : "INJURY RESISTED!"
+    },
+
+    "Tooltips" : {
+        "COMBAT_SAVE_TITLE" : "Combat Saves Disabled",
+        "COMBAT_SAVE_DETAILS" : "Saving during combat is disabled to prevent errors in modded games.",
+        "COMBAT_RESTART_TITLE" : "Mission Restarts Disabled",
+        "COMBAT_RESTART_DETAILS" : "Restarting a missing during combat is disabled to prevent errors in modded games. Restarting often leads to corruption at the salvage screen.",
     }
 }

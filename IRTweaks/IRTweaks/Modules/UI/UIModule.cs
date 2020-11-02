@@ -64,21 +64,17 @@ namespace IRTweaks.Modules.Tooltip {
                         CombatLog.InitModule();
                     }
 
-                    if (Mod.Config.Fixes.SkirmishAlwaysUnlimited) {
+                    if (Mod.Config.Fixes.SkirmishAlwaysUnlimited)
                         Mod.Log.Info?.Write("Activating Fix: SkirmishAlwaysUnlimited");
-                    }
 
-                    // Disables the ability to save in combat
-                    if (Mod.Config.Fixes.DisableCombatSaves) {
+                    if (Mod.Config.Fixes.DisableCombatSaves)
                         Mod.Log.Info?.Write("Activating Fix: DisableCombatSaves");
-                        MethodInfo sgom_cs = AccessTools.Method(typeof(SimGameOptionsMenu), "CanSave");
-                        HarmonyMethod cs_sgom_cs_post = new HarmonyMethod(typeof(CombatSaves), "SimGameOptionsMenu_CanSave_Postfix");
-                        harmony.Patch(sgom_cs, null, cs_sgom_cs_post, null);
 
-                        MethodInfo sgom_sstt = AccessTools.Method(typeof(SimGameOptionsMenu), "SetSaveTooltip");
-                        HarmonyMethod cs_sgom_sstt_postfix = new HarmonyMethod(typeof(CombatSaves), "SimGameOptionsMenu_SetSaveTooltip_Postfix");
-                        harmony.Patch(sgom_sstt, null, cs_sgom_sstt_postfix, null);
-                    }
+                    if (Mod.Config.Fixes.DisableCombatRestarts)
+                        Mod.Log.Info?.Write("Activating Fix: DisableCombatRestart");
+
+                    if (Mod.Config.Fixes.WarnOnCombatRestart)
+                        Mod.Log.Info?.Write("Activating Fix: EnableCombatRestartWarning");
 
                     // Makes the main menu a smoother as there are fewer
                     if (Mod.Config.Fixes.StreamlinedMainMenu) {

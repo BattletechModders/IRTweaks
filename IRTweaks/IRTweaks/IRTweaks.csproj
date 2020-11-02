@@ -106,7 +106,7 @@
     <Compile Include="Modules\Combat\SpawnProtection.cs" />
     <Compile Include="Modules\Combat\UrbanExplosionsFix.cs" />
     <Compile Include="Modules\Misc\DisableMPHash.cs" />
-    <Compile Include="Modules\Misc\PilotEffects.cs" />
+    <Compile Include="Modules\Misc\MultiTargetAsStatistic.cs" />
     <Compile Include="Modules\Misc\ShowAllArgoUpgrades.cs" />
     <Compile Include="Modules\Misc\SkipDeleteSavePopup.cs" />
     <Compile Include="Modules\Misc\DisableCampaign.cs" />

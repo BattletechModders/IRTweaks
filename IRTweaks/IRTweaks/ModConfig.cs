@@ -66,7 +66,9 @@ namespace IRTweaks {
         public bool BulkPurchasing = true;
         public bool CombatLog = true;
         public bool DisableCampaign = true;
+        public bool DisableCombatRestarts = true;
         public bool DisableCombatSaves = true;
+        public bool DisableIronMan = true;
         public bool DisableMPHashCalculation = true;
         public bool ExtendedStats = true;
         public bool FlexibleSensorLock = true;
@@ -85,6 +87,7 @@ namespace IRTweaks {
         public bool SpawnProtection = true;
         public bool StreamlinedMainMenu = true;
         public bool UrbanExplosionsFix = true;
+        public bool WarnOnCombatRestart = false;
         public bool WeaponTooltip = true;
     }
 
