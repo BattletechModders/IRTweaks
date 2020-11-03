@@ -38,8 +38,8 @@ namespace IRTweaks.Helper {
                 {
                     // Calculate the modifiers for the pilot
                     Mod.Log.Info?.Write($" Calculating calledShotModifier for actor: {actor.DistinctId()}");
-                    int baseMod = Mod.Config.Combat.CalledShot.Modifier;
-                    int tacticsMod = Mod.Config.Combat.CalledShot.EnableTacticsMod ?
+                    int baseMod = Mod.Config.Combat.CalledShot.BaseModifier;
+                    int tacticsMod = Mod.Config.Combat.CalledShot.EnableTacticsModifier ?
                         (-1 * SkillUtils.GetTacticsModifier(pilot)) : 0;
                     int tagsCSMod = SkillUtils.GetTagsModifier(pilot, Mod.Config.Combat.CalledShot.PilotTags);
 

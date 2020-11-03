@@ -73,9 +73,6 @@ namespace IRTweaks.Modules.Tooltip {
                     if (Mod.Config.Fixes.DisableCombatRestarts)
                         Mod.Log.Info?.Write("Activating Fix: DisableCombatRestart");
 
-                    if (Mod.Config.Fixes.WarnOnCombatRestart)
-                        Mod.Log.Info?.Write("Activating Fix: EnableCombatRestartWarning");
-
                     // Makes the main menu a smoother as there are fewer
                     if (Mod.Config.Fixes.StreamlinedMainMenu) {
                         Mod.Log.Info?.Write("Activating Fix: StreamlinedMainMenu");

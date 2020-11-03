@@ -13,7 +13,7 @@ namespace IRTweaks.Modules.Combat
     [HarmonyPatch(typeof(AbstractActor), "InitEffectStats")]
     static class AbstractActor_InitEffectStats
     {
-        static bool Prepare => Mod.Config.Fixes.PreventHeadShots;
+        static bool Prepare => Mod.Config.Fixes.CalledShotTweaks;
 
         static void Postfix(AbstractActor __instance)
         {
@@ -26,7 +26,7 @@ namespace IRTweaks.Modules.Combat
     [HarmonyPatch(typeof(HUDMechArmorReadout), "SetHoveredArmor")]
     static class HUDMechArmorReadout_SetHoveredAmor
     {
-        static bool Prepare => Mod.Config.Fixes.PreventHeadShots;
+        static bool Prepare => Mod.Config.Fixes.CalledShotTweaks;
 
         static void Postfix(HUDMechArmorReadout __instance, ArmorLocation location, Mech ___displayedMech)
         {
@@ -68,7 +68,7 @@ namespace IRTweaks.Modules.Combat
     [HarmonyPatch(typeof(SelectionStateFire), "SetCalledShot")]
     static class SelectionStateFire_SetCalledShot
     {
-        static bool Prepare => Mod.Config.Fixes.PreventHeadShots;
+        static bool Prepare => Mod.Config.Fixes.CalledShotTweaks;
 
         static void Postfix(SelectionStateFire __instance, ArmorLocation location)
         {
@@ -105,7 +105,7 @@ namespace IRTweaks.Modules.Combat
     [HarmonyPatch(typeof(ToHit), "GetMoraleAttackModifer")]
     static class ToHit_GetMoraleAttackModifer
     {
-        static bool Prepare => Mod.Config.Fixes.NuancedCalledShotModifier;
+        static bool Prepare => Mod.Config.Fixes.CalledShotTweaks;
 
         static void Postfix(ref float __result)
         {
@@ -116,7 +116,7 @@ namespace IRTweaks.Modules.Combat
     [HarmonyPatch(typeof(ToHit), "GetAllModifiers")]
     static class ToHit_GetAllModifiers
     {
-        static bool Prepare => Mod.Config.Fixes.NuancedCalledShotModifier;
+        static bool Prepare => Mod.Config.Fixes.CalledShotTweaks;
 
         static void Postfix(ref float __result, bool isCalledShot, AbstractActor attacker)
         {
@@ -134,7 +134,7 @@ namespace IRTweaks.Modules.Combat
     [HarmonyPatch(typeof(ToHit), "GetAllModifiersDescription")]
     static class ToHit_GetAllModifiersDescription
     {
-        static bool Prepare => Mod.Config.Fixes.NuancedCalledShotModifier;
+        static bool Prepare => Mod.Config.Fixes.CalledShotTweaks;
 
         static void Postfix(ref string __result, bool isCalledShot, AbstractActor attacker)
         {
@@ -156,7 +156,7 @@ namespace IRTweaks.Modules.Combat
     [HarmonyPatch(typeof(CombatHUDWeaponSlot), "UpdateToolTipsFiring")]
     static class CombatHUDWeaponSlot_UpdateToolTipsFiringr
     {
-        static bool Prepare => Mod.Config.Fixes.NuancedCalledShotModifier;
+        static bool Prepare => Mod.Config.Fixes.CalledShotTweaks;
 
         static void Postfix(CombatHUDWeaponSlot __instance, CombatGameState ___Combat, CombatHUD ___HUD)
         {
@@ -178,7 +178,6 @@ namespace IRTweaks.Modules.Combat
                 }
             }
         }
-
     }
 
 }

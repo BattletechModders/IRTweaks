@@ -25,12 +25,8 @@ namespace IRTweaks.Modules.Combat {
                         harmony.Patch(pilot_ISV_MI, psv_ISV_HM, null, null);
                     }
 
-                    if (Mod.Config.Fixes.NuancedCalledShotModifier)
-                        Mod.Log.Info?.Write("Activating Fix: NuancedCalledShotModifier");
-
-                    // Headshot patches - prevent headshot without appropriate equipment
-                    if (Mod.Config.Fixes.PreventHeadShots)
-                        Mod.Log.Info?.Write("Activating Fix: PreventCalledShots");
+                    if (Mod.Config.Fixes.CalledShotTweaks)
+                        Mod.Log.Info?.Write("Activating Fix: CalledShotTweaks");
 
                     if (Mod.Config.Fixes.FlexibleSensorLock) {
                         Mod.Log.Info?.Write("Activating Fix: FlexibleSensorLock");
