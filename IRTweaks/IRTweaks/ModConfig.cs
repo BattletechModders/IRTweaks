@@ -18,10 +18,13 @@ namespace IRTweaks {
 
         public CalledShotOpts CalledShot = new CalledShotOpts();
         public class CalledShotOpts {
-            public int Modifier = 6;
 
-            public bool EnableTacticsMod = true;
+            public bool DisableAllLocations = true;
+            public bool DisableHeadshots = true;
 
+            public bool EnableTacticsModifier = true;
+
+            public int BaseModifier = 6;
             public Dictionary<string, int> PilotTags = new Dictionary<string, int>();
         }
 
@@ -67,6 +70,7 @@ namespace IRTweaks {
         public bool BuildingDamageColorChange = true;
         public bool BraceOnMeleeWithJuggernaut = true;
         public bool BulkPurchasing = true;
+        public bool CalledShotTweaks = true;
         public bool CombatLog = true;
         public bool DisableCampaign = true;
         public bool DisableCombatRestarts = true;
@@ -76,21 +80,18 @@ namespace IRTweaks {
         public bool FlexibleSensorLock = true;
         public bool MechbayLayout = true;
         public bool MultiTargetStat = true;
-        public bool NuancedCalledShotModifier = true;
         public bool PainTolerance = true;
         public bool PathfinderTeamFix = true;
-        public bool PreventHeadShots = true;
         public bool RandomStartByDifficulty = true;
         public bool ReduceSaveCompression = true;
         public bool ShowAllArgoUpgrades = true;
         public bool SimGameDifficultyLabelsReplacer = true;
-        public bool SkirmishReset = true;
         public bool SkirmishAlwaysUnlimited = true;
+        public bool SkirmishReset = false;
         public bool SkipDeleteSavePopup = true;
         public bool SpawnProtection = true;
         public bool StreamlinedMainMenu = true;
         public bool UrbanExplosionsFix = true;
-        public bool WarnOnCombatRestart = false;
         public bool WeaponTooltip = true;
     }
 
@@ -107,14 +108,6 @@ namespace IRTweaks {
         public CombatOpts Combat = new CombatOpts();
         public StoreOpts Store = new StoreOpts();
 
-        public const string SimGameDifficultyString_Desc = "DESCRIPTION";
-        public const string SimGameDifficultyString_Label = "LABEL";
-        public Dictionary<string, string> SimGameDifficultyStrings = new Dictionary<string, string>()
-        {
-            { SimGameDifficultyString_Desc, "Overall Difficulty" },
-            { SimGameDifficultyString_Label, "Difficulty" },
-        };
-
         public void LogConfig() {
             Mod.Log.Info?.Write("=== MOD CONFIG BEGIN ===");
             Mod.Log.Info?.Write($"  DEBUG: {this.Debug} Trace: {this.Trace}");
@@ -124,6 +117,7 @@ namespace IRTweaks {
             Mod.Log.Info?.Write($"  BuildingDamageColorChange:          {this.Fixes.BuildingDamageColorChange}");
             Mod.Log.Info?.Write($"  BraceOnMeleeWithJuggernaut:         {this.Fixes.BraceOnMeleeWithJuggernaut}");
             Mod.Log.Info?.Write($"  BulkPurchasing:                     {this.Fixes.BulkPurchasing}");
+            Mod.Log.Info?.Write($"  CalledShotTweaks:                   {this.Fixes.CalledShotTweaks}");
             Mod.Log.Info?.Write($"  CombatLog:                          {this.Fixes.CombatLog}");
             Mod.Log.Info?.Write($"  DisableCampaign:                    {this.Fixes.DisableCampaign}");
             Mod.Log.Info?.Write($"  DisableCombatRestarts:              {this.Fixes.DisableCombatRestarts}");
@@ -132,10 +126,8 @@ namespace IRTweaks {
             Mod.Log.Info?.Write($"  ExtendedStats:                      {this.Fixes.ExtendedStats}");
             Mod.Log.Info?.Write($"  FlexibleSensorLock:                 {this.Fixes.FlexibleSensorLock}");
             Mod.Log.Info?.Write($"  MechbayLayoutFix:                   {this.Fixes.MechbayLayout}");
-            Mod.Log.Info?.Write($"  NuancedCalledShotModifier:          {this.Fixes.NuancedCalledShotModifier}");
             Mod.Log.Info?.Write($"  PainTolerance:                      {this.Fixes.PainTolerance}");
             Mod.Log.Info?.Write($"  PathfinderTeamFix:                  {this.Fixes.PathfinderTeamFix}");
-            Mod.Log.Info?.Write($"  PreventHeadShots:                   {this.Fixes.PreventHeadShots}");
             Mod.Log.Info?.Write($"  RandomStartByDifficulty:            {this.Fixes.RandomStartByDifficulty}");
             Mod.Log.Info?.Write($"  ReduceSaveCompression:              {this.Fixes.ReduceSaveCompression}");
             Mod.Log.Info?.Write($"  ShowAllArgoUpgrades:                {this.Fixes.ShowAllArgoUpgrades}");
@@ -149,11 +141,13 @@ namespace IRTweaks {
             Mod.Log.Info?.Write($"  WeaponTooltips:                     {this.Fixes.WeaponTooltip}");
 
             Mod.Log.Info?.Write("  -- Called Shot --");
-            Mod.Log.Info?.Write($"   CalledShotDefaultMod:{Combat.CalledShot.Modifier}");
+            Mod.Log.Info?.Write($"   Disable => AllLocations: {Combat.CalledShot.DisableAllLocations}  Headshots: {Combat.CalledShot.DisableHeadshots}");
+            Mod.Log.Info?.Write($"   Enable => ComplexTacticsModifier: {Combat.CalledShot.EnableTacticsModifier}");
+            Mod.Log.Info?.Write($"   BaseModifier:{Combat.CalledShot.BaseModifier}");
             foreach (KeyValuePair<string, int> kvp in Combat.CalledShot.PilotTags) {
                 Mod.Log.Info?.Write($"   CalledShotPilotModifier - tag:{kvp.Key} modifier:{kvp.Value}");
             }
-            Mod.Log.Info?.Write($"   CalledShotDefaultMod:{Combat.CalledShot.Modifier}");
+            Mod.Log.Info?.Write($"   CalledShotDefaultMod:{Combat.CalledShot.BaseModifier}");
 
             Mod.Log.Info?.Write("  -- Spawn Protection --");
             Mod.Log.Info?.Write($"   ApplyGuard:{Combat.SpawnProtection.ApplyGuard}  EvasionPips:{Combat.SpawnProtection.EvasionPips}");

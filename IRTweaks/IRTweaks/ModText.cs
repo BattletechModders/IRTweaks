@@ -32,5 +32,13 @@ namespace IRTweaks
             { TT_CombatRestartMission_Title, "Mission Restarts Disabled" },
             { TT_CombatRestartMission_Details, "Restarting a missing during combat is disabled to prevent errors in modded games. Restarting often leads to corruption at the salvage screen." }
         };
+
+        public const string SGDS_Desc = "DESCRIPTION";
+        public const string SGDS_Label = "LABEL";
+        public Dictionary<string, string> SimGameDifficultyStrings = new Dictionary<string, string>()
+        {
+            { SGDS_Desc, "Overall Difficulty" },
+            { SGDS_Label, "Difficulty" },
+        };
     }
 }

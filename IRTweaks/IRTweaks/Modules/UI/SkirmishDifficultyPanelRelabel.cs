@@ -17,7 +17,7 @@ namespace IRTweaks.Modules.UI
             if (__instance != null && ___difficultyBarAndMod != null)
             {
                 ___difficultyBarAndMod.TotalScoreModifierLabel.SetText(
-                    new Text(Mod.Config.SimGameDifficultyStrings[ModConfig.SimGameDifficultyString_Desc], new object[] { })
+                    new Text(Mod.LocalizedText.SimGameDifficultyStrings[ModText.SGDS_Desc], new object[] { })
                     );
 
                 GameObject difficultyTotalGO = __instance.gameObject.FindFirstChildNamed("OBJ_difficultyTotal");
@@ -32,7 +32,7 @@ namespace IRTweaks.Modules.UI
                         if (localText != null)
                         {
                             Mod.Log.Info?.Write("UPDATED LABEL");
-                            localText.SetText(Mod.Config.SimGameDifficultyStrings[ModConfig.SimGameDifficultyString_Label]);
+                            localText.SetText(Mod.LocalizedText.SimGameDifficultyStrings[ModText.SGDS_Label]);
                         }
                         else
                         {

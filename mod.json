@@ -2,61 +2,73 @@
 	"Name": "IRTweaks",
 	"Enabled": true,
 	"Hidden": true,
-	"Version": "0.7.4",
+	"Version": "0.7.0",
 	"Description": "Miscellaneous Tweaks and Fixes",
 	"Author": "IceRaptor",
 	"Website": "https://github.com/IceRaptor/IRTweaks",
 	"Contact": "",
 	"DLL": "IRTweaks.dll",
-	"DependsOn": [ "IRBTModUtils" ],
+	"DependsOn": [
+		"IRBTModUtils",
+		"Custom Ammo Categories"
+	],
 	"Settings": {
-		"Debug": true,
+		"Debug": false,
 		"Trace": false,
 		"Fixes": {
 			"AlternateMechNamingStyle": false,
-            "BuildingDamageColorChange" : true,
-            "BraceOnMeleeWithJuggernaut" : true,
+			"BuildingDamageColorChange": false,
+			"BraceOnMeleeWithJuggernaut": true,
 			"BulkPurchasing": true,
+			"CalledShotTweaks": true,
 			"CombatLog": false,
-			"DisableCampaign": false,
-			"DisableCombatSaves": false,
-            "DisableMPHashCalculation" : true,
+			"DisableCampaign": true,
+			"DisableCombatRestarts": true,
+			"DisableCombatSaves": true,
+			"DisableMPHashCalculation": true,
 			"ExtendedStats": false,
 			"FlexibleSensorLock": false,
-            "MechbayLayout" : true,
+			"MechbayLayout": true,
 			"MultiTargetStat": true,
-			"PainTolerance": true,
+			"PainTolerance": false,
 			"PathfinderTeamFix": true,
-			"PreventHeadShots": false,
 			"RandomStartByDifficulty": true,
 			"ReduceSaveCompression": true,
 			"ShowAllArgoUpgrades": true,
-            "SimGameDifficultyLabelsReplacer" : false,
+			"SimGameDifficultyLabelsReplacer": false,
 			"SkirmishAlwaysUnlimited": true,
 			"SkirmishReset": false,
 			"SkipDeleteSavePopup": true,
 			"SpawnProtection": false,
 			"StreamlinedMainMenu": true,
-            "UrbanExplosionsFix" : true,
-			"WeaponTooltip": false,
+			"UrbanExplosionsFix": false,
+			"WeaponTooltip": false
 		},
 		"Abilities": {
-            "FlexibleSensorLockId": "AbilityDefT8A",
-            "JuggernautId" : "AbilityDefGu8",
+			"FlexibleSensorLockId": "AbilityDefT5A",
+			"JuggernautId": "AbilityDefGu8",
 			"MultiTargetId": "AbilityDefG5"
 		},
 		"Combat": {
+			"PilotAttributesMax": 13,
+			"CalledShot": {
+				"DisableAllLocations": true,
+				"DisableHeadshots": true,
+				"EnableTacticsModifier": true,
+				"BaseModifier": 6,
+				"PilotTags": {}
+			},
 			"FlexibleSensorLock": {
 				"FreeActionWithAbility": false
 			},
 			"PainTolerance": {
-                "ResistPerGuts": 10,
-                "HeadDamageResistPenaltyPerArmorPoint": 5,
-                "HeadHitArmorOnlyResistPenaltyMulti": 0.5
-                "AmmoExplosionResistPenaltyPerCapacityPercentile": 1,
-                "OverheatResistPenaltyPerHeatPercentile": 1,
-                "KnockdownResistPenalty": 6,
-                "SideLocationDestroyedResistPenalty": 10,
+				"ResistPerGuts": 10,
+				"HeadDamageResistPenaltyPerArmorPoint": 5,
+				"HeadHitArmorOnlyResistPenaltyMulti": 0.5,
+				"AmmoExplosionResistPenaltyPerCapacityPercentile": 1,
+				"OverheatResistPenaltyPerHeatPercentile": 1,
+				"KnockdownResistPenalty": 6,
+				"SideLocationDestroyedResistPenalty": 10
 			},
 			"SpawnProtection": {
 				"ApplyGuard": true,
@@ -70,10 +82,6 @@
 		"Store": {
 			"QuantityOnShift": 5,
 			"QuantityOnControl": 20
-		},
-        "SimGameDifficultyStrings" : {
-            "DESCRIPTION" : "Overall Difficulty",
-            "LABEL" : "Difficulty"
-        }
+		}
 	}
 }
