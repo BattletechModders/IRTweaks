@@ -88,7 +88,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Helper\ActorHelper.cs" />
-    <Compile Include="Helper\CalledShotHelper.cs" />
     <Compile Include="Helper\DiagnosticLogger.cs" />
     <Compile Include="Helper\PainHelper.cs" />
     <Compile Include="Helper\ProtectionHelper.cs" />
@@ -99,6 +98,7 @@
     <Compile Include="Modules\Combat\CalledShots.cs" />
     <Compile Include="Modules\Combat\CombatModule.cs" />
     <Compile Include="Modules\Combat\BraceOnMeleeWithJuggernaut.cs" />
+    <Compile Include="Modules\Combat\HarmonyPathAttribute.cs" />
     <Compile Include="Modules\Combat\PainTolerance.cs" />
     <Compile Include="Modules\Combat\PathfinderTeamFix.cs" />
     <Compile Include="Modules\Combat\PilotStatValidators.cs" />

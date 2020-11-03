@@ -8,8 +8,8 @@ namespace IRTweaks
 {
     public static class ModStats
     {
-        public const string CalledShowAlwaysAllow = "IRTCalledShotAlwaysAllow";
-        public const string CalledShotMod = "IRTCalledShotMod";
+        public const string CalledShot_AlwaysAllow = "IRTCalledShotAlwaysAllow";
+        public const string CalledShot_AttackMod = "IRTCalledShotMod";
 
         public const string EnableMultiTarget = "IRAllowMultiTarget";
 

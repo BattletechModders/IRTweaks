@@ -102,7 +102,7 @@ namespace IRTweaks.Modules.Tooltip {
 
                     }
 
-                    // Update the pilot stats to have a maximum greater than 10
+                    // Update the weapon tooltip to support CAC behaviors
                     if (Mod.Config.Fixes.WeaponTooltip) {
                         Mod.Log.Info?.Write("Activating Fix: WeaponTooltip");
                         MethodInfo tooltipPrefab_Weapon_SetData = AccessTools.Method(typeof(TooltipPrefab_Weapon), "SetData");

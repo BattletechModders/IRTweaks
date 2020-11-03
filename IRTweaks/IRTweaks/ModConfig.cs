@@ -19,6 +19,9 @@ namespace IRTweaks {
         public CalledShotOpts CalledShot = new CalledShotOpts();
         public class CalledShotOpts {
             public int Modifier = 6;
+
+            public bool EnableTacticsMod = true;
+
             public Dictionary<string, int> PilotTags = new Dictionary<string, int>();
         }
 
@@ -68,12 +71,12 @@ namespace IRTweaks {
         public bool DisableCampaign = true;
         public bool DisableCombatRestarts = true;
         public bool DisableCombatSaves = true;
-        public bool DisableIronMan = true;
         public bool DisableMPHashCalculation = true;
         public bool ExtendedStats = true;
         public bool FlexibleSensorLock = true;
         public bool MechbayLayout = true;
         public bool MultiTargetStat = true;
+        public bool NuancedCalledShotModifier = true;
         public bool PainTolerance = true;
         public bool PathfinderTeamFix = true;
         public bool PreventHeadShots = true;
@@ -123,11 +126,13 @@ namespace IRTweaks {
             Mod.Log.Info?.Write($"  BulkPurchasing:                     {this.Fixes.BulkPurchasing}");
             Mod.Log.Info?.Write($"  CombatLog:                          {this.Fixes.CombatLog}");
             Mod.Log.Info?.Write($"  DisableCampaign:                    {this.Fixes.DisableCampaign}");
+            Mod.Log.Info?.Write($"  DisableCombatRestarts:              {this.Fixes.DisableCombatRestarts}");
             Mod.Log.Info?.Write($"  DisableCombatSaves:                 {this.Fixes.DisableCombatSaves}");
             Mod.Log.Info?.Write($"  DisableMPHashCalculation:           {this.Fixes.DisableMPHashCalculation}");
             Mod.Log.Info?.Write($"  ExtendedStats:                      {this.Fixes.ExtendedStats}");
             Mod.Log.Info?.Write($"  FlexibleSensorLock:                 {this.Fixes.FlexibleSensorLock}");
             Mod.Log.Info?.Write($"  MechbayLayoutFix:                   {this.Fixes.MechbayLayout}");
+            Mod.Log.Info?.Write($"  NuancedCalledShotModifier:          {this.Fixes.NuancedCalledShotModifier}");
             Mod.Log.Info?.Write($"  PainTolerance:                      {this.Fixes.PainTolerance}");
             Mod.Log.Info?.Write($"  PathfinderTeamFix:                  {this.Fixes.PathfinderTeamFix}");
             Mod.Log.Info?.Write($"  PreventHeadShots:                   {this.Fixes.PreventHeadShots}");

@@ -1,5 +1,4 @@
 ﻿using BattleTech;
-using BattleTech.Save.SaveGameStructure;
 using BattleTech.UI;
 using BattleTech.UI.Tooltips;
 using Harmony;
