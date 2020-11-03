@@ -8,8 +8,14 @@ namespace IRTweaks.Helper {
 
         public static bool CanAlwaysUseCalledShot(this AbstractActor actor)
         {
-            Statistic alwaysAllowStat = actor.StatCollection.GetStatistic(ModStats.CalledShot_AlwaysAllow);
-            return alwaysAllowStat != null && alwaysAllowStat.Value<bool>();
+            Statistic stat = actor.StatCollection.GetStatistic(ModStats.CalledShot_AlwaysAllow);
+            return stat != null && stat.Value<bool>();
+        }
+
+        public static bool ImmuneToHeadInjuries(this AbstractActor actor)
+        {
+            Statistic stat = actor.StatCollection.GetStatistic(ModStats.IgnoreHeadInjuries);
+            return stat != null && stat.Value<bool>();
         }
 
         public static int CalledShotModifier(this AbstractActor actor)

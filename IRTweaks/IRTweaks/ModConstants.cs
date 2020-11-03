@@ -13,11 +13,14 @@ namespace IRTweaks
 
         public const string EnableMultiTarget = "IRAllowMultiTarget";
 
-        public const string HBS_RandomMechs = "StartingRandomMechLists";
-        public const string HBS_FactionRep = "FactionReputation";
-        public const string HBS_StrayShotValidTargets = "StrayShotValidTargets";
+        public const string IgnoreHeadInjuries = "IRIgnoreHeadInjuries";
 
         public const string HBS_AmmoBox_CurrentAmmo = "CurrentAmmo";
+        public const string HBS_FactionRep = "FactionReputation";
+        public const string HBS_MaxTargets = "MaxTargets";
+        public const string HBS_RandomMechs = "StartingRandomMechLists";
+        public const string HBS_StrayShotValidTargets = "StrayShotValidTargets";
+
     }
 
 }

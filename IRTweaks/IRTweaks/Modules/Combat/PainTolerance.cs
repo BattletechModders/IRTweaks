@@ -2,6 +2,7 @@
 using Harmony;
 using IRBTModUtils;
 using IRBTModUtils.Extension;
+using IRTweaks.Helper;
 using Localize;
 using System;
 using System.Collections.Generic;
@@ -132,8 +133,14 @@ namespace IRTweaks.Modules.Combat
                 Mod.Log.Info?.Write($"  Actor overheated, setting injury resist to: {ModState.InjuryResistPenalty}");
             }
 
-            // Need default resistance?
+            // Check head injury
+            if (__instance.ParentActor.ImmuneToHeadInjuries())
+            {
+                Mod.Log.Info?.Write($"Ignoring head injury on actor: {__instance.ParentActor.DistinctId()} due to stat");
+                return false;
+            }
 
+            // Need default resistance?
             if (ModState.InjuryResistPenalty != -1)
             {
                 bool success = PainHelper.MakeResistCheck(__instance);
@@ -242,6 +249,17 @@ namespace IRTweaks.Modules.Combat
             codes.RemoveRange(targetIdx - 4, 12);
 
             return codes;
+        }
+    }
+
+    [HarmonyPatch(typeof(AbstractActor), "InitEffectStats")]
+    public static class AbstractActor_InitEffectStats_PainTolerance
+    {
+        static bool Prepare() => Mod.Config.Fixes.PainTolerance;
+
+        static void Postfix(AbstractActor __instance)
+        {
+            __instance.StatCollection.AddStatistic<bool>(ModStats.IgnoreHeadInjuries, false);
         }
     }
 }
