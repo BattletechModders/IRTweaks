@@ -1,30 +1,18 @@
 ﻿using BattleTech;
 using IRBTModUtils.Extension;
-using System.Collections.Generic;
 using us.frostraptor.modUtils;
 
 namespace IRTweaks.Helper {
 
     public static class ActorHelper {
 
-        // Looks in the actor and their components for a statistic
-        public static List<Statistic> FindCustomStatistic(string statName, AbstractActor actor) {
-            List<Statistic> statistics = new List<Statistic>();
-
-            Mod.Log.Debug?.Write($" == BEGIN Searching actor:{actor.DisplayName} and components for stat:{statName}");
-
-            // Walk the actor's statCollection
-            if (actor.StatCollection.ContainsStatistic(statName)) {
-                Mod.Log.Debug?.Write($"  actor has stat: {statName}");
-                statistics.Add(actor.StatCollection.GetStatistic(statName));
-            }
-
-            Mod.Log.Debug?.Write($" == DONE Searching actor:{actor.DisplayName} and components for stat:{statName}");
-
-            return statistics;
+        public static bool CanAlwaysUseCalledShot(this AbstractActor actor)
+        {
+            Statistic alwaysAllowStat = actor.StatCollection.GetStatistic(ModStats.CalledShot_AlwaysAllow);
+            return alwaysAllowStat != null && alwaysAllowStat.Value<bool>();
         }
 
-        public static int GetCalledShotModifier(AbstractActor actor)
+        public static int CalledShotModifier(this AbstractActor actor)
         {
             int mod = 0;
 
@@ -50,6 +38,10 @@ namespace IRTweaks.Helper {
                     Mod.Log.Info?.Write($" -- calledShotMod: {calledShotMod} = defaultMod: {baseMod} + tacticsMod: {tacticsMod} + tagsCSMod: {tagsCSMod} + actorMod: {actorMod}");
 
                     ModState.PilotCalledShotModifiers[pilotKey] = calledShotMod;
+                }
+                else
+                {
+                    Mod.Log.Debug?.Write($"CalledShotModifier: {mod} for actor: {actor.DistinctId()}");
                 }
             }
 

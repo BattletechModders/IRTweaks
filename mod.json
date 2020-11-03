@@ -13,7 +13,7 @@
 		"Custom Ammo Categories"
 	],
 	"Settings": {
-		"Debug": false,
+		"Debug": true,
 		"Trace": false,
 		"Fixes": {
 			"AlternateMechNamingStyle": false,
@@ -55,7 +55,7 @@
 				"DisableAllLocations": true,
 				"DisableHeadshots": true,
 				"EnableTacticsModifier": true,
-				"BaseModifier": 6,
+				"BaseModifier": -6,
 				"PilotTags": {}
 			},
 			"FlexibleSensorLock": {

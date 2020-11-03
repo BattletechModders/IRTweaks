@@ -1,0 +1,100 @@
+{
+  "FuryConstants": {
+    "MoraleMin": 50,
+    "MoraleMax": 100,
+    "CanUseInspireLevel": 1,
+    "InspireCost": 1,
+    "AutoInspire": false,
+    "UseOffensivePush": true,
+    "OffensivePushCost": 1,
+    "OffensivePushLowMoraleCost": 2,
+    "OffensivePushHighMoraleCost": 1,
+    "UseDefensivePush": false,
+    "MoraleInitialDefault": 5,
+    "UseBaselineMoraleGainEachRound": true,
+    "MoraleBaselineGainPerRound": 10,
+    "MoraleBaselineMultiplyByActive": false,
+    "FreeStandUpAction": true,
+    "CameraHighlight": true,
+    "ThresholdMajorityHit": 0.75,
+    "ThresholdMajorityMiss": 0.25,
+    "ThresholdMinorArmor": 0.05,
+    "ThresholdMajorArmor": 0.1,
+    "ChangeEnemyCrit": 0,
+    "ChangeEnemyAmmoExplodes": 0,
+    "ChangeEnemyWeaponDestroyed": 0,
+    "ChangeEnemyLocationDestroyed": 0,
+    "ChangeMajorityAttackingShotsHit": 0,
+    "ChangeEnemyMinorArmorDamage": 0,
+    "ChangeEnemyMajorArmorDamage": 0,
+    "ChangeEnemyKnockedDown": 0,
+    "ChangeDFADealt": 0,
+    "ChangeEnemyDestroyedLight": 0,
+    "ChangeEnemyDestroyedMedium": 0,
+    "ChangeEnemyDestroyedHeavy": 0,
+    "ChangeEnemyDestroyedAssault": 0,
+    "ChangeEnemyDestroyedMeleeAdditional": 0,
+    "ChangeObjectiveCompleted": 5,
+    "ChangeObjectiveFailed": 0,
+    "ChangeAllyCrit": 5,
+    "ChangeAllyAmmoExplodes": 5,
+    "ChangeAllyWeaponDestroyed": 5,
+    "ChangeAllyLocationDestroyed": 5,
+    "ChangeAllyMinorArmorDamage": 0,
+    "ChangeAllyMajorArmorDamage": 0,
+    "ChangeAllyKnockedDown": 5,
+    "ChangeDFAReceived": 10,
+    "ChangeAllyDestroyedLight": 10,
+    "ChangeAllyDestroyedMedium": 20,
+    "ChangeAllyDestroyedHeavy": 30,
+    "ChangeAllyDestroyedAssault": 40,
+    "ChangeAllyDestroyedMeleeAdditional": 10,
+    "CanAIBeInspired": true,
+    "InspirationAccelerationMultiplier": 0.5,
+    "InspiredEffect": {
+      "durationData": {
+        "duration": 1,
+        "ticksOnActivations": true,
+        "useActivationsOfTarget": true
+      },
+      "targetingData": {
+        "effectTriggerType": "OnActivation",
+        "effectTargetType": "SingleTarget"
+      },
+      "effectType": "TagEffect",
+      "Description": {
+        "Id": "AbilityDefFocused",
+        "Name": "FOCUSED",
+        "Details": "IGNORE GUARDED AND EVASIVE",
+        "Icon": "uixSvgIcon_mwInspired"
+      },
+      "nature": "Buff"
+    },
+	"InitiativeDelayEffect": {
+      "durationData": {
+        "duration": 1,
+		"ticksOnActivations" : true,
+        "useActivationsOfTarget" : true,
+        "stackLimit": 1
+      },
+      "targetingData": {
+        "effectTriggerType": "OnHit",
+        "effectTargetType": "SingleTarget"
+      },
+      "effectType": "StatisticEffect",
+      "Description": {
+        "Id": "AbilityDefInitiativeDelay",
+        "Name": "INITIATIVE REDUCED",
+        "Details": "-1 INITIATIVE",
+        "Icon": "uixSvgIcon_mwInspired"
+      },
+      "statisticData": {
+        "statName" : "BaseInitiative",
+        "operation" : "Int_Add",
+        "modValue" : "1",
+        "modType" : "System.Int32"
+      },
+      "nature": "Debuff"
+    }
+  } 
+}
