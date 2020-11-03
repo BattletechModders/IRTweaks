@@ -184,33 +184,6 @@ namespace IRTweaks.Modules.Combat
         }
     }
 
-    //[HarmonyPatch(typeof(CombatHUDWeaponSlot), "UpdateToolTipsFiring")]
-    //static class CombatHUDWeaponSlot_UpdateToolTipsFiringr
-    //{
-    //    static bool Prepare => Mod.Config.Fixes.CalledShotTweaks;
-
-    //    static void Postfix(CombatHUDWeaponSlot __instance, CombatHUD ___HUD)
-    //    {
-    //        if (___HUD.SelectionHandler.ActiveState.SelectionType == SelectionType.FireMorale)
-    //        {
-    //            Mod.Log.Trace?.Write("CHUDWS:UTTF:Post entered.");
-
-
-    //            int calledShotMod = ActorHelper.CalledShotModifier(___HUD.SelectedActor);
-    //            if (calledShotMod != 0)
-    //            {
-    //                Text hoverText = new Text("{0} {1:+0;-#}", new object[] { Mod.LocalizedText.Modifiers[ModText.Mod_CalledShot], calledShotMod });
-
-    //                if (calledShotMod < 0)
-    //                    __instance.ToolTipHoverElement.BuffStrings.Add(hoverText);
-    //                else if (calledShotMod > 0)
-    //                    __instance.ToolTipHoverElement.DebuffStrings.Add(hoverText);
-    //            }
-    //            Mod.Log.Debug?.Write($"Updated TooltipsForFiring for actor: {___HUD.SelectedActor} with mod: {calledShotMod}");
-    //        }
-    //    }
-    //}
-
     //Update the hover text in the case of a modifier
     [HarmonyPatch(typeof(CombatHUDWeaponSlot), "SetHitChance", new Type[] { typeof(ICombatant) })]
     static class CombatHUDWeaponSlot_SetHitChance
