@@ -92,6 +92,53 @@ This restrictions do not apply to any units that are currently prone or shutdown
 
 Additionally you can allow an actor to bypass this restriction by setting  `IRTCalledShotAlwaysAllow` statistic (Boolean) to true. Units with this set to true can always use the vanilla called shot location selection.
 
+## Pain Tolerance
+This tweak makes skilled pilots more resistant to injuries. Any time the pilot would normally be injured by a head hit, torso destruction, ammo explosion, or knockdown, they make a check against their Guts skill rating to determine if they can shrug off the effect. 
+
+This check is also made in the event of a Shutdown, if the optional _ShutdownCausesInjury_ value is set to true. This value can be set in either the `CombatGameConstants.json`, or can be introduced by [MechEngineer](https://github.com/BattletechModders/MechEngineer/blob/master/source/Features/ShutdownInjuryProtection/Patches/MechShutdownSequence_CheckForHeatDamage_Patch.cs). This check is also made if you are using MechEngineer's  [ReceiveHeatDamageInjury](https://github.com/BattletechModders/MechEngineer/blob/master/source/Features/ShutdownInjuryProtection/Patches/Mech_CheckForHeatDamage_Patch.cs) option. 
+
+### Details
+
+Each pilot's resist check is defined by their rating in the Guts skill, as well as any Abilities in that tree that have been taken. The table below defines the guts modifier that will be used as a modifier base. This value is then multiplied by the **ResistPerGuts** configuration value to determine a base check level. Pilot skills of 11-13 are used for elite pilots in the RogueTech mod. Player pilots cannot reach this level.
+
+Assuming a *ResistPerGuts* value of 10, this table defines the resist chance per guts rating:
+
+| Skill                | 1    | 2    | 3    | 4    | 5    | 6    | 7    | 8    | 9    | 10   | 11   | 12   | 13   |
+| -------------------- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
+| Modifier             | 10% | 20% | 30% | 40% | 50% | 60% | 70% | 80% | 90% | 100% | 110% | 120% | 130% |
+| with Level 5 Ability | 10% | 20% | 30% | 40% | 60% | 70% | 80% | 90% | 100% | 110% | 120% | 130% | 140% |
+| with Level 8 Ability | 10% | 20% | 30% | 40% | 70% | 80% | 90% | 100% | 110% | 120% | 130% | 140% | 150% |
+
+> Example: A pilot has guts 5 and the level 5 ability. This gives them a 60% modifier to ignore damage sources. If the pilot improves their Guts skill to 6, their modifier would increase to 70%.
+
+### Ammo Explosion Injuries
+
+When an ammo box explodes, the ratio of available to total rounds in the exploding ammo box is calculated. For each percentage point, the resist penalty is reduced by `PainTolerance.PenaltyPerAmmoExplosionRatio`. This defaults to 1, so the resist penalty will be reduced by 1% for each 1% of ammo remaining in the box.
+
+### Head Injuries
+
+When a mech's head is hit, each point of damage reduces the resist chance by the **HeadDamageResistPenaltyPerArmorPoint** configuration value. If the attack only inflicts armor damage, the total damage is multiplied by the **HeadHitArmorOnlyResistPenaltyMulti** value. By default this reduces the damage amount by 50%, making it easier for players to shrug off the hit.
+
+> Example: A pilot with guts 7 (but no abilities) gets hit in the head of 3 damage. The damage doesn't penetrate the armor, so it becomes 3 * 0.5 = 1.5, rounded down to 1. The pilot's resist chance is 70% - 5% for the damage, or 65%.
+>
+> Example 2: A pilot with guts 10 and both abilities gets hit in the head for 18 damage. Some of the damage penetrates structure. The pilot's base resist chance is 120%. The attack reduces that check by 18 * 5% = 90%. The pilot has 30% chance to avoid the injury.
+
+### Knockdown Injuries
+
+When a Mech suffers a knockdown, the resist chance is reduced by 6%. You can customize this value by setting `PainTolerance.KnockdownResistPenalty`.
+
+> Example: A pilot with guts 3 suffers a knockdown. They have a base resist of 30%, -6% for a knockdown, and thus will ignore the injury on 24% or less.
+
+### Overheat Injuries
+
+When a mech takes overheat damage, each point of heat over the overheating limit reduces the resist chance by **OverheatResistPenaltyPerHeatPercentile**. The difference between the mech's maximum heat (at which point is shuts down) and it's overheating limit is taken as a spectrum from 0 - 100. The mech's current heat within this spectrum defines the resistance penalty.
+
+> Example: A pilot with a resistance check of 60% overheats their Mech. The Mech has a maximum heat of 200, and an overheating limit of 120. 200 - 120 = 80 points on the overheating spectrum. If the Mech was currently as 180 heat points, the overheating points would be calculated as 180 -120 = 60 points. The ratio of points to spectrum is then calculated, or 80 / 60 = 0.75 * 100 = 75 points. Assuming PenaltyPerHeatDamageInjuryRatio = 1, then the resist check is reduced by -75%. The pilot cannot resist and thus takes the injury.
+
+### Side Torso Destroyed Injuries
+
+When a side torso is destroyed, a pilot normally takes a point of damage. The resist chance is reduced by `PainTolerance.SideLocationDestroyedResistPenalty`, which defaults to 10%.
+
 ## Random Start By Difficulty
 
 This tweak allows you to define difficulty settings that impact the Career starts. This is useful for mods like RogueTech, which customizes your starting lance and faction reputation based upon a difficulty menu selection. The mod looks for two custom *DifficultyConstants*, each with a different behavior.
@@ -152,14 +199,6 @@ Example:
                 },
 ```
 
-## Restrict Called Shots to Head
-
-This tweak changes the called shot dialog to disallow selecting the head unless the target unit is shutdown or prone. This only applies to mech targets; vehicle and building targets may be targeted normally.
-
-Units that have `IRTCalledShotAlwaysAllow : true` in their _StatCollection_ can select heads even if the target is shutdown or prone. This would typically come in through equipment and similar effects.
-
-This tweak has no customization.
-
 ## Sensor Lock Freedom
 
 This tweak changes the SensorLock behaviors such that using the action doesn't end your turn. This previously occurred because SensorLock actions counted as both movement and firing (in a very weird way). When this tweak is enabled, you can sensor lock at any point during your activation.
@@ -176,7 +215,7 @@ This tweak provides significant defensive bonuses to units when they spawn. Unit
 
 This has been extracted from CWolf's amazing [Mission Control](https://github.com/CWolfs/MissionControl) mod - check it out!
 
-### Configuration
+#### Configuration
 
 This tweak is enabled if `Fixes.SpawnProtection=true` is set to true in _mod.json_. The following configuration options can further customize this tweak's behavior:
 
@@ -187,7 +226,7 @@ This tweak is enabled if `Fixes.SpawnProtection=true` is set to true in _mod.jso
 * `Combat.SpawnProtection.ApplyToAllies`: If true, allies will be protected when they spawn as well. Defaults to true.
 * `Combat.SpawnProtection.ApplyToReinforcements`: If true, enemies that spawn during a mission (i.e. are not present on the first turn) will be protected. Defaults to true.
 
-## Weapon tooltips
+## Weapon Tooltips
 
 This tweak makes minor changes to the tooltips shown when hovering over weapons:
 
