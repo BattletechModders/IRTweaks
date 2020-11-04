@@ -6,7 +6,7 @@ This is a mod for the [HBS BattleTech](http://battletechgame.com/) game that inc
 * **BraceOnMeleeWithJuggernaut**: If a pilot has the Guts 8 ability (typically Juggernaut), braces the unit after a melee or DFA attack. A direct copy of [RealityMachina's Better-Juggernaut](https://github.com/RealityMachina/Better-Juggernaut).
 * **BulkPurchasing**: Provides buttons and keyboard shortcuts that allow bulk purchasing and selling of items in the store.
 * **CalledShotTweaks**: The modifier for called shots (aka offensive push) is driven by the pilot's tactics skill, ability, and pilot tags. It can also be influenced by gear. Options allow disabling the ability to called shot 
-* **Combat Log**: Provides an in-game log that captures text from floaties and preserves them in a readable format.
+* **CombatLog**: Provides an in-game log that captures text from floaties and preserves them in a readable format.
 * **DisableCampaign**: Disables the HBS campaign button, to prevent errors with various mod packs.
 * **DisableCombatRestarts**: Mission restarts lead to corruption at the salvage screen in vanilla, and especially in a modded game. This disables the UI selection that allows in-combat saves to be made.
 * **DisableCombatSaves**: Combat saves are prone to errors during vanilla gameplay, but especially so during modded gameplay. This disables the UI selection that allows in-combat saves to be made.
@@ -47,10 +47,8 @@ This mod requires the latest releases of the following mods:
 This tweak makes minor changes to the store UI elements:
 
 * Enables bulk-purchase for items in the mech store
-* Allows shift+click on the -/+ in the bulk-purchase and bulk-sell screens to increment the count by -/+5
-* Allows control+click on the -/+ in the bulk-purchase and bulk-sell screens to increment the count by -/+20
-
-You can customize these quantities by setting `Store.QuantityOnShift` or `Store.QuantityOnControl` values in `mod.json`.
+* Allows Shift+Click on the -/+ in the bulk-purchase and bulk-sell screens to increment the count by -/+ 5. You can customize this value by setting `Store.QuantityOnShift` in mod.json.
+* Allows Control+Click on the -/+ in the bulk-purchase and bulk-sell screens to increment the count by -/+ 20. You can customize this value by setting `Store.QuantityOnControl` in mod.json.
 
 ## Called Shot Tweaks
 
@@ -62,25 +60,23 @@ The *BaseModifier* is set as `Combat.CalledShots.BaseModifier` in mod.json. The 
 
 #### Pilot Skills Modifier
 
-A pilots skills and abilities determine the `PilotTagsModifier`. Their **Tactics** skill defines the value of the modifier, as shown in the table below:
-
-A MechWarriors's **Tactics** skill adds a flat modifier to the base initiative defined by the unit tonnage. This value is graduated, as defined in the table below.
+A pilots skills and abilities determine the *PilotTagsModifier*. Their **Tactics** skill defines the value of the modifier, as shown in the table below. Note that values are negative, as negatives are bonuses.
 
 | Skill            | 1    | 2    | 3    | 4    | 5    | 6    | 7    | 8    | 9    | 10   | 11   | 12   | 13   |
 | ---------------- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
-| Modifier         | +0   | +1   | +1   | +2   | +2   | +3   | +3   | +4   | +4   | +5   | +6   | +7   | +8   |
-| +Level 5 Ability | NA   | NA   | NA   | NA   | +3   | +4   | +4   | +5   | +5   | +6   | +7   | +8   | +9   |
-| +Level 8 Ability | NA   | NA   | NA   | NA   | NA   | NA   | NA   | +6   | +6   | +7   | +8   | +9   | +10  |
+| Modifier         | +0   | -1   | -1   | -2   | -2   | -3   | -3   | -4   | -4   | -5   | -6   | -7   | -8   |
+| +Level 5 Ability | NA   | NA   | NA   | NA   | -3   | -4   | -4   | -5   | -5   | -6   | -7   | -8   | -9   |
+| +Level 8 Ability | NA   | NA   | NA   | NA   | NA   | NA   | NA   | -6   | -6   | -7   | -8   | -9   | -10  |
 
 #### Pilot Tags Modifier
 
-The pilot's tags determine the `CalledShotPilotTagsMod`. Every tag defined in `ToHitCfg.CalledShotPilotTags` (in _mod.json_) applies a specific modifier if the pilot also possesses that tag. The modifiers from all applicable tags are summed into `CalledShotPilotTagsMod`.
+Every pilot can tag one or more tags, which indicate special behaviors. Every tag defined in `Combat.CalledShot.PilotTags`(in _mod.json_) applies a specific modifier if the pilot also possesses that tag. The sum of modifiers from all applicable tags becomes the *PilotTagsModifier*.
 
-> Example: ToHitCfg.CalledShotPilotTags is { "pilot_drunk" : 2, "pilot_reckless" : 1, pilot_assassin": -2,  }. If the pilot has both the pilot_drunk and pilot_reckless and tags, their CalledShotPilotTagsMod would be +3.
+> Example: Combat.CalledShot.PilotTag is { "pilot_drunk" : 2, "pilot_reckless" : 1, pilot_assassin": -2,  }. If the pilot has both the pilot_drunk and pilot_reckless tags, their PilotTagsModifier would be +3.
 
 #### Unit Modifier
 
-Units that have `IRTCalledShotMod` in their _StatCollection_ will take this modifier as the `CalledShotUnitMod `. The _StatCollection_ assumes an int value.
+Units that have `IRTCalledShotMod` in their _StatCollection_ will take this modifier as the `CalledShotUnitMod `. The _StatCollection_ assumes an Int32 (integer) value.
 
 ## Random Start By Difficulty
 
