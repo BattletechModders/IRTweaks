@@ -1,22 +1,32 @@
 # IRTweaks
-This is a mod for the [HBS BattleTech](http://battletechgame.com/) game that includes a variety of tweaks, changes, and modifications to the base game. A wide range of effects is covered, and all of the options can be selectively enabled. A short summary of the features includes:
+This is a mod for the [HBS BattleTech](http://battletechgame.com/) game that includes a variety of tweaks, changes, and modifications to the base game. A wide range of effects is covered, and all of the options can be selectively enabled. A short summary of the features is provided below. You can enable or disable each tweak in `mod.json` by setting the appropriate `Fixes` value to true or false.
 
+* **AlternativeMechNamingStyle**: Used by RogueTech to set unique naming styles consistent with the **LowVisiblity** mod. No other systems should use this.
+* **BuildingDamageColorChange**: Changes the floating damage on buildings to be dark blue to distinguish this damage type. Thanks to **Gnivler** for this fix!
 * **BraceOnMeleeWithJuggernaut**: If a pilot has the Guts 8 ability (typically Juggernaut), braces the unit after a melee or DFA attack. A direct copy of [RealityMachina's Better-Juggernaut](https://github.com/RealityMachina/Better-Juggernaut).
-* **Bulk Purchasing**: Provides buttons and keyboard shortcuts that allow bulk purchasing and selling of items in the store.
+* **BulkPurchasing**: Provides buttons and keyboard shortcuts that allow bulk purchasing and selling of items in the store.
+* **CalledShotTweaks**: The modifier for called shots (aka offensive push) is driven by the pilot's tactics skill, ability, and pilot tags. It can also be influenced by gear. Options allow disabling the ability to called shot 
 * **Combat Log**: Provides an in-game log that captures text from floaties and preserves them in a readable format.
-* **Campaign Disabler**: Disables the HBS campaign button, to prevent errors with various mod packs.
-* **Combat Saves Disabler**: Combat saves are prone to errors during vanilla gameplay, but especially so during modded gameplay. This disables the UI selection that allows in-combat saves to be made.
-* **Multiplayer Hash Disabler**: Disables a mod-hash calculated on startup that's only used to validate multiplayer games are compatible. Saves 2-3s of load time.
-* **Extended Stats**: Allows pilots to be assigned Statistic values above the normal bounds of 1-10.
-* **Flexible Sensor Lock**: Using a Sensor Lock action does not count as movement or firing. This allows it to be combined with actions in a unit's activation.
-* **Nuanced Called Shot Modifier**: The modifier for called shots (aka offensive push) is driven by the pilot's tactics skill, ability, and pilot tags. It can also be influenced by gear.
+* **DisableCampaign**: Disables the HBS campaign button, to prevent errors with various mod packs.
+* **DisableCombatRestarts**: Mission restarts lead to corruption at the salvage screen in vanilla, and especially in a modded game. This disables the UI selection that allows in-combat saves to be made.
+* **DisableCombatSaves**: Combat saves are prone to errors during vanilla gameplay, but especially so during modded gameplay. This disables the UI selection that allows in-combat saves to be made.
+* **DisableMPHashCalculation**: Disables a mod-hash calculated on startup that's only used to validate multiplayer games are compatible. Saves 2-3s of load time.
+* **ExtendedStats**: Allows pilots to be assigned Statistic values above the normal bounds of 1-10.
+* **FlexibleSensorLock**: Using a Sensor Lock action does not count as movement or firing. This allows it to be combined with actions in a unit's activation.
+* **MechbayLayoutFix**: Moves a few UI elements in the mechbay to work better in a MechEngineer based mod. Thanks to Tiraxx for the idea!
+* **MultiTargetStat**: This allows units to gain the Multi-Target ability from a Statistic, which can be applied via effects.
+* **PainTolerance**: Provides Guts-based resistance to injuries. See below for details.
+* **PathfinderTeamFix**: Mission Control introduces pathfinding units that have no Team associated with them. This breaks some mods, which this fix remediates.
 * **Random Start by Difficulty Menu**: Allows an option in the new-game difficulty menu to be associated with user-created lists of starting mechs.
-* **Restrict Called Shots to Head**: You can only select the head on a called shot if the target is shutdown, prone, or you have special equipment.
+* **ReduceSaveCompression**: By default the game is setup to use an aggressive compression on save game files. This slows down game load. By setting this to true saves will use more space on disk but load faster. Thanks to **Gnivler** for this fix!
 * **ShowAllArgoUpgrades**: Shows all available argo upgrades, instead of hiding the ones that require additional unlocks.
 * **SimGameDifficultyLabelsReplacer**: Allows customization of the labels on the 'difficulty' bar when you start a new career or campaign game. 
+* **SkirmishAlwaysUnlimited**: This allows you to drop from Skirmish even if your lances violate the limits of the currently selected operation type.
 * **SkirmishReset**: This fix is a modder's resource. Skirmish saves the mechDefs that were customized, which can result in an ever-spinny when itemDefs are changed or mods are disabled. When enabled, this fix will always reset the Skirmish lances and mech definitions to the base state by deleting all customizations.
 * **SkipDeleteSavePopup**: Disables the 'are you sure' prompt when you delete save games.
 * **Spawn Protection**: Provides high evasion, braced, and guarded status to units when they spawn. This can prevent first-turn damage during mission start, or to reinforcements that spawn close to the player.
+* **Streamlined Main Menu**: This tweaks the layout of the main Argo UI to move the most commonly accessed buttons directly to the sidebar. 
+* **Urban Explosions Fix**: This corrects a subtle bug in HBS code that causes exploding buildings to not sequence properly. Unfortunately enabling this fix makes buildings take significantly longer to be destroyed. This will be improved in a future fix.
 * **Weapon Tooltips**: Modifies the weapon tooltips to more accurately report damage when a weapon uses extensions provided by [CustomAmmoCategories](https://github.com/CMiSSioN/CustomAmmoCategories).
 
 This mod replaces the following mods, which used to be stand-alone:
@@ -40,17 +50,19 @@ This tweak makes minor changes to the store UI elements:
 * Allows shift+click on the -/+ in the bulk-purchase and bulk-sell screens to increment the count by -/+5
 * Allows control+click on the -/+ in the bulk-purchase and bulk-sell screens to increment the count by -/+20
 
-This tweak is enabled if `Fixes.BulkPurchasing=true` is set to true in _mod.json_. There are no customizations for this tweak.
+You can customize these quantities by setting `Store.QuantityOnShift` or `Store.QuantityOnControl` values in `mod.json`.
 
-## Nuanced Called Shot Modifier
+## Called Shot Tweaks
 
-This tweak allows fine-grained tuning of the Called Shot modifiers. The game exposes only a single modifier value (via `CombatGameConstants:ToHitOffensivePush`), which is used in all cases. This tweak allows both the pilot and the actor to have an influence on these outcomes as well. The calculation is:
+This tweak makes two major changes to how Called Shot (i.e. Morale Attack aka Fury aka Precision Strike) works. The first change is that the modifier applied to the shot is no longer a fixed value (`CombatGameConstants:ToHitOffensivePush`), but rather calculated by the following formula:
 
-`CalledShotDefaultMod + CalledShotPilotSkillsMod + CalledShotPilotTagsMod + CalledShotUnitMod = CalledShotModifier`
+`CalledShotModifier = BaseModifier + PilotTacticsModifier + PilotTagsModifier + ActorStatModifier`
+
+The *BaseModifier* is set as `Combat.CalledShots.BaseModifier` in mod.json. The *ActorStatModifier* is defined by the `IRTCalledShotMod` statistic, which can be set by an effect on the actor. The *PilotTacticsModifier* and *PilotTagsModifier* are defined below.
 
 #### Pilot Skills Modifier
 
-A pilots skills and abilities determine the `CalledShotPilotSkillsMod`. Their **Tactics** skill defines the value of the modifier, as shown in the table below:
+A pilots skills and abilities determine the `PilotTagsModifier`. Their **Tactics** skill defines the value of the modifier, as shown in the table below:
 
 A MechWarriors's **Tactics** skill adds a flat modifier to the base initiative defined by the unit tonnage. This value is graduated, as defined in the table below.
 
