@@ -52,7 +52,9 @@ This tweak makes minor changes to the store UI elements:
 
 ## Called Shot Tweaks
 
-This tweak makes two major changes to how Called Shot (i.e. Morale Attack aka Fury aka Precision Strike) works. The first change is that the modifier applied to the shot is no longer a fixed value (`CombatGameConstants:ToHitOffensivePush`), but rather calculated by the following formula:
+This tweak makes two major changes to how Called Shot (i.e. Morale Attack aka Fury aka Precision Strike) works. The first change is that the modifier applied to the shot is no longer a fixed value (`CombatGameConstants:ToHitOffensivePush`), but rather calculated by a formula (see below). The second change is that choosing a location can be disabled entirely, or headshots can be disabled. 
+
+### Called Shot Modifier Calculation
 
 `CalledShotModifier = BaseModifier + PilotTacticsModifier + PilotTagsModifier + ActorStatModifier`
 
@@ -68,6 +70,8 @@ A pilots skills and abilities determine the *PilotTagsModifier*. Their **Tactics
 | +Level 5 Ability | NA   | NA   | NA   | NA   | -3   | -4   | -4   | -5   | -5   | -6   | -7   | -8   | -9   |
 | +Level 8 Ability | NA   | NA   | NA   | NA   | NA   | NA   | NA   | -6   | -6   | -7   | -8   | -9   | -10  |
 
+You can disable the calculation of this modifier by setting `Combat.CalledShot.EnableTacticsModifier=false`.
+
 #### Pilot Tags Modifier
 
 Every pilot can tag one or more tags, which indicate special behaviors. Every tag defined in `Combat.CalledShot.PilotTags`(in _mod.json_) applies a specific modifier if the pilot also possesses that tag. The sum of modifiers from all applicable tags becomes the *PilotTagsModifier*.
@@ -77,6 +81,16 @@ Every pilot can tag one or more tags, which indicate special behaviors. Every ta
 #### Unit Modifier
 
 Units that have `IRTCalledShotMod` in their _StatCollection_ will take this modifier as the `CalledShotUnitMod `. The _StatCollection_ assumes an Int32 (integer) value.
+
+### Called Shot Location
+
+By setting `Combat.CalledShot.DisableAllLocations=true`, you can disable the selection of any location during a called shot. This will apply any relevant penalties and consume morale, but will randomize locations like a normal attack. The popup won't be displayed but the background will light up. 
+
+If you instead set `Combat.CalledShot.DisableHeadshots=true`, the popup will be displayed normally but the head will not be a valid selection. You won't be able to click on it, though it is still displayed in the paper doll as normal.
+
+This restrictions do not apply to any units that are currently prone or shutdown. These units can be targeted with called shot as per vanilla.
+
+Additionally you can allow an actor to bypass this restriction by setting  `IRTCalledShotAlwaysAllow` statistic (Boolean) to true. Units with this set to true can always use the vanilla called shot location selection.
 
 ## Random Start By Difficulty
 
