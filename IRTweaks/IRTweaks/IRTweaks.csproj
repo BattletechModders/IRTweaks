@@ -37,7 +37,7 @@
   <ItemGroup>
     <Reference Include="0Harmony, Version=1.2.0.1, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\My Games\BattleTech\mods\HBS\0Harmony.dll</HintPath>
+      <HintPath>E:\steam\SteamApps\common\BATTLETECH\BattleTech_Data\Managed\0Harmony.dll</HintPath>
     </Reference>
     <Reference Include="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -96,13 +96,13 @@
     <Compile Include="ModInit.cs" />
     <Compile Include="Modules\Combat\BuildingDamageColorChange.cs" />
     <Compile Include="Modules\Combat\CalledShots.cs" />
-    <Compile Include="Modules\Combat\CombatModule.cs" />
+    <Compile Include="Modules\CombatModule.cs" />
     <Compile Include="Modules\Combat\BraceOnMeleeWithJuggernaut.cs" />
-    <Compile Include="Modules\Combat\HarmonyPathAttribute.cs" />
     <Compile Include="Modules\Combat\PainTolerance.cs" />
     <Compile Include="Modules\Combat\PathfinderTeamFix.cs" />
-    <Compile Include="Modules\Combat\PilotStatValidators.cs" />
+    <Compile Include="Modules\Combat\ExtendedStats.cs" />
     <Compile Include="Modules\Combat\FlexibleSensorLock.cs" />
+    <Compile Include="Modules\Combat\ScaleObjectiveBuildingHealth.cs" />
     <Compile Include="Modules\Combat\SpawnProtection.cs" />
     <Compile Include="Modules\Combat\UrbanExplosionsFix.cs" />
     <Compile Include="Modules\Misc\DisableMPHash.cs" />
@@ -110,7 +110,7 @@
     <Compile Include="Modules\Misc\ShowAllArgoUpgrades.cs" />
     <Compile Include="Modules\Misc\SkipDeleteSavePopup.cs" />
     <Compile Include="Modules\Misc\DisableCampaign.cs" />
-    <Compile Include="Modules\Misc\MiscModule.cs" />
+    <Compile Include="Modules\MiscModule.cs" />
     <Compile Include="Modules\Misc\RandomStartByDifficulty.cs" />
     <Compile Include="Modules\Misc\ReduceSaveCompression.cs" />
     <Compile Include="Modules\Misc\SkirmishReset.cs" />
@@ -123,7 +123,7 @@
     <Compile Include="Modules\UI\StreamlinedMainMenu.cs" />
     <Compile Include="Modules\UI\StoreHelper.cs" />
     <Compile Include="Modules\UI\StoreQuantities.cs" />
-    <Compile Include="Modules\UI\UIModule.cs" />
+    <Compile Include="Modules\UIModule.cs" />
     <Compile Include="Modules\UI\WeaponTooltips.cs" />
     <Compile Include="Patches\CombatGameStatePatches.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

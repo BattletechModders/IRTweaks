@@ -21,6 +21,8 @@ namespace IRTweaks
         public const string HBS_RandomMechs = "StartingRandomMechLists";
         public const string HBS_StrayShotValidTargets = "StrayShotValidTargets";
 
+        public const string HBS_Building_Structure = "Structure";
+
     }
 
 }

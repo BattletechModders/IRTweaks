@@ -42,6 +42,9 @@ namespace IRTweaks {
 
             Log.Debug?.Write($"ModDir is:{modDirectory}");
             Log.Debug?.Write($"mod.json settings are:({settingsJSON})");
+
+            // Initialize the mod settings
+            Mod.Config.Init();
             Mod.Config.LogConfig();
 
             if (settingsE != null) {
@@ -62,6 +65,7 @@ namespace IRTweaks {
                 Mod.LocalizedText = new ModText();
                 Log.Error?.Write(e, $"Failed to read localizations from: {localizationPath} due to error!");
             }
+
 
             var harmony = HarmonyInstance.Create(HarmonyPackage);
 

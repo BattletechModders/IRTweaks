@@ -4,31 +4,40 @@ using Harmony;
 using System;
 using System.Reflection;
 
-namespace IRTweaks.Modules.Combat {
+namespace IRTweaks.Modules.Combat
+{
 
-    public static class CombatFixes {
+    public static class CombatFixes
+    {
         static bool Initialized = false;
-        public static class State {
-            public static void Reset() {
+        public static class State
+        {
+            public static void Reset()
+            {
             }
         }
 
-        public static void InitModule(HarmonyInstance harmony) {
-            if (!Initialized) {
+        public static void InitModule(HarmonyInstance harmony)
+        {
+            if (!Initialized)
+            {
 
-                try {
-                    // Update the pilot stats to have a maximum greater than 10
-                    if (Mod.Config.Fixes.ExtendedStats) {
-                        Mod.Log.Info?.Write("Activating Fix: ExtendedStats");
-                        MethodInfo pilot_ISV_MI = AccessTools.Method(typeof(Pilot), "InitStatValidators");
-                        HarmonyMethod psv_ISV_HM = new HarmonyMethod(typeof(PilotStatValidators), "Pilot_InitStatValidators_Prefix");
-                        harmony.Patch(pilot_ISV_MI, psv_ISV_HM, null, null);
-                    }
+                try
+                {
+                    if (Mod.Config.Fixes.BraceOnMeleeWithJuggernaut)
+                        Mod.Log.Info?.Write("Activating Fix: BraceOnMeleeWithJuggernaut");
+
+                    if (Mod.Config.Fixes.BuildingDamageColorChange)
+                        Mod.Log.Info?.Write("Activating Fix: BuildingDamageColorChange");
 
                     if (Mod.Config.Fixes.CalledShotTweaks)
                         Mod.Log.Info?.Write("Activating Fix: CalledShotTweaks");
 
-                    if (Mod.Config.Fixes.FlexibleSensorLock) {
+                    if (Mod.Config.Fixes.ExtendedStats)
+                        Mod.Log.Info?.Write("Activating Fix: ExtendedStats");
+
+                    if (Mod.Config.Fixes.FlexibleSensorLock)
+                    {
                         Mod.Log.Info?.Write("Activating Fix: FlexibleSensorLock");
                         // TODO: Add in sensor probe sequence. Limit to once per turn.
                         HarmonyMethod slc_r_f_post = new HarmonyMethod(typeof(FlexibleSensorLock), "Returns_False_Postfix");
@@ -70,20 +79,25 @@ namespace IRTweaks.Modules.Combat {
                         harmony.Patch(aiu_eslq, fsl_aiu_eslq_pre, null, null);
                     }
 
-                    if (Mod.Config.Fixes.SpawnProtection) {
+                    if (Mod.Config.Fixes.PainTolerance)
+                        Mod.Log.Info?.Write("Activating Fix: PainTolerance");
+
+                    if (Mod.Config.Fixes.PathfinderTeamFix)
+                        Mod.Log.Info?.Write("Activating Fix: PathfinderTeamFix");
+
+                    if (Mod.Config.Fixes.ScaleObjectiveBuildingStructure)
+                        Mod.Log.Info?.Write("Activating Fix: ScaleObjectiveBuildingStructure");
+
+                    if (Mod.Config.Fixes.SpawnProtection)
                         Mod.Log.Info?.Write("Activating Fix: SpawnProtection");
 
-                        MethodInfo t_au = AccessTools.Method(typeof(Team), "AddUnit");
-                        HarmonyMethod sp_t_au_post = new HarmonyMethod(typeof(SpawnProtection), "Team_AddUnit_Postfix");
-                        harmony.Patch(t_au, null, sp_t_au_post, null);
+                    if (Mod.Config.Fixes.UrbanExplosionsFix)
+                        Mod.Log.Info?.Write("Activating Fix: UrbanExplosionsFix");
 
-                        MethodInfo td_bnr = AccessTools.Method(typeof(TurnDirector), "BeginNewRound");
-                        HarmonyMethod sp_td_bnr_post = new HarmonyMethod(typeof(SpawnProtection), "TurnDirector_BeginNewRound_Postfix");
-                        harmony.Patch(td_bnr, null, sp_td_bnr_post, null);
-                    }
 
                 }
-                catch (Exception e) {
+                catch (Exception e)
+                {
                     Mod.Log.Error?.Write($"Failed to load patches due to: {e.Message}");
                     Mod.Log.Error?.Write(e);
                 }
