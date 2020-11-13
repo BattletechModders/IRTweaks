@@ -66,7 +66,6 @@ namespace IRTweaks {
                 Log.Error?.Write(e, $"Failed to read localizations from: {localizationPath} due to error!");
             }
 
-
             var harmony = HarmonyInstance.Create(HarmonyPackage);
 
             // Initialize modules

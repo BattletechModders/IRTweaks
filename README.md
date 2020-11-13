@@ -19,6 +19,7 @@ This is a mod for the [HBS BattleTech](http://battletechgame.com/) game that inc
 * **PathfinderTeamFix**: Mission Control introduces pathfinding units that have no Team associated with them. This breaks some mods, which this fix remediates.
 * **Random Start by Difficulty Menu**: Allows an option in the new-game difficulty menu to be associated with user-created lists of starting mechs.
 * **ReduceSaveCompression**: By default the game is setup to use an aggressive compression on save game files. This slows down game load. By setting this to true saves will use more space on disk but load faster. Thanks to **Gnivler** for this fix!
+* **ScaleObjectiveBuildingStructure**: Increases the structure of any building that is the target of an objective. This allows high difficulty attack bases to be more difficult, and high difficulty defend bases to be easier.
 * **ShowAllArgoUpgrades**: Shows all available argo upgrades, instead of hiding the ones that require additional unlocks.
 * **SimGameDifficultyLabelsReplacer**: Allows customization of the labels on the 'difficulty' bar when you start a new career or campaign game. 
 * **SkirmishAlwaysUnlimited**: This allows you to drop from Skirmish even if your lances violate the limits of the currently selected operation type.
@@ -198,6 +199,17 @@ Example:
                     ]
                 },
 ```
+
+## ScaleObjectiveBuildingStructure
+
+This tweak modifies the structure of all buildings that are associated with an objective at the start of combat. All buildings are changed regardless of their faction affiliation, so it applies to defend base targets as much as attack base targets.
+
+This tweak can be customized in mod.json through the `Combat.ScaledStructure` settings. `ScaledSettings.DifficultyScaling` is a dictionary keyed by the current contract's **finalDifficulty**. Each value has a `Multi` and `Mod` value. The `Multi` value is a multiplier that multiplies the base structure of the building. The 'Mod' value then modifies this value. 
+
+`AdjustedStructure = (BaseStructure x Multi) + Mod`
+
+
+ `ScaledStructure.DefaultScale` defines the modifications that should be used when no difficulty-based scaling can be found. If the __finalDifficulty_ of a contract cannot be found, but the __finalDifficulty_ is within the minimum and maximum values defined in `DifficultyScaling` the default scale will be used.
 
 ## Sensor Lock Freedom
 

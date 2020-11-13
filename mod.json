@@ -2,7 +2,7 @@
 	"Name": "IRTweaks",
 	"Enabled": true,
 	"Hidden": true,
-	"Version": "0.7.6",
+	"Version": "0.8.0",
 	"Description": "Miscellaneous Tweaks and Fixes",
 	"Author": "IceRaptor",
 	"Website": "https://github.com/IceRaptor/IRTweaks",
@@ -33,6 +33,7 @@
 			"PreventHeadShots": false,
 			"RandomStartByDifficulty": true,
 			"ReduceSaveCompression": true,
+            "ScaleObjectiveBuildingStructure" : true,
 			"ShowAllArgoUpgrades": true,
 			"SimGameDifficultyLabelsReplacer" : false,
 			"SkirmishAlwaysUnlimited": true,
@@ -90,10 +91,6 @@
 		"Store": {
 			"QuantityOnShift": 5,
 			"QuantityOnControl": 20
-		},
-        "SimGameDifficultyStrings" : {
-            "DESCRIPTION" : "Overall Difficulty",
-            "LABEL" : "Difficulty"
-        }
+		}
 	}
 }
