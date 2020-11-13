@@ -204,7 +204,7 @@ Example:
 
 This tweak modifies the structure of all buildings that are associated with an objective at the start of combat. All buildings are changed regardless of their faction affiliation, so it applies to defend base targets as much as attack base targets.
 
-This tweak can be customized in mod.json through the `Combat.ScaledStructure` settings. `ScaledSettings.DifficultyScaling` is a dictionary keyed by the current contract's **finalDifficulty**. Each value has a `Multi` and `Mod` value. The `Multi` value is a multiplier that multiplies the base structure of the building. The 'Mod' value then modifies this value. 
+This tweak can be customized in mod.json through the `Combat.ScaledStructure` settings. `ScaledSettings.DifficultyScaling` is a dictionary keyed by the current contract's **finalDifficulty**. Each value has a `Multi` and `Mod` value. The `Multi` value is a multiplier that multiplies the base structure of the building. The 'Mod' value then modifies this value.
 
 `AdjustedStructure = (BaseStructure x Multi) + Mod`
 
