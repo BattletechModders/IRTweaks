@@ -4,6 +4,32 @@ namespace IRTweaks
 {
     public class ModText
     {
+
+        public const string DT_Title_ScrapAll = "SCRAP_ALL_TITLE";
+        public const string DT_Title_ScrapAssaults = "SCRAP_ALL_ASSAULT";
+        public const string DT_Title_ScrapHeavies = "SCRAP_ALL_HEAVY";
+        public const string DT_Title_ScrapLights = "SCRAP_ALL_LIGHT";
+        public const string DT_Title_ScrapMediums = "SCRAP_ALL_MEDIUM";
+
+        public const string DT_Desc_ScrapAll = "SCRAP_ALL_DESC";
+        public const string DT_Button_Cancel = "BUTTON_CANCEL";
+        public const string DT_Button_Scrap = "BUTTON_SCRAP";
+
+        public Dictionary<string, string> Dialog = new Dictionary<string, string>
+        {
+            { DT_Title_ScrapAll, "SCRAP ALL IN STORAGE" },
+            { DT_Title_ScrapAssaults, "SCRAP ASSAULTS IN STORAGE" },
+            { DT_Title_ScrapHeavies, "SCRAP HEAVIES IN STORAGE" },
+            { DT_Title_ScrapLights, "SCRAP LIGHTS IN STORAGE" },
+            { DT_Title_ScrapMediums, "SCRAP MEDIUMS IN STORAGE" },
+
+            { DT_Desc_ScrapAll, "This will scrap units currently in storage, gaining {0} c-bills. This action cannot be reversed, you will need to load an earlier save. Are you sure?" },
+
+            { DT_Button_Cancel, "CANCEL" },
+            { DT_Button_Scrap, "SCRAP" }
+
+        };
+
         public const string FT_InjuryResist = "INJURY_RESIST";
 
         public Dictionary<string, string> Floaties = new Dictionary<string, string>

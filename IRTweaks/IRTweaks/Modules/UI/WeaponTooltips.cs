@@ -1,16 +1,23 @@
 ﻿using BattleTech;
 using BattleTech.UI.Tooltips;
 using CustAmmoCategories;
+using Harmony;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace IRTweaks.Modules.UI {
-
+namespace IRTweaks.Modules.UI
+{
+    
     // Update the tooltip to distinguish between different weapon types, and make CAC mannerisms clearer
-    public static class WeaponTooltips {
-        public static void TooltipPrefab_Weapon_SetData_Postfix(TooltipPrefab_Weapon __instance, object data, 
-            TextMeshProUGUI ___rangeType, TextMeshProUGUI ___damage) {
+    [HarmonyPatch(typeof(TooltipPrefab_Weapon), "SetData")]
+    static class WeaponTooltips_TooltipPrefab_Weapon_SetData
+    {
+        static bool Prepare => Mod.Config.Fixes.WeaponTooltip;
+
+        static void Postfix(TooltipPrefab_Weapon __instance, object data,
+            TextMeshProUGUI ___rangeType, TextMeshProUGUI ___damage)
+        {
             Mod.Log.Debug?.Write("TP_W:SD entered.");
 
             ___rangeType.enabled = false;

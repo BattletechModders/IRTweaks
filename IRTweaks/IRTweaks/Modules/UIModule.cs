@@ -6,15 +6,21 @@ using IRTweaks.Modules.UI;
 using System;
 using System.Reflection;
 
-namespace IRTweaks.Modules.Tooltip {
-    public static class UIFixes {
+namespace IRTweaks.Modules.Tooltip
+{
+    public static class UIFixes
+    {
         static bool Initialized = false;
 
-        public static void InitModule(HarmonyInstance harmony) {
-            if (!Initialized) {
-                try {
+        public static void InitModule(HarmonyInstance harmony)
+        {
+            if (!Initialized)
+            {
+                try
+                {
                     // Updates the purchase and selling dialogs to allow multiple items to be purchased and sold at once
-                    if (Mod.Config.Fixes.BulkPurchasing) {
+                    if (Mod.Config.Fixes.BulkPurchasing)
+                    {
                         Mod.Log.Info?.Write("Activating Fix: BulkPurchasing");
                         MethodInfo refreshMI = AccessTools.Method(typeof(SG_Stores_MultiPurchasePopup), "Refresh");
                         HarmonyMethod mpp_R_Post = new HarmonyMethod(typeof(StoreQuantities), "MultiPurchasePopup_Refresh_Postfix");
@@ -30,7 +36,8 @@ namespace IRTweaks.Modules.Tooltip {
                     }
 
                     // Enable the CombatLog
-                    if (Mod.Config.Fixes.CombatLog) {
+                    if (Mod.Config.Fixes.CombatLog)
+                    {
                         Mod.Log.Info?.Write("Activating Fix: CombatLog");
                         MethodInfo combatHUD_Init_MI = AccessTools.Method(typeof(CombatHUD), "Init", new Type[] { typeof(CombatGameState) });
                         HarmonyMethod cl_chud_i_post = new HarmonyMethod(typeof(CombatLog), "CombatHUD_Init_Postfix");
@@ -74,7 +81,8 @@ namespace IRTweaks.Modules.Tooltip {
                         Mod.Log.Info?.Write("Activating Fix: DisableCombatRestart");
 
                     // Makes the main menu a smoother as there are fewer
-                    if (Mod.Config.Fixes.StreamlinedMainMenu) {
+                    if (Mod.Config.Fixes.StreamlinedMainMenu)
+                    {
                         Mod.Log.Info?.Write("Activating Fix: StreamlinedMainMenu");
 
                         MethodInfo sgnb_rftp_mi = AccessTools.Method(typeof(SGNavigationButton), "ResetFlyoutsToPrefab");
@@ -100,14 +108,12 @@ namespace IRTweaks.Modules.Tooltip {
                     }
 
                     // Update the weapon tooltip to support CAC behaviors
-                    if (Mod.Config.Fixes.WeaponTooltip) {
+                    if (Mod.Config.Fixes.WeaponTooltip)
                         Mod.Log.Info?.Write("Activating Fix: WeaponTooltip");
-                        MethodInfo tooltipPrefab_Weapon_SetData = AccessTools.Method(typeof(TooltipPrefab_Weapon), "SetData");
-                        HarmonyMethod tm_tp_w_sd_post = new HarmonyMethod(typeof(WeaponTooltips), "TooltipPrefab_Weapon_SetData_Postfix");
-                        harmony.Patch(tooltipPrefab_Weapon_SetData, null, tm_tp_w_sd_post, null);
-                    }
 
-                } catch (Exception e) {
+                }
+                catch (Exception e)
+                {
                     Mod.Log.Error?.Write($"Failed to load patches due to: {e.Message}");
                     Mod.Log.Error?.Write(e.StackTrace);
                     Mod.Log.Error?.Write(e.ToString());

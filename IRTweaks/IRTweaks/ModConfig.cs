@@ -131,6 +131,7 @@ namespace IRTweaks
 
         // UI
         public bool BulkPurchasing = true;
+        public bool BulkScrapping = true;
         public bool CombatLog = true;
         public bool DisableCombatRestarts = true;
         public bool DisableCombatSaves = true;
@@ -166,6 +167,7 @@ namespace IRTweaks
             Mod.Log.Info?.Write($"  BuildingDamageColorChange:          {this.Fixes.BuildingDamageColorChange}");
             Mod.Log.Info?.Write($"  BraceOnMeleeWithJuggernaut:         {this.Fixes.BraceOnMeleeWithJuggernaut}");
             Mod.Log.Info?.Write($"  BulkPurchasing:                     {this.Fixes.BulkPurchasing}");
+            Mod.Log.Info?.Write($"  BulkScrapping:                      {this.Fixes.BulkScrapping}");
             Mod.Log.Info?.Write($"  CalledShotTweaks:                   {this.Fixes.CalledShotTweaks}");
             Mod.Log.Info?.Write($"  CombatLog:                          {this.Fixes.CombatLog}");
             Mod.Log.Info?.Write($"  DisableCampaign:                    {this.Fixes.DisableCampaign}");

@@ -5,40 +5,9 @@ using IRBTModUtils;
 using IRBTModUtils.Extension;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace IRTweaks.Modules.Combat
 {
-    //[HarmonyPatch(typeof(BattleTech.Building), "InitStats")]
-    //static class ScaleObjectiveBuildingStructure_Building_InitStats
-    //{
-    //    static bool Prepare => Mod.Config.Fixes.ScaleObjectiveBuildingStructure;
-
-    //    static void Postfix(BattleTech.Building __instance, bool ___isObjectiveTarget)
-    //    {
-
-    //        //float adjustedStruct = (float)Math.Floor((__instance.CurrentStructure * scale.Multi) + scale.Mod);
-    //        //Mod.Log.Info?.Write($" -- adjustedStructure: {adjustedStruct} = ( currentStruct: {__instance.CurrentStructure} x scaleMulti: {scale.Multi} ) + scaleMod: {scale.Mod}");
-    //        //__instance.StatCollection.ModifyStat("IRTweaks", -1, ModStats.HBS_Building_Structure, StatCollection.StatOperation.Set, adjustedStruct);
-    //        //Traverse startingStructT = Traverse.Create(__instance).Property("StartingStructure");
-    //        //startingStructT.SetValue(adjustedStruct);
-
-    //        //Mod.Log.Info?.Write($"Evaluating building: {__instance.DistinctId()} for structure scaling.");
-    //        //if (___isObjectiveTarget)
-    //        //{
-
-    //        //}
-    //        //else
-    //        //{
-    //        //    Mod.Log.Info?.Write($"  -- building is not objective target, it will not be scaled.");
-    //        //}
-
-
-    //    }
-
-    //}
 
     [HarmonyPatch(typeof(TurnDirector), "OnInitializeContractComplete")]
     public static class ScaleObjectiveBuildingStructure_TurnDirector_OnInitializeContractComplete
