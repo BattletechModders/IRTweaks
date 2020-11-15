@@ -64,6 +64,18 @@ namespace IRTweaks.Modules.Combat
                         building.StatCollection.ModifyStat("IRTweaks", -1, ModStats.HBS_Building_Structure, StatCollection.StatOperation.Set, adjustedStruct);
                         Traverse startingStructT = Traverse.Create(__instance).Property("StartingStructure");
                         startingStructT.SetValue(adjustedStruct);
+
+                        Mod.Log.Info?.Write($"  -- new stats for building =>  currentStructure: {building.CurrentStructure}  startingStructure: {building.StartingStructure}  ratio: {building.HealthAsRatio}");
+
+                        // Update the destructable group
+                        if (building.DestructibleObjectGroup != null)
+                        {
+                            building.DestructibleObjectGroup.health = adjustedStruct;
+                            building.DestructibleObjectGroup.fullHealth = adjustedStruct;
+
+                            Mod.Log.Info?.Write($"  -- new stats for destructibleObjectGroup =>  health: {building.DestructibleObjectGroup.health}  fullHealth: {building.DestructibleObjectGroup.fullHealth}");
+                        }
+
                     }
                 }
             }
