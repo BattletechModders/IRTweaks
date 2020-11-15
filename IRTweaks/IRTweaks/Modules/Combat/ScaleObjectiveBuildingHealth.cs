@@ -62,7 +62,7 @@ namespace IRTweaks.Modules.Combat
                         Mod.Log.Info?.Write($" -- adjustedStructure: {adjustedStruct} = ( currentStruct: {building.CurrentStructure} x scaleMulti: {scale.Multi} ) + scaleMod: {scale.Mod}");
                         
                         building.StatCollection.ModifyStat("IRTweaks", -1, ModStats.HBS_Building_Structure, StatCollection.StatOperation.Set, adjustedStruct);
-                        Traverse startingStructT = Traverse.Create(__instance).Property("StartingStructure");
+                        Traverse startingStructT = Traverse.Create(building).Property("StartingStructure");
                         startingStructT.SetValue(adjustedStruct);
 
                         Mod.Log.Info?.Write($"  -- new stats for building =>  currentStructure: {building.CurrentStructure}  startingStructure: {building.StartingStructure}  ratio: {building.HealthAsRatio}");
