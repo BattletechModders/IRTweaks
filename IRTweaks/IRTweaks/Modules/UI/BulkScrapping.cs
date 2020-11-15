@@ -12,16 +12,11 @@ namespace IRTweaks.Modules.UI
 {
     public static class ScrapHelper
     {
-        public static void BuildScrapAllDialog(List<IMechLabDraggableItem> widgetInventory, float scrapPartModifier, string title, Action confirmAction)
+        public static void BuildScrapAllDialog(List<MechBayChassisUnitElement> filteredChassis,
+            float scrapPartModifier, string title, Action confirmAction)
         {
-            List<MechBayChassisUnitElement> activeItems = widgetInventory
-                .Where(x => x.GameObject.activeSelf)
-                .OfType<MechBayChassisUnitElement>()
-                .ToList();
-
-            int cbills = ScrapHelper.CalculateTotalScrap(activeItems, scrapPartModifier);
+            int cbills = ScrapHelper.CalculateTotalScrap(filteredChassis, scrapPartModifier);
             string cbillStr = SimGameState.GetCBillString(cbills);
-
 
             string descLT = new Text(Mod.LocalizedText.Dialog[ModText.DT_Desc_ScrapAll], new object[] { cbillStr }).ToString();
             string cancelLT = new Text(Mod.LocalizedText.Dialog[ModText.DT_Button_Cancel]).ToString();
@@ -34,21 +29,18 @@ namespace IRTweaks.Modules.UI
                 .Render();
         }
 
-        public static void ScrapAllActive(List<IMechLabDraggableItem> widgetInventory)
+        public static void ScrapChassis(List<MechBayChassisUnitElement> filteredChassis)
         {
-            List<MechBayChassisUnitElement> activeItems = widgetInventory
-                .Where(x => x.GameObject.activeSelf)
-                .OfType<MechBayChassisUnitElement>()
-                .ToList();
-
             MechBayPanel mechBayPanel = LazySingletonBehavior<UIManager>.Instance.GetOrCreateUIModule<MechBayPanel>();
             
-            foreach (MechBayChassisUnitElement item in activeItems)
+            foreach (MechBayChassisUnitElement item in filteredChassis)
             {
                 // parts 0 + max 0 = one unit
                 int fullMechs = (item.PartsCount == 0 && item.PartsMax == 0) ?
                     1 : (int)Math.Floor((double)item.PartsCount / item.PartsMax);
                 int partsCount = item.PartsCount - fullMechs;
+                Mod.Log.Info?.Write($"Scrapping chassis: {item.ChassisDef.Description.Name}" +
+                    $" with {fullMechs} complete mechs and {partsCount} parts.");
 
                 for (int i = 0; i < fullMechs; i++)
                 {
@@ -65,10 +57,10 @@ namespace IRTweaks.Modules.UI
             }
         }
 
-        public static int CalculateTotalScrap(List<MechBayChassisUnitElement> activeChassis, float scrapPartModifier)
+        public static int CalculateTotalScrap(List<MechBayChassisUnitElement> filteredChassis,  float scrapPartModifier)
         {
             float total = 0;
-            foreach (MechBayChassisUnitElement item in activeChassis)
+            foreach (MechBayChassisUnitElement item in filteredChassis)
             {
                 Mod.Log.Info?.Write($"Part : {item.ChassisDef.Description.Name} {item.PartsCount} partsCounts with {item.PartsMax} partsMax");
                 // parts 0 + max 0 = one unit
@@ -103,8 +95,13 @@ namespace IRTweaks.Modules.UI
                 Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt))
             {
                 string titleLT = new Text(Mod.LocalizedText.Dialog[ModText.DT_Title_ScrapAll]).ToString();
-                ScrapHelper.BuildScrapAllDialog(___inventory, __instance.Sim.Constants.Finances.MechScrapModifier, titleLT, 
-                    delegate { ScrapHelper.ScrapAllActive(___inventory); });
+
+                List<MechBayChassisUnitElement> filteredItems = ___inventory
+                    .OfType<MechBayChassisUnitElement>()
+                    .ToList();
+
+                ScrapHelper.BuildScrapAllDialog(filteredItems, __instance.Sim.Constants.Finances.MechScrapModifier, titleLT, 
+                    delegate { ScrapHelper.ScrapChassis(filteredItems); });
             }
         }
     }
@@ -120,8 +117,14 @@ namespace IRTweaks.Modules.UI
                 Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt))
             {
                 string titleLT = new Text(Mod.LocalizedText.Dialog[ModText.DT_Title_ScrapAssaults]).ToString();
-                ScrapHelper.BuildScrapAllDialog(___inventory, __instance.Sim.Constants.Finances.MechScrapModifier, titleLT,
-                    delegate { ScrapHelper.ScrapAllActive(___inventory); });
+
+                List<MechBayChassisUnitElement> filteredItems = ___inventory
+                    .OfType<MechBayChassisUnitElement>()
+                    .Where(x => x.ChassisDef.weightClass == WeightClass.ASSAULT)
+                    .ToList();
+
+                ScrapHelper.BuildScrapAllDialog(filteredItems, __instance.Sim.Constants.Finances.MechScrapModifier, titleLT,
+                    delegate { ScrapHelper.ScrapChassis(filteredItems); });
             }
         }
     }
@@ -137,8 +140,14 @@ namespace IRTweaks.Modules.UI
                 Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt))
             {
                 string titleLT = new Text(Mod.LocalizedText.Dialog[ModText.DT_Title_ScrapHeavies]).ToString();
-                ScrapHelper.BuildScrapAllDialog(___inventory, __instance.Sim.Constants.Finances.MechScrapModifier, titleLT,
-                    delegate { ScrapHelper.ScrapAllActive(___inventory); });
+
+                List<MechBayChassisUnitElement> filteredItems = ___inventory
+                    .OfType<MechBayChassisUnitElement>()
+                    .Where(x => x.ChassisDef.weightClass == WeightClass.HEAVY)
+                    .ToList();
+
+                ScrapHelper.BuildScrapAllDialog(filteredItems, __instance.Sim.Constants.Finances.MechScrapModifier, titleLT,
+                    delegate { ScrapHelper.ScrapChassis(filteredItems); });
             }
         }
     }
@@ -154,8 +163,14 @@ namespace IRTweaks.Modules.UI
                 Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt))
             {
                 string titleLT = new Text(Mod.LocalizedText.Dialog[ModText.DT_Title_ScrapLights]).ToString();
-                ScrapHelper.BuildScrapAllDialog(___inventory, __instance.Sim.Constants.Finances.MechScrapModifier, titleLT,
-                    delegate { ScrapHelper.ScrapAllActive(___inventory); });
+
+                List<MechBayChassisUnitElement> filteredItems = ___inventory
+                    .OfType<MechBayChassisUnitElement>()
+                    .Where(x => x.ChassisDef.weightClass == WeightClass.LIGHT)
+                    .ToList();
+
+                ScrapHelper.BuildScrapAllDialog(filteredItems, __instance.Sim.Constants.Finances.MechScrapModifier, titleLT,
+                    delegate { ScrapHelper.ScrapChassis(filteredItems); });
             }
         }
     }
@@ -171,8 +186,14 @@ namespace IRTweaks.Modules.UI
                 Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt))
             {
                 string titleLT = new Text(Mod.LocalizedText.Dialog[ModText.DT_Title_ScrapMediums]).ToString();
-                ScrapHelper.BuildScrapAllDialog(___inventory, __instance.Sim.Constants.Finances.MechScrapModifier, titleLT,
-                    delegate { ScrapHelper.ScrapAllActive(___inventory); });
+
+                List<MechBayChassisUnitElement> filteredItems = ___inventory
+                    .OfType<MechBayChassisUnitElement>()
+                    .Where(x => x.ChassisDef.weightClass == WeightClass.MEDIUM)
+                    .ToList();
+
+                ScrapHelper.BuildScrapAllDialog(filteredItems, __instance.Sim.Constants.Finances.MechScrapModifier, titleLT,
+                    delegate { ScrapHelper.ScrapChassis(filteredItems); });
             }
         }
     }
