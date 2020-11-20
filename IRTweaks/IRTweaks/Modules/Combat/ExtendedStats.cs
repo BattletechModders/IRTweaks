@@ -7,7 +7,7 @@ namespace IRTweaks.Modules.Combat
     [HarmonyPatch(typeof(Pilot), "InitStatValidators")]
     static class ExtendedStats_Pilot_InitStatValidators
     {
-        static bool Prepare => Mod.Config.Fixes.ExtendedStats;
+        static bool Prepare() => Mod.Config.Fixes.ExtendedStats;
 
         static bool Prefix(Pilot __instance, StatCollection ___statCollection)
         {
