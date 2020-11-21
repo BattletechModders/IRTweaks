@@ -13,7 +13,7 @@ namespace IRTweaks.Modules.Combat
     [HarmonyPatch(typeof(AbstractActor), "InitEffectStats")]
     static class AbstractActor_InitEffectStats
     {
-        static bool Prepare => Mod.Config.Fixes.CalledShotTweaks;
+        static bool Prepare() => Mod.Config.Fixes.CalledShotTweaks;
 
         static void Postfix(AbstractActor __instance)
         {
@@ -26,7 +26,7 @@ namespace IRTweaks.Modules.Combat
     [HarmonyPatch(typeof(HUDMechArmorReadout), "SetHoveredArmor")]
     static class HUDMechArmorReadout_SetHoveredAmor
     {
-        static bool Prepare => Mod.Config.Fixes.CalledShotTweaks;
+        static bool Prepare() => Mod.Config.Fixes.CalledShotTweaks;
 
         static void Postfix(HUDMechArmorReadout __instance, ArmorLocation location, Mech ___displayedMech)
         {
@@ -61,7 +61,7 @@ namespace IRTweaks.Modules.Combat
     [HarmonyPatch(new Type[] { typeof(ArmorLocation) })]
     static class SelectionStateFire_SetCalledShot_AL
     {
-        static bool Prepare => Mod.Config.Fixes.CalledShotTweaks;
+        static bool Prepare() => Mod.Config.Fixes.CalledShotTweaks;
 
         static void Postfix(SelectionStateFire __instance, ArmorLocation location)
         {
@@ -94,7 +94,7 @@ namespace IRTweaks.Modules.Combat
     [HarmonyPatch(new Type[] { typeof(VehicleChassisLocations) })]
     static class SelectionStateFire_SetCalledShot_VCL
     {
-        static bool Prepare => Mod.Config.Fixes.CalledShotTweaks;
+        static bool Prepare() => Mod.Config.Fixes.CalledShotTweaks;
 
         static void Postfix(SelectionStateFire __instance)
         {
@@ -112,7 +112,7 @@ namespace IRTweaks.Modules.Combat
     [HarmonyPatch(typeof(SelectionStateMoraleAttack), "NeedsCalledShot", MethodType.Getter)]
     static class SelectionStateMoraleAttack_NeedsCalledShot
     {
-        static bool Prepare => Mod.Config.Fixes.CalledShotTweaks;
+        static bool Prepare() => Mod.Config.Fixes.CalledShotTweaks;
 
         static void Postfix(SelectionStateFire __instance, ref bool __result)
         {
@@ -135,7 +135,7 @@ namespace IRTweaks.Modules.Combat
     [HarmonyPatch(typeof(ToHit), "GetMoraleAttackModifier")]
     static class ToHit_GetMoraleAttackModifier
     {
-        static bool Prepare => Mod.Config.Fixes.CalledShotTweaks;
+        static bool Prepare() => Mod.Config.Fixes.CalledShotTweaks;
 
         static void Postfix(ref float __result)
         {
@@ -146,7 +146,7 @@ namespace IRTweaks.Modules.Combat
     [HarmonyPatch(typeof(ToHit), "GetAllModifiers")]
     static class ToHit_GetAllModifiers
     {
-        static bool Prepare => Mod.Config.Fixes.CalledShotTweaks;
+        static bool Prepare() => Mod.Config.Fixes.CalledShotTweaks;
 
         static void Postfix(ref float __result, bool isCalledShot, AbstractActor attacker)
         {
@@ -165,7 +165,7 @@ namespace IRTweaks.Modules.Combat
     [HarmonyPatch(typeof(ToHit), "GetAllModifiersDescription")]
     static class ToHit_GetAllModifiersDescription
     {
-        static bool Prepare => Mod.Config.Fixes.CalledShotTweaks;
+        static bool Prepare() => Mod.Config.Fixes.CalledShotTweaks;
 
         static void Postfix(ref string __result, bool isCalledShot, AbstractActor attacker)
         {
@@ -188,7 +188,7 @@ namespace IRTweaks.Modules.Combat
     [HarmonyPatch(typeof(CombatHUDWeaponSlot), "SetHitChance", new Type[] { typeof(ICombatant) })]
     static class CombatHUDWeaponSlot_SetHitChance
     {
-        static bool Prepare => Mod.Config.Fixes.CalledShotTweaks;
+        static bool Prepare() => Mod.Config.Fixes.CalledShotTweaks;
 
         static void Postfix(CombatHUDWeaponSlot __instance, ICombatant target, Weapon ___displayedWeapon, CombatHUD ___HUD)
         {
@@ -222,7 +222,7 @@ namespace IRTweaks.Modules.Combat
     [HarmonyPatch(typeof(CombatHUDCalledShotPopUp), "Update")]
     static class CombatHUDCalledShotPopUp_Update
     {
-        static bool Prepare => Mod.Config.Fixes.CalledShotTweaks;
+        static bool Prepare() => Mod.Config.Fixes.CalledShotTweaks;
 
         static void Postfix(CombatHUDCalledShotPopUp __instance, CombatHUD ___HUD)
         {

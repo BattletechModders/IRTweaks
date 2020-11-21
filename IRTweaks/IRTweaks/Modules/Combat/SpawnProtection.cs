@@ -10,7 +10,7 @@ namespace IRTweaks.Modules.Combat
     [HarmonyPatch(typeof(Team), "AddUnit")]
     static class SpawnProtection_Team_AddUnit
     {
-        static bool Prepare => Mod.Config.Fixes.SpawnProtection;
+        static bool Prepare() => Mod.Config.Fixes.SpawnProtection;
 
         static void Postfix(Team __instance, AbstractActor unit)
         {
@@ -47,7 +47,7 @@ namespace IRTweaks.Modules.Combat
     [HarmonyPatch(typeof(TurnDirector), "BeginNewRound")]
     static class SpawnProtection_TurnDirector_BeginNewRound
     {
-        static bool Prepare => Mod.Config.Fixes.SpawnProtection;
+        static bool Prepare() => Mod.Config.Fixes.SpawnProtection;
 
         static void Postfix(TurnDirector __instance)
         {

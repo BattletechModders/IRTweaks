@@ -9,7 +9,7 @@ namespace IRTweaks.Modules.Misc
     [HarmonyPatch(typeof(SimGameState), "AddRandomStartingMechs")]
     static class RandomStartByDifficulty_SimGameState_AddRandomStartingMechs
     {
-        static bool Prepare => Mod.Config.Fixes.RandomStartByDifficulty;
+        static bool Prepare() => Mod.Config.Fixes.RandomStartByDifficulty;
 
         static void Prefix(SimGameState __instance)
         {
@@ -62,7 +62,7 @@ namespace IRTweaks.Modules.Misc
     [HarmonyPatch(typeof(SimGameConstantOverride), "ApplyOverride")]
     static class RandomStartByDifficulty_SimGameConstantOverride_ApplyOverride
     {
-        static bool Prepare => Mod.Config.Fixes.RandomStartByDifficulty;
+        static bool Prepare() => Mod.Config.Fixes.RandomStartByDifficulty;
 
         static void Postfix(SimGameConstantOverride __instance, string constantType, string constantName, SimGameState ___simState)
         {
@@ -85,7 +85,7 @@ namespace IRTweaks.Modules.Misc
     [HarmonyPatch(typeof(SGDifficultySettingObject), "CurCareerModifier")]
     static class RandomStartByDifficulty_SGDifficultySettingObject_CurCareerModifier
     {
-        static bool Prepare => Mod.Config.Fixes.RandomStartByDifficulty;
+        static bool Prepare() => Mod.Config.Fixes.RandomStartByDifficulty;
 
         static bool Prefix(SGDifficultySettingObject __instance, ref float __result, int ___curIdx)
         {

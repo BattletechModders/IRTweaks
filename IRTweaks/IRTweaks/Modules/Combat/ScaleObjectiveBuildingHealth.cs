@@ -12,7 +12,7 @@ namespace IRTweaks.Modules.Combat
     [HarmonyPatch(typeof(TurnDirector), "OnInitializeContractComplete")]
     public static class ScaleObjectiveBuildingStructure_TurnDirector_OnInitializeContractComplete
     {
-        static bool Prepare => Mod.Config.Fixes.ScaleObjectiveBuildingStructure;
+        static bool Prepare() => Mod.Config.Fixes.ScaleObjectiveBuildingStructure;
 
         public static void Postfix(TurnDirector __instance, MessageCenterMessage message)
         {
