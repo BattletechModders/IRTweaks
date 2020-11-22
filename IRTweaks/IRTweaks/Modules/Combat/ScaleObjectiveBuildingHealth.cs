@@ -56,14 +56,23 @@ namespace IRTweaks.Modules.Combat
                 {
                     if (combatant is BattleTech.Building building)
                     {
-                        Mod.Log.Info?.Write($" -- building: {building.DistinctId()} is an objective target, it should be scaled!");
+                        BattleTech.Building scaledBuilding = building;
+                        if (!ModState.ScaledObjectiveBuildings.Contains(building.DistinctId()))
+                        {
+                            float adjustedStruct = (float)Math.Floor((building.CurrentStructure * scale.Multi) + scale.Mod);
+                            Mod.Log.Info?.Write($" -- adjustedStructure: {adjustedStruct} = ( currentStruct: {building.CurrentStructure} x scaleMulti: {scale.Multi} ) + scaleMod: {scale.Mod}");
 
-                        float adjustedStruct = (float)Math.Floor((building.CurrentStructure * scale.Multi) + scale.Mod);
-                        Mod.Log.Info?.Write($" -- adjustedStructure: {adjustedStruct} = ( currentStruct: {building.CurrentStructure} x scaleMulti: {scale.Multi} ) + scaleMod: {scale.Mod}");
-                        
-                        building.StatCollection.ModifyStat("IRTweaks", -1, ModStats.HBS_Building_Structure, StatCollection.StatOperation.Set, adjustedStruct);
-                        Traverse startingStructT = Traverse.Create(__instance).Property("StartingStructure");
-                        startingStructT.SetValue(adjustedStruct);
+                            building.StatCollection.ModifyStat("IRTweaks", -1, ModStats.HBS_Building_Structure, StatCollection.StatOperation.Set, adjustedStruct);
+                            Traverse startingStructT = Traverse.Create(__instance).Property("StartingStructure");
+                            startingStructT.SetValue(adjustedStruct);
+
+                            ModState.ScaledObjectiveBuildings.Add(building.DistinctId());
+                        }
+                        else
+                        {
+                            Mod.Log.Info?.Write($" -- building: {building.DistinctId()} was already scaled, skipping");
+
+                        }
                     }
                 }
             }

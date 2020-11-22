@@ -16,6 +16,10 @@ namespace IRTweaks {
         public static List<int> ExplosionSequences = new List<int>();
         public static List<BattleTech.Building> ExplosionBuildingTargets = new List<BattleTech.Building>();
 
+        // Record objective buildings
+        public static HashSet<string> ScaledObjectiveBuildings = new HashSet<string>();
+
+
         public static void Reset() {
             // Reinitialize state
             PilotCalledShotModifiers.Clear();
@@ -23,6 +27,8 @@ namespace IRTweaks {
 
             ExplosionSequences.Clear();
             ExplosionBuildingTargets.Clear();
+
+            ScaledObjectiveBuildings.Clear();
         }
     }
 
