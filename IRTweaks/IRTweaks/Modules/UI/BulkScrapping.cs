@@ -119,8 +119,14 @@ namespace IRTweaks.Modules.UI
     {
         static bool Prepare() => Mod.Config.Fixes.BulkScrapping;
 
-        static void Postfix(MechBayMechStorageWidget __instance, List<IMechLabDraggableItem> ___inventory)
+        static void Postfix(MechBayMechStorageWidget __instance, List<IMechLabDraggableItem> ___inventory, IMechLabDropTarget ___parentDropTarget)
         {
+            if (___parentDropTarget == null || !(___parentDropTarget is MechBayPanel mechBayPanel))
+            {
+                Mod.Log.Info?.Write("Parent is not MechBay, skipping.");
+                return;
+            }
+
             if (___inventory != null && ___inventory.Count > 0 && 
                 Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt))
             {
@@ -142,8 +148,14 @@ namespace IRTweaks.Modules.UI
     {
         static bool Prepare() => Mod.Config.Fixes.BulkScrapping;
 
-        static void Postfix(MechBayMechStorageWidget __instance, List<IMechLabDraggableItem> ___inventory)
+        static void Postfix(MechBayMechStorageWidget __instance, List<IMechLabDraggableItem> ___inventory, IMechLabDropTarget ___parentDropTarget)
         {
+            if (___parentDropTarget == null || !(___parentDropTarget is MechBayPanel mechBayPanel))
+            {
+                Mod.Log.Info?.Write("Parent is not MechBay, skipping.");
+                return;
+            }
+
             if (___inventory != null && ___inventory.Count > 0 &&
                 Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt))
             {
@@ -166,8 +178,14 @@ namespace IRTweaks.Modules.UI
     {
         static bool Prepare() => Mod.Config.Fixes.BulkScrapping;
 
-        static void Postfix(MechBayMechStorageWidget __instance, List<IMechLabDraggableItem> ___inventory)
+        static void Postfix(MechBayMechStorageWidget __instance, List<IMechLabDraggableItem> ___inventory, IMechLabDropTarget ___parentDropTarget)
         {
+            if (___parentDropTarget == null || !(___parentDropTarget is MechBayPanel mechBayPanel))
+            {
+                Mod.Log.Info?.Write("Parent is not MechBay, skipping.");
+                return;
+            }
+
             if (___inventory != null && ___inventory.Count > 0 &&
                 Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt))
             {
@@ -190,8 +208,14 @@ namespace IRTweaks.Modules.UI
     {
         static bool Prepare() => Mod.Config.Fixes.BulkScrapping;
 
-        static void Postfix(MechBayMechStorageWidget __instance, List<IMechLabDraggableItem> ___inventory)
+        static void Postfix(MechBayMechStorageWidget __instance, List<IMechLabDraggableItem> ___inventory, IMechLabDropTarget ___parentDropTarget)
         {
+            if (___parentDropTarget == null || !(___parentDropTarget is MechBayPanel mechBayPanel))
+            {
+                Mod.Log.Info?.Write("Parent is not MechBay, skipping.");
+                return;
+            }
+
             if (___inventory != null && ___inventory.Count > 0 &&
                 Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt))
             {
@@ -214,8 +238,14 @@ namespace IRTweaks.Modules.UI
     {
         static bool Prepare() => Mod.Config.Fixes.BulkScrapping;
 
-        static void Postfix(MechBayMechStorageWidget __instance, List<IMechLabDraggableItem> ___inventory)
+        static void Postfix(MechBayMechStorageWidget __instance, List<IMechLabDraggableItem> ___inventory, IMechLabDropTarget ___parentDropTarget)
         {
+            if (___parentDropTarget == null || !(___parentDropTarget is MechBayPanel mechBayPanel))
+            {
+                Mod.Log.Info?.Write("Parent is not MechBay, skipping.");
+                return;
+            }
+
             if (___inventory != null && ___inventory.Count > 0 &&
                 Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt))
             {
