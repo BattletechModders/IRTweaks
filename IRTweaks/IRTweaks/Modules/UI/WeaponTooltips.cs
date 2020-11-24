@@ -13,7 +13,7 @@ namespace IRTweaks.Modules.UI
     [HarmonyPatch(typeof(TooltipPrefab_Weapon), "SetData")]
     static class WeaponTooltips_TooltipPrefab_Weapon_SetData
     {
-        static bool Prepare => Mod.Config.Fixes.WeaponTooltip;
+        static bool Prepare() => Mod.Config.Fixes.WeaponTooltip;
 
         static void Postfix(TooltipPrefab_Weapon __instance, object data,
             TextMeshProUGUI ___rangeType, TextMeshProUGUI ___damage)

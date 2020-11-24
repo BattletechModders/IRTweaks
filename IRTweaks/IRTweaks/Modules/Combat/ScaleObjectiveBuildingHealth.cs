@@ -12,7 +12,7 @@ namespace IRTweaks.Modules.Combat
     [HarmonyPatch(typeof(TurnDirector), "OnInitializeContractComplete")]
     public static class ScaleObjectiveBuildingStructure_TurnDirector_OnInitializeContractComplete
     {
-        static bool Prepare => Mod.Config.Fixes.ScaleObjectiveBuildingStructure;
+        static bool Prepare() => Mod.Config.Fixes.ScaleObjectiveBuildingStructure;
 
         public static void Postfix(TurnDirector __instance, MessageCenterMessage message)
         {
@@ -56,26 +56,31 @@ namespace IRTweaks.Modules.Combat
                 {
                     if (combatant is BattleTech.Building building)
                     {
-                        Mod.Log.Info?.Write($" -- building: {building.DistinctId()} is an objective target, it should be scaled!");
-
-                        float adjustedStruct = (float)Math.Floor((building.CurrentStructure * scale.Multi) + scale.Mod);
-                        Mod.Log.Info?.Write($" -- adjustedStructure: {adjustedStruct} = ( currentStruct: {building.CurrentStructure} x scaleMulti: {scale.Multi} ) + scaleMod: {scale.Mod}");
-                        
-                        building.StatCollection.ModifyStat("IRTweaks", -1, ModStats.HBS_Building_Structure, StatCollection.StatOperation.Set, adjustedStruct);
-                        Traverse startingStructT = Traverse.Create(building).Property("StartingStructure");
-                        startingStructT.SetValue(adjustedStruct);
-
-                        Mod.Log.Info?.Write($"  -- new stats for building =>  currentStructure: {building.CurrentStructure}  startingStructure: {building.StartingStructure}  ratio: {building.HealthAsRatio}");
-
-                        // Update the destructable group
-                        if (building.DestructibleObjectGroup != null)
+                        BattleTech.Building scaledBuilding = building;
+                        if (!ModState.ScaledObjectiveBuildings.Contains(building.DistinctId()))
                         {
-                            building.DestructibleObjectGroup.health = adjustedStruct;
-                            building.DestructibleObjectGroup.fullHealth = adjustedStruct;
+                            float adjustedStruct = (float)Math.Floor((building.CurrentStructure * scale.Multi) + scale.Mod);
+                            Mod.Log.Info?.Write($" -- adjustedStructure: {adjustedStruct} = ( currentStruct: {building.CurrentStructure} x scaleMulti: {scale.Multi} ) + scaleMod: {scale.Mod}");
 
-                            Mod.Log.Info?.Write($"  -- new stats for destructibleObjectGroup =>  health: {building.DestructibleObjectGroup.health}  fullHealth: {building.DestructibleObjectGroup.fullHealth}");
+                            building.StatCollection.ModifyStat("IRTweaks", -1, ModStats.HBS_Building_Structure, StatCollection.StatOperation.Set, adjustedStruct);
+                            Traverse startingStructT = Traverse.Create(building).Property("StartingStructure");
+                            startingStructT.SetValue(adjustedStruct);
+
+                            Mod.Log.Info?.Write($"  -- new stats for building =>  currentStructure: {building.CurrentStructure}  startingStructure: {building.StartingStructure}  ratio: {building.HealthAsRatio}");
+
+                            // Update the destructable group
+                            if (building.DestructibleObjectGroup != null)
+                            {
+                                building.DestructibleObjectGroup.health = adjustedStruct;
+                                building.DestructibleObjectGroup.fullHealth = adjustedStruct;
+
+                                Mod.Log.Info?.Write($"  -- new stats for destructibleObjectGroup =>  health: {building.DestructibleObjectGroup.health}  fullHealth: {building.DestructibleObjectGroup.fullHealth}");
+                            }
                         }
-
+                        else
+                        {
+                            Mod.Log.Info?.Write($" -- building: {building.DistinctId()} was already scaled, skipping");
+                        }
                     }
                 }
             }

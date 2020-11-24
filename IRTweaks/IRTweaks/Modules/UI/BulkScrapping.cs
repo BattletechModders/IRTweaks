@@ -117,10 +117,16 @@ namespace IRTweaks.Modules.UI
     [HarmonyPatch(typeof(MechBayMechStorageWidget), "Filter_WeightAll")]
     static class BulkScrapping_MechBayMechStorageWidget_Filter_WeightAll
     {
-        static bool Prepare => Mod.Config.Fixes.BulkScrapping;
+        static bool Prepare() => Mod.Config.Fixes.BulkScrapping;
 
-        static void Postfix(MechBayMechStorageWidget __instance, List<IMechLabDraggableItem> ___inventory)
+        static void Postfix(MechBayMechStorageWidget __instance, List<IMechLabDraggableItem> ___inventory, IMechLabDropTarget ___parentDropTarget)
         {
+            if (___parentDropTarget == null || !(___parentDropTarget is MechBayPanel mechBayPanel))
+            {
+                Mod.Log.Info?.Write("Parent is not MechBay, skipping.");
+                return;
+            }
+
             if (___inventory != null && ___inventory.Count > 0 && 
                 Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt))
             {
@@ -140,10 +146,16 @@ namespace IRTweaks.Modules.UI
     [HarmonyPatch(typeof(MechBayMechStorageWidget), "Filter_WeightAssault")]
     static class BulkScrapping_MechBayMechStorageWidget_Filter_WeightAssault
     {
-        static bool Prepare => Mod.Config.Fixes.BulkScrapping;
+        static bool Prepare() => Mod.Config.Fixes.BulkScrapping;
 
-        static void Postfix(MechBayMechStorageWidget __instance, List<IMechLabDraggableItem> ___inventory)
+        static void Postfix(MechBayMechStorageWidget __instance, List<IMechLabDraggableItem> ___inventory, IMechLabDropTarget ___parentDropTarget)
         {
+            if (___parentDropTarget == null || !(___parentDropTarget is MechBayPanel mechBayPanel))
+            {
+                Mod.Log.Info?.Write("Parent is not MechBay, skipping.");
+                return;
+            }
+
             if (___inventory != null && ___inventory.Count > 0 &&
                 Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt))
             {
@@ -164,10 +176,16 @@ namespace IRTweaks.Modules.UI
     [HarmonyPatch(typeof(MechBayMechStorageWidget), "Filter_WeightHeavy")]
     static class BulkScrapping_MechBayMechStorageWidget_Filter_WeightHeavy
     {
-        static bool Prepare => Mod.Config.Fixes.BulkScrapping;
+        static bool Prepare() => Mod.Config.Fixes.BulkScrapping;
 
-        static void Postfix(MechBayMechStorageWidget __instance, List<IMechLabDraggableItem> ___inventory)
+        static void Postfix(MechBayMechStorageWidget __instance, List<IMechLabDraggableItem> ___inventory, IMechLabDropTarget ___parentDropTarget)
         {
+            if (___parentDropTarget == null || !(___parentDropTarget is MechBayPanel mechBayPanel))
+            {
+                Mod.Log.Info?.Write("Parent is not MechBay, skipping.");
+                return;
+            }
+
             if (___inventory != null && ___inventory.Count > 0 &&
                 Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt))
             {
@@ -188,10 +206,16 @@ namespace IRTweaks.Modules.UI
     [HarmonyPatch(typeof(MechBayMechStorageWidget), "Filter_WeightLight")]
     static class BulkScrapping_MechBayMechStorageWidget_Filter_WeightLight
     {
-        static bool Prepare => Mod.Config.Fixes.BulkScrapping;
+        static bool Prepare() => Mod.Config.Fixes.BulkScrapping;
 
-        static void Postfix(MechBayMechStorageWidget __instance, List<IMechLabDraggableItem> ___inventory)
+        static void Postfix(MechBayMechStorageWidget __instance, List<IMechLabDraggableItem> ___inventory, IMechLabDropTarget ___parentDropTarget)
         {
+            if (___parentDropTarget == null || !(___parentDropTarget is MechBayPanel mechBayPanel))
+            {
+                Mod.Log.Info?.Write("Parent is not MechBay, skipping.");
+                return;
+            }
+
             if (___inventory != null && ___inventory.Count > 0 &&
                 Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt))
             {
@@ -212,10 +236,16 @@ namespace IRTweaks.Modules.UI
     [HarmonyPatch(typeof(MechBayMechStorageWidget), "Filter_WeightMedium")]
     static class BulkScrapping_MechBayMechStorageWidget_Filter_WeightMedium
     {
-        static bool Prepare => Mod.Config.Fixes.BulkScrapping;
+        static bool Prepare() => Mod.Config.Fixes.BulkScrapping;
 
-        static void Postfix(MechBayMechStorageWidget __instance, List<IMechLabDraggableItem> ___inventory)
+        static void Postfix(MechBayMechStorageWidget __instance, List<IMechLabDraggableItem> ___inventory, IMechLabDropTarget ___parentDropTarget)
         {
+            if (___parentDropTarget == null || !(___parentDropTarget is MechBayPanel mechBayPanel))
+            {
+                Mod.Log.Info?.Write("Parent is not MechBay, skipping.");
+                return;
+            }
+
             if (___inventory != null && ___inventory.Count > 0 &&
                 Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt))
             {
