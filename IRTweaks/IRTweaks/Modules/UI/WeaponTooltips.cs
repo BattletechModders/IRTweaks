@@ -78,28 +78,93 @@ namespace IRTweaks.Modules.UI
 
                         if (extDef.HasShells == TripleBoolean.True || extDef.BallisticDamagePerPallet != TripleBoolean.True)
                         {
-                            // damage x shots = total
-                            totalDamage = weaponDef.Damage * weaponDef.ShotsWhenFired;
-                            string localText = $"{weaponDef.Damage} x {weaponDef.ShotsWhenFired} = {totalDamage}";
-                            Mod.Log.Debug?.Write($"ImprovedBallistic + HasShells || !BallisticDamagePerPallet weapon damage set to: {localText}");
-                            ___damage.SetText(localText);
+                            if (weaponDef.ShotsWhenFired != 1)
+                            {
+                                // damage x shots = total
+                                totalDamage = weaponDef.Damage * weaponDef.ShotsWhenFired;
+                                string localText = $"{weaponDef.Damage} x {weaponDef.ShotsWhenFired} = {totalDamage}";
+                                Mod.Log.Debug?.Write($"ImprovedBallistic + HasShells || !BallisticDamagePerPallet weapon damage set to: {localText}; ShotsWhenFired != 1");
+                                ___damage.SetText(localText);
+                            }
+                            else
+                            {
+                                totalDamage = weaponDef.Damage * weaponDef.ShotsWhenFired;
+                                string localText = $"{totalDamage}";
+                                Mod.Log.Debug?.Write($"ImprovedBallistic + HasShells || !BallisticDamagePerPallet weapon damage set to: {localText}; ShotsWhenFired == 1");
+                                ___damage.SetText(localText);
+                            }
+
                         }
 
                         if (extDef.BallisticDamagePerPallet == TripleBoolean.True && extDef.DamageNotDivided == TripleBoolean.True)
                         {
-                            totalDamage = weaponDef.Damage * weaponDef.ProjectilesPerShot * weaponDef.ShotsWhenFired;
-                            string localText = $"{weaponDef.Damage} x {weaponDef.ProjectilesPerShot} x {weaponDef.ShotsWhenFired} = {totalDamage}";
-                            Mod.Log.Debug?.Write($"ImprovedBallistic + BallisticDamagePerPallet + DamageNotDivided weapon damage set to: {localText}");
-                            ___damage.SetText(localText);
+                            if (weaponDef.ShotsWhenFired != 1 && weaponDef.ProjectilesPerShot != 1)
+                            {
+                                totalDamage = weaponDef.Damage * weaponDef.ProjectilesPerShot * weaponDef.ShotsWhenFired;
+                                string localText = $"{weaponDef.Damage} x {weaponDef.ProjectilesPerShot} x {weaponDef.ShotsWhenFired} = {totalDamage}";
+                                Mod.Log.Debug?.Write($"ImprovedBallistic + BallisticDamagePerPallet + DamageNotDivided weapon damage set to: {localText}; ProjectilesPerShot != 1 AND ShotsWhenFired != 1");
+                                ___damage.SetText(localText);
+                            }
+                            else if (weaponDef.ShotsWhenFired == 1 && weaponDef.ProjectilesPerShot != 1)
+                            {
+                                totalDamage = weaponDef.Damage * weaponDef.ProjectilesPerShot * weaponDef.ShotsWhenFired;
+                                string localText = $"{weaponDef.Damage} x {weaponDef.ProjectilesPerShot}= {totalDamage}";
+                                Mod.Log.Debug?.Write(
+                                    $"ImprovedBallistic + BallisticDamagePerPallet + DamageNotDivided weapon damage set to: {localText}; ProjectilesPerShot != 1 BUT ShotsWhenFired == 1"); 
+                                ___damage.SetText(localText);
+                            }
+                            else if (weaponDef.ShotsWhenFired != 1 && weaponDef.ProjectilesPerShot == 1)
+                            {
+                                totalDamage = weaponDef.Damage * weaponDef.ProjectilesPerShot * weaponDef.ShotsWhenFired;
+                                string localText = $"{weaponDef.Damage} x {weaponDef.ShotsWhenFired} = {totalDamage}";
+                                Mod.Log.Debug?.Write($"ImprovedBallistic + BallisticDamagePerPallet + DamageNotDivided weapon damage set to: {localText}; ProjectilesPerShot == 1 BUT ShotsWhenFired != 1");
+                                ___damage.SetText(localText);
+                            }
+                            else
+                            {
+                                totalDamage = weaponDef.Damage * weaponDef.ProjectilesPerShot * weaponDef.ShotsWhenFired;
+                                string localText = $"{totalDamage}";
+                                Mod.Log.Debug?.Write($"ImprovedBallistic + HasShells || !BallisticDamagePerPallet weapon damage set to: {localText}; ShotsWhenFired AND ProjectilesPerShot == 1");
+                                ___damage.SetText(localText);
+                            }
+
                         }
 
                         if (extDef.BallisticDamagePerPallet == TripleBoolean.True && extDef.DamageNotDivided != TripleBoolean.True)
                         {
-                            float damagePerPellet = weaponDef.Damage / weaponDef.ProjectilesPerShot;
-                            totalDamage = damagePerPellet * weaponDef.ShotsWhenFired * weaponDef.ProjectilesPerShot;
-                            string localText = $"{damagePerPellet} x {weaponDef.ShotsWhenFired} x {weaponDef.ProjectilesPerShot} = {totalDamage}";
-                            Mod.Log.Debug?.Write($"ImprovedBallistic + BallisticDamagePerPallet + !DamageNotDivided weapon damage set to: {localText}");
-                            ___damage.SetText(localText);
+                            if (weaponDef.ShotsWhenFired != 1 && weaponDef.ProjectilesPerShot != 1)
+                            {
+                                float damagePerPellet = weaponDef.Damage / weaponDef.ProjectilesPerShot;
+                                totalDamage = damagePerPellet * weaponDef.ShotsWhenFired * weaponDef.ProjectilesPerShot;
+                                string localText = $"{damagePerPellet} x {weaponDef.ShotsWhenFired} x {weaponDef.ProjectilesPerShot} = {totalDamage}";
+                                Mod.Log.Debug?.Write($"ImprovedBallistic + BallisticDamagePerPallet + !DamageNotDivided weapon damage set to: {localText}; ProjectilesPerShot != 1 AND ShotsWhenFired != 1");
+                                ___damage.SetText(localText);
+                            }
+                            else if (weaponDef.ShotsWhenFired == 1 && weaponDef.ProjectilesPerShot != 1)
+                            {
+                                float damagePerPellet = weaponDef.Damage / weaponDef.ProjectilesPerShot;
+                                totalDamage = damagePerPellet * weaponDef.ShotsWhenFired * weaponDef.ProjectilesPerShot;
+                                string localText = $"{damagePerPellet} x {weaponDef.ProjectilesPerShot} = {totalDamage}";
+                                Mod.Log.Debug?.Write($"ImprovedBallistic + BallisticDamagePerPallet + !DamageNotDivided weapon damage set to: {localText}; ProjectilesPerShot != 1 BUT ShotsWhenFired == 1");
+                                ___damage.SetText(localText);
+                            }
+                            else if (weaponDef.ShotsWhenFired != 1 && weaponDef.ProjectilesPerShot == 1)
+                            {
+                                float damagePerPellet = weaponDef.Damage / weaponDef.ProjectilesPerShot;
+                                totalDamage = damagePerPellet * weaponDef.ShotsWhenFired * weaponDef.ProjectilesPerShot;
+                                string localText = $"{damagePerPellet} x {weaponDef.ShotsWhenFired} = {totalDamage}";
+                                Mod.Log.Debug?.Write($"ImprovedBallistic + BallisticDamagePerPallet + !DamageNotDivided weapon damage set to: {localText}; ProjectilesPerShot == 1 BUT ShotsWhenFired != 1");
+                                ___damage.SetText(localText);
+                            }
+                            else
+                            {
+                                float damagePerPellet = weaponDef.Damage / weaponDef.ProjectilesPerShot;
+                                totalDamage = damagePerPellet * weaponDef.ShotsWhenFired * weaponDef.ProjectilesPerShot;
+                                string localText = $"{totalDamage}";
+                                Mod.Log.Debug?.Write($"ImprovedBallistic + BallisticDamagePerPallet + !DamageNotDivided weapon damage set to: {localText}; ProjectilesPerShot == 1 AND ShotsWhenFired == 1");
+                                ___damage.SetText(localText);
+                            }
+
                         }
 
                     }
