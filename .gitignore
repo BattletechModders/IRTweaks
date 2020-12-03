@@ -241,3 +241,6 @@ ModelManifest.xml
 # FAKE - F# Make
 .fake/
 IRTweaks/IRTweaks/IRTweaks.csproj
+
+# Ignore the VS Directory.build.props file
+Directory.Build.props 
