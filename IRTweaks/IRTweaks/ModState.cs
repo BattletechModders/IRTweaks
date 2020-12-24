@@ -18,7 +18,7 @@ namespace IRTweaks {
 
         // Record objective buildings
         public static HashSet<string> ScaledObjectiveBuildings = new HashSet<string>();
-
+        public static CombatOpts.StructureScale ActiveContractBuildingScaling = Mod.Config.Combat.ScaledStructure.DefaultScale;
 
         public static void Reset() {
             // Reinitialize state
@@ -29,6 +29,7 @@ namespace IRTweaks {
             ExplosionBuildingTargets.Clear();
 
             ScaledObjectiveBuildings.Clear();
+            ActiveContractBuildingScaling = Mod.Config.Combat.ScaledStructure.DefaultScale;
         }
     }
 
