@@ -113,7 +113,6 @@ namespace IRTweaks.Modules.UI
         }
     }
 
-
     [HarmonyPatch(typeof(MechBayMechStorageWidget), "Filter_WeightAll")]
     static class BulkScrapping_MechBayMechStorageWidget_Filter_WeightAll
     {
@@ -121,12 +120,14 @@ namespace IRTweaks.Modules.UI
 
         static void Postfix(MechBayMechStorageWidget __instance, List<IMechLabDraggableItem> ___inventory, IMechLabDropTarget ___parentDropTarget)
         {
+            // Not MechBay, skip
             if (___parentDropTarget == null || !(___parentDropTarget is MechBayPanel mechBayPanel))
-            {
-                Mod.Log.Info?.Write("Parent is not MechBay, skipping.");
                 return;
-            }
 
+            // Components tab isn't selected, skip
+            if (!__instance.gameObject.activeInHierarchy) return;
+
+            Mod.Log.Info?.Write("MBMSW:F_WA FIRED");
             if (___inventory != null && ___inventory.Count > 0 && 
                 Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt))
             {
@@ -150,11 +151,14 @@ namespace IRTweaks.Modules.UI
 
         static void Postfix(MechBayMechStorageWidget __instance, List<IMechLabDraggableItem> ___inventory, IMechLabDropTarget ___parentDropTarget)
         {
+            // Not MechBay, skip
             if (___parentDropTarget == null || !(___parentDropTarget is MechBayPanel mechBayPanel))
-            {
-                Mod.Log.Info?.Write("Parent is not MechBay, skipping.");
                 return;
-            }
+
+            // Components tab isn't selected, skip
+            if (!__instance.gameObject.activeInHierarchy) return;
+
+
 
             if (___inventory != null && ___inventory.Count > 0 &&
                 Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt))
@@ -180,11 +184,13 @@ namespace IRTweaks.Modules.UI
 
         static void Postfix(MechBayMechStorageWidget __instance, List<IMechLabDraggableItem> ___inventory, IMechLabDropTarget ___parentDropTarget)
         {
+            // Not MechBay, skip
             if (___parentDropTarget == null || !(___parentDropTarget is MechBayPanel mechBayPanel))
-            {
-                Mod.Log.Info?.Write("Parent is not MechBay, skipping.");
                 return;
-            }
+
+            // Components tab isn't selected, skip
+            if (!__instance.gameObject.activeInHierarchy) return;
+
 
             if (___inventory != null && ___inventory.Count > 0 &&
                 Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt))
@@ -210,11 +216,13 @@ namespace IRTweaks.Modules.UI
 
         static void Postfix(MechBayMechStorageWidget __instance, List<IMechLabDraggableItem> ___inventory, IMechLabDropTarget ___parentDropTarget)
         {
+            // Not MechBay, skip
             if (___parentDropTarget == null || !(___parentDropTarget is MechBayPanel mechBayPanel))
-            {
-                Mod.Log.Info?.Write("Parent is not MechBay, skipping.");
                 return;
-            }
+
+            // Components tab isn't selected, skip
+            if (!__instance.gameObject.activeInHierarchy) return;
+
 
             if (___inventory != null && ___inventory.Count > 0 &&
                 Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt))
@@ -240,11 +248,13 @@ namespace IRTweaks.Modules.UI
 
         static void Postfix(MechBayMechStorageWidget __instance, List<IMechLabDraggableItem> ___inventory, IMechLabDropTarget ___parentDropTarget)
         {
+            // Not MechBay, skip
             if (___parentDropTarget == null || !(___parentDropTarget is MechBayPanel mechBayPanel))
-            {
-                Mod.Log.Info?.Write("Parent is not MechBay, skipping.");
                 return;
-            }
+
+            // Components tab isn't selected, skip
+            if (!__instance.gameObject.activeInHierarchy) return;
+
 
             if (___inventory != null && ___inventory.Count > 0 &&
                 Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt))
