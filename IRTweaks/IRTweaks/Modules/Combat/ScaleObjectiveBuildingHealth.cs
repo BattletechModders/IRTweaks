@@ -107,6 +107,8 @@ namespace IRTweaks.Modules.Combat
         public static void ScaleHealth(this BattleTech.Building building)
         {
             float adjustedStruct = (float)Math.Floor((building.CurrentStructure * ModState.ActiveContractBuildingScaling.Multi) + ModState.ActiveContractBuildingScaling.Mod);
+
+            // Update Structure stat and StartingStructure value
             building.StatCollection.ModifyStat("IRTweaks", -1, ModStats.HBS_Building_Structure, StatCollection.StatOperation.Set, adjustedStruct);
             Traverse startingStructT = Traverse.Create(building).Property("StartingStructure");
             startingStructT.SetValue(adjustedStruct);
