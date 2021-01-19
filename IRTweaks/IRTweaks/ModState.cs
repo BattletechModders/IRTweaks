@@ -20,6 +20,8 @@ namespace IRTweaks {
         public static HashSet<string> ScaledObjectiveBuildings = new HashSet<string>();
         public static CombatOpts.StructureScale ActiveContractBuildingScaling = Mod.Config.Combat.ScaledStructure.DefaultScale;
 
+        public static HashSet<string> SpawnProtectedUnits = new HashSet<string>();
+
         public static void Reset() {
             // Reinitialize state
             PilotCalledShotModifiers.Clear();
@@ -30,6 +32,8 @@ namespace IRTweaks {
 
             ScaledObjectiveBuildings.Clear();
             ActiveContractBuildingScaling = Mod.Config.Combat.ScaledStructure.DefaultScale;
+
+            SpawnProtectedUnits.Clear();
         }
     }
 
