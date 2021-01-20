@@ -68,9 +68,12 @@ namespace IRTweaks.Modules.UI
                 buttonText.SetText("VALIDATE");
 
                 // Disable the store button
-                Transform storeButtonT = __instance.gameObject.transform.Find("Representation/OBJGROUP_LEFT/OBJ_inventoryLong/OBJ_storeButton");
-                if (storeButtonT == null) Mod.Log.Error?.Write("Failed to find OBJ_storeButton!");
-                storeButtonT.gameObject.SetActive(false);
+                if (Mod.Config.Fixes.MechbayLayoutDisableStore)
+                {
+                    Transform storeButtonT = __instance.gameObject.transform.Find("Representation/OBJGROUP_LEFT/OBJ_inventoryLong/OBJ_storeButton");
+                    if (storeButtonT == null) Mod.Log.Error?.Write("Failed to find OBJ_storeButton!");
+                    storeButtonT.gameObject.SetActive(false);
+                }
             }
             catch (Exception e)
             {

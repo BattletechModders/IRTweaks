@@ -136,6 +136,7 @@ namespace IRTweaks
         public bool DisableCombatRestarts = true;
         public bool DisableCombatSaves = true;
         public bool MechbayLayout = true;
+        public bool MechbayLayoutDisableStore = true;
         public bool SkirmishAlwaysUnlimited = true;
         public bool SimGameDifficultyLabelsReplacer = true;
         public bool StreamlinedMainMenu = true;
@@ -176,7 +177,8 @@ namespace IRTweaks
             Mod.Log.Info?.Write($"  DisableMPHashCalculation:           {this.Fixes.DisableMPHashCalculation}");
             Mod.Log.Info?.Write($"  ExtendedStats:                      {this.Fixes.ExtendedStats}");
             Mod.Log.Info?.Write($"  FlexibleSensorLock:                 {this.Fixes.FlexibleSensorLock}");
-            Mod.Log.Info?.Write($"  MechbayLayoutFix:                   {this.Fixes.MechbayLayout}");
+            Mod.Log.Info?.Write($"  MechbayLayout:                      {this.Fixes.MechbayLayout}");
+            Mod.Log.Info?.Write($"  MechbayLayoutDisableStore:          {this.Fixes.MechbayLayoutDisableStore}");
             Mod.Log.Info?.Write($"  PainTolerance:                      {this.Fixes.PainTolerance}");
             Mod.Log.Info?.Write($"  PathfinderTeamFix:                  {this.Fixes.PathfinderTeamFix}");
             Mod.Log.Info?.Write($"  RandomStartByDifficulty:            {this.Fixes.RandomStartByDifficulty}");
