@@ -30,6 +30,13 @@ namespace IRTweaks
 
         };
 
+        public const string LT_MechBay_Confirm_Text = "MECHBAY_CONFIRM_TEXT";
+
+        public Dictionary<string, string> Labels = new Dictionary<string, string>
+        {
+            { LT_MechBay_Confirm_Text, "Validate" }
+        };
+
         public const string FT_InjuryResist = "INJURY_RESIST";
 
         public Dictionary<string, string> Floaties = new Dictionary<string, string>
