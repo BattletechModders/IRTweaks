@@ -4,6 +4,7 @@ using BattleTech.UI.Tooltips;
 using Harmony;
 using IRBTModUtils;
 using Localize;
+using System;
 
 namespace IRTweaks.Modules.UI
 {
@@ -45,6 +46,38 @@ namespace IRTweaks.Modules.UI
                 }
 
             }
+        }
+    }
+
+    [HarmonyPatch(typeof(SimGameOptionsMenu), "QuitPopup")]
+    static class SimGameOptionsMenu_QuitPopup
+    {
+        static bool Prepare() => Mod.Config.Fixes.DisableCombatSaves;
+
+        static bool Prefix(SimGameOptionsMenu __instance, Action quitAction)
+        {
+            CombatGameState combatGameState = SharedState.Combat;
+            if (combatGameState != null && !combatGameState.TurnDirector.IsMissionOver && combatGameState.TurnDirector.GameHasBegun)
+            {
+                Mod.Log.Trace?.Write("SGOM:CS - in combat.");
+
+                string text = Strings.T("Are you sure you want to quit?");
+                string body = Strings.T("You will lose all unsaved progress since your last manual save or autosave");
+                string title = Strings.T("Are you sure you want to quit?");
+                string title2 = text;
+                string body2 = Strings.T("You will forfeit the match if you quit");
+                
+                GameInstance battleTechGame = UnityGameInstance.BattleTechGame;
+                GenericPopupBuilder genericPopupBuilder = GenericPopupBuilder.Create(text, body);
+                genericPopupBuilder.AddButton("Cancel", null, true, null)
+                    .AddButton("Quit", quitAction, true, null)
+                    .CancelOnEscape();
+                genericPopupBuilder.IsNestedPopupWithBuiltInFader().Render();
+
+                return false;
+            }
+
+            return true;
         }
     }
 
