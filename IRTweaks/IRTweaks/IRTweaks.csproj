@@ -119,6 +119,7 @@
     <Compile Include="Modules\UI\BulkScrapping.cs" />
     <Compile Include="Modules\UI\CombatLog.cs" />
     <Compile Include="Modules\UI\CombatSaves.cs" />
+    <Compile Include="Modules\UI\MapBoundary.cs" />
     <Compile Include="Modules\UI\MechBayChanges.cs" />
     <Compile Include="Modules\UI\SkirmishDifficultyPanelRelabel.cs" />
     <Compile Include="Modules\UI\SkirmishFilter.cs" />
