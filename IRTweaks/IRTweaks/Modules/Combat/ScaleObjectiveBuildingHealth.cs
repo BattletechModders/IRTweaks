@@ -106,18 +106,18 @@ namespace IRTweaks.Modules.Combat
     {
         public static void ScaleHealth(this BattleTech.Building building)
         {
+
+            Mod.Log.Info?.Write($"Scaling health for building: {building.DistinctId()}" +
+                $" =>  currentStructure: {building.CurrentStructure}  startingStructure: {building.StartingStructure}  ratio: {building.HealthAsRatio}");
+
             float adjustedStruct = (float)Math.Floor((building.CurrentStructure * ModState.ActiveContractBuildingScaling.Multi) + ModState.ActiveContractBuildingScaling.Mod);
+            Mod.Log.Info?.Write($" -- adjustedStructure: {adjustedStruct} = ( currentStruct: {building.CurrentStructure} " +
+                $"x scaleMulti: {ModState.ActiveContractBuildingScaling.Multi} ) + scaleMod: {ModState.ActiveContractBuildingScaling.Mod}");
 
             // Update Structure stat and StartingStructure value
             building.StatCollection.ModifyStat("IRTweaks", -1, ModStats.HBS_Building_Structure, StatCollection.StatOperation.Set, adjustedStruct);
             Traverse startingStructT = Traverse.Create(building).Property("StartingStructure");
             startingStructT.SetValue(adjustedStruct);
-
-            Mod.Log.Info?.Write($"Scaling health for building: {building.DistinctId()}" +
-                $" =>  currentStructure: {building.CurrentStructure}  startingStructure: {building.StartingStructure}  ratio: {building.HealthAsRatio}");
-
-            Mod.Log.Info?.Write($" -- adjustedStructure: {adjustedStruct} = ( currentStruct: {building.CurrentStructure} " +
-                $"x scaleMulti: {ModState.ActiveContractBuildingScaling.Multi} ) + scaleMod: {ModState.ActiveContractBuildingScaling.Mod}");
 
             // Update the destructable group
             if (building.DestructibleObjectGroup != null)
