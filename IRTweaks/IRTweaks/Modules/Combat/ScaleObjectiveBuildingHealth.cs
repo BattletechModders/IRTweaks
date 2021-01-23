@@ -17,10 +17,19 @@ namespace IRTweaks.Modules.Combat
         {
             ModState.ScaledObjectiveBuildings.Clear();
 
+
+            // 1st check for skirmish mode
+            if (SharedState.Combat.ActiveContract.ContractTypeValue.IsSkirmish)
+            {
+                Mod.Log.Info?.Write($"Skirmish Mode found, using default value: {Mod.Config.Combat.ScaledStructure.DefaultScale}");
+                ModState.ActiveContractBuildingScaling = Mod.Config.Combat.ScaledStructure.DefaultScale;
+                return;
+            }
+
             // Determine scale, if any
             Mod.Log.Info?.Write("Checking contract for objective building scaling:");
             Mod.Log.Info?.Write($"  -- contract has " +
-                $"difficulty: {SharedState.Combat.ActiveContract.Override.difficulty} and " +
+                $"difficulty: {SharedState.Combat.ActiveContract?.Override?.difficulty} and " +
                 $"finalDifficulty: {SharedState.Combat.ActiveContract.Override.finalDifficulty}");
 
             if (SharedState.Combat.ActiveContract.Override.finalDifficulty < Mod.Config.Combat.ScaledStructure.MinDifficulty)
