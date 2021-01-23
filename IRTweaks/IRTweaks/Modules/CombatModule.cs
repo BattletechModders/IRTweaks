@@ -78,9 +78,8 @@ namespace IRTweaks.Modules.Combat
                         HarmonyMethod fsl_aiu_eslq_pre = new HarmonyMethod(typeof(FlexibleSensorLock), "AIUtil_EvaluateSensorLockQuality_Prefix");
                         harmony.Patch(aiu_eslq, fsl_aiu_eslq_pre, null, null);
 
-                        MethodInfo abact_ins = AccessTools.Method(typeof(AbstractActor), "InitStats");
-                        HarmonyMethod fsl_abact_ins = new HarmonyMethod(typeof(FlexibleSensorLock), "AbstractActor_InitStats_Prefix");
-                        harmony.Patch(abact_ins, fsl_abact_ins, null, null);
+                        HarmonyMethod fsl_abact_ins = new HarmonyMethod(typeof(FlexibleSensorLock), "Mech_InitStats_Prefix");
+                        harmony.Patch(AccessTools.Method(typeof(Mech), "InitStats"), fsl_abact_ins, null, null);
 
                         if (Mod.Config.Combat.FlexibleSensorLock.AlsoAppliesToActiveProbe)
                         {

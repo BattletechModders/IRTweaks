@@ -130,7 +130,7 @@ namespace IRTweaks.Modules.Combat {
             __result = false;
         }
 
-        public static void AbstractActor_InitStats_Prefix(AbstractActor __instance)
+        public static void Mech_InitStats_Prefix(AbstractActor __instance)
         {
             if (!__instance.Combat.IsLoadingFromSave && Mod.Config.Combat.FlexibleSensorLock.FreeActionWithStat)
             {
