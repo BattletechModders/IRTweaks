@@ -38,6 +38,9 @@ namespace IRTweaks
         public class FlexibleSensorLockOptions
         {
             public bool FreeActionWithAbility = false;
+            public bool FreeActionWithStat = false;
+            public string FreeActionStatName = "FreeSensorLock";
+            public bool AlsoAppliesToActiveProbe = false;
         }
 
         public PainToleranceOpts PainTolerance = new PainToleranceOpts();

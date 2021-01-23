@@ -9,6 +9,7 @@ namespace IRTweaks {
         public static Dictionary<string, int> PilotCalledShotModifiers = new Dictionary<string, int>();
 
         public static SelectionStateSensorLock SelectionStateSensorLock;
+        public static SelectionStateActiveProbe SelectionStateActiveProbe;
 
         // Tracks an attack sequence that creates an injury
         public static float InjuryResistPenalty = -1f;

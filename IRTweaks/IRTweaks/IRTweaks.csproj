@@ -86,6 +86,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>$(BattleTechGameDir)\BattleTech_Data\Managed\UnityEngine.UI.dll</HintPath>
     </Reference>
+	 <Reference Include="UnityEngine.ParticleSystemModule">
+      <HintPath>$(BattleTechGameDir)\BattleTech_Data\Managed\UnityEngine.ParticleSystemModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Helper\ActorHelper.cs" />
