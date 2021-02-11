@@ -142,6 +142,8 @@ namespace IRTweaks
         public bool StreamlinedMainMenu = true;
         public bool WeaponTooltip = true;
 
+        public bool MaxArmorMaxesArmor = false;
+
     }
 
     public class ModConfig
