@@ -21,8 +21,8 @@ namespace IRTweaks {
         }
 
         public static bool MakeResistCheck(Pilot pilot) {
-            int normalizedGunnery = SkillUtils.GetGunneryModifier(pilot);
-            float baseResist = normalizedGunnery * Mod.Config.Combat.PainTolerance.ResistPerGuts;
+            int normalizedGuts = SkillUtils.GetGutsModifier(pilot);
+            float baseResist = normalizedGuts * Mod.Config.Combat.PainTolerance.ResistPerGuts;
             float resistPenalty = ModState.InjuryResistPenalty;
             float resistChance = Math.Max(0, baseResist - resistPenalty);
             Mod.Log.Debug?.Write($"baseResist:{baseResist} - resistPenalty:{resistPenalty} = resistChance:{resistChance}");
