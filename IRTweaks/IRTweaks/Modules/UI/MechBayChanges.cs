@@ -5,6 +5,7 @@ using BattleTech.UI.TMProWrapper;
 using Harmony;
 using System;
 using System.Collections.Generic;
+using HBS;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -84,6 +85,48 @@ namespace IRTweaks.Modules.UI
         }
     }
 
+    [HarmonyPatch(typeof(MechLabPanel), "OnMaxArmor")]
+    static class MechLabPanel_OnMaxArmor_Patch
+    {
+        static bool Prepare() => Mod.Config.Fixes.MaxArmorMaxesArmor;
+        static bool Prefix(MechLabPanel __instance, MechLabMechInfoWidget ___mechInfoWidget, MechLabItemSlotElement ___dragItem)
+        {
+            if (!__instance.Initialized)
+            {
+                return false;
+            }
+            if (___dragItem != null)
+            {
+                return false;
+            }
+            if (__instance.headWidget.IsDestroyed || __instance.centerTorsoWidget.IsDestroyed || __instance.leftTorsoWidget.IsDestroyed || __instance.rightTorsoWidget.IsDestroyed || __instance.leftArmWidget.IsDestroyed || __instance.rightArmWidget.IsDestroyed || __instance.leftLegWidget.IsDestroyed || __instance.rightLegWidget.IsDestroyed)
+            {
+                __instance.modifiedDialogShowing = true;
+                GenericPopupBuilder.Create("'Mech Location Destroyed", "You cannot auto-assign armor while a 'Mech location is Destroyed.").AddButton("Okay", null, true, null).CancelOnEscape().AddFader(new UIColorRef?(LazySingletonBehavior<UIManager>.Instance.UILookAndColorConstants.PopupBackfill), 0f, true).SetAlwaysOnTop().SetOnClose(delegate
+                {
+                    __instance.modifiedDialogShowing = false;
+                }).Render();
+                return false;
+            }
+
+            __instance.headWidget.ModifyArmor(false, __instance.headWidget.maxArmor, true);
+			__instance.centerTorsoWidget.ModifyArmor(false, __instance.centerTorsoWidget.maxArmor, true);
+            __instance.centerTorsoWidget.ModifyArmor(true, __instance.centerTorsoWidget.maxRearArmor, true);
+            __instance.leftTorsoWidget.ModifyArmor(false, __instance.leftTorsoWidget.maxArmor, true);
+            __instance.leftTorsoWidget.ModifyArmor(true, __instance.leftTorsoWidget.maxRearArmor, true);
+            __instance.rightTorsoWidget.ModifyArmor(false, __instance.rightTorsoWidget.maxArmor, true);
+            __instance.rightTorsoWidget.ModifyArmor(true, __instance.rightTorsoWidget.maxRearArmor, true);
+            __instance.leftArmWidget.ModifyArmor(false, __instance.leftArmWidget.maxArmor, true);
+            __instance.rightArmWidget.ModifyArmor(false, __instance.rightArmWidget.maxArmor, true);
+            __instance.leftLegWidget.ModifyArmor(false, __instance.leftLegWidget.maxArmor, true);
+            __instance.rightLegWidget.ModifyArmor(false, __instance.rightLegWidget.maxArmor, true);
+            ___mechInfoWidget.RefreshInfo(false);
+
+            __instance.FlagAsModified();
+            __instance.ValidateLoadout(false);
+            return false;
+        }
+    }
     //[HarmonyPatch(typeof(MechLabPanel), "SetData")]
     //[HarmonyPatch(new Type[] { typeof(MechDef), typeof(DataManager), typeof(UnityAction), typeof(UnityAction), typeof(bool)})]
     //static class MechLabPanel_SetData_2
