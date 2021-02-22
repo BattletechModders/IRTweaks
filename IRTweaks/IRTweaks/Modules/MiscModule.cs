@@ -15,6 +15,9 @@ namespace IRTweaks.Modules.Misc {
                     if (Mod.Config.Fixes.DisableCampaign)
                         Mod.Log.Info?.Write("Activating Fix: DisableCampaign");
 
+                    if (Mod.Config.Fixes.DisableLowFundsNotification)
+                        Mod.Log.Info?.Write("Activating Fix: DisableLowFundsNotification");
+
                     if (Mod.Config.Fixes.DisableMPHashCalculation)
                         Mod.Log.Info?.Write("Activating Fix: DisableMPHashCalculation");
 

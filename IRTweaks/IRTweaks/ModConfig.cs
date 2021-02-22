@@ -121,6 +121,7 @@ namespace IRTweaks
 
         // Misc
         public bool DisableCampaign = true;
+        public bool DisableLowFundsNotification = true;
         public bool DisableMPHashCalculation = true;
         public bool MultiTargetStat = true;
         public bool RandomStartByDifficulty = true;
