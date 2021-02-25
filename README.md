@@ -132,6 +132,45 @@ When a Mech suffers a knockdown, the resist chance is reduced by 6%. You can cus
 
 > Example: A pilot with guts 3 suffers a knockdown. They have a base resist of 30%, -6% for a knockdown, and thus will ignore the injury on 24% or less.
 
+## Obstructed Line-Of-Site Damage Resistance
+
+When LOS to a target is "obstructed" (red-yellow or purple colored targeting line with an "eye" icon), shots hitting certain mech or vehicle armor locations can have their damage reduced.
+
+### Configuration
+
+`DRMechLocs` - List of valid mech `ArmorLocation`s that have can incoming damage reduced.
+
+`DRVehicleLocs` - List of valid `VehicleChassisLocations` that can have incoming damage reduced.
+
+`QuadTags` - List of unit tags that denote a unit is a Quad mech. Adds "LeftArm" and "RightArm" to valid ArmorLocations for these units only.
+
+`ObstructionDRByTags` - Dictionary where key = unit tag, and value = incoming damage multiplier for units with that tag.
+
+> Example:
+```
+			"ObstructionTweaks": {
+				"DRMechLocs": [
+					"LeftLeg",
+					"RightLeg"
+				],
+				"DRVehicleLocs": [
+					"Front",
+					"Rear",
+					"Left",
+					"Right"
+				],
+				"QuadTags": [
+					"unit_quad"
+				],
+				"ObstructionDRByTags": {
+					"unit_mech": 0.5,
+					"unit_vehicle": 0.75,
+					"unit_quad": 0.1
+				}
+			}
+```
+Using the above settings, a standard mech with tag `unit_mech` would take 50% incoming damage to its left and right legs. A vehicle with tag `unit_vehicle` would take 75% incoming damage to front, rear, left, and right sides, and a Quad mech with tag `unit_quad` would take 10% damage to all 4 legs (left leg, right leg, left "arm", and right "arm"). A unit with multiple matching "tags" in `ObstructionDRByTags` will use the <i>lowest</i> damage multiplier, taking the least damage.
+
 ### Overheat Injuries
 
 When a mech takes overheat damage, each point of heat over the overheating limit reduces the resist chance by **OverheatResistPenaltyPerHeatPercentile**. The difference between the mech's maximum heat (at which point is shuts down) and it's overheating limit is taken as a spectrum from 0 - 100. The mech's current heat within this spectrum defines the resistance penalty.
