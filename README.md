@@ -11,6 +11,7 @@ This is a mod for the [HBS BattleTech](http://battletechgame.com/) game that inc
 * **DisableCampaign**: Disables the HBS campaign button, to prevent errors with various mod packs.
 * **DisableCombatRestarts**: Mission restarts lead to corruption at the salvage screen in vanilla, and especially in a modded game. This disables the UI selection that allows in-combat saves to be made.
 * **DisableCombatSaves**: Combat saves are prone to errors during vanilla gameplay, but especially so during modded gameplay. This disables the UI selection that allows in-combat saves to be made.
+* **DisableLowFundsNotification**: Disables the irritating "low funds" notification.
 * **DisableMPHashCalculation**: Disables a mod-hash calculated on startup that's only used to validate multiplayer games are compatible. Saves 2-3s of load time.
 * **ExtendedStats**: Allows pilots to be assigned Statistic values above the normal bounds of 1-10.
 * **FlexibleSensorLock**: Using a Sensor Lock action does not count as movement or firing. This allows it to be combined with actions in a unit's activation.
@@ -142,9 +143,9 @@ When LOS to a target is "obstructed" (red-yellow or purple colored targeting lin
 
 `DRVehicleLocs` - List of valid `VehicleChassisLocations` that can have incoming damage reduced.
 
-`QuadTags` - List of unit tags that denote a unit is a Quad mech. Adds "LeftArm" and "RightArm" to valid ArmorLocations for these units only.
+`QuadTags` - List of mechdef tags that denote a unit is a Quad mech. Adds "LeftArm" and "RightArm" to valid ArmorLocations for these units only.
 
-`ObstructionDRByTags` - Dictionary where key = unit tag, and value = incoming damage multiplier for units with that tag.
+`ObstructionDRByTags` - Dictionary where key = unit mechdef or vehicledef tag, and value = incoming damage multiplier for units with that tag.
 
 > Example:
 ```
