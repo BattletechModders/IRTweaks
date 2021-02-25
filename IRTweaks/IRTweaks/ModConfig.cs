@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using BattleTech;
 
 namespace IRTweaks
 {
@@ -101,6 +102,15 @@ namespace IRTweaks
             public bool ApplyToReinforcements = false;
         }
 
+        public ObstructionTweakOpts ObstructionTweaks = new ObstructionTweakOpts();
+        public class ObstructionTweakOpts
+        {
+            public List<ArmorLocation> DRMechLocs = new List<ArmorLocation>();
+            public List<VehicleChassisLocations> DRVehicleLocs = new List<VehicleChassisLocations>();
+            public List<string> QuadTags = new List<string>();
+            public Dictionary<string, float> ObstructionDRByTags = new Dictionary<string, float>(); 
+
+        }
     }
 
     public class FixesFlags
@@ -181,6 +191,8 @@ namespace IRTweaks
             Mod.Log.Info?.Write($"  FlexibleSensorLock:                 {this.Fixes.FlexibleSensorLock}");
             Mod.Log.Info?.Write($"  MechbayLayout:                      {this.Fixes.MechbayLayout}");
             Mod.Log.Info?.Write($"  MechbayLayoutDisableStore:          {this.Fixes.MechbayLayoutDisableStore}");
+            Mod.Log.Info?.Write($"  MaxArmorMaxesArmor:                 {this.Fixes.MaxArmorMaxesArmor}");
+
             Mod.Log.Info?.Write($"  PainTolerance:                      {this.Fixes.PainTolerance}");
             Mod.Log.Info?.Write($"  PathfinderTeamFix:                  {this.Fixes.PathfinderTeamFix}");
             Mod.Log.Info?.Write($"  RandomStartByDifficulty:            {this.Fixes.RandomStartByDifficulty}");
@@ -210,6 +222,12 @@ namespace IRTweaks
             Mod.Log.Info?.Write($"   ApplyGuard:{Combat.SpawnProtection.ApplyGuard}  EvasionPips:{Combat.SpawnProtection.EvasionPips}");
             Mod.Log.Info?.Write($"   ApplyToEnemies:{Combat.SpawnProtection.ApplyToEnemies}  ApplyToAllies:{Combat.SpawnProtection.ApplyToAllies}  ApplyToNeutrals:{Combat.SpawnProtection.ApplyToNeutrals}  ");
             Mod.Log.Info?.Write($"   ApplyToReinforcements:{Combat.SpawnProtection.ApplyToReinforcements}");
+
+            Mod.Log.Info?.Write("  -- ObstructionTweaks --");
+            Mod.Log.Info?.Write($"   DRMechLocs:{Combat.ObstructionTweaks.DRMechLocs}");
+            Mod.Log.Info?.Write($"   DRVehicleLocs:{Combat.ObstructionTweaks.DRVehicleLocs}");
+            Mod.Log.Info?.Write($"   QuadTags:{Combat.ObstructionTweaks.QuadTags}");
+            Mod.Log.Info?.Write($"   ObstructionDRByTags:{Combat.ObstructionTweaks.ObstructionDRByTags}");
 
             Mod.Log.Info?.Write("  -- Store --");
             Mod.Log.Info?.Write($"   QuantityOnShift:{Store.QuantityOnShift}  QuantityOnControl:{Store.QuantityOnControl}");
