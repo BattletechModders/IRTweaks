@@ -40,7 +40,7 @@ namespace IRTweaks
         {
             public bool FreeActionWithAbility = false;
             public bool FreeActionWithStat = false;
-            public string FreeActionStatName = "FreeSensorLock";
+            public string FreeActionStatName = "IR_FreeSensorLock";
             public bool AlsoAppliesToActiveProbe = false;
         }
 
@@ -191,8 +191,10 @@ namespace IRTweaks
             Mod.Log.Info?.Write($"  DisableCombatRestarts:              {this.Fixes.DisableCombatRestarts}");
             Mod.Log.Info?.Write($"  DisableCombatSaves:                 {this.Fixes.DisableCombatSaves}");
             Mod.Log.Info?.Write($"  DisableMPHashCalculation:           {this.Fixes.DisableMPHashCalculation}");
+            Mod.Log.Info?.Write($"  DisableLowFundsNotification:        {this.Fixes.DisableLowFundsNotification}");
             Mod.Log.Info?.Write($"  ExtendedStats:                      {this.Fixes.ExtendedStats}");
             Mod.Log.Info?.Write($"  FlexibleSensorLock:                 {this.Fixes.FlexibleSensorLock}");
+            Mod.Log.Info?.Write($"  MaxArmorMaxesArmor:                 {this.Fixes.MaxArmorMaxesArmor}");
             Mod.Log.Info?.Write($"  MechbayLayout:                      {this.Fixes.MechbayLayout}");
             Mod.Log.Info?.Write($"  MechbayLayoutDisableStore:          {this.Fixes.MechbayLayoutDisableStore}");
             Mod.Log.Info?.Write($"  MaxArmorMaxesArmor:                 {this.Fixes.MaxArmorMaxesArmor}");

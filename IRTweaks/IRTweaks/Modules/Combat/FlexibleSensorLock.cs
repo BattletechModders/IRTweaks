@@ -2,16 +2,20 @@
 using BattleTech.UI;
 using Harmony;
 
-namespace IRTweaks.Modules.Combat {
+namespace IRTweaks.Modules.Combat
+{
     using System.Linq;
     using UnityEngine;
 
-    public static class FlexibleSensorLock {
+    public static class FlexibleSensorLock
+    {
 
-        public static void SelectionStateSensorLock_CanActorUseThisState_Postfix(SelectionStateSensorLock __instance, AbstractActor actor, ref bool __result) {
+        public static void SelectionStateSensorLock_CanActorUseThisState_Postfix(SelectionStateSensorLock __instance, AbstractActor actor, ref bool __result)
+        {
             Mod.Log.Trace?.Write("SSSL:CAUTS entered");
 
-            if (ActorHasFreeSensorLock(actor)) {
+            if (ActorHasFreeSensorLock(actor))
+            {
                 Pilot pilot = actor?.GetPilot();
                 Ability activeAbility = pilot.GetActiveAbility(ActiveAbilityID.SensorLock);
                 bool flag = (activeAbility != null && activeAbility.IsAvailable);
@@ -20,30 +24,36 @@ namespace IRTweaks.Modules.Combat {
             }
         }
 
-        public static void SelectionStateSensorLock_CreateFiringOrders_Postfix(SelectionStateSensorLock __instance, string button) {
+        public static void SelectionStateSensorLock_CreateFiringOrders_Postfix(SelectionStateSensorLock __instance, string button)
+        {
             Mod.Log.Trace?.Write("SSSL:CFO entered");
 
-            if (button == "BTN_FireConfirm" && __instance.HasTarget) {
+            if (button == "BTN_FireConfirm" && __instance.HasTarget)
+            {
                 ModState.SelectionStateSensorLock = __instance;
             }
         }
 
-        public static bool SensorLockSequence_CompleteOrders_Prefix(SensorLockSequence __instance, AbstractActor ___owningActor) {
+        public static bool SensorLockSequence_CompleteOrders_Prefix(SensorLockSequence __instance, AbstractActor ___owningActor)
+        {
             Mod.Log.Trace?.Write("SLS:CO entered, aborting invocation");
             //Mod.Log.Trace?.Write($"  oa:{___owningActor.DisplayName}_{___owningActor.GetPilot().Name} hasFired:{___owningActor.HasFiredThisRound} hasMoved:{___owningActor.HasMovedThisRound} hasActivated:{___owningActor.HasActivatedThisRound}");
 
             // Force the ability to be on cooldown
-            if (ActorHasFreeSensorLock(___owningActor)) {
+            if (ActorHasFreeSensorLock(___owningActor))
+            {
                 Pilot pilot = ___owningActor.GetPilot();
                 Ability ability = pilot.GetActiveAbility(ActiveAbilityID.SensorLock);
                 Mod.Log.Debug?.Write($"  On sensor lock complete, cooldown is:{ability.CurrentCooldown}");
-                if (ability.CurrentCooldown < 1) {
+                if (ability.CurrentCooldown < 1)
+                {
                     ability.ActivateCooldown();
                 }
 
                 Mod.Log.Debug?.Write($"  Clearing all sequences");
 
-                if (ModState.SelectionStateSensorLock != null) {
+                if (ModState.SelectionStateSensorLock != null)
+                {
                     Mod.Log.Debug?.Write($"  Calling clearTargetedActor");
                     Traverse traverse = Traverse.Create(ModState.SelectionStateSensorLock).Method("ClearTargetedActor");
                     traverse.GetValue();
@@ -57,33 +67,39 @@ namespace IRTweaks.Modules.Combat {
             return false;
         }
 
-        public static bool OrderSequence_OnComplete_Prefix(OrderSequence __instance, AbstractActor ___owningActor) {
-            if ((__instance is SensorLockSequence || (__instance is ActiveProbeSequence && Mod.Config.Combat.FlexibleSensorLock.AlsoAppliesToActiveProbe) ) && ActorHasFreeSensorLock(___owningActor)) {
+        public static bool OrderSequence_OnComplete_Prefix(OrderSequence __instance, AbstractActor ___owningActor)
+        {
+            if ((__instance is SensorLockSequence || (__instance is ActiveProbeSequence && Mod.Config.Combat.FlexibleSensorLock.AlsoAppliesToActiveProbe))
+                && ActorHasFreeSensorLock(___owningActor))
+            {
                 Mod.Log.Trace?.Write($"OS:OC entered, cm:{__instance.ConsumesMovement} cf:{__instance.ConsumesFiring}");
-                Mod.Log.Trace?.Write($"    oa:{___owningActor.DisplayName}_{___owningActor.GetPilot().Name} hasFired:{___owningActor.HasFiredThisRound} hasMoved:{___owningActor.HasMovedThisRound} hasActivated:{___owningActor.HasActivatedThisRound}");
+                Mod.Log.Trace?.Write($"    oa:{___owningActor.DisplayName}_{___owningActor.GetPilot().Name} hasFired:{___owningActor.HasFiredThisRound} " +
+                    $"hasMoved:{___owningActor.HasMovedThisRound} hasActivated:{___owningActor.HasActivatedThisRound}");
                 Mod.Log.Trace?.Write($"    ca:{__instance.ConsumesActivation} fae:{__instance.ForceActivationEnd}");
 
                 Mod.Log.Trace?.Write(" SensorLockSequence, skipping.");
 
-                Mod.Log.Trace?.Write(" Clearing shown list");
                 Traverse.Create(__instance).Method("ClearShownList").GetValue();
-                Mod.Log.Trace?.Write(" Clearing camera");
                 Traverse.Create(__instance).Method("ClearCamera").GetValue();
-                Mod.Log.Trace?.Write(" Clearing focal point");
                 Traverse.Create(__instance).Method("ClearFocalPoint").GetValue();
-                if (__instance.CompletedCallback != null) {
+
+                if (__instance.CompletedCallback != null)
+                {
                     Mod.Log.Trace?.Write(" Getting SequenceFinished");
-                    var seqFinished = Traverse.Create(__instance).Property("CompletedCallback").GetValue<SequenceFinished>();
+                    Traverse.Create(__instance).Property("CompletedCallback").GetValue<SequenceFinished>();
                 }
 
                 return true;
-            } else {
+            }
+            else
+            {
                 //Mod.Log.Trace?.Write(" Not SensorLockSequence, continuing.");
                 return true;
             }
         }
 
-        public static void OrderSequence_ConsumesActivation_Postfix(OrderSequence __instance, ref bool __result, AbstractActor ___owningActor) {
+        public static void OrderSequence_ConsumesActivation_Postfix(OrderSequence __instance, ref bool __result, AbstractActor ___owningActor)
+        {
             if (__instance is SensorLockSequence || (__instance is ActiveProbeSequence && Mod.Config.Combat.FlexibleSensorLock.AlsoAppliesToActiveProbe))
             {
                 __result = true;
@@ -111,13 +127,16 @@ namespace IRTweaks.Modules.Combat {
                           + $"abilities = [{string.Join(",", pilot?.Abilities.Select(ability => ability.Def.Id))}]");
             if (Mod.Config.Combat.FlexibleSensorLock.FreeActionWithAbility && (pilot?.Abilities?.Exists(ability => ability.Def.Id == Mod.Config.Abilities.FlexibleSensorLockId) ?? false))
                 return true;
+
             return false;
         }
 
 
-        public static bool AIUtil_EvaluateSensorLockQuality_Prefix(ref bool __result, AbstractActor movingUnit, ICombatant target, out float quality) {
+        public static bool AIUtil_EvaluateSensorLockQuality_Prefix(ref bool __result, AbstractActor movingUnit, ICombatant target, out float quality)
+        {
             AbstractActor abstractActor = target as AbstractActor;
-            if (abstractActor == null || movingUnit.DynamicUnitRole == UnitRole.LastManStanding || !abstractActor.HasActivatedThisRound || abstractActor.IsDead || abstractActor.EvasivePipsTotal == 0) {
+            if (abstractActor == null || movingUnit.DynamicUnitRole == UnitRole.LastManStanding || !abstractActor.HasActivatedThisRound || abstractActor.IsDead || abstractActor.EvasivePipsTotal == 0)
+            {
                 quality = float.MinValue;
                 __result = false;
                 return false;
@@ -126,7 +145,8 @@ namespace IRTweaks.Modules.Combat {
             return true;
         }
 
-        public static void Returns_False_Postfix(ref bool __result) {
+        public static void Returns_False_Postfix(ref bool __result)
+        {
             __result = false;
         }
 

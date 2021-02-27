@@ -48,6 +48,7 @@ This mod requires the latest releases of the following mods:
 
 ## Bulk Purchasing
 
+
 This tweak makes minor changes to the store UI elements:
 
 * Enables bulk-purchase for items in the mech store
@@ -95,6 +96,11 @@ If you instead set `Combat.CalledShot.DisableHeadshots=true`, the popup will be 
 This restrictions do not apply to any units that are currently prone or shutdown. These units can be targeted with called shot as per vanilla.
 
 Additionally you can allow an actor to bypass this restriction by setting  `IRTCalledShotAlwaysAllow` statistic (Boolean) to true. Units with this set to true can always use the vanilla called shot location selection.
+
+## Flexible Sensor Lock
+This tweak allows units to use sensor lock without it consuming their action or movement. This can be limited to units with a specific ability or stat. The ability to restrict this is defined by the `AbilityOpts.FlexibleSensorLockId` value in mod.json, which defaults to `AbilityDefT8A`. The stat is defined in `AbilityOpts.FreeActionStatName`, which defaults `IR_FreeSensorLock`. 
+
+If the `Combat.FlexibleSensorLock.AlsoAppliesToActiveProbe` is true, the ActiveProbe ability that some units possess will also not require an action or movement.
 
 ## Pain Tolerance
 This tweak makes skilled pilots more resistant to injuries. Any time the pilot would normally be injured by a head hit, torso destruction, ammo explosion, or knockdown, they make a check against their Guts skill rating to determine if they can shrug off the effect. 
