@@ -7,46 +7,22 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using CustAmmoCategories;
+using static CustAmmoCategories.CustomAmmoCategories;
 using UnityEngine;
 
 namespace IRTweaks.Modules.Combat 
 { 
     public class IRT_CAC_Obstruct
     { 
-        private static MethodInfo DamageModifiersCache_RegisterDamageModifier = null;
-
-        public static void detectCAC()
-        { 
-            Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies(); 
-            foreach (Assembly assembly in assemblies) { 
-                if (assembly.FullName.StartsWith("CustomAmmoCategories")) { 
-                    Type dmgHelperType = assembly.GetType("CustAmmoCategories.DamageModifiersCache"); 
-                    if (dmgHelperType != null) {
-                        DamageModifiersCache_RegisterDamageModifier = dmgHelperType.GetMethod("RegisterDamageModifier", BindingFlags.Static | BindingFlags.Public);
-                    }
-                }
-            }
-        }
-
-        public static void registerCACDmgModifier(string id, string staticName, bool isStatic, bool isNormal, bool isAP,
-            bool isHeat, bool isStability,
-            Func<Weapon, Vector3, ICombatant, bool, int, float, float, float, float, float> modifier,
-            Func<Weapon, Vector3, ICombatant, bool, int, float, float, float, float, string> modname
-        )
-        {
-            if (DamageModifiersCache_RegisterDamageModifier == null)
-            {
-                return;
-            }
-
-            DamageModifiersCache_RegisterDamageModifier.Invoke(null,
-                new object[] {id, staticName, isStatic, isNormal, isAP, isHeat, isStability, modifier, modname});
-        }
+        
 
         public static void FinishedLoading(List<string> loadOrder) 
-        { 
-            detectCAC(); 
-            registerCACDmgModifier("IRTweaks_Obstruct_DmgMod", "IRT_CAC_Obstruct_DmgMod", false, true, true, true, true, IRT_CAC_ObstructDmgMod, IRT_CAC_ObstructDmgModName);
+        {
+            if (Mod.Config.Combat.ObstructionTweaks.ObstructionDRByTags.Count > 0)
+            {
+                DamageModifiersCache.RegisterDamageModifier("IRTweaks_Obstruct_DmgMod", "IRT_CAC_Obstruct_DmgMod", false, true, true, true, true, IRT_CAC_ObstructDmgMod, IRT_CAC_ObstructDmgModName);
+            }
         }
 
         
