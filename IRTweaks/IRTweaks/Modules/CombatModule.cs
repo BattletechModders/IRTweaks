@@ -77,6 +77,38 @@ namespace IRTweaks.Modules.Combat
                         MethodInfo aiu_eslq = AccessTools.Method(typeof(AIUtil), "EvaluateSensorLockQuality");
                         HarmonyMethod fsl_aiu_eslq_pre = new HarmonyMethod(typeof(FlexibleSensorLock), "AIUtil_EvaluateSensorLockQuality_Prefix");
                         harmony.Patch(aiu_eslq, fsl_aiu_eslq_pre, null, null);
+
+                        HarmonyMethod fsl_abact_ins = new HarmonyMethod(typeof(FlexibleSensorLock), "Mech_InitStats_Prefix");
+                        harmony.Patch(AccessTools.Method(typeof(Mech), "InitStats"), fsl_abact_ins, null, null);
+
+                        if (Mod.Config.Combat.FlexibleSensorLock.AlsoAppliesToActiveProbe)
+                        {
+                            // sel state
+                            PropertyInfo ssap_cf = AccessTools.Property(typeof(SelectionStateActiveProbe), "ConsumesFiring");
+                            harmony.Patch(ssap_cf.GetGetMethod(false), null, slc_r_f_post, null);
+
+                            PropertyInfo ssap_cm = AccessTools.Property(typeof(SelectionStateActiveProbe), "ConsumesMovement");
+                            harmony.Patch(ssap_cf.GetGetMethod(false), null, slc_r_f_post, null);
+
+                            MethodInfo ssap_cauts = AccessTools.Method(typeof(SelectionStateActiveProbe), "CanActorUseThisState");
+                            HarmonyMethod fsl_ssap_cauts_post = new HarmonyMethod(typeof(FlexibleSensorLock), "SelectionStateActiveProbe_CanActorUseThisState_Postfix");
+                            harmony.Patch(ssap_cauts, null, fsl_ssap_cauts_post, null);
+
+                            MethodInfo ssap_cfo = AccessTools.Method(typeof(SelectionStateActiveProbe), "CreateFiringOrders");
+                            HarmonyMethod fsl_ssap_cfo_post = new HarmonyMethod(typeof(FlexibleSensorLock), "SelectionStateActiveProbe_CreateFiringOrders_Postfix");
+                            harmony.Patch(ssap_cfo, null, fsl_ssap_cfo_post, null);
+
+                            //ActiveProbeSequence CompleteOrders
+                            MethodInfo aps_co = AccessTools.Method(typeof(ActiveProbeSequence), "CompleteOrders");
+                            HarmonyMethod fsl_aps_co_pre = new HarmonyMethod(typeof(FlexibleSensorLock), "ActiveProbeSequence_CompleteOrders_Prefix");
+                            harmony.Patch(aps_co, fsl_aps_co_pre, null, null);
+
+                            PropertyInfo aps_cf = AccessTools.Property(typeof(ActiveProbeSequence), "ConsumesFiring");
+                            harmony.Patch(aps_cf.GetGetMethod(false), null, slc_r_f_post, null);
+
+                            PropertyInfo aps_cm = AccessTools.Property(typeof(ActiveProbeSequence), "ConsumesMovement");
+                            harmony.Patch(aps_cm.GetGetMethod(false), null, slc_r_f_post, null);
+                        }
                     }
 
                     if (Mod.Config.Fixes.PainTolerance)
