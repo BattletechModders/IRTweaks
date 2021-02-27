@@ -47,9 +47,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>$(BattleTechGameDir)\BattleTech_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
     </Reference>
-    <Reference Include="CustomAmmoCategories">
-      <HintPath>$(BattleTechGameDir)\Mods\CustomAmmoCategories\CustomAmmoCategories.dll</HintPath>
-    </Reference>
     <Reference Include="DOTweenPro, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>$(BattleTechGameDir)\BattleTech_Data\Managed\DOTweenPro.dll</HintPath>
@@ -137,10 +134,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>
-      if exist "$(BattleTechGame)\Mods\IRTweaks"
-      (
-      xcopy "$(TargetDir)$(TargetFileName)" "$(BattleTechGame)\Mods\IRTweaks" /y
-      )</PostBuildEvent>
+    <PostBuildEvent>if exist "$(BattleTechGame)\Mods\IRTweaks" (
+xcopy "$(TargetDir)$(TargetFileName)" "$(BattleTechGame)\Mods\IRTweaks" /y
+)</PostBuildEvent>
   </PropertyGroup>
 </Project>
