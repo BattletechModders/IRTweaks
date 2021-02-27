@@ -11,6 +11,7 @@ This is a mod for the [HBS BattleTech](http://battletechgame.com/) game that inc
 * **DisableCampaign**: Disables the HBS campaign button, to prevent errors with various mod packs.
 * **DisableCombatRestarts**: Mission restarts lead to corruption at the salvage screen in vanilla, and especially in a modded game. This disables the UI selection that allows in-combat saves to be made.
 * **DisableCombatSaves**: Combat saves are prone to errors during vanilla gameplay, but especially so during modded gameplay. This disables the UI selection that allows in-combat saves to be made.
+* **DisableLowFundsNotification**: Disables the irritating "low funds" notification.
 * **DisableMPHashCalculation**: Disables a mod-hash calculated on startup that's only used to validate multiplayer games are compatible. Saves 2-3s of load time.
 * **ExtendedStats**: Allows pilots to be assigned Statistic values above the normal bounds of 1-10.
 * **FlexibleSensorLock**: Using a Sensor Lock action does not count as movement or firing. This allows it to be combined with actions in a unit's activation.
@@ -131,6 +132,45 @@ When a mech's head is hit, each point of damage reduces the resist chance by the
 When a Mech suffers a knockdown, the resist chance is reduced by 6%. You can customize this value by setting `PainTolerance.KnockdownResistPenalty`.
 
 > Example: A pilot with guts 3 suffers a knockdown. They have a base resist of 30%, -6% for a knockdown, and thus will ignore the injury on 24% or less.
+
+## Obstructed Line-Of-Site Damage Resistance
+
+When LOS to a target is "obstructed" (red-yellow or purple colored targeting line with an "eye" icon), shots hitting certain mech or vehicle armor locations can have their damage reduced.
+
+### Configuration
+
+`DRMechLocs` - List of valid mech `ArmorLocation`s that have can incoming damage reduced.
+
+`DRVehicleLocs` - List of valid `VehicleChassisLocations` that can have incoming damage reduced.
+
+`QuadTags` - List of mechdef tags that denote a unit is a Quad mech. Adds "LeftArm" and "RightArm" to valid ArmorLocations for these units only.
+
+`ObstructionDRByTags` - Dictionary where key = unit mechdef or vehicledef tag, and value = incoming damage multiplier for units with that tag.
+
+> Example:
+```
+			"ObstructionTweaks": {
+				"DRMechLocs": [
+					"LeftLeg",
+					"RightLeg"
+				],
+				"DRVehicleLocs": [
+					"Front",
+					"Rear",
+					"Left",
+					"Right"
+				],
+				"QuadTags": [
+					"unit_quad"
+				],
+				"ObstructionDRByTags": {
+					"unit_mech": 0.5,
+					"unit_vehicle": 0.75,
+					"unit_quad": 0.1
+				}
+			}
+```
+Using the above settings, a standard mech with tag `unit_mech` would take 50% incoming damage to its left and right legs. A vehicle with tag `unit_vehicle` would take 75% incoming damage to front, rear, left, and right sides, and a Quad mech with tag `unit_quad` would take 10% damage to all 4 legs (left leg, right leg, left "arm", and right "arm"). A unit with multiple matching "tags" in `ObstructionDRByTags` will use the <i>lowest</i> damage multiplier, taking the least damage.
 
 ### Overheat Injuries
 

@@ -1,0 +1,122 @@
+﻿using BattleTech;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using UnityEngine;
+
+namespace IRTweaks.Modules.Combat 
+{ 
+    public class IRT_CAC_Obstruct
+    { 
+        private static MethodInfo DamageModifiersCache_RegisterDamageModifier = null;
+
+        public static void detectCAC()
+        { 
+            Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies(); 
+            foreach (Assembly assembly in assemblies) { 
+                if (assembly.FullName.StartsWith("CustomAmmoCategories")) { 
+                    Type dmgHelperType = assembly.GetType("CustAmmoCategories.DamageModifiersCache"); 
+                    if (dmgHelperType != null) {
+                        DamageModifiersCache_RegisterDamageModifier = dmgHelperType.GetMethod("RegisterDamageModifier", BindingFlags.Static | BindingFlags.Public);
+                    }
+                }
+            }
+        }
+
+        public static void registerCACDmgModifier(string id, string staticName, bool isStatic, bool isNormal, bool isAP,
+            bool isHeat, bool isStability,
+            Func<Weapon, Vector3, ICombatant, bool, int, float, float, float, float, float> modifier,
+            Func<Weapon, Vector3, ICombatant, bool, int, float, float, float, float, string> modname
+        )
+        {
+            if (DamageModifiersCache_RegisterDamageModifier == null)
+            {
+                return;
+            }
+
+            DamageModifiersCache_RegisterDamageModifier.Invoke(null,
+                new object[] {id, staticName, isStatic, isNormal, isAP, isHeat, isStability, modifier, modname});
+        }
+
+        public static void FinishedLoading(List<string> loadOrder) 
+        { 
+            detectCAC(); 
+            registerCACDmgModifier("IRTweaks_Obstruct_DmgMod", "IRT_CAC_Obstruct_DmgMod", false, true, true, true, true, IRT_CAC_ObstructDmgMod, IRT_CAC_ObstructDmgModName);
+        }
+
+        
+
+        public static float IRT_CAC_ObstructDmgMod(Weapon weapon, Vector3 attackPosition, ICombatant target, bool IsBreachingShot,
+            int location, float dmg, float ap, float heat, float stab)
+        {
+            var actor = weapon.parent;
+            var lineOfFireLevel = target.Combat.FindActorByGUID(actor.GUID).VisibilityCache
+                .VisibilityToTarget(target).LineOfFireLevel;
+            if (lineOfFireLevel != LineOfFireLevel.LOFObstructed) return 1f;
+            if (target is Mech mech)
+            {
+                if (Mod.Config.Combat.ObstructionTweaks.ObstructionDRByTags.Keys.Any(x =>
+                    mech.MechDef.MechTags.Any(y => y == x)))
+                {
+                    var validLocs = Mod.Config.Combat.ObstructionTweaks.DRMechLocs;
+
+
+                    if (Mod.Config.Combat.ObstructionTweaks.QuadTags.Any(x =>
+                        mech.MechDef.MechTags.Any(y => y == x)))
+                    {
+                        Mod.Log.Debug?.Write($"Found mech Quad tag. Adding Arms to valid Locs.");
+                        validLocs.Add(ArmorLocation.LeftArm);
+                        validLocs.Add(ArmorLocation.RightArm);
+                        Mod.Log.Debug?.Write($"Valid hit locations for damage reduction: {validLocs.ToList()}.");
+                    }
+                    
+                    if (validLocs.Contains((ArmorLocation)location))
+                    {
+                        Mod.Log.Debug?.Write($"{(ArmorLocation)location} is valid hit location for damage reduction.");
+                        var damageReduction = Mod.Config.Combat.ObstructionTweaks.ObstructionDRByTags
+                            .Where(x => mech.MechDef.MechTags.Contains(x.Key)).Select(y => y.Value).ToList()
+                            .Min();
+
+                        Mod.Log.Info?.Write(
+                            $"Applied {damageReduction} multiplier for armor damage reduction to {(ArmorLocation)location}.");
+                        return damageReduction;
+                    }
+                }
+            }
+
+            if (target is Vehicle vehicle)
+            {
+                if (Mod.Config.Combat.ObstructionTweaks.ObstructionDRByTags.Keys.Any(x =>
+                    vehicle.VehicleDef.VehicleTags.Any(y => y == x)))
+                {
+
+                    if (Mod.Config.Combat.ObstructionTweaks.DRVehicleLocs.Contains((VehicleChassisLocations)location))
+                    {
+                        Mod.Log.Debug?.Write($"{(VehicleChassisLocations)location} is valid hit location for damage reduction.");
+                        var damageReduction = Mod.Config.Combat.ObstructionTweaks.ObstructionDRByTags
+                            .Where(x => vehicle.VehicleDef.VehicleTags.Contains(x.Key)).Select(y => y.Value).ToList()
+                            .Max();
+
+                        Mod.Log.Info?.Write(
+                            $"Applied {damageReduction} multiplier for armor damage reduction to {(VehicleChassisLocations)location}.");
+                        return damageReduction;
+                    }
+                }
+            }
+
+            return 1f;
+        }
+
+        public static string IRT_CAC_ObstructDmgModName(Weapon weapon, Vector3 attackPosition, ICombatant target,
+            bool IsBreachingShot, int location, float dmg, float ap, float heat, float stab)
+        {
+            return "IRT_CAC_Obstruct_DmgMod_" + target.DisplayName;
+        }
+
+    }
+}

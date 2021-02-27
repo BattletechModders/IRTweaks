@@ -99,6 +99,7 @@
     <Compile Include="Modules\Combat\CalledShots.cs" />
     <Compile Include="Modules\CombatModule.cs" />
     <Compile Include="Modules\Combat\BraceOnMeleeWithJuggernaut.cs" />
+    <Compile Include="Modules\Combat\ObstructionTweaks_CAC.cs" />
     <Compile Include="Modules\Combat\PainTolerance.cs" />
     <Compile Include="Modules\Combat\PathfinderTeamFix.cs" />
     <Compile Include="Modules\Combat\ExtendedStats.cs" />
@@ -111,6 +112,7 @@
     <Compile Include="Modules\Misc\ShowAllArgoUpgrades.cs" />
     <Compile Include="Modules\Misc\SkipDeleteSavePopup.cs" />
     <Compile Include="Modules\Misc\DisableCampaign.cs" />
+    <Compile Include="Modules\Misc\DisableLowFundsNotification.cs" />
     <Compile Include="Modules\MiscModule.cs" />
     <Compile Include="Modules\Misc\RandomStartByDifficulty.cs" />
     <Compile Include="Modules\Misc\ReduceSaveCompression.cs" />
