@@ -286,6 +286,21 @@ This tweak is enabled if `Fixes.SpawnProtection=true` is set to true in _mod.jso
 * `Combat.SpawnProtection.ApplyToAllies`: If true, allies will be protected when they spawn as well. Defaults to true.
 * `Combat.SpawnProtection.ApplyToReinforcements`: If true, enemies that spawn during a mission (i.e. are not present on the first turn) will be protected. Defaults to true.
 
+## Turret Armor and Structure Multiplier
+
+Decouples turret armor and structure multipliers from using the `ArmorMultiplierVehicle` and `StructureMultiplierVehicle` in CombatGameConstants. Disabled if the below tweaks are omitted from settings or set to 0, in which case the vehicle values from CombatGameConstants will be used. Otherwise works identically to the multiplier settings in CombatGameConstants.
+
+### Configuration
+
+```
+"TurretArmorAndStructure": {
+	"StructureMultiplierTurret": 2,
+	"ArmorMultiplierTurret": 5
+},
+```
+
+Above values would multiply turret structure and armor defined in defs by 2 and 5, respectively.
+
 ## Weapon Tooltips
 
 This tweak makes minor changes to the tooltips shown when hovering over weapons:
