@@ -44,6 +44,16 @@ namespace IRTweaks
             public bool AlsoAppliesToActiveProbe = false;
         }
 
+        public ObstructionTweakOpts ObstructionTweaks = new ObstructionTweakOpts();
+        public class ObstructionTweakOpts
+        {
+            public List<ArmorLocation> DRMechLocs = new List<ArmorLocation>();
+            public List<VehicleChassisLocations> DRVehicleLocs = new List<VehicleChassisLocations>();
+            public List<string> QuadTags = new List<string>();
+            public Dictionary<string, float> ObstructionDRByTags = new Dictionary<string, float>(); 
+
+        }
+
         public PainToleranceOpts PainTolerance = new PainToleranceOpts();
         public class PainToleranceOpts
         {
@@ -105,14 +115,12 @@ namespace IRTweaks
             public bool ApplyToReinforcements = false;
         }
 
-        public ObstructionTweakOpts ObstructionTweaks = new ObstructionTweakOpts();
-        public class ObstructionTweakOpts
-        {
-            public List<ArmorLocation> DRMechLocs = new List<ArmorLocation>();
-            public List<VehicleChassisLocations> DRVehicleLocs = new List<VehicleChassisLocations>();
-            public List<string> QuadTags = new List<string>();
-            public Dictionary<string, float> ObstructionDRByTags = new Dictionary<string, float>(); 
+        public TurretArmorAndStructureOpts TurretArmorAndStructure = new TurretArmorAndStructureOpts();
 
+        public class TurretArmorAndStructureOpts
+        {
+            public float StructureMultiplierTurret;
+            public float ArmorMultiplierTurret;
         }
     }
 
