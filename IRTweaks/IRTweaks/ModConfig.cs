@@ -157,14 +157,14 @@ namespace IRTweaks
         public bool CombatLog = true;
         public bool DisableCombatRestarts = true;
         public bool DisableCombatSaves = true;
+        public bool MaxArmorMaxesArmor = false;
         public bool MechbayLayout = true;
         public bool MechbayLayoutDisableStore = true;
+        public bool MechbayAdvancedStripping = true;
         public bool SkirmishAlwaysUnlimited = true;
         public bool SimGameDifficultyLabelsReplacer = true;
         public bool StreamlinedMainMenu = true;
         public bool WeaponTooltip = true;
-
-        public bool MaxArmorMaxesArmor = false;
 
     }
 
