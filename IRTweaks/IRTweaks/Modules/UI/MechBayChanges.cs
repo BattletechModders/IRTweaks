@@ -92,6 +92,9 @@ namespace IRTweaks.Modules.UI
         static bool Prepare() => Mod.Config.Fixes.MaxArmorMaxesArmor;
         static bool Prefix(MechLabPanel __instance, MechLabMechInfoWidget ___mechInfoWidget, MechLabItemSlotElement ___dragItem)
         {
+            var hk = Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl);
+            if (hk) return true;
+
             if (!__instance.Initialized)
             {
                 return false;
