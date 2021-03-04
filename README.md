@@ -17,6 +17,7 @@ This is a mod for the [HBS BattleTech](http://battletechgame.com/) game that inc
 * **FlexibleSensorLock**: Using a Sensor Lock action does not count as movement or firing. This allows it to be combined with actions in a unit's activation.
 * **MaxArmorMaxesArmor**: "Max Armor" button in mechbay now sets armor to the maximum possible for the chassis; ignores available tonnage.
 * **MechbayLayoutFix**: Moves a few UI elements in the mechbay to work better in a MechEngineer based mod. Thanks to Tiraxx for the idea!
+* **MechbayAdvancedStripping**: Holding Left or Right Control while clicking the "Strip Equipment" button in the mechbay will strip <i>only</i> weapons and ammo.
 * **MultiTargetStat**: This allows units to gain the Multi-Target ability from a Statistic, which can be applied via effects.
 * **PainTolerance**: Provides Guts-based resistance to injuries. See below for details.
 * **PathfinderTeamFix**: Mission Control introduces pathfinding units that have no Team associated with them. This breaks some mods, which this fix remediates.
@@ -285,6 +286,21 @@ This tweak is enabled if `Fixes.SpawnProtection=true` is set to true in _mod.jso
 * `Combat.SpawnProtection.ApplyToNeutrals`: If true, neutrals will be protected when they spawn as well. Defaults to true.
 * `Combat.SpawnProtection.ApplyToAllies`: If true, allies will be protected when they spawn as well. Defaults to true.
 * `Combat.SpawnProtection.ApplyToReinforcements`: If true, enemies that spawn during a mission (i.e. are not present on the first turn) will be protected. Defaults to true.
+
+## Turret Armor and Structure Multiplier
+
+Decouples turret armor and structure multipliers from using the `ArmorMultiplierVehicle` and `StructureMultiplierVehicle` in CombatGameConstants. Disabled if the below tweaks are omitted from settings or set to 0, in which case the vehicle values from CombatGameConstants will be used. Otherwise works identically to the multiplier settings in CombatGameConstants.
+
+### Configuration
+
+```
+"TurretArmorAndStructure": {
+	"StructureMultiplierTurret": 2,
+	"ArmorMultiplierTurret": 5
+},
+```
+
+Above values would multiply turret structure and armor defined in defs by 2 and 5, respectively.
 
 ## Weapon Tooltips
 
