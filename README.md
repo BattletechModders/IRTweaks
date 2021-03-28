@@ -98,6 +98,37 @@ This restrictions do not apply to any units that are currently prone or shutdown
 
 Additionally you can allow an actor to bypass this restriction by setting  `IRTCalledShotAlwaysAllow` statistic (Boolean) to true. Units with this set to true can always use the vanilla called shot location selection.
 
+## Damage Mods By Skill
+This tweak allows you to define multipliers to damage of various types: normal, heat, stability, and AP damage (from CAC). Units' access to the modifiers is first controlled via a stat check; the unit must have boolean true value for a statistic named the same as Item1 in the following Tuples. This statistic can be added via equipment, pilot abilities, etc. Item2 of the Tuple corresponds to the probability that the modifier will be applied; set to 1 to always apply the modifier. Item3 of the Tuple represents the actual multiplier to be applied.
+
+These values are defined using the following settings:
+```json
+"DamageModsBySkill": {
+			"StabilityMod": [
+				{
+				"Item1": "stabMod1",
+				"Item2": 0.9,
+				"Item3": 25.0
+				},
+				{
+				"Item1": "stabMod2",
+				"Item2": 0.2,
+				"Item3": 0.1
+				}
+			],
+			"HeatMod": [
+				{
+				"Item1": "heatMod1",
+				"Item2": 0.9,
+				"Item3": 5.0
+				}
+			],
+			"APDmgMod": [],
+			"StdDmgMod": []
+			},
+```
+Using the above example, a unit with a stat effect `stabMod1 = true` would inflict 25 times as much stability damage 90% of the time, while a unit with `stabMod2 = true` would inflict 10% of normal stability damage 20% of the time.
+
 ## Flexible Sensor Lock
 This tweak allows units to use sensor lock without it consuming their action or movement. This can be limited to units with a specific ability or stat. The ability to restrict this is defined by the `AbilityOpts.FlexibleSensorLockId` value in mod.json, which defaults to `AbilityDefT8A`. The stat is defined in `AbilityOpts.FreeActionStatName`, which defaults `IR_FreeSensorLock`. 
 
@@ -194,6 +225,97 @@ When a side torso is destroyed, a pilot normally takes a point of damage. The re
 This tweak allows you to define difficulty settings that impact the Career starts. This is useful for mods like RogueTech, which customizes your starting lance and faction reputation based upon a difficulty menu selection. The mod looks for two custom *DifficultyConstants*, each with a different behavior.
 
 This tweak is enabled if `Fixes.RandomStartByDifficulty=true` is set to true in _mod.json_. Customizations are only expressed through the difficulty constants described below.
+
+### Expanded Stray Shot Control
+
+This tweak allows you to further control raycasted Stray Shot behavior: supported options are Disabled, Buildings Only, Enemies Only, Enemies and Neutral, and All (Friendly Fire).
+
+```json
+{
+	"ID": "diff_FriendlyFire",
+	"Name": "Friendly Fire",
+	"TelemetryEventName": "",
+	"UIOrder": 0,
+	"Tooltip": "Select what Stray Shot behavior you want - No Stray Shots, Buildings Only, Enemies Only, Enemies/Neutral, Friendly Fire",
+	"Enabled": true,
+	"Visible": true,
+	"Toggle": false,
+	"StartOnly": false,
+	"DefaultIndex": 2,
+	"Options": [
+						{
+			"ID": "diff_FF_Disabled",
+			"Name": "Disabled",
+			"TelemetryEventDesc": "",
+			"DifficultyValue": 0,
+			"CareerScoreModifier": -1,
+			"DifficultyConstants": [
+				{
+					"ConstantType": "string",
+					"ConstantName": "StrayShotsEnabled",
+					"ConstantValue": "False"
+				}
+			]
+		},
+		{
+			"ID": "diff_FF_Buildings",
+			"Name": "Buildings Only",
+			"TelemetryEventDesc": "",
+			"DifficultyValue": 0,
+			"CareerScoreModifier": -1,
+			"DifficultyConstants": [
+				{
+					"ConstantType": "string",
+					"ConstantName": "StrayShotsHitUnits",
+					"ConstantValue": "False"
+				}
+			]
+		},
+		{
+			"ID": "diff_FF_Off",
+			"Name": "Enemies Only",
+			"TelemetryEventDesc": "",
+			"DifficultyValue": 0,
+			"CareerScoreModifier": -1,
+			"DifficultyConstants": [
+				{
+					"ConstantType": "string",
+					"ConstantName": "StrayShotValidTargets",
+					"ConstantValue": "0"
+				}
+			]
+		},
+		{
+			"ID": "diff_FF_Neutral",
+			"Name": "Enemies/Neutral",
+			"TelemetryEventDesc": "",
+			"DifficultyValue": 0,
+			"CareerScoreModifier": 0,
+			"DifficultyConstants": [
+				{
+					"ConstantType": "string",
+					"ConstantName": "StrayShotValidTargets",
+					"ConstantValue": "1"
+				}
+			]
+		},
+		{
+			"ID": "diff_FF_On",
+			"Name": "All",
+			"TelemetryEventDesc": "",
+			"DifficultyValue": 0,
+			"CareerScoreModifier": 0.5,
+			"DifficultyConstants": [
+				{
+					"ConstantType": "string",
+					"ConstantName": "StrayShotValidTargets",
+					"ConstantValue": "2"
+				}
+			]
+		}
+	]
+}
+```
 
 ### StartingRandomMechLists
 
