@@ -98,7 +98,7 @@ This restrictions do not apply to any units that are currently prone or shutdown
 
 Additionally you can allow an actor to bypass this restriction by setting  `IRTCalledShotAlwaysAllow` statistic (Boolean) to true. Units with this set to true can always use the vanilla called shot location selection.
 
-## Damage Mods By Skill
+## Damage Mods
 This tweak allows you to define multipliers to damage of various types: normal, heat, stability, and AP damage (from CAC). Units' access to the modifiers is first controlled via a stat check; the unit must have boolean true value for a statistic named the same as Item1 in the following Tuples. This statistic can be added via equipment, pilot abilities, etc. Item2 of the Tuple corresponds to the probability that the modifier will be applied; set to 1 to always apply the modifier. Item3 of the Tuple represents the actual multiplier to be applied.
 
 These values are defined using the following settings:
