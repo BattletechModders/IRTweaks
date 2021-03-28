@@ -40,10 +40,15 @@ namespace IRTweaks
 
         public class DamageModsBySkillOpts
         {
-            public List<Tuple<string, float, float>> StabilityMod = new List<Tuple<string, float, float>>();
-            public List<Tuple<string, float, float>> HeatMod = new List<Tuple<string, float, float>>();
-            public List<Tuple<string, float, float>> APDmgMod = new List<Tuple<string, float, float>>();
-            public List<Tuple<string, float, float>> StdDmgMod = new List<Tuple<string, float, float>>();
+            public List<StabilityMod> StabilityMods = new List<StabilityMod>();
+            public List<HeatMod> HeatMods = new List<HeatMod>();
+            public List<APDmgMod> APDmgMods = new List<APDmgMod>();
+            public List<StdDmgMod> StdDmgMods = new List<StdDmgMod>();
+
+            //           public List<Tuple<string, float, float>> StabilityMod = new List<Tuple<string, float, float>>();
+            //           public List<Tuple<string, float, float>> HeatMod = new List<Tuple<string, float, float>>();
+            //           public List<Tuple<string, float, float>> APDmgMod = new List<Tuple<string, float, float>>();
+            //           public List<Tuple<string, float, float>> StdDmgMod = new List<Tuple<string, float, float>>();
         }
 
         public FlexibleSensorLockOptions FlexibleSensorLock = new FlexibleSensorLockOptions();

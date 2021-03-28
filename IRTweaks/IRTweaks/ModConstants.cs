@@ -26,5 +26,29 @@ namespace IRTweaks
         public const string HBS_Building_Structure = "Structure";
 
     }
+    public class StabilityMod
+    {
+        public string StatName;
+        public float Probability;
+        public float Multiplier;
+    }
+    public class HeatMod
+    {
+        public string StatName;
+        public float Probability;
+        public float Multiplier;
+    }
+    public class APDmgMod
+    {
+        public string StatName;
+        public float Probability;
+        public float Multiplier;
+    }
+    public class StdDmgMod
+    {
+        public string StatName;
+        public float Probability;
+        public float Multiplier;
+    }
 
 }
