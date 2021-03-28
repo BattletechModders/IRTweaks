@@ -20,6 +20,8 @@ namespace IRTweaks
         public const string HBS_MaxTargets = "MaxTargets";
         public const string HBS_RandomMechs = "StartingRandomMechLists";
         public const string HBS_StrayShotValidTargets = "StrayShotValidTargets";
+        public const string HBS_StrayShotEnabler = "StrayShotsEnabled";
+        public const string HBS_StrayShotHitsUnits = "StrayShotsHitUnits";
 
         public const string HBS_Building_Structure = "Structure";
 

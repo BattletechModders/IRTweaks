@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using BattleTech;
 
@@ -33,6 +34,16 @@ namespace IRTweaks
 
             public int BaseModifier = 6;
             public Dictionary<string, int> PilotTags = new Dictionary<string, int>();
+        }
+
+        public DamageModsBySkillOpts DamageModsBySkill = new DamageModsBySkillOpts();
+
+        public class DamageModsBySkillOpts
+        {
+            public List<Tuple<string, float, float>> StabilityMod = new List<Tuple<string, float, float>>();
+            public List<Tuple<string, float, float>> HeatMod = new List<Tuple<string, float, float>>();
+            public List<Tuple<string, float, float>> APDmgMod = new List<Tuple<string, float, float>>();
+            public List<Tuple<string, float, float>> StdDmgMod = new List<Tuple<string, float, float>>();
         }
 
         public FlexibleSensorLockOptions FlexibleSensorLock = new FlexibleSensorLockOptions();

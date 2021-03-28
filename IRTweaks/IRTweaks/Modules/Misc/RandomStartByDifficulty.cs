@@ -68,6 +68,30 @@ namespace IRTweaks.Modules.Misc
         {
             Mod.Log.Trace?.Write("SGCO:AO entered.");
 
+            if (constantName != null && constantName.ToLower().Equals(ModStats.HBS_StrayShotEnabler.ToLower()))
+            {
+                bool value = Convert.ToBoolean(__instance.ConstantOverrides[constantType][constantName]);
+                Mod.Log.Debug?.Write($" Setting StrayShotsEnabled to {value} ");
+                ToHitConstantsDef thcd = ___simState.CombatConstants.ToHit;
+                thcd.StrayShotsEnabled = value;
+
+                Traverse traverse = Traverse.Create(___simState.CombatConstants).Property("ToHit");
+                traverse.SetValue(thcd);
+                Mod.Log.Debug?.Write($" Replaced ToHit");
+            }
+
+            if (constantName != null && constantName.ToLower().Equals(ModStats.HBS_StrayShotHitsUnits.ToLower()))
+            {
+                bool value = Convert.ToBoolean(__instance.ConstantOverrides[constantType][constantName]);
+                Mod.Log.Debug?.Write($" Setting StrayShotsHitUnits to {value} ");
+                ToHitConstantsDef thcd = ___simState.CombatConstants.ToHit;
+                thcd.StrayShotsHitUnits = value;
+
+                Traverse traverse = Traverse.Create(___simState.CombatConstants).Property("ToHit");
+                traverse.SetValue(thcd);
+                Mod.Log.Debug?.Write($" Replaced ToHit");
+            }
+
             if (constantName != null && constantName.ToLower().Equals(ModStats.HBS_StrayShotValidTargets.ToLower()))
             {
                 string value = __instance.ConstantOverrides[constantType][constantName];

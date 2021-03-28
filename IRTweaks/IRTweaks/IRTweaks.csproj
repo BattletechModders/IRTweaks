@@ -103,6 +103,7 @@
     <Compile Include="Modules\Combat\CalledShots.cs" />
     <Compile Include="Modules\CombatModule.cs" />
     <Compile Include="Modules\Combat\BraceOnMeleeWithJuggernaut.cs" />
+    <Compile Include="Modules\Combat\DamageModsBySkill_CAC.cs" />
     <Compile Include="Modules\Combat\TurretArmorAndStructureMult.cs" />
     <Compile Include="Modules\Combat\ObstructionTweaks_CAC.cs" />
     <Compile Include="Modules\Combat\PainTolerance.cs" />
