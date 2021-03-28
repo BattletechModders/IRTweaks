@@ -99,33 +99,38 @@ This restrictions do not apply to any units that are currently prone or shutdown
 Additionally you can allow an actor to bypass this restriction by setting  `IRTCalledShotAlwaysAllow` statistic (Boolean) to true. Units with this set to true can always use the vanilla called shot location selection.
 
 ## Damage Mods
-This tweak allows you to define multipliers to damage of various types: normal, heat, stability, and AP damage (from CAC). Units' access to the modifiers is first controlled via a stat check; the unit must have boolean true value for a statistic named the same as Item1 in the following Tuples. This statistic can be added via equipment, pilot abilities, etc. Item2 of the Tuple corresponds to the probability that the modifier will be applied; set to 1 to always apply the modifier. Item3 of the Tuple represents the actual multiplier to be applied.
+This tweak allows you to define multipliers to damage of various types: normal, heat, stability, and AP damage (from CAC). Units' access to the modifiers is first controlled via a stat check; the unit must have boolean true value for a statistic named the same as StatName in the following settings. This statistic can be added via equipment, pilot abilities, etc. Probability corresponds to the probability that the modifier will be applied; set to 1 to always apply the modifier. Multiplier represents the actual multiplier to be applied.
 
 These values are defined using the following settings:
 ```json
 "DamageModsBySkill": {
-			"StabilityMod": [
-				{
-				"Item1": "stabMod1",
-				"Item2": 0.9,
-				"Item3": 25.0
-				},
-				{
-				"Item1": "stabMod2",
-				"Item2": 0.2,
-				"Item3": 0.1
-				}
-			],
-			"HeatMod": [
-				{
-				"Item1": "heatMod1",
-				"Item2": 0.9,
-				"Item3": 5.0
-				}
-			],
-			"APDmgMod": [],
-			"StdDmgMod": []
+		"StabilityMods": [
+			{
+				"StatName": "stabMod1",
+				"Probability": 0.9,
+				"Multiplier": 25.0
 			},
+			{
+				"StatName": "stabMod2",
+				"Probability": 0.2,
+				"Multiplier": 0.1
+			}
+		],
+		"HeatMods": [
+			{
+				"StatName": "heatMod1",
+				"Probability": 0.9,
+				"Multiplier": 5.0
+			},
+			{
+				"StatName": "heatMod2",
+				"Probability": 0.2,
+				"Multiplier": 0.1
+			}
+		],
+		"APDmgMods": [],
+		"StdDmgMods": []
+	},
 ```
 Using the above example, a unit with a stat effect `stabMod1 = true` would inflict 25 times as much stability damage 90% of the time, while a unit with `stabMod2 = true` would inflict 10% of normal stability damage 20% of the time.
 
