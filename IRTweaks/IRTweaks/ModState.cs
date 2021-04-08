@@ -1,11 +1,17 @@
 ﻿
 using BattleTech.UI;
 using System.Collections.Generic;
+using BattleTech;
 
 namespace IRTweaks {
 
     public static class ModState {
-
+        public static class InstantiatedDifficultySettings
+        {
+            public static List<SGDSToggle> instantiatedToggles = new List<SGDSToggle>();
+            public static List<SGDSDropdown> instantiatedDropdowns = new List<SGDSDropdown>();
+        }
+        
         public static Dictionary<string, int> PilotCalledShotModifiers = new Dictionary<string, int>();
 
         public static SelectionStateSensorLock SelectionStateSensorLock;
