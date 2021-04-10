@@ -155,6 +155,7 @@ namespace IRTweaks
         public bool ScaleObjectiveBuildingStructure = true;
         public bool SpawnProtection = true;
         public bool UrbanExplosionsFix = true;
+        public bool WeakAgainstMeleeFix = true;
 
         // Misc
         public bool DisableCampaign = true;
