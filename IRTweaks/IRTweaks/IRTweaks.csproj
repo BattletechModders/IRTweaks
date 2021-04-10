@@ -47,9 +47,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>$(BattleTechGameDir)\BattleTech_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
     </Reference>
-    <Reference Include="CustomAmmoCategories, Version=0.0.1.177, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>E:\steam\SteamApps\common\BATTLETECH\Mods\CustomAmmoCategories\CustomAmmoCategories.dll</HintPath>
+    <Reference Include="CustomAmmoCategories">
+      <HintPath>$(BattleTechGameDir)\Mods\CustomAmmoCategories\CustomAmmoCategories.dll</HintPath>
     </Reference>
     <Reference Include="DOTweenPro, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -87,7 +86,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>$(BattleTechGameDir)\BattleTech_Data\Managed\UnityEngine.UI.dll</HintPath>
     </Reference>
-	 <Reference Include="UnityEngine.ParticleSystemModule">
+    <Reference Include="UnityEngine.ParticleSystemModule">
       <HintPath>$(BattleTechGameDir)\BattleTech_Data\Managed\UnityEngine.ParticleSystemModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
@@ -104,6 +103,9 @@
     <Compile Include="Modules\Combat\CalledShots.cs" />
     <Compile Include="Modules\CombatModule.cs" />
     <Compile Include="Modules\Combat\BraceOnMeleeWithJuggernaut.cs" />
+    <Compile Include="Modules\Combat\WeakAgainstMeleeDisplay.cs" />
+    <Compile Include="Modules\Combat\DamageModsBySkill_CAC.cs" />
+    <Compile Include="Modules\Combat\TurretArmorAndStructureMult.cs" />
     <Compile Include="Modules\Combat\ObstructionTweaks_CAC.cs" />
     <Compile Include="Modules\Combat\PainTolerance.cs" />
     <Compile Include="Modules\Combat\PathfinderTeamFix.cs" />

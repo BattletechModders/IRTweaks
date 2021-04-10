@@ -15,8 +15,9 @@ This is a mod for the [HBS BattleTech](http://battletechgame.com/) game that inc
 * **DisableMPHashCalculation**: Disables a mod-hash calculated on startup that's only used to validate multiplayer games are compatible. Saves 2-3s of load time.
 * **ExtendedStats**: Allows pilots to be assigned Statistic values above the normal bounds of 1-10.
 * **FlexibleSensorLock**: Using a Sensor Lock action does not count as movement or firing. This allows it to be combined with actions in a unit's activation.
-* **MaxArmorMaxesArmor**: "Max Armor" button in mechbay now sets armor to the maximum possible for the chassis; ignores available tonnage.
+* **MaxArmorMaxesArmor**: "Max Armor" button in mechbay now sets armor to the maximum possible for the chassis; ignores available tonnage. Holding Control while clicking will use vanilla functionality (does not work well with MechEngineer armors like ferro, etc.)
 * **MechbayLayoutFix**: Moves a few UI elements in the mechbay to work better in a MechEngineer based mod. Thanks to Tiraxx for the idea!
+* **MechbayAdvancedStripping**: Holding Left or Right Control while clicking the "Strip Equipment" button in the mechbay will strip <i>only</i> weapons and ammo.
 * **MultiTargetStat**: This allows units to gain the Multi-Target ability from a Statistic, which can be applied via effects.
 * **PainTolerance**: Provides Guts-based resistance to injuries. See below for details.
 * **PathfinderTeamFix**: Mission Control introduces pathfinding units that have no Team associated with them. This breaks some mods, which this fix remediates.
@@ -96,6 +97,42 @@ If you instead set `Combat.CalledShot.DisableHeadshots=true`, the popup will be 
 This restrictions do not apply to any units that are currently prone or shutdown. These units can be targeted with called shot as per vanilla.
 
 Additionally you can allow an actor to bypass this restriction by setting  `IRTCalledShotAlwaysAllow` statistic (Boolean) to true. Units with this set to true can always use the vanilla called shot location selection.
+
+## Damage Mods
+This tweak allows you to define multipliers to damage of various types: normal, heat, stability, and AP damage (from CAC). Units' access to the modifiers is first controlled via a stat check; the unit must have boolean true value for a statistic named the same as StatName in the following settings. This statistic can be added via equipment, pilot abilities, etc. Probability corresponds to the probability that the modifier will be applied; set to 1 to always apply the modifier. Multiplier represents the actual multiplier to be applied.
+
+These values are defined using the following settings:
+```json
+"DamageModsBySkill": {
+		"StabilityMods": [
+			{
+				"StatName": "stabMod1",
+				"Probability": 0.9,
+				"Multiplier": 25.0
+			},
+			{
+				"StatName": "stabMod2",
+				"Probability": 0.2,
+				"Multiplier": 0.1
+			}
+		],
+		"HeatMods": [
+			{
+				"StatName": "heatMod1",
+				"Probability": 0.9,
+				"Multiplier": 5.0
+			},
+			{
+				"StatName": "heatMod2",
+				"Probability": 0.2,
+				"Multiplier": 0.1
+			}
+		],
+		"APDmgMods": [],
+		"StdDmgMods": []
+	},
+```
+Using the above example, a unit with a stat effect `stabMod1 = true` would inflict 25 times as much stability damage 90% of the time, while a unit with `stabMod2 = true` would inflict 10% of normal stability damage 20% of the time.
 
 ## Flexible Sensor Lock
 This tweak allows units to use sensor lock without it consuming their action or movement. This can be limited to units with a specific ability or stat. The ability to restrict this is defined by the `AbilityOpts.FlexibleSensorLockId` value in mod.json, which defaults to `AbilityDefT8A`. The stat is defined in `AbilityOpts.FreeActionStatName`, which defaults `IR_FreeSensorLock`. 
@@ -194,6 +231,97 @@ This tweak allows you to define difficulty settings that impact the Career start
 
 This tweak is enabled if `Fixes.RandomStartByDifficulty=true` is set to true in _mod.json_. Customizations are only expressed through the difficulty constants described below.
 
+### Expanded Stray Shot Control
+
+This tweak allows you to further control raycasted Stray Shot behavior: supported options are Disabled, Buildings Only, Enemies Only, Enemies and Neutral, and All (Friendly Fire).
+
+```json
+{
+	"ID": "diff_FriendlyFire",
+	"Name": "Friendly Fire",
+	"TelemetryEventName": "",
+	"UIOrder": 0,
+	"Tooltip": "Select what Stray Shot behavior you want - No Stray Shots, Buildings Only, Enemies Only, Enemies/Neutral, Friendly Fire",
+	"Enabled": true,
+	"Visible": true,
+	"Toggle": false,
+	"StartOnly": false,
+	"DefaultIndex": 2,
+	"Options": [
+						{
+			"ID": "diff_FF_Disabled",
+			"Name": "Disabled",
+			"TelemetryEventDesc": "",
+			"DifficultyValue": 0,
+			"CareerScoreModifier": -1,
+			"DifficultyConstants": [
+				{
+					"ConstantType": "string",
+					"ConstantName": "StrayShotsEnabled",
+					"ConstantValue": "False"
+				}
+			]
+		},
+		{
+			"ID": "diff_FF_Buildings",
+			"Name": "Buildings Only",
+			"TelemetryEventDesc": "",
+			"DifficultyValue": 0,
+			"CareerScoreModifier": -1,
+			"DifficultyConstants": [
+				{
+					"ConstantType": "string",
+					"ConstantName": "StrayShotsHitUnits",
+					"ConstantValue": "False"
+				}
+			]
+		},
+		{
+			"ID": "diff_FF_Off",
+			"Name": "Enemies Only",
+			"TelemetryEventDesc": "",
+			"DifficultyValue": 0,
+			"CareerScoreModifier": -1,
+			"DifficultyConstants": [
+				{
+					"ConstantType": "string",
+					"ConstantName": "StrayShotValidTargets",
+					"ConstantValue": "0"
+				}
+			]
+		},
+		{
+			"ID": "diff_FF_Neutral",
+			"Name": "Enemies/Neutral",
+			"TelemetryEventDesc": "",
+			"DifficultyValue": 0,
+			"CareerScoreModifier": 0,
+			"DifficultyConstants": [
+				{
+					"ConstantType": "string",
+					"ConstantName": "StrayShotValidTargets",
+					"ConstantValue": "1"
+				}
+			]
+		},
+		{
+			"ID": "diff_FF_On",
+			"Name": "All",
+			"TelemetryEventDesc": "",
+			"DifficultyValue": 0,
+			"CareerScoreModifier": 0.5,
+			"DifficultyConstants": [
+				{
+					"ConstantType": "string",
+					"ConstantName": "StrayShotValidTargets",
+					"ConstantValue": "2"
+				}
+			]
+		}
+	]
+}
+```
+
 ### StartingRandomMechLists
 
 A comma separated list of lancedefs that should be used to randomize the starting mech selections. It's only useful when 'random mechs' are selected as an option. An example value would be:
@@ -285,6 +413,21 @@ This tweak is enabled if `Fixes.SpawnProtection=true` is set to true in _mod.jso
 * `Combat.SpawnProtection.ApplyToNeutrals`: If true, neutrals will be protected when they spawn as well. Defaults to true.
 * `Combat.SpawnProtection.ApplyToAllies`: If true, allies will be protected when they spawn as well. Defaults to true.
 * `Combat.SpawnProtection.ApplyToReinforcements`: If true, enemies that spawn during a mission (i.e. are not present on the first turn) will be protected. Defaults to true.
+
+## Turret Armor and Structure Multiplier
+
+Decouples turret armor and structure multipliers from using the `ArmorMultiplierVehicle` and `StructureMultiplierVehicle` in CombatGameConstants. Disabled if the below tweaks are omitted from settings or set to 0, in which case the vehicle values from CombatGameConstants will be used. Otherwise works identically to the multiplier settings in CombatGameConstants.
+
+### Configuration
+
+```
+"TurretArmorAndStructure": {
+	"StructureMultiplierTurret": 2,
+	"ArmorMultiplierTurret": 5
+},
+```
+
+Above values would multiply turret structure and armor defined in defs by 2 and 5, respectively.
 
 ## Weapon Tooltips
 

@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using HBS;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.EventSystems;
 
 namespace IRTweaks.Modules.UI
 {
@@ -91,6 +92,9 @@ namespace IRTweaks.Modules.UI
         static bool Prepare() => Mod.Config.Fixes.MaxArmorMaxesArmor;
         static bool Prefix(MechLabPanel __instance, MechLabMechInfoWidget ___mechInfoWidget, MechLabItemSlotElement ___dragItem)
         {
+            var hk = Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl);
+            if (hk) return true;
+
             if (!__instance.Initialized)
             {
                 return false;
@@ -127,6 +131,61 @@ namespace IRTweaks.Modules.UI
             return false;
         }
     }
+
+    [HarmonyPatch(typeof(MechLabPanel), "OnStripEquipment")]
+    static class MechLabPanel_OnStripEquipment_Patch
+    {
+        static bool Prepare() => Mod.Config.Fixes.MechbayAdvancedStripping;
+
+        static bool Prefix(MechLabPanel __instance, bool ___batchActionInProgress, MechLabItemSlotElement ___dragItem)
+        {
+            var hk = Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl);
+            if (!hk) return true;
+
+            if (!__instance.Initialized)
+            {
+                return false;
+            }
+            if (___dragItem != null)
+            {
+                return false;
+            }
+            ___batchActionInProgress = true;
+            __instance.headWidget.AdvancedStripping(__instance);
+            __instance.centerTorsoWidget.AdvancedStripping(__instance);
+            __instance.leftTorsoWidget.AdvancedStripping(__instance);
+            __instance.rightTorsoWidget.AdvancedStripping(__instance);
+            __instance.leftArmWidget.AdvancedStripping(__instance);
+            __instance.rightArmWidget.AdvancedStripping(__instance);
+            __instance.leftLegWidget.AdvancedStripping(__instance);
+            __instance.rightLegWidget.AdvancedStripping(__instance);
+            __instance.FlagAsModified();
+            __instance.ValidateLoadout(false);
+            ___batchActionInProgress = false;
+            return false;
+        }
+
+        internal static void AdvancedStripping(this MechLabLocationWidget widget, MechLabPanel panel)
+        {
+            if (!panel.Initialized)
+            {
+                return;
+            }
+
+            var loclInv = Traverse.Create(widget).Field("localInventory").GetValue<List<MechLabItemSlotElement>>();
+
+            for (int i = loclInv.Count - 1; i >= 0; i--)
+            {
+                MechLabItemSlotElement mechLabItemSlotElement = loclInv[i];
+                if (!mechLabItemSlotElement.ComponentRef.IsFixed && (mechLabItemSlotElement.ComponentRef.Def is WeaponDef || mechLabItemSlotElement.ComponentRef.Def is AmmunitionBoxDef))
+                {
+                    widget.OnRemoveItem(mechLabItemSlotElement, true);
+                    panel.ForceItemDrop(mechLabItemSlotElement);
+                }
+            }
+        }
+    }
+
     //[HarmonyPatch(typeof(MechLabPanel), "SetData")]
     //[HarmonyPatch(new Type[] { typeof(MechDef), typeof(DataManager), typeof(UnityAction), typeof(UnityAction), typeof(bool)})]
     //static class MechLabPanel_SetData_2

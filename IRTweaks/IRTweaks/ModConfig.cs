@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using BattleTech;
 
@@ -35,6 +36,21 @@ namespace IRTweaks
             public Dictionary<string, int> PilotTags = new Dictionary<string, int>();
         }
 
+        public DamageModsBySkillOpts DamageModsBySkill = new DamageModsBySkillOpts();
+
+        public class DamageModsBySkillOpts
+        {
+            public List<StabilityMod> StabilityMods = new List<StabilityMod>();
+            public List<HeatMod> HeatMods = new List<HeatMod>();
+            public List<APDmgMod> APDmgMods = new List<APDmgMod>();
+            public List<StdDmgMod> StdDmgMods = new List<StdDmgMod>();
+
+            //           public List<Tuple<string, float, float>> StabilityMod = new List<Tuple<string, float, float>>();
+            //           public List<Tuple<string, float, float>> HeatMod = new List<Tuple<string, float, float>>();
+            //           public List<Tuple<string, float, float>> APDmgMod = new List<Tuple<string, float, float>>();
+            //           public List<Tuple<string, float, float>> StdDmgMod = new List<Tuple<string, float, float>>();
+        }
+
         public FlexibleSensorLockOptions FlexibleSensorLock = new FlexibleSensorLockOptions();
         public class FlexibleSensorLockOptions
         {
@@ -42,6 +58,16 @@ namespace IRTweaks
             public bool FreeActionWithStat = false;
             public string FreeActionStatName = "IR_FreeSensorLock";
             public bool AlsoAppliesToActiveProbe = false;
+        }
+
+        public ObstructionTweakOpts ObstructionTweaks = new ObstructionTweakOpts();
+        public class ObstructionTweakOpts
+        {
+            public List<ArmorLocation> DRMechLocs = new List<ArmorLocation>();
+            public List<VehicleChassisLocations> DRVehicleLocs = new List<VehicleChassisLocations>();
+            public List<string> QuadTags = new List<string>();
+            public Dictionary<string, float> ObstructionDRByTags = new Dictionary<string, float>(); 
+
         }
 
         public PainToleranceOpts PainTolerance = new PainToleranceOpts();
@@ -105,14 +131,12 @@ namespace IRTweaks
             public bool ApplyToReinforcements = false;
         }
 
-        public ObstructionTweakOpts ObstructionTweaks = new ObstructionTweakOpts();
-        public class ObstructionTweakOpts
-        {
-            public List<ArmorLocation> DRMechLocs = new List<ArmorLocation>();
-            public List<VehicleChassisLocations> DRVehicleLocs = new List<VehicleChassisLocations>();
-            public List<string> QuadTags = new List<string>();
-            public Dictionary<string, float> ObstructionDRByTags = new Dictionary<string, float>(); 
+        public TurretArmorAndStructureOpts TurretArmorAndStructure = new TurretArmorAndStructureOpts();
 
+        public class TurretArmorAndStructureOpts
+        {
+            public float StructureMultiplierTurret;
+            public float ArmorMultiplierTurret;
         }
     }
 
@@ -131,6 +155,7 @@ namespace IRTweaks
         public bool ScaleObjectiveBuildingStructure = true;
         public bool SpawnProtection = true;
         public bool UrbanExplosionsFix = true;
+        public bool WeakAgainstMeleeFix = true;
 
         // Misc
         public bool DisableCampaign = true;
@@ -149,14 +174,14 @@ namespace IRTweaks
         public bool CombatLog = true;
         public bool DisableCombatRestarts = true;
         public bool DisableCombatSaves = true;
+        public bool MaxArmorMaxesArmor = false;
         public bool MechbayLayout = true;
         public bool MechbayLayoutDisableStore = true;
+        public bool MechbayAdvancedStripping = true;
         public bool SkirmishAlwaysUnlimited = true;
         public bool SimGameDifficultyLabelsReplacer = true;
         public bool StreamlinedMainMenu = true;
         public bool WeaponTooltip = true;
-
-        public bool MaxArmorMaxesArmor = false;
 
     }
 
