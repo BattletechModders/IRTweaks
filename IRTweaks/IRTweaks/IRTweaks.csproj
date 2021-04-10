@@ -142,7 +142,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>if exist "$(BattleTechGame)\Mods\IRTweaks" (
+    <PostBuildEvent>time /t
+if exist "$(BattleTechGame)\Mods\IRTweaks" (	
 xcopy "$(TargetDir)$(TargetFileName)" "$(BattleTechGame)\Mods\IRTweaks" /y
 )</PostBuildEvent>
   </PropertyGroup>
