@@ -2,56 +2,55 @@
 	"Name": "IRTweaks",
 	"Enabled": true,
 	"Hidden": true,
-	"Version": "0.9.1",
+	"Version": "0.9.2",
 	"Description": "Miscellaneous Tweaks and Fixes",
 	"Author": "IceRaptor",
 	"Website": "https://github.com/IceRaptor/IRTweaks",
 	"Contact": "",
 	"DLL": "IRTweaks.dll",
-	"DependsOn": [
-		"IRBTModUtils",
-		"Custom Ammo Categories"
-	],
+	"DependsOn": [ "IRBTModUtils", "Custom Ammo Categories" ],
 	"Settings": {
 		"Debug": false,
 		"Trace": false,
 		"Fixes": {
 			"AlternateMechNamingStyle": false,
 			"BuildingDamageColorChange": false,
-            "BraceOnMeleeWithJuggernaut" : true,
+			"BraceOnMeleeWithJuggernaut": true,
 			"BulkPurchasing": false,
-			"BulkScrapping" : true,
+			"BulkScrapping": false,
 			"CombatLog": false,
 			"DisableCampaign": true,
 			"DisableCombatSaves": true,
-			"DisableCombatRestarts": false,
-			"DisableLowFundsNotification" : true,
-			"DisableMPHashCalculation" : true,
+			"DisableCombatRestarts": true,
+			"DisableLowFundsNotification": true,
+			"DisableMPHashCalculation": true,
 			"ExtendedStats": false,
 			"FlexibleSensorLock": false,
-			"MaxArmorMaxesArmor" : false,
-			"MechbayLayout" : true,
-			"MechbayLayoutDisableStore" : true,
+			"MaxArmorMaxesArmor": true,
+			"MechbayAdvancedStripping": true,
+			"MechbayLayout": true,
+			"MechbayLayoutDisableStore": true,
 			"MultiTargetStat": true,
 			"PainTolerance": true,
 			"PathfinderTeamFix": true,
 			"PreventHeadShots": false,
 			"RandomStartByDifficulty": true,
 			"ReduceSaveCompression": true,
-			"ScaleObjectiveBuildingStructure" : true,
+			"ScaleObjectiveBuildingStructure": true,
 			"ShowAllArgoUpgrades": true,
-			"SimGameDifficultyLabelsReplacer" : false,
+			"SimGameDifficultyLabelsReplacer": false,
 			"SkirmishAlwaysUnlimited": true,
 			"SkirmishReset": false,
 			"SkipDeleteSavePopup": true,
 			"SpawnProtection": true,
 			"StreamlinedMainMenu": true,
-			"UrbanExplosionsFix" : false,
+			"TurnDirectorStartFirstRoundFix" : true,
+			"UrbanExplosionsFix": false,
 			"WeaponTooltip": true
 		},
 		"Abilities": {
 			"FlexibleSensorLockId": "AbilityDefT5A",
-            "JuggernautId" : "AbilityDefGu8",
+			"JuggernautId": "AbilityDefGu8",
 			"MultiTargetId": "AbilityDefG5"
 		},
 		"Combat": {
@@ -59,23 +58,38 @@
 				"DisableAllLocations": true,
 				"DisableHeadshots": true,
 				"EnableTacticsModifier": true,
-				"BaseModifier": -4,
+				"BaseModifier": -1,
 				"PilotTags": {}
+			},
+			"DamageModsBySkill": {
+				"StabilityMods": [
+					{
+						"StatName": "GunneryStabBonus1",
+						"Probability": 0.15,
+						"Multiplier": 1.15
+					}
+				],
+				"HeatMods": [
+					{
+						"StatName": "GunneryHeatBonus1",
+						"Probability": 0.15,
+						"Multiplier": 1.15
+					}
+				],
+				"APDmgMods": [],
+				"StdDmgMods": [
+					{
+						"StatName": "GunnderyDmgBonus1",
+						"Probability": 0.15,
+						"Multiplier": 1.15
+					}
+				]
 			},
 			"FlexibleSensorLock": {
 				"FreeActionWithAbility": false,
-				"FreeActionWithStat" : false,
-				"FreeActionStatName" : "IR_FreeSensorLock",
-				"AlsoAppliesToActiveProbe" : false,
-			},
-			"PainTolerance": {
-				"ResistPerGuts": 15,
-				"HeadDamageResistPenaltyPerArmorPoint": 2,
-				"HeadHitArmorOnlyResistPenaltyMulti": 0.3,
-				"AmmoExplosionResistPenaltyPerCapacityPercentile": 1,
-				"OverheatResistPenaltyPerHeatPercentile": 1,
-				"KnockdownResistPenalty": 6,
-				"SideLocationDestroyedResistPenalty": 10
+				"FreeActionWithStat": false,
+				"FreeActionStatName": "IR_FreeSensorLock",
+				"AlsoAppliesToActiveProbe": false
 			},
 			"ObstructionTweaks": {
 				"DRMechLocs": [
@@ -97,6 +111,15 @@
 					"unit_quad": 0.25
 				}
 			},
+			"PainTolerance": {
+				"ResistPerGuts": 15,
+				"HeadDamageResistPenaltyPerArmorPoint": 2,
+				"HeadHitArmorOnlyResistPenaltyMulti": 0.3,
+				"AmmoExplosionResistPenaltyPerCapacityPercentile": 1,
+				"OverheatResistPenaltyPerHeatPercentile": 1,
+				"KnockdownResistPenalty": 6,
+				"SideLocationDestroyedResistPenalty": 10
+			},
 			"ScaledStructure" : {
                 "DefaultScale" : { "Mod" : 0, "Multi" : 1.0 },
                 "DifficultyScaling" : {
@@ -113,14 +136,19 @@
 					"11" : { "Mod" : 55, "Multi" : 5.5 },
 					"12" : { "Mod" : 60, "Multi" : 6.0 }
 				}
-            },
+			},
 			"SpawnProtection": {
 				"ApplyGuard": true,
-				"EvasionPips": 6,
+				"EvasionPips": 8,
 				"ApplyToEnemies": true,
 				"ApplyToAllies": true,
 				"ApplyToNeutrals": true,
 				"ApplyToReinforcements": true
+			},
+
+			"TurretArmorAndStructure": {
+				"StructureMultiplierTurret": 0,
+				"ArmorMultiplierTurret": 0
 			}
 		},
 		"Store": {
