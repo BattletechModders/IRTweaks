@@ -46,6 +46,7 @@
 			"StreamlinedMainMenu": true,
 			"TurnDirectorStartFirstRoundFix" : true,
 			"UrbanExplosionsFix": false,
+			"WeakAgainstMeleeFix": true,
 			"WeaponTooltip": true
 		},
 		"Abilities": {

@@ -1,4 +1,9 @@
 {
+	"MeleeToolTip": {
+		"CG_Title_WeakMelee,": "WEAK AGAINST MELEE",
+		"CG_Text_WeakMeleeVehicles": "Melee attacks do {0}% damage to vehicles.",
+		"CG_Text_WeakMeleeTurrets": "Melee attacks do {0}% damage to turrets."
+	},
 	"Dialog": {
 		"SCRAP_ALL_TITLE": "SCRAP ALL IN STORAGE",
 		"SCRAP_ALL_ASSAULT": "SCRAP ASSAULTS IN STORAGE",
@@ -9,24 +14,19 @@
 		"BUTTON_CANCEL": "CANCEL",
 		"BUTTON_SCRAP": "SCRAP"
 	},
-
 	"Floaties": {
 		"INJURY_RESIST": "INJURY RESISTED!"
 	},
-
-	"Labels" : {
-		"MECHBAY_CONFIRM_TEXT" : "Validate"
+	"Labels": {
+		"MECHBAY_CONFIRM_TEXT": "Validate"
 	},
-
 	"Modifiers": {
 		"CALLED_SHOT": "Called Shot"
 	},
-
 	"SimGameDifficultyStrings": {
 		"DESCRIPTION": "Overall Difficulty",
 		"LABEL": "Difficulty"
 	},
-
 	"Tooltips": {
 		"COMBAT_SAVE_TITLE": "Combat Saves Disabled",
 		"COMBAT_SAVE_DETAILS": "Saving during combat is disabled to prevent errors in modded games. Loading a modded game can result in consistent behavior, as few mods write their data into the saves.",

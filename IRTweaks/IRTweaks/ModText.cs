@@ -4,6 +4,9 @@ namespace IRTweaks
 {
     public class ModText
     {
+        public const string CG_Title_WeakMelee = "WEAK AGAINST MELEE";
+        public const string CG_Text_WeakMeleeVehicles = "Melee attacks do {0}% damage to vehicles.";
+        public const string CG_Text_WeakMeleeTurrets = "Melee attacks do {0}% damage to turrets.";
 
         public const string DT_Title_ScrapAll = "SCRAP_ALL_TITLE";
         public const string DT_Title_ScrapAssaults = "SCRAP_ALL_ASSAULT";
@@ -14,6 +17,13 @@ namespace IRTweaks
         public const string DT_Desc_ScrapAll = "SCRAP_ALL_DESC";
         public const string DT_Button_Cancel = "BUTTON_CANCEL";
         public const string DT_Button_Scrap = "BUTTON_SCRAP";
+
+        public Dictionary<string, string> MeleeToolTip = new Dictionary<string, string>
+        {
+            {CG_Title_WeakMelee, "WEAK AGAINST MELEE"},
+            {CG_Text_WeakMeleeVehicles, "Melee attacks do {0}% damage to vehicles."},
+            {CG_Text_WeakMeleeTurrets, "Melee attacks do {0}% damage to turrets."}
+        };
 
         public Dictionary<string, string> Dialog = new Dictionary<string, string>
         {

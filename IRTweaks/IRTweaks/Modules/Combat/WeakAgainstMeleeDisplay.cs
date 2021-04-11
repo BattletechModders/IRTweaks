@@ -33,8 +33,8 @@ namespace IRTweaks.Modules.Combat
                     new object[]
                     {
                         LazySingletonBehavior<UIManager>.Instance.UILookAndColorConstants.StatusVehicleMeleeIcon,
-                        new Text("WEAK AGAINST MELEE", Array.Empty<object>()),
-                        new Text("Melee attacks do {0}% damage to vehicles.", dmg),
+                        new Text(ModText.CG_Title_WeakMelee.ToString(), Array.Empty<object>()),
+                        new Text(ModText.CG_Text_WeakMeleeVehicles.ToString(), dmg),
                         __instance.defaultIconScale, false
                     });
                 return false;
@@ -47,8 +47,8 @@ namespace IRTweaks.Modules.Combat
                     new object[]
                     {
                         LazySingletonBehavior<UIManager>.Instance.UILookAndColorConstants.StatusVehicleMeleeIcon,
-                        new Text("WEAK AGAINST MELEE", Array.Empty<object>()),
-                        new Text("Melee attacks do {0}% damage to turrets.", dmg),
+                        new Text(ModText.CG_Title_WeakMelee.ToString(), Array.Empty<object>()),
+                        new Text(ModText.CG_Text_WeakMeleeTurrets.ToString(), dmg),
                         __instance.defaultIconScale, false
                     });
                 return false;
