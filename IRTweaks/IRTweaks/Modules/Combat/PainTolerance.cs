@@ -131,6 +131,14 @@ namespace IRTweaks.Modules.Combat
                 ModState.InjuryResistPenalty = Mod.Config.Combat.PainTolerance.SideLocationDestroyedResistPenalty;
                 Mod.Log.Info?.Write($"  Actor torso/side destroyed, setting injury resist to: {ModState.InjuryResistPenalty}");
             }
+
+            else if (damageType == DamageType.Weapon && ModState.WasCTDestroyed)
+            {
+                ModState.InjuryResistPenalty = Mod.Config.Combat.PainTolerance.CTLocationDestroyedResistPenalty;
+                Mod.Log.Info?.Write($"  Actor Center destroyed, setting injury resist to: {ModState.InjuryResistPenalty}");
+                ModState.WasCTDestroyed = false;
+            }
+
             else if (damageType == DamageType.Overheat || damageType == DamageType.OverheatSelf || 
                 "OVERHEATED".Equals(__instance.InjuryReasonDescription, StringComparison.InvariantCultureIgnoreCase))
             {

@@ -85,6 +85,7 @@ namespace IRTweaks
 
             public float KnockdownResistPenalty = 6f;
             public float SideLocationDestroyedResistPenalty = 10f;
+            public float CTLocationDestroyedResistPenalty = 10f;
 
         }
 
@@ -148,6 +149,7 @@ namespace IRTweaks
         public bool BuildingDamageColorChange = true;
         public bool BraceOnMeleeWithJuggernaut = true;
         public bool CalledShotTweaks = true;
+        public bool CTDestructInjuryFix = true;
         public bool ExtendedStats = true;
         public bool FlexibleSensorLock = true;
         public bool PainTolerance = true;

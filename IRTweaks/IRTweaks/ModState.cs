@@ -29,6 +29,8 @@ namespace IRTweaks {
 
         public static HashSet<string> SpawnProtectedUnits = new HashSet<string>();
 
+        public static bool WasCTDestroyed = false;
+
         public static void Reset() {
             // Reinitialize state
             PilotCalledShotModifiers.Clear();
@@ -41,6 +43,8 @@ namespace IRTweaks {
             ActiveContractBuildingScaling = Mod.Config.Combat.ScaledStructure.DefaultScale;
 
             SpawnProtectedUnits.Clear();
+
+            WasCTDestroyed = false;
         }
     }
 
