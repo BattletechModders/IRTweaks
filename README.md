@@ -8,6 +8,7 @@ This is a mod for the [HBS BattleTech](http://battletechgame.com/) game that inc
 * **BulkScrapping**: Allows players to scrap all chassis of a given weight from the storage screen at once. Hold Alt and click one of the weight filters at the top of the storage screen to scrap everything in that category.
 * **CalledShotTweaks**: The modifier for called shots (aka offensive push) is driven by the pilot's tactics skill, ability, and pilot tags. It can also be influenced by gear. Options allow disabling the ability to called shot 
 * **CombatLog**: Provides an in-game log that captures text from floaties and preserves them in a readable format.
+* **CTDestructInjuryFix**: Re-enables CT destruction causing Maximum pilot injuries, forcing them to win a roll against `SimGameConstants.Pilot.IncapacitatedDeathChance` to survive at end of contract.
 * **DisableCampaign**: Disables the HBS campaign button, to prevent errors with various mod packs.
 * **DisableCombatRestarts**: Mission restarts lead to corruption at the salvage screen in vanilla, and especially in a modded game. This disables the UI selection that allows in-combat saves to be made.
 * **DisableCombatSaves**: Combat saves are prone to errors during vanilla gameplay, but especially so during modded gameplay. This disables the UI selection that allows in-combat saves to be made.
@@ -177,6 +178,20 @@ When a Mech suffers a knockdown, the resist chance is reduced by 6%. You can cus
 
 > Example: A pilot with guts 3 suffers a knockdown. They have a base resist of 30%, -6% for a knockdown, and thus will ignore the injury on 24% or less.
 
+### Overheat Injuries
+
+When a mech takes overheat damage, each point of heat over the overheating limit reduces the resist chance by **OverheatResistPenaltyPerHeatPercentile**. The difference between the mech's maximum heat (at which point is shuts down) and it's overheating limit is taken as a spectrum from 0 - 100. The mech's current heat within this spectrum defines the resistance penalty.
+
+> Example: A pilot with a resistance check of 60% overheats their Mech. The Mech has a maximum heat of 200, and an overheating limit of 120. 200 - 120 = 80 points on the overheating spectrum. If the Mech was currently as 180 heat points, the overheating points would be calculated as 180 -120 = 60 points. The ratio of points to spectrum is then calculated, or 80 / 60 = 0.75 * 100 = 75 points. Assuming PenaltyPerHeatDamageInjuryRatio = 1, then the resist check is reduced by -75%. The pilot cannot resist and thus takes the injury.
+
+### Side Torso Destroyed Injuries
+
+When a side torso is destroyed, a pilot normally takes a point of damage. The resist chance is reduced by `PainTolerance.SideLocationDestroyedResistPenalty`, which defaults to 10%.
+
+### Center Torso Destroyed Injuries
+
+**Requires `CTDestructInjuryFix` set to true!** When the center torso is destroyed, a pilot normally damage equal to their remaining health, incapacitating them. The resist chance is reduced by `PainTolerance.CTLocationDestroyedResistPenalty`, which defaults to 10%.
+
 ## Obstructed Line-Of-Site Damage Resistance
 
 When LOS to a target is "obstructed" (red-yellow or purple colored targeting line with an "eye" icon), shots hitting certain mech or vehicle armor locations can have their damage reduced.
@@ -215,16 +230,6 @@ When LOS to a target is "obstructed" (red-yellow or purple colored targeting lin
 			}
 ```
 Using the above settings, a standard mech with tag `unit_mech` would take 50% incoming damage to its left and right legs. A vehicle with tag `unit_vehicle` would take 75% incoming damage to front, rear, left, and right sides, and a Quad mech with tag `unit_quad` would take 10% damage to all 4 legs (left leg, right leg, left "arm", and right "arm"). A unit with multiple matching "tags" in `ObstructionDRByTags` will use the <i>lowest</i> damage multiplier, taking the least damage.
-
-### Overheat Injuries
-
-When a mech takes overheat damage, each point of heat over the overheating limit reduces the resist chance by **OverheatResistPenaltyPerHeatPercentile**. The difference between the mech's maximum heat (at which point is shuts down) and it's overheating limit is taken as a spectrum from 0 - 100. The mech's current heat within this spectrum defines the resistance penalty.
-
-> Example: A pilot with a resistance check of 60% overheats their Mech. The Mech has a maximum heat of 200, and an overheating limit of 120. 200 - 120 = 80 points on the overheating spectrum. If the Mech was currently as 180 heat points, the overheating points would be calculated as 180 -120 = 60 points. The ratio of points to spectrum is then calculated, or 80 / 60 = 0.75 * 100 = 75 points. Assuming PenaltyPerHeatDamageInjuryRatio = 1, then the resist check is reduced by -75%. The pilot cannot resist and thus takes the injury.
-
-### Side Torso Destroyed Injuries
-
-When a side torso is destroyed, a pilot normally takes a point of damage. The resist chance is reduced by `PainTolerance.SideLocationDestroyedResistPenalty`, which defaults to 10%.
 
 ## Random Start By Difficulty
 
