@@ -12,6 +12,32 @@ using UnityEngine.UI;
 namespace IRTweaks.Modules.Misc
 {
 
+
+
+    [HarmonyPatch(typeof(LineOfSight), "FindSecondaryImpactTarget")]
+    static class LineOfSight_FindSecondaryImpactTarget
+    {
+        static void Postfix(LineOfSight __instance, RaycastHit[] rayInfos, AbstractActor attacker,
+            ICombatant initialTarget, Vector3 attackPosition, ref Vector3 impactPoint, ref bool __result)
+        {
+            var combat = UnityGameInstance.BattleTechGame.Combat;
+            if (!combat.Constants.ToHit.StrayShotsEnabled)
+            {
+                var num = float.MaxValue;
+                for (int i = 0; i < rayInfos.Length; i++)
+                {
+                    if (rayInfos[i].distance < num)
+                    {
+                        impactPoint = rayInfos[i].point;
+                        num = rayInfos[i].distance;
+                    }
+                }
+                __result = true;
+            }
+        }
+    }
+
+
     [HarmonyPatch(typeof(SimGameDifficultySettingsModule), "InitSettings")]
     static class SimGameDifficultySettingsModule_InitSettings_Patch
     {
