@@ -129,6 +129,11 @@ namespace IRTweaks.Modules.UI {
                         ___buttonParent.ArgoButtonFlyoutChangeRoom(DropshipLocation.SHOP);
                     }
                     QueueOrForceActivation(DropshipMenuType.Shop, DropshipLocation.SHOP, ___buttonParent.navParent, simulation);
+                } else if (___text.text.Contains("Hiring Hall")) {
+                    if (simulation.CurRoomState != DropshipLocation.HIRING) {
+                        ___buttonParent.ArgoButtonFlyoutChangeRoom(DropshipLocation.HIRING);
+                    }
+                    QueueOrForceActivation(DropshipMenuType.HiringHall, DropshipLocation.HIRING, ___buttonParent.navParent, simulation);
                 } else if (___text.text.Contains("Memorial")) {
                     if (simulation.CurRoomState != DropshipLocation.BARRACKS) {
                         ___buttonParent.ArgoButtonFlyoutChangeRoom(DropshipLocation.BARRACKS);
@@ -156,14 +161,43 @@ namespace IRTweaks.Modules.UI {
         public static class SGNavigationWidgetLeft_Init {
             static bool Prepare() { return Mod.Config.Fixes.StreamlinedMainMenu; }
 
-            static void Postfix(SGNavigationWidgetLeft __instance, SGShipMap ___shipMap, SGNavigationList ___locationList) {
+            static void Postfix(SGNavigationWidgetLeft __instance, SGShipMap ___shipMap, SGFinancialForecastWidget ___financialForecast,
+                SGMoraleBar ___theMoraleBar, SGMedTechPointsDisplay ___theMedTechs, SGMechTechPointsDisplay ___theMechTechs, SGNavigationList ___locationList)
+            {
                 Mod.Log.Info?.Write($"SGNWL:I - entered with instanceType: {__instance.GetType()}.");
 
                 ___shipMap.gameObject.SetActive(false);
 
-                Vector3 startPos = ___locationList.transform.position;
-                startPos.y += 200;
-                ___locationList.transform.position = startPos;
+                if (Mod.Config.Fixes.ShiftMenuElements)
+                {
+                    Mod.Log.Info?.Write(" - Shifting Left Menu Elements");
+
+                    Vector3 startPos = ___financialForecast.transform.position;
+                    startPos.y += 10;
+                    ___financialForecast.transform.position = startPos;
+
+                    startPos = ___theMoraleBar.transform.position;
+                    startPos.y += 12;
+                    ___theMoraleBar.transform.position = startPos;
+
+                    startPos = ___theMedTechs.transform.position;
+                    startPos.y += 10;
+                    ___theMedTechs.transform.position = startPos;
+
+                    startPos = ___theMechTechs.transform.position;
+                    startPos.y += 10;
+                    ___theMechTechs.transform.position = startPos;
+
+                    startPos = ___locationList.transform.position;
+                    startPos.y += 245;
+                    ___locationList.transform.position = startPos;
+                }
+                else
+                {
+                    Vector3 startPos = ___locationList.transform.position;
+                    startPos.y += 200;
+                    ___locationList.transform.position = startPos;
+                }
             }
         }
 
@@ -216,6 +250,7 @@ namespace IRTweaks.Modules.UI {
         public static class SGNavigationList_Start {
 
             public static SGNavigationButton storeButton;
+            public static SGNavigationButton hiringHallButton;
             public static SGNavigationButton staffButton;
             public static SGNavigationButton memorialButton;
 
@@ -242,6 +277,26 @@ namespace IRTweaks.Modules.UI {
                         storeButton.SetupElement(__instance, ___radioSet, "Store",
                             LazySingletonBehavior<UIManager>.Instance.UILookAndColorConstants.DropshipRoomCaptainsQuartersIcon, simulation);
 
+                        // Create the hiring hall button
+                        if (Mod.Config.Fixes.ShiftMenuElements)
+                        {
+                            Mod.Log.Info?.Write(" - Creating Hiring Hall button");
+                            GameObject hiringHallButtonGO = GameObject.Instantiate(___argoButton.gameObject);
+                            hiringHallButtonGO.SetActive(true);
+                            hiringHallButtonGO.transform.position = ___argoButton.gameObject.transform.position;
+                            hiringHallButtonGO.transform.SetParent(___argoButton.gameObject.transform.parent);
+                            hiringHallButtonGO.transform.localScale = Vector3.one;
+                            hiringHallButtonGO.transform.SetSiblingIndex(2);
+
+
+                            hiringHallButton = hiringHallButtonGO.GetComponent<SGNavigationButton>();
+                            Traverse hiringHallButtonT = Traverse.Create(memorialButton).Field("id");
+                            hiringHallButtonT.SetValue(DropshipLocation.SHIP);
+
+                            hiringHallButton.SetupElement(__instance, ___radioSet, "Hiring Hall",
+                                LazySingletonBehavior<UIManager>.Instance.UILookAndColorConstants.DropshipRoomBarracksIcon, simulation);
+                        }
+
                         // Create the staff button
                         Mod.Log.Info?.Write(" - Creating staff button");
                         GameObject staffButtonGO = GameObject.Instantiate(___argoButton.gameObject);
@@ -249,7 +304,10 @@ namespace IRTweaks.Modules.UI {
                         staffButtonGO.transform.position = ___argoButton.gameObject.transform.position;
                         staffButtonGO.transform.SetParent(___argoButton.gameObject.transform.parent);
                         staffButtonGO.transform.localScale = Vector3.one;
-                        staffButtonGO.transform.SetSiblingIndex(7);
+                        if (Mod.Config.Fixes.ShiftMenuElements)
+                            staffButtonGO.transform.SetSiblingIndex(8);
+                        else
+                            staffButtonGO.transform.SetSiblingIndex(7);
 
                         staffButton = staffButtonGO.GetComponent<SGNavigationButton>();
                         Traverse staffButtonT = Traverse.Create(staffButton).Field("id");
@@ -272,7 +330,10 @@ namespace IRTweaks.Modules.UI {
                         memorialButtonGO.transform.position = ___argoButton.gameObject.transform.position;
                         memorialButtonGO.transform.SetParent(___argoButton.gameObject.transform.parent);
                         memorialButtonGO.transform.localScale = Vector3.one;
-                        memorialButtonGO.transform.SetSiblingIndex(9);
+                        if (Mod.Config.Fixes.ShiftMenuElements)
+                            memorialButtonGO.transform.SetSiblingIndex(10);
+                        else
+                            memorialButtonGO.transform.SetSiblingIndex(9);
 
                         memorialButton = memorialButtonGO.GetComponent<SGNavigationButton>();
                         Traverse memorialButtonT = Traverse.Create(memorialButton).Field("id");
