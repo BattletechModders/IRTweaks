@@ -182,6 +182,7 @@ namespace IRTweaks.Modules.Misc
             }
 
             ModState.PilotCurrentFreeXP[__instance.GUID]  = __instance.pilotDef.ExperienceUnspent;
+            Mod.Log.Info?.Write($"{__instance.Description.Id}: PilotCurrentXP now {ModState.PilotCurrentFreeXP[__instance.GUID]} after setting to {__instance.pilotDef.ExperienceUnspent}.");
         }
     }
 
@@ -199,12 +200,15 @@ namespace IRTweaks.Modules.Misc
             if (!ModState.PilotCurrentFreeXP.ContainsKey(__instance.GUID))
             {
                 ModState.PilotCurrentFreeXP.Add(__instance.GUID, __instance.UnspentXP);
-                Mod.Log.Info?.Write($"{__instance.Description.Id}: Added key to PilotCurrentXP with UnspentXP value.");
+                Mod.Log.Info?.Write($"{__instance.Description.Id}: Added key to PilotCurrentXP with {__instance.UnspentXP} UnspentXP value.");
             }
 
             ModState.PilotCurrentFreeXP[__instance.GUID] += value;
+            Mod.Log.Info?.Write($"{__instance.Description.Id}: PilotCurrentXP now {ModState.PilotCurrentFreeXP[__instance.GUID]} after adding {value}.");
         }
     }
+
+
 
     [HarmonyPatch(typeof(Pilot))]
     [HarmonyPatch("SpendExperience")]
@@ -220,7 +224,7 @@ namespace IRTweaks.Modules.Misc
             if (!ModState.PilotCurrentFreeXP.ContainsKey(__instance.GUID))
             {
                 ModState.PilotCurrentFreeXP.Add(__instance.GUID, __instance.UnspentXP);
-                Mod.Log.Info?.Write($"{__instance.Description.Id}: Added key to PilotCurrentXP with UnspentXP value.");
+                Mod.Log.Info?.Write($"{__instance.Description.Id}: Added key to PilotCurrentXP with {__instance.UnspentXP} UnspentXP value.");
             }
         }
 
@@ -236,16 +240,94 @@ namespace IRTweaks.Modules.Misc
             }
 
             ModState.PilotCurrentFreeXP[__instance.GUID] -= (int)value;
+            Mod.Log.Info?.Write($"{__instance.Description.Id}: pilot UnspentXP was {ModState.PilotCurrentFreeXP[__instance.GUID]} after subtracting {value}.");
             if (__instance.UnspentXP != ModState.PilotCurrentFreeXP[__instance.GUID])
             {
+                Mod.Log.Info?.Write($"{__instance.Description.Id}: pilot UnspentXP was {__instance.UnspentXP} but state variable was {ModState.PilotCurrentFreeXP[__instance.GUID]}.");
                 sim.CompanyStats.AddStatistic("CheaterCheaterPumpkinEater", true);
                 Mod.Log.Info?.Write($"Caught you, you little shit. Cheated experience.");
+
                 GenericPopupBuilder.Create("CHEAT DETECTED!", "t-bone thinks you're cheating. if you aren't, you should let the RT crew know on Discord.").AddButton("Okay", null, true, null).CancelOnEscape().AddFader(new UIColorRef?(LazySingletonBehavior<UIManager>.Instance.UILookAndColorConstants.PopupBackfill), 0f, true).Render();
             }
         }
     }
 
+    [HarmonyPatch(typeof(SGBarracksMWDetailPanel), "OnPilotReset")]
+    public static class SGBarracksMWDetailPanel_OnPilotReset
+    {
+        static bool Prepare() => Mod.Config.Fixes.CheatDetection;
+        public static void Postfix(SGBarracksMWDetailPanel __instance, Pilot ___tempPilot, Pilot ___curPilot)
+        {
+            var sim = UnityGameInstance.BattleTechGame.Simulation;
+            if (sim == null) return;
+            if (String.IsNullOrEmpty(___curPilot.GUID)) return;
+            if (!ModState.PilotCurrentFreeXP.ContainsKey(___curPilot.GUID))
+            {
+                ModState.PilotCurrentFreeXP.Add(___curPilot.GUID, ___curPilot.UnspentXP);
+                Mod.Log.Info?.Write(
+                    $"{___curPilot.Description.Id}: Added key to PilotCurrentXP with UnspentXP value, but should have been done already");
+            }
 
+            ModState.PilotCurrentFreeXP[___curPilot.GUID] = ___curPilot.UnspentXP;
+            Mod.Log.Info?.Write(
+                $"{___curPilot.Description.Id}: Free XP state was {ModState.PilotCurrentFreeXP[___curPilot.GUID]} after changing to basePilot {___curPilot.UnspentXP}");
+        }
+    }
+
+    [HarmonyPatch(typeof(SGBarracksWidget), "ReceiveButtonPress")]
+    public static class SGBarracksWidget_ReceiveButtonPress
+    {
+        static bool Prepare() => Mod.Config.Fixes.CheatDetection;
+        public static void Postfix(SGBarracksWidget __instance, string button, SGBarracksMWDetailPanel ___mechWarriorDetails)
+        {
+            if (button != "Close") return;
+            var sim = UnityGameInstance.BattleTechGame.Simulation;
+            if (sim == null) return;
+
+            var curPilot = Traverse.Create(___mechWarriorDetails).Field("curPilot").GetValue<Pilot>();
+            if (String.IsNullOrEmpty(curPilot.GUID)) return;
+            if (!ModState.PilotCurrentFreeXP.ContainsKey(curPilot.GUID))
+            {
+                ModState.PilotCurrentFreeXP.Add(curPilot.GUID, curPilot.UnspentXP);
+                Mod.Log.Info?.Write(
+                    $"{curPilot.Description.Id}: Added key to PilotCurrentXP with UnspentXP value, but should have been done already");
+            }
+
+            ModState.PilotCurrentFreeXP[curPilot.GUID] = curPilot.UnspentXP;
+            Mod.Log.Info?.Write(
+                $"{curPilot.Description.Id}: Free XP state was {ModState.PilotCurrentFreeXP[curPilot.GUID]} after changing to basePilot {curPilot.UnspentXP}");
+        }
+    }
+
+    [HarmonyPatch(typeof(SGBarracksAdvancementPanel), "OnValueClick")]
+    [HarmonyBefore(new string[]
+    {
+        "ca.gnivler.BattleTech.Abilifier"
+    })]
+    [HarmonyPriority(Priority.First)]
+    public static class SGBarracksAdvancementPanel_OnValueClick_Patch
+    {
+        static bool Prepare() => Mod.Config.Fixes.CheatDetection;
+        public static void Prefix(SGBarracksAdvancementPanel __instance, Pilot ___curPilot, Pilot ___basePilot,
+            List<SGBarracksSkillPip> ___gunPips, List<SGBarracksSkillPip> ___pilotPips,
+            List<SGBarracksSkillPip> ___gutPips, List<SGBarracksSkillPip> ___tacPips, string type, int value)
+        {
+            if (___curPilot.StatCollection.GetValue<int>(type) > value)
+            {
+                var sim = UnityGameInstance.BattleTechGame.Simulation;
+                if (sim == null) return;
+                if (String.IsNullOrEmpty(___curPilot.GUID)) return;
+                if (!ModState.PilotCurrentFreeXP.ContainsKey(___curPilot.GUID))
+                {
+                    ModState.PilotCurrentFreeXP.Add(___curPilot.GUID, ___curPilot.UnspentXP);
+                    Mod.Log.Info?.Write($"{___curPilot.Description.Id}: Added key to PilotCurrentXP with UnspentXP value, but should have been done already");
+                }
+
+                ModState.PilotCurrentFreeXP[___curPilot.GUID] = ___basePilot.UnspentXP;
+                Mod.Log.Info?.Write($"{___curPilot.Description.Id}: Free XP state was {ModState.PilotCurrentFreeXP[___curPilot.GUID]} after changing to basePilot {___basePilot.UnspentXP}");
+            }
+        }
+    }
 
     [HarmonyPatch(typeof(SimGameState))]
     [HarmonyPatch("AddFunds")]
