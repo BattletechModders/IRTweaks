@@ -31,6 +31,13 @@ namespace IRTweaks {
 
         public static bool WasCTDestroyed = false;
 
+        public static Dictionary<string, float> UnitStartingArmor = new Dictionary<string, float>();
+        public static Dictionary<string, float> UnitCurrentArmor = new Dictionary<string, float>();
+        public static Dictionary<string, int> UnitCurrentHeat = new Dictionary<string, int>();
+        public static Dictionary<string, int> PilotCurrentFreeXP = new Dictionary<string, int>();
+        public static Dictionary<string, int> PilotDefCurrentFreeXP = new Dictionary<string, int>();
+        public static Dictionary<string, int> SimGameFunds = new Dictionary<string, int>();
+
         public static void Reset() {
             // Reinitialize state
             PilotCalledShotModifiers.Clear();

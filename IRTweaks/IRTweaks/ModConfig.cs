@@ -161,6 +161,7 @@ namespace IRTweaks
         public bool WeakAgainstMeleeFix = true;
 
         // Misc
+        public bool CheatDetection = true;
         public bool DisableCampaign = true;
         public bool DisableLowFundsNotification = true;
         public bool DisableMPHashCalculation = true;
