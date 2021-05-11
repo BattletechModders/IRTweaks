@@ -465,7 +465,12 @@ namespace IRTweaks.Modules.Misc
             if (!ModState.SimGameFunds.ContainsKey(__instance.InstanceGUID))
             {
                 ModState.SimGameFunds.Add(__instance.InstanceGUID, __instance.Funds);
-                Mod.Log.Info?.Write($"CHEATDETECTION: Added key to SimGameFunds with Funds value.");
+                Mod.Log.Info?.Write($"CHEATDETECTION: Added key to SimGameFunds with Funds {__instance.Funds} on rehydrate.");
+            }
+            else
+            {
+                ModState.SimGameFunds[__instance.InstanceGUID] = __instance.Funds;
+                Mod.Log.Info?.Write($"CHEATDETECTION: Set ModState.SimGameFunds to {__instance.Funds} on rehydrate.");
             }
 
             var currentPilots = new List<Pilot>(__instance.PilotRoster);
@@ -476,7 +481,65 @@ namespace IRTweaks.Modules.Misc
                 if (!ModState.PilotCurrentFreeXP.ContainsKey(pilot.GUID))
                 {
                     ModState.PilotCurrentFreeXP.Add(pilot.GUID, pilot.UnspentXP);
-                    Mod.Log.Info?.Write($"CHEATDETECTION: {pilot.Description.Id}: Added key to PilotCurrentXP with ExperienceUnspent value.");
+                    Mod.Log.Info?.Write($"CHEATDETECTION: {pilot.Description.Id}: Added key to PilotCurrentXP with ExperienceUnspent {pilot.UnspentXP}.");
+                }
+                else
+                {
+                    ModState.PilotCurrentFreeXP[pilot.GUID] = pilot.UnspentXP;
+                    Mod.Log.Info?.Write($"CHEATDETECTION: {pilot.Description.Id}: Set tracker PilotCurrentXP with ExperienceUnspent {pilot.UnspentXP}.");
+                }
+            }
+        }
+    }
+
+
+    [HarmonyPatch(typeof(SimGameState))]
+    [HarmonyPatch("Dehydrate")]
+    public static class SimGameState_Dehydrate_CH
+    {
+        static bool Prepare() => Mod.Config.Fixes.CheatDetection;
+
+        public static void Prefix(SimGameState __instance)
+        {
+            if (!ModState.SimGameFunds.ContainsKey(__instance.InstanceGUID))
+            {
+                ModState.SimGameFunds.Add(__instance.InstanceGUID, __instance.Funds);
+                Mod.Log.Info?.Write($"CHEATDETECTION: Added key to SimGameFunds with Funds {__instance.Funds} on dehydrate.");
+            }
+
+            if (__instance.Funds != ModState.SimGameFunds[__instance.InstanceGUID])
+            {
+                __instance.CompanyStats.AddStatistic("CheaterCheaterPumpkinEater", true);
+                Mod.Log.Info?.Write($"CHEATDETECTION: Caught you, you little shit. Cheated money. SGS Funds: {__instance.Funds} while tracker funds {ModState.SimGameFunds[__instance.InstanceGUID]}");
+
+                if (Mod.Config.Fixes.CheatDetectionNotify) GenericPopupBuilder.Create("CHEAT DETECTED!", "t-bone thinks you're cheating. if you aren't, you should let the RT crew know on Discord.").AddButton("Okay", null, true, null).CancelOnEscape().AddFader(new UIColorRef?(LazySingletonBehavior<UIManager>.Instance.UILookAndColorConstants.PopupBackfill), 0f, true).Render();
+            }
+            
+
+            var currentPilots = new List<Pilot>(__instance.PilotRoster);
+            currentPilots.Add(__instance.Commander);
+            foreach (var pilot in currentPilots)
+            {
+                if (String.IsNullOrEmpty(pilot.GUID)) return;
+                if (!ModState.PilotCurrentFreeXP.ContainsKey(pilot.GUID))
+                {
+                    ModState.PilotCurrentFreeXP.Add(pilot.GUID, pilot.UnspentXP);
+                    Mod.Log.Info?.Write($"CHEATDETECTION: {pilot.Description.Id}: Added key to PilotCurrentXP with ExperienceUnspent {pilot.UnspentXP}.");
+                }
+
+                if (pilot.UnspentXP != ModState.PilotCurrentFreeXP[pilot.GUID])
+                {
+                    Mod.Log.Info?.Write($"CHEATDETECTION: {pilot.Description.Id}: pilot UnspentXP was {pilot.UnspentXP} but state variable was {ModState.PilotCurrentFreeXP[pilot.GUID]}.");
+                    __instance.CompanyStats.AddStatistic("CheaterCheaterPumpkinEater", true);
+                    Mod.Log.Info?.Write($"CHEATDETECTION: Caught you, you little shit. Cheated experience.");
+
+                    if (Mod.Config.Fixes.CheatDetectionNotify) GenericPopupBuilder
+                        .Create("CHEAT DETECTED!",
+                            "t-bone thinks you're cheating. if you aren't, you should let the RT crew know on Discord.")
+                        .AddButton("Okay", null, true, null).CancelOnEscape()
+                        .AddFader(
+                            new UIColorRef?(LazySingletonBehavior<UIManager>.Instance
+                                .UILookAndColorConstants.PopupBackfill), 0f, true).Render();
                 }
             }
         }
