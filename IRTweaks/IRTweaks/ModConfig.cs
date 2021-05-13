@@ -162,6 +162,7 @@ namespace IRTweaks
 
         // Misc
         public bool CheatDetection = true;
+        public bool CheatDetectionNotify = false;
         public bool DisableCampaign = true;
         public bool DisableLowFundsNotification = true;
         public bool DisableMPHashCalculation = true;
