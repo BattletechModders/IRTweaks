@@ -21,7 +21,7 @@ namespace IRTweaks
 
     public class CheatOpts
     {
-        public bool CheatDetection = true;
+        public bool CheatDetection = false;
         public bool CheatDetectionNotify = false;
         public string CheatDetectionStat = "CheatFound1";
     }
