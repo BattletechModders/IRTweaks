@@ -19,6 +19,13 @@ namespace IRTweaks
         public int QuantityOnControl = 20;
     }
 
+    public class CheatOpts
+    {
+        public bool CheatDetection = false;
+        public bool CheatDetectionNotify = false;
+        public string CheatDetectionStat = "CheatFound1";
+    }
+
     public class CombatOpts
     {
         public int PilotAttributesMax = 13;
@@ -161,8 +168,7 @@ namespace IRTweaks
         public bool WeakAgainstMeleeFix = true;
 
         // Misc
-        public bool CheatDetection = true;
-        public bool CheatDetectionNotify = false;
+        
         public bool DisableCampaign = true;
         public bool DisableLowFundsNotification = true;
         public bool DisableMPHashCalculation = true;
@@ -202,6 +208,7 @@ namespace IRTweaks
         public FixesFlags Fixes = new FixesFlags();
 
         public AbilityOpts Abilities = new AbilityOpts();
+        public CheatOpts CheatDetection = new CheatOpts();
         public CombatOpts Combat = new CombatOpts();
         public StoreOpts Store = new StoreOpts();
 
@@ -260,6 +267,11 @@ namespace IRTweaks
             Mod.Log.Info?.Write($"   ApplyGuard:{Combat.SpawnProtection.ApplyGuard}  EvasionPips:{Combat.SpawnProtection.EvasionPips}");
             Mod.Log.Info?.Write($"   ApplyToEnemies:{Combat.SpawnProtection.ApplyToEnemies}  ApplyToAllies:{Combat.SpawnProtection.ApplyToAllies}  ApplyToNeutrals:{Combat.SpawnProtection.ApplyToNeutrals}  ");
             Mod.Log.Info?.Write($"   ApplyToReinforcements:{Combat.SpawnProtection.ApplyToReinforcements}");
+
+            Mod.Log.Info?.Write("  -- Cheat Detection --");
+            Mod.Log.Info?.Write($"   CheatDetection:{CheatDetection.CheatDetection}");
+            Mod.Log.Info?.Write($"   CheatDetectionNotify:{CheatDetection.CheatDetectionNotify}");
+            Mod.Log.Info?.Write($"   CheatDetectionStat:{CheatDetection.CheatDetectionStat}");
 
             Mod.Log.Info?.Write("  -- ObstructionTweaks --");
             Mod.Log.Info?.Write($"   DRMechLocs:{Combat.ObstructionTweaks.DRMechLocs}");
