@@ -100,6 +100,15 @@ This restrictions do not apply to any units that are currently prone or shutdown
 
 Additionally you can allow an actor to bypass this restriction by setting  `IRTCalledShotAlwaysAllow` statistic (Boolean) to true. Units with this set to true can always use the vanilla called shot location selection.
 
+## Cheat Detection
+This module allows the use of cheats such as CheatEngine or other memory address editors to be detected.
+
+`CheatDetection` - bool, if true CheatDetection is enabled.
+
+`CheatDetectionNotify` - bool, if true a popup is displayed ingame when a cheat was detected.
+
+`CheatDetectionStat` - string, statname of bool statistic written to CompanyStats when a cheat has been detected.
+
 ## Damage Mods
 This tweak allows you to define multipliers to damage of various types: normal, heat, stability, and AP damage (from CAC). Units' access to the modifiers is first controlled via a stat check; the unit must have boolean true value for a statistic named the same as StatName in the following settings. This statistic can be added via equipment, pilot abilities, etc. Probability corresponds to the probability that the modifier will be applied; set to 1 to always apply the modifier. Multiplier represents the actual multiplier to be applied.
 
