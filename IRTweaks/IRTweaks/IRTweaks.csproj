@@ -121,6 +121,7 @@
     <Compile Include="Modules\Combat\SpawnProtection.cs" />
     <Compile Include="Modules\Combat\UrbanExplosionsFix.cs" />
     <Compile Include="Modules\Misc\CheatDetection.cs" />
+    <Compile Include="Modules\Misc\FactionValueFix.cs" />
     <Compile Include="Modules\Misc\DisableMPHash.cs" />
     <Compile Include="Modules\Misc\MultiTargetAsStatistic.cs" />
     <Compile Include="Modules\Misc\ShowAllArgoUpgrades.cs" />
