@@ -15,6 +15,7 @@ This is a mod for the [HBS BattleTech](http://battletechgame.com/) game that inc
 * **DisableLowFundsNotification**: Disables the irritating "low funds" notification.
 * **DisableMPHashCalculation**: Disables a mod-hash calculated on startup that's only used to validate multiplayer games are compatible. Saves 2-3s of load time.
 * **ExtendedStats**: Allows pilots to be assigned Statistic values above the normal bounds of 1-10.
+* **FactionValueFix**: Fixes career FactionValues in saves when FactionValues are changed mid-career. Previously, if a FactionValue was set to "IsCareerIgnoredContractTarget": false,, that false value would persist in saves even when the actual FactionValue in Faction.json was changed, preventing that faction from appearing as a procedural contract target for that career.
 * **FlexibleSensorLock**: Using a Sensor Lock action does not count as movement or firing. This allows it to be combined with actions in a unit's activation.
 * **MaxArmorMaxesArmor**: "Max Armor" button in mechbay now sets armor to the maximum possible for the chassis; ignores available tonnage. Holding Control while clicking will use vanilla functionality (does not work well with MechEngineer armors like ferro, etc.)
 * **MechbayLayoutFix**: Moves a few UI elements in the mechbay to work better in a MechEngineer based mod. Thanks to Tiraxx for the idea!
