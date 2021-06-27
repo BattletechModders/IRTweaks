@@ -247,6 +247,22 @@ This tweak allows you to define difficulty settings that impact the Career start
 
 This tweak is enabled if `Fixes.RandomStartByDifficulty=true` is set to true in _mod.json_. Customizations are only expressed through the difficulty constants described below.
 
+### Restrict More Settings to "Start Only"
+
+This tweak allows the "Career start only" difficulty settings field to be expanded to hold >6 settings, and uses the following settings:
+```
+	"Misc": {
+		"StartOnlyScalar": 40,
+		"StartOnlyPositionY": 40,
+		"RegularPositionY": 40
+	},
+```
+StartOnlyScalar - float, for each pair of additional "start only" settings, the start only field will be embiggened by this amount, and the "regular" settings field will be shrunk by this amount.
+
+StartOnlyPositionY - float, adjusts vertical position of the "start only" settings field.
+
+RegularPositionY - float, adjusts vertical position of the "regular" settings field.
+
 ### Expanded Stray Shot Control
 
 This tweak allows you to further control raycasted Stray Shot behavior: supported options are Disabled, Buildings Only, Enemies Only, Enemies and Neutral, and All (Friendly Fire).
