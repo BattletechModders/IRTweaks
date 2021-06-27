@@ -66,32 +66,35 @@ namespace IRTweaks.Modules.Misc
                 }
             }
 
-            if (startCount < 2) return;
             var startYAdjust = startCount / 2;
 
             var regularDiffs = GameObject.Find("difficulty_scroll");
             var startOnly = GameObject.Find("OBJ_startOnly_settings");
             var startRect = startOnly.GetComponent<RectTransform>();
+
+            if (startYAdjust > 0)
+            {
+
             
-            var currentStartPosition = startRect.position;
-            currentStartPosition.y += Mod.Config.Misc.DifficultyUIScaling.StartOnlyPositionY;
-            startRect.position = currentStartPosition;
+                var currentStartPosition = startRect.position;
+                currentStartPosition.y += Mod.Config.Misc.DifficultyUIScaling.StartOnlyPositionY;
+                startRect.position = currentStartPosition;
 
-            var currentStartSizeDelta = startRect.sizeDelta;
+                var currentStartSizeDelta = startRect.sizeDelta;
             
-            currentStartSizeDelta.y += startYAdjust * Mod.Config.Misc.DifficultyUIScaling.StartOnlyScalar;
-            startRect.sizeDelta = currentStartSizeDelta;
+                currentStartSizeDelta.y += startYAdjust * Mod.Config.Misc.DifficultyUIScaling.StartOnlyScalar;
+                startRect.sizeDelta = currentStartSizeDelta;
 
-            var regularRect = regularDiffs.GetComponent<RectTransform>();
-            var currentRegSizeDelta = regularRect.sizeDelta;
-            currentRegSizeDelta.y -= startYAdjust * Mod.Config.Misc.DifficultyUIScaling.StartOnlyPositionY;
-            regularRect.sizeDelta = currentRegSizeDelta;
+                var regularRect = regularDiffs.GetComponent<RectTransform>();
+                var currentRegSizeDelta = regularRect.sizeDelta;
+                currentRegSizeDelta.y -= startYAdjust * Mod.Config.Misc.DifficultyUIScaling.StartOnlyPositionY;
+                regularRect.sizeDelta = currentRegSizeDelta;
 
-            var currentRegPosition = regularRect.position;
-            currentRegPosition.y += Mod.Config.Misc.DifficultyUIScaling.RegularPositionY;
-            currentRegPosition.y -= (startYAdjust * Mod.Config.Misc.DifficultyUIScaling.StartOnlyPositionY);
-            regularRect.position = currentRegPosition;
-
+                var currentRegPosition = regularRect.position;
+                currentRegPosition.y += Mod.Config.Misc.DifficultyUIScaling.RegularPositionY;
+                currentRegPosition.y -= (startYAdjust * Mod.Config.Misc.DifficultyUIScaling.StartOnlyPositionY);
+                regularRect.position = currentRegPosition;
+            }
 
             var startTransformLayoutGroup = startOnly.GetComponent<RectTransform>().GetComponent<GridLayoutGroup>();
             startTransformLayoutGroup.childAlignment = TextAnchor.UpperCenter;
