@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using BattleTech.UI.TMProWrapper;
+using HBS.Extensions;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -43,16 +44,64 @@ namespace IRTweaks.Modules.Misc
     {
         private static MethodInfo _getItemMethodUInfo = AccessTools.Method(typeof(SimGameDifficultySettingsModule), "GetItem");
 
-        static void Prefix(SimGameDifficultySettingsModule __instance)
+        static void Prefix(SimGameDifficultySettingsModule __instance, SimGameDifficulty ___cachedDiff)
         {
-            var startonly = GameObject.Find("OBJ_startOnly_settings");
-            var transformLayoutGroup = startonly.GetComponent<RectTransform>().GetComponent<GridLayoutGroup>();
-            transformLayoutGroup.cellSize = new Vector2(375, 40);
-            transformLayoutGroup.spacing = new Vector2(25, 22);
+
+            ___cachedDiff = UnityGameInstance.BattleTechGame.DifficultySettings;
+            var settings = ___cachedDiff.GetSettings();
+            settings.Sort(delegate(SimGameDifficulty.DifficultySetting a, SimGameDifficulty.DifficultySetting b)
+            {
+                if (a.UIOrder != b.UIOrder)
+                {
+                    return a.UIOrder.CompareTo(b.UIOrder);
+                }
+                return a.Name.CompareTo(b.Name);
+            });
+            var startCount = -5;
+            foreach (var setting in settings)
+            {
+                if (setting.Visible && setting.StartOnly && setting.Enabled)
+                {
+                    startCount += 1;
+                }
+            }
+
+            if (startCount < 2) return;
+            var startYAdjust = startCount / 2;
+
+            var regularDiffs = GameObject.Find("difficulty_scroll");
+            var startOnly = GameObject.Find("OBJ_startOnly_settings");
+            var startRect = startOnly.GetComponent<RectTransform>();
+            
+            var currentStartPosition = startRect.position;
+            currentStartPosition.y += 35;
+            startRect.position = currentStartPosition;
+
+            var currentStartSizeDelta = startRect.sizeDelta;
+            
+            currentStartSizeDelta.y += startYAdjust * 35;
+            startRect.sizeDelta = currentStartSizeDelta;
+
+            var regularRect = regularDiffs.GetComponent<RectTransform>();
+            var currentRegSizeDelta = regularRect.sizeDelta;
+            currentRegSizeDelta.y -= startYAdjust * 30;
+            regularRect.sizeDelta = currentRegSizeDelta;
+
+            var currentRegPosition = regularRect.position;
+            currentRegPosition.y += 35;
+            currentRegPosition.y -= (startYAdjust * 30);
+            regularRect.position = currentRegPosition;
+
+
+            var startTransformLayoutGroup = startOnly.GetComponent<RectTransform>().GetComponent<GridLayoutGroup>();
+            startTransformLayoutGroup.childAlignment = TextAnchor.UpperCenter;
+            startTransformLayoutGroup.cellSize = new Vector2(375, 40);
+            startTransformLayoutGroup.spacing = new Vector2(25, 10);
+
         }
         static void Postfix(SimGameDifficultySettingsModule __instance, SimGameDifficulty ___cachedDiff, string ___ironManModeId, string ___autoEquipMechsId, string ___mechPartsReqId, string ___skipPrologueId, string ___randomMechId, string ___argoUpgradeCostId, SGDSToggle ___ironManModeToggle, SGDSDropdown ___mechPartsReqDropdown, GameObject ___disabledOverlay, List<SGDSDropdown> ___activeDropdowns, List<SGDSToggle> ___activeToggles, List<SGDSDropdown> ___cachedDropdowns, List<SGDSToggle> ___cachedToggles, SGDSToggle ___togglePrefab, SGDSDropdown ___dropdownPrefab)
         {
-            var sim = UnityGameInstance.BattleTechGame.Simulation;
+
             var existingStartOnlyVars = new List<string>()
             {
                 ___ironManModeId,
@@ -88,7 +137,7 @@ namespace IRTweaks.Modules.Misc
 
                             GameObject newDropDownObject = UnityEngine.Object.Instantiate<GameObject>(sourceSettingDropDownGO, sourceSettingDropDownGO.transform.parent);
 
-                            SGDSDropdown newDropDown = newDropDownObject.GetComponentInParent<SGDSDropdown>();
+                            SGDSDropdown newDropDown = newDropDownObject.GetOrAddComponent<SGDSDropdown>();
 
                             var dropdown = Traverse.Create(newDropDown).Field("dropdown").GetValue<HBS_Dropdown>();
                             var dropdownrect = dropdown.gameObject.GetComponent<RectTransform>();
@@ -110,7 +159,7 @@ namespace IRTweaks.Modules.Misc
                         {
                             var sourceDiffToggleGO = ___ironManModeToggle.gameObject;
                             GameObject sourceDiffToggle = UnityEngine.Object.Instantiate<GameObject>(sourceDiffToggleGO, sourceDiffToggleGO.transform.parent);
-                            SGDSToggle newToggle = sourceDiffToggle.GetComponentInParent<SGDSToggle>();
+                            SGDSToggle newToggle = sourceDiffToggle.GetOrAddComponent<SGDSToggle>();
 
                             if (!ModState.InstantiatedDifficultySettings.instantiatedToggles.Contains(newToggle))
                             {
