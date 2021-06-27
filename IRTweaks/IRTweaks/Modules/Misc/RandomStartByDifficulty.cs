@@ -74,22 +74,22 @@ namespace IRTweaks.Modules.Misc
             var startRect = startOnly.GetComponent<RectTransform>();
             
             var currentStartPosition = startRect.position;
-            currentStartPosition.y += 35;
+            currentStartPosition.y += Mod.Config.Misc.DifficultyUIScaling.StartOnlyPositionY;
             startRect.position = currentStartPosition;
 
             var currentStartSizeDelta = startRect.sizeDelta;
             
-            currentStartSizeDelta.y += startYAdjust * 35;
+            currentStartSizeDelta.y += startYAdjust * Mod.Config.Misc.DifficultyUIScaling.StartOnlyScalar;
             startRect.sizeDelta = currentStartSizeDelta;
 
             var regularRect = regularDiffs.GetComponent<RectTransform>();
             var currentRegSizeDelta = regularRect.sizeDelta;
-            currentRegSizeDelta.y -= startYAdjust * 30;
+            currentRegSizeDelta.y -= startYAdjust * Mod.Config.Misc.DifficultyUIScaling.StartOnlyPositionY;
             regularRect.sizeDelta = currentRegSizeDelta;
 
             var currentRegPosition = regularRect.position;
-            currentRegPosition.y += 35;
-            currentRegPosition.y -= (startYAdjust * 30);
+            currentRegPosition.y += Mod.Config.Misc.DifficultyUIScaling.RegularPositionY;
+            currentRegPosition.y -= (startYAdjust * Mod.Config.Misc.DifficultyUIScaling.StartOnlyPositionY);
             regularRect.position = currentRegPosition;
 
 
