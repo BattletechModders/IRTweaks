@@ -252,10 +252,11 @@ This tweak is enabled if `Fixes.RandomStartByDifficulty=true` is set to true in 
 This tweak allows the "Career start only" difficulty settings field to be expanded to hold >6 settings, and uses the following settings:
 ```
 	"Misc": {
-		"StartOnlyScalar": 40,
-		"StartOnlyPositionY": 40,
-		"RegularPositionY": 40
-	},
+			"DifficultyUIScaling": {
+				"StartOnlyScalar": 40,
+				"StartOnlyPositionY": 40,
+				"RegularPositionY": 40
+			},
 ```
 StartOnlyScalar - float, for each pair of additional "start only" settings, the start only field will be embiggened by this amount, and the "regular" settings field will be shrunk by this amount.
 
