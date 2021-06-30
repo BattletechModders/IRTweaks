@@ -241,6 +241,29 @@ When LOS to a target is "obstructed" (red-yellow or purple colored targeting lin
 ```
 Using the above settings, a standard mech with tag `unit_mech` would take 50% incoming damage to its left and right legs. A vehicle with tag `unit_vehicle` would take 75% incoming damage to front, rear, left, and right sides, and a Quad mech with tag `unit_quad` would take 10% damage to all 4 legs (left leg, right leg, left "arm", and right "arm"). A unit with multiple matching "tags" in `ObstructionDRByTags` will use the <i>lowest</i> damage multiplier, taking the least damage.
 
+## Mechbay Refit Restrictions
+
+This tweak allows you to restrict refitting certain components (using Component Tags) if the player does not have a matching Argo Upgrade. For example, if you set the component tags for `emod_engineslots_xl_center` to contain the following:
+```
+"ComponentTags" : {
+	"items" : [
+	"component_type_stock",
+	"requires_refitHarness"
+		],
+	"tagSetSourceFile" : ""
+	}
+```
+and in IRTweaks mod.json settings you have the following (under the "Misc" section):
+```
+"MechLabRefitReqs": {
+	"MechLabRefitReqs":{
+		"requires_refitHarness": "argoUpgrade_mechBay_refitHarness"
+		}
+	}
+```
+
+Then the player will be unable to fit an XL engine if they have not obtained the Argo upgrade with ID `argoUpgrade_mechBay_refitHarness`
+
 ## Random Start By Difficulty
 
 This tweak allows you to define difficulty settings that impact the Career starts. This is useful for mods like RogueTech, which customizes your starting lance and faction reputation based upon a difficulty menu selection. The mod looks for two custom *DifficultyConstants*, each with a different behavior.
