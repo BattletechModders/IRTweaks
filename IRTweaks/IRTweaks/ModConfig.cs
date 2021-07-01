@@ -35,6 +35,12 @@ namespace IRTweaks
             public float StartOnlyPositionY = 40f;
             public float RegularPositionY = 40f;
         }
+
+        public MechLabRefitReqOpts MechLabRefitReqs = new MechLabRefitReqOpts();
+        public class MechLabRefitReqOpts
+        {
+            public Dictionary<string, string> MechLabRefitReqs = new Dictionary<string, string>();
+        }
     }
 
     public class CombatOpts

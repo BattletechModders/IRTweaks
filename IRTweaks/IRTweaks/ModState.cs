@@ -11,7 +11,9 @@ namespace IRTweaks {
             public static List<SGDSToggle> instantiatedToggles = new List<SGDSToggle>();
             public static List<SGDSDropdown> instantiatedDropdowns = new List<SGDSDropdown>();
         }
-        
+
+        public static bool IsComponentValidForRefit = false;
+
         public static Dictionary<string, int> PilotCalledShotModifiers = new Dictionary<string, int>();
 
         public static SelectionStateSensorLock SelectionStateSensorLock;
