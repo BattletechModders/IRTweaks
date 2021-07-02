@@ -5,7 +5,9 @@ using BattleTech.UI.TMProWrapper;
 using Harmony;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using HBS;
+using Localize;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
@@ -185,6 +187,70 @@ namespace IRTweaks.Modules.UI
             }
         }
     }
+
+    [HarmonyPatch(typeof(MechLabLocationWidget), "ValidateAdd",
+        new Type[] {typeof(MechComponentRef)})]
+    static class MechLabLocationWidget_ValidateAdd
+    {
+        static bool Prepare() => Mod.Config.Misc.MechLabRefitReqs.MechLabRefitReqs.Count > 0;
+        public static void Postfix(MechLabLocationWidget __instance, MechComponentRef newComponent, MechLabPanel ___mechLab)
+        {
+            var sim = UnityGameInstance.BattleTechGame.Simulation;
+
+            if (sim == null)
+            {
+                ModState.IsComponentValidForRefit = true;
+                return;
+            }
+
+            foreach (var tag in newComponent.Def.ComponentTags)
+            {
+                if (Mod.Config.Misc.MechLabRefitReqs.MechLabRefitReqs.ContainsKey(tag))
+                {
+                    if (!sim.PurchasedArgoUpgrades.Contains(
+                        Mod.Config.Misc.MechLabRefitReqs.MechLabRefitReqs[tag]))
+                    {
+                        sim.DataManager.ShipUpgradeDefs.TryGet(
+                            Mod.Config.Misc.MechLabRefitReqs.MechLabRefitReqs[tag], out ShipModuleUpgrade upgrade);
+
+                        var SetErrorMsg = Traverse.Create(__instance).Method("SetDropErrorMessage",
+                            new Type[] {typeof(string), typeof(object[])});
+
+                        SetErrorMsg.GetValue(
+                            $"Cannot fit {newComponent.Def.Description.Name} to unit, requires Argo upgrade {upgrade.Description.Name}.", new object[]{});
+
+                        ModState.IsComponentValidForRefit = false;
+                        return;
+                    }
+                }
+            }
+            ModState.IsComponentValidForRefit = true;
+        }
+    }
+
+    [HarmonyPatch(typeof(MechLabLocationWidget), "OnMechLabDrop",
+        new Type[] {typeof(PointerEventData), typeof(MechLabDropTargetType)})]
+    static class MechLabLocationWidget_OnMechLabDrop
+    {
+        static bool Prepare() => Mod.Config.Misc.MechLabRefitReqs.MechLabRefitReqs.Count > 0;
+        public static bool Prefix(MechLabLocationWidget __instance, PointerEventData eventData, MechLabDropTargetType addToType, MechLabPanel ___mechLab, Text ____dropErrorMessage)
+        {
+            var sim = UnityGameInstance.BattleTechGame.Simulation;
+
+            if (sim == null) return true;
+
+            if (!ModState.IsComponentValidForRefit)
+            {
+                ___mechLab.ShowDropErrorMessage(____dropErrorMessage);
+                ___mechLab.OnDrop(eventData);
+                return false;
+            }
+
+            return true;
+        }
+    }
+
+
 
     //[HarmonyPatch(typeof(MechLabPanel), "SetData")]
     //[HarmonyPatch(new Type[] { typeof(MechDef), typeof(DataManager), typeof(UnityAction), typeof(UnityAction), typeof(bool)})]

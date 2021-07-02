@@ -241,11 +241,51 @@ When LOS to a target is "obstructed" (red-yellow or purple colored targeting lin
 ```
 Using the above settings, a standard mech with tag `unit_mech` would take 50% incoming damage to its left and right legs. A vehicle with tag `unit_vehicle` would take 75% incoming damage to front, rear, left, and right sides, and a Quad mech with tag `unit_quad` would take 10% damage to all 4 legs (left leg, right leg, left "arm", and right "arm"). A unit with multiple matching "tags" in `ObstructionDRByTags` will use the <i>lowest</i> damage multiplier, taking the least damage.
 
+## Mechbay Refit Restrictions
+
+This tweak allows you to restrict refitting certain components (using Component Tags) if the player does not have a matching Argo Upgrade. For example, if you set the component tags for `emod_engineslots_xl_center` to contain the following:
+```
+"ComponentTags" : {
+	"items" : [
+	"component_type_stock",
+	"requires_refitHarness"
+		],
+	"tagSetSourceFile" : ""
+	}
+```
+and in IRTweaks mod.json settings you have the following (under the "Misc" section):
+```
+"MechLabRefitReqs": {
+	"MechLabRefitReqs":{
+		"requires_refitHarness": "argoUpgrade_mechBay_refitHarness"
+		}
+	}
+```
+
+Then the player will be unable to fit an XL engine if they have not obtained the Argo upgrade with ID `argoUpgrade_mechBay_refitHarness`
+
 ## Random Start By Difficulty
 
 This tweak allows you to define difficulty settings that impact the Career starts. This is useful for mods like RogueTech, which customizes your starting lance and faction reputation based upon a difficulty menu selection. The mod looks for two custom *DifficultyConstants*, each with a different behavior.
 
 This tweak is enabled if `Fixes.RandomStartByDifficulty=true` is set to true in _mod.json_. Customizations are only expressed through the difficulty constants described below.
+
+### Restrict More Settings to "Start Only"
+
+This tweak allows the "Career start only" difficulty settings field to be expanded to hold >6 settings, and uses the following settings:
+```
+	"Misc": {
+			"DifficultyUIScaling": {
+				"StartOnlyScalar": 40,
+				"StartOnlyPositionY": 40,
+				"RegularPositionY": 40
+			},
+```
+StartOnlyScalar - float, for each pair of additional "start only" settings, the start only field will be embiggened by this amount, and the "regular" settings field will be shrunk by this amount.
+
+StartOnlyPositionY - float, adjusts vertical position of the "start only" settings field.
+
+RegularPositionY - float, adjusts vertical position of the "regular" settings field.
 
 ### Expanded Stray Shot Control
 

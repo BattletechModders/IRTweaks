@@ -26,6 +26,23 @@ namespace IRTweaks
         public string CheatDetectionStat = "CheatFound1";
     }
 
+    public class MiscOpts
+    {
+        public DifficultyUIScalingOpts DifficultyUIScaling = new DifficultyUIScalingOpts();
+        public class DifficultyUIScalingOpts
+        {
+            public float StartOnlyScalar = 40f;
+            public float StartOnlyPositionY = 40f;
+            public float RegularPositionY = 40f;
+        }
+
+        public MechLabRefitReqOpts MechLabRefitReqs = new MechLabRefitReqOpts();
+        public class MechLabRefitReqOpts
+        {
+            public Dictionary<string, string> MechLabRefitReqs = new Dictionary<string, string>();
+        }
+    }
+
     public class CombatOpts
     {
         public int PilotAttributesMax = 13;
@@ -210,6 +227,7 @@ namespace IRTweaks
 
         public AbilityOpts Abilities = new AbilityOpts();
         public CheatOpts CheatDetection = new CheatOpts();
+        public MiscOpts Misc = new MiscOpts();
         public CombatOpts Combat = new CombatOpts();
         public StoreOpts Store = new StoreOpts();
 
