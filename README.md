@@ -278,8 +278,7 @@ This tweak allows the "Career start only" difficulty settings field to be expand
 			"DifficultyUIScaling": {
 				"StartOnlyScalar": 40,
 				"StartOnlyPositionY": 40,
-				"RegularPositionY": 40,
-				"HideScoreBar": true
+				"RegularPositionY": 40
 			},
 ```
 StartOnlyScalar - float, for each pair of additional "start only" settings, the start only field will be embiggened by this amount, and the "regular" settings field will be shrunk by this amount.
@@ -287,8 +286,6 @@ StartOnlyScalar - float, for each pair of additional "start only" settings, the 
 StartOnlyPositionY - float, adjusts vertical position of the "start only" settings field.
 
 RegularPositionY - float, adjusts vertical position of the "regular" settings field.
-
-HideScoreBar - bool, if true will remove the difficulty scale bar and adjust the normal difficulty setting area to take advantage of the blank space
 
 ### Expanded Stray Shot Control
 
