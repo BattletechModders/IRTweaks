@@ -34,6 +34,7 @@ namespace IRTweaks
             public float StartOnlyScalar = 40f;
             public float StartOnlyPositionY = 40f;
             public float RegularPositionY = 40f;
+            public bool HideScoreBar = false;
         }
 
         public MechLabRefitReqOpts MechLabRefitReqs = new MechLabRefitReqOpts();

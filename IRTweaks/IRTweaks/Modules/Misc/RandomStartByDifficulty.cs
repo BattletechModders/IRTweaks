@@ -38,6 +38,15 @@ namespace IRTweaks.Modules.Misc
         }
     }
 
+    [HarmonyPatch(typeof(SimGameDifficultySettingsModule), "UpdateDifficultyScoreBar")]
+    static class SimGameDifficultySettingsModule_UpdateDifficultyScoreBar_Patch
+    {
+        static bool Prepare() => Mod.Config.Misc.DifficultyUIScaling.HideScoreBar;
+        static void Postfix(SimGameDifficultySettingsModule __instance, PreGameCareerModeSettingsTotalScoreDescAndBar ___difficultyBarAndMod)
+        {
+            ___difficultyBarAndMod.gameObject.SetActive(false);
+        }
+    }
 
     [HarmonyPatch(typeof(SimGameDifficultySettingsModule), "InitSettings")]
     static class SimGameDifficultySettingsModule_InitSettings_Patch
@@ -85,7 +94,7 @@ namespace IRTweaks.Modules.Misc
 
                 var regularRect = regularDiffs.GetComponent<RectTransform>();
                 var currentRegSizeDelta = regularRect.sizeDelta;
-                currentRegSizeDelta.y -= (startYAdjust - 2) * Mod.Config.Misc.DifficultyUIScaling.StartOnlyPositionY;
+                currentRegSizeDelta.y -= startYAdjust - (Mod.Config.Misc.DifficultyUIScaling.HideScoreBar ? 2 : 0) * Mod.Config.Misc.DifficultyUIScaling.StartOnlyPositionY;
                 regularRect.sizeDelta = currentRegSizeDelta;
 
                 var currentRegPosition = regularRect.position;
