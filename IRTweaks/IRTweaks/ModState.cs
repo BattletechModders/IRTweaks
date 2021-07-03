@@ -6,11 +6,14 @@ using BattleTech;
 namespace IRTweaks {
 
     public static class ModState {
-        public static class InstantiatedDifficultySettings
-        {
-            public static List<SGDSToggle> instantiatedToggles = new List<SGDSToggle>();
-            public static List<SGDSDropdown> instantiatedDropdowns = new List<SGDSDropdown>();
-        }
+
+        public static List<SGDSToggle> instantiatedToggles = new List<SGDSToggle>();
+        public static List<SGDSDropdown> instantiatedDropdowns = new List<SGDSDropdown>();
+        
+
+        public static float MinDiffModifier = 0f;
+        public static float MaxDiffModifier = 0f;
+        public static bool HaveDiffSettingsInitiated = false;
 
         public static bool IsComponentValidForRefit = false;
 
@@ -39,6 +42,13 @@ namespace IRTweaks {
         public static Dictionary<string, int> PilotCurrentFreeXP = new Dictionary<string, int>();
         public static Dictionary<string, int> PilotDefCurrentFreeXP = new Dictionary<string, int>();
         public static Dictionary<string, int> SimGameFunds = new Dictionary<string, int>();
+
+        public static void OnSimInit()
+        {
+            HaveDiffSettingsInitiated = false;
+            instantiatedDropdowns = new List<SGDSDropdown>();
+            instantiatedToggles = new List<SGDSToggle>();
+        }
 
         public static void Reset() {
             // Reinitialize state

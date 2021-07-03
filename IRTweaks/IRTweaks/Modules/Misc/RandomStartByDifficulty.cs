@@ -13,8 +13,6 @@ using UnityEngine.UI;
 namespace IRTweaks.Modules.Misc
 {
 
-
-
     [HarmonyPatch(typeof(LineOfSight), "FindSecondaryImpactTarget")]
     static class LineOfSight_FindSecondaryImpactTarget
     {
@@ -41,22 +39,93 @@ namespace IRTweaks.Modules.Misc
     [HarmonyPatch(typeof(SimGameDifficultySettingsModule), "UpdateDifficultyScoreBar")]
     static class SimGameDifficultySettingsModule_UpdateDifficultyScoreBar_Patch
     {
-        static bool Prepare() => Mod.Config.Misc.DifficultyUIScaling.HideScoreBar;
-        static void Postfix(SimGameDifficultySettingsModule __instance, PreGameCareerModeSettingsTotalScoreDescAndBar ___difficultyBarAndMod)
+
+        static bool Prefix(SimGameDifficultySettingsModule __instance, SimGameDifficulty ___cachedDiff,
+            PreGameCareerModeSettingsTotalScoreDescAndBar ___difficultyBarAndMod)
         {
-            ___difficultyBarAndMod.gameObject.SetActive(false);
+            float num = __instance.CalculateRawScoreMod();
+            bool active = __instance.ShouldShowDifficultyData();
+            ___difficultyBarAndMod.gameObject.SetActive(active);
+            ___difficultyBarAndMod.RefreshInfo(num);
+
+            if (__instance.CanModifyStartSettings)
+            {
+                var atlasSkull = GameObject.Find("atlasSkull-image");
+                var atlasImage = atlasSkull.gameObject.GetComponent<Image>();
+                var currentModifier = Mathf.Abs(Mathf.Max(0,num) - ModState.MaxDiffModifier);
+                var scaledModifier = Mathf.FloorToInt(currentModifier * 255 / ModState.MaxDiffModifier);
+                Mod.Log.Info?.Write($"COLOR SCORE MOD THING: real score {num} vs current {currentModifier} vs scaled {scaledModifier}");
+                Mod.Log.Info?.Write($"From UPDATEDIFFICULTYSCOREBAR: Atlas values: {atlasImage.color.r}, {atlasImage.color.g}, {atlasImage.color.b}, {atlasImage.color.a}");
+                atlasImage.color = new Color32(255, (byte)scaledModifier, (byte)scaledModifier, 255);;
+            }
+            
+            return false;
+        }
+    }
+
+    [HarmonyPatch(typeof(PreGameCareerModeSettingsTotalScoreDescAndBar), "RefreshInfo", new Type[] {typeof(float)})]
+    static class PreGameCareerModeSettingsTotalScoreDescAndBar_RefreshInfo_Patch
+    {
+        static bool Prepare() => Mod.Config.Fixes.RandomStartByDifficulty;
+        static bool Prefix(PreGameCareerModeSettingsTotalScoreDescAndBar __instance, float newMod)
+        {
+            bool flag = false;
+            SimGameState simulation = UnityGameInstance.BattleTechGame.Simulation;
+            if (simulation != null && simulation.DifficultySettings.GetRawCareerModifier() < newMod)
+            {
+                flag = true;
+            }
+
+            var absDiffRange = Mathf.Abs(ModState.MinDiffModifier) + ModState.MaxDiffModifier;
+
+            var newModShiftedAbs = newMod + Mathf.Abs(ModState.MinDiffModifier);
+
+            __instance.ShowAttemptedToRaiseDifficultyWarningIcon(flag);
+
+            float fillAmount = newModShiftedAbs / absDiffRange;
+            __instance.DifficultyFillBar.fillAmount = fillAmount;
+            __instance.TotalScoreModifierValue.SetText("{0:n2}", new object[]
+            {
+                newMod
+            });
+            return false;
+        }
+    }
+
+    [HarmonyPatch(typeof(SimGameState), "_OnInit")]
+    static class SimGameState__OnInit_Patch
+    {
+        static void Postfix(SimGameState __instance, GameInstance game, SimGameDifficulty difficulty)
+        {
+            ModState.OnSimInit();
         }
     }
 
     [HarmonyPatch(typeof(SimGameDifficultySettingsModule), "InitSettings")]
     static class SimGameDifficultySettingsModule_InitSettings_Patch
     {
-        private static MethodInfo _getItemMethodUInfo = AccessTools.Method(typeof(SimGameDifficultySettingsModule), "GetItem");
-
-        static void Prefix(SimGameDifficultySettingsModule __instance, SimGameDifficulty ___cachedDiff)
+        static void Prefix(SimGameDifficultySettingsModule __instance, SimGameDifficulty ___cachedDiff, PreGameCareerModeSettingsTotalScoreDescAndBar ___difficultyBarAndMod)
         {
 
+            if (ModState.HaveDiffSettingsInitiated) return;
+
             ___cachedDiff = UnityGameInstance.BattleTechGame.DifficultySettings;
+
+            if (ModState.MaxDiffModifier == 0f && ModState.MinDiffModifier == 0f)
+            {
+                Helper.DifficultyHelper.GetDifficultyModifierRange(___cachedDiff);
+            }
+
+            if (__instance.CanModifyStartSettings)
+            {
+                var atlasSkull = GameObject.Find("atlasSkull-image");
+                var atlasImage = atlasSkull.gameObject.GetComponent<Image>();
+                var currentModifier = Mathf.Abs(Mathf.Max(0,__instance.CalculateRawScoreMod()) - ModState.MaxDiffModifier);
+                var scaledModifier = Mathf.FloorToInt(currentModifier * 255 / ModState.MaxDiffModifier);
+                atlasImage.color = new Color32(255, (byte)scaledModifier, (byte)scaledModifier, 255);
+                Mod.Log.Info?.Write($"From INITSETTINGS: Atlas values: {atlasImage.color.r}, {atlasImage.color.g}, {atlasImage.color.b}, {atlasImage.color.a}");
+            }
+            
             var settings = ___cachedDiff.GetSettings();
             settings.Sort(delegate(SimGameDifficulty.DifficultySetting a, SimGameDifficulty.DifficultySetting b)
             {
@@ -81,8 +150,26 @@ namespace IRTweaks.Modules.Misc
             var startOnly = GameObject.Find("OBJ_startOnly_settings");
             var startRect = startOnly.GetComponent<RectTransform>();
 
-            if (startYAdjust > 0)
+
+            if (startYAdjust > 0 )
             {
+                if (__instance.CanModifyStartSettings)
+                {
+                    var barRect = ___difficultyBarAndMod.gameObject.GetComponent<RectTransform>();
+                    var currentbarPos = barRect.position;
+                    currentbarPos.x = 700f;
+                    currentbarPos.y = 400f;
+                    barRect.position = currentbarPos;
+                }
+                else
+                {
+                    var barRect = ___difficultyBarAndMod.gameObject.GetComponent<RectTransform>();
+                    var currentbarPos = barRect.position;
+                    currentbarPos.y = 820f;
+                    barRect.position = currentbarPos;
+                }
+
+
                 var currentStartPosition = startRect.position;
                 currentStartPosition.y += Mod.Config.Misc.DifficultyUIScaling.StartOnlyPositionY;
                 startRect.position = currentStartPosition;
@@ -94,7 +181,7 @@ namespace IRTweaks.Modules.Misc
 
                 var regularRect = regularDiffs.GetComponent<RectTransform>();
                 var currentRegSizeDelta = regularRect.sizeDelta;
-                currentRegSizeDelta.y -= startYAdjust - (Mod.Config.Misc.DifficultyUIScaling.HideScoreBar ? 2 : 0) * Mod.Config.Misc.DifficultyUIScaling.StartOnlyPositionY;
+                currentRegSizeDelta.y -= startYAdjust - 1 * Mod.Config.Misc.DifficultyUIScaling.StartOnlyScalar;
                 regularRect.sizeDelta = currentRegSizeDelta;
 
                 var currentRegPosition = regularRect.position;
@@ -109,6 +196,7 @@ namespace IRTweaks.Modules.Misc
             startTransformLayoutGroup.spacing = new Vector2(25, 10);
 
         }
+
         static void Postfix(SimGameDifficultySettingsModule __instance, SimGameDifficulty ___cachedDiff, string ___ironManModeId, string ___autoEquipMechsId, string ___mechPartsReqId, string ___skipPrologueId, string ___randomMechId, string ___argoUpgradeCostId, SGDSToggle ___ironManModeToggle, SGDSDropdown ___mechPartsReqDropdown, GameObject ___disabledOverlay, List<SGDSDropdown> ___activeDropdowns, List<SGDSToggle> ___activeToggles, List<SGDSDropdown> ___cachedDropdowns, List<SGDSToggle> ___cachedToggles, SGDSToggle ___togglePrefab, SGDSDropdown ___dropdownPrefab)
         {
 
@@ -157,12 +245,12 @@ namespace IRTweaks.Modules.Misc
                                 .GetValue<LocalizableText>();
                             dropdownLabel.enableWordWrapping = false;
 
-                            if (!ModState.InstantiatedDifficultySettings.instantiatedDropdowns.Contains(newDropDown))
+                            if (!ModState.instantiatedDropdowns.Contains(newDropDown))
                             {
                                 ___activeDropdowns.Add(newDropDown);
                                 newDropDown.Initialize(__instance, setting, curSettingIndex);
                                 newDropDown.gameObject.SetActive(true);
-                                ModState.InstantiatedDifficultySettings.instantiatedDropdowns.Add(newDropDown);
+                                ModState.instantiatedDropdowns.Add(newDropDown);
                             }
                         }
                         else if (setting.Toggle)
@@ -171,12 +259,12 @@ namespace IRTweaks.Modules.Misc
                             GameObject sourceDiffToggle = UnityEngine.Object.Instantiate<GameObject>(sourceDiffToggleGO, sourceDiffToggleGO.transform.parent);
                             SGDSToggle newToggle = sourceDiffToggle.GetOrAddComponent<SGDSToggle>();
 
-                            if (!ModState.InstantiatedDifficultySettings.instantiatedToggles.Contains(newToggle))
+                            if (!ModState.instantiatedToggles.Contains(newToggle))
                             {
                                 ___activeToggles.Add(newToggle);
                                 newToggle.Initialize(__instance, setting, curSettingIndex);
                                 newToggle.gameObject.SetActive(true);
-                                ModState.InstantiatedDifficultySettings.instantiatedToggles.Add(newToggle);
+                                ModState.instantiatedToggles.Add(newToggle);
                             }
                         }
                     }
@@ -187,6 +275,7 @@ namespace IRTweaks.Modules.Misc
                 UnityEngine.Object.Instantiate<GameObject>(___disabledOverlay, ___disabledOverlay.transform.parent);
            ___disabledOverlay.SetActive(false);
            newDisabledOverlay.SetActive(!__instance.CanModifyStartSettings);
+           ModState.HaveDiffSettingsInitiated = true;
         }
     }
 
