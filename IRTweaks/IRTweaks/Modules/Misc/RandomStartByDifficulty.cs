@@ -275,6 +275,7 @@ namespace IRTweaks.Modules.Misc
                 UnityEngine.Object.Instantiate<GameObject>(___disabledOverlay, ___disabledOverlay.transform.parent);
            ___disabledOverlay.SetActive(false);
            newDisabledOverlay.SetActive(!__instance.CanModifyStartSettings);
+           __instance.UpdateDifficultyScoreBar();
            ModState.HaveDiffSettingsInitiated = true;
         }
     }
