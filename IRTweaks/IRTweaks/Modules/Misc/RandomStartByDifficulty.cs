@@ -101,6 +101,15 @@ namespace IRTweaks.Modules.Misc
         }
     }
 
+    [HarmonyPatch(typeof(SimGameState), "Destroy")]
+    static class SimGameState__Destroy_Patch
+    {
+        static void Postfix(SimGameState __instance)
+        {
+            ModState.OnSimInit();
+        }
+    }
+
     [HarmonyPatch(typeof(SimGameDifficultySettingsModule), "InitSettings")]
     static class SimGameDifficultySettingsModule_InitSettings_Patch
     {
