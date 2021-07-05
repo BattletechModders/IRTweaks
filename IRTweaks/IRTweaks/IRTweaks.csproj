@@ -101,6 +101,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Helper\ActorHelper.cs" />
+    <Compile Include="Helper\DifficultyHelper.cs" />
     <Compile Include="Helper\DiagnosticLogger.cs" />
     <Compile Include="Helper\PainHelper.cs" />
     <Compile Include="Helper\ProtectionHelper.cs" />
