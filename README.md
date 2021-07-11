@@ -1,6 +1,7 @@
 # IRTweaks
 This is a mod for the [HBS BattleTech](http://battletechgame.com/) game that includes a variety of tweaks, changes, and modifications to the base game. A wide range of effects is covered, and all of the options can be selectively enabled. A short summary of the features is provided below. You can enable or disable each tweak in `mod.json` by setting the appropriate `Fixes` value to true or false.
 
+* **AbilityResourceFix**: If an Ability has `"Resource" : "ConsumesActivation",` the actors activation will be consumed upon use. In addition, the ability will be <i>unable</i> to be used if the actor has done any other actions (shooting, moving, etc).
 * **AlternativeMechNamingStyle**: Used by RogueTech to set unique naming styles consistent with the **LowVisiblity** mod. No other systems should use this.
 * **BuildingDamageColorChange**: Changes the floating damage on buildings to be dark blue to distinguish this damage type. Thanks to **Gnivler** for this fix!
 * **BraceOnMeleeWithJuggernaut**: If a pilot has the Guts 8 ability (typically Juggernaut), braces the unit after a melee or DFA attack. A direct copy of [RealityMachina's Better-Juggernaut](https://github.com/RealityMachina/Better-Juggernaut).
