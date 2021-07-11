@@ -241,7 +241,7 @@ namespace IRTweaks.Modules.Misc
             if (__instance.UnspentXP != ModState.PilotCurrentFreeXP[__instance.GUID])
             {
                 Mod.Log.Info?.Write($"CHEATDETECTION: {__instance.Description.Id}: pilot UnspentXP was {__instance.UnspentXP} but state variable was {ModState.PilotCurrentFreeXP[__instance.GUID]}.");
-                sim.CompanyStats.AddStatistic(Mod.Config.CheatDetection.CheatDetectionStat, true);
+                sim.CompanyStats.AddStatistic(Mod.Config.CheatDetection.CheatDetectionStat, "XP: at Pilot.SpendExperience");
                 Mod.Log.Info?.Write($"CHEATDETECTION: Caught you, you little shit. Cheated experience.");
 
                 if (Mod.Config.CheatDetection.CheatDetectionNotify) GenericPopupBuilder.Create("CHEAT DETECTED!", "t-bone thinks you're cheating. if you aren't, you should let the RT crew know on Discord.").AddButton("Okay", null, true, null).CancelOnEscape().AddFader(new UIColorRef?(LazySingletonBehavior<UIManager>.Instance.UILookAndColorConstants.PopupBackfill), 0f, true).Render();
@@ -339,7 +339,7 @@ namespace IRTweaks.Modules.Misc
             }
             if (__instance.Funds != ModState.SimGameFunds[__instance.InstanceGUID])
             {
-                __instance.CompanyStats.AddStatistic(Mod.Config.CheatDetection.CheatDetectionStat, true);
+                __instance.CompanyStats.AddStatistic(Mod.Config.CheatDetection.CheatDetectionStat, "FUNDS: SGS.AddFunds - Pre");
                 Mod.Log.Info?.Write($"CHEATDETECTION: Caught you, you little shit. Cheated money. SGS Funds: {__instance.Funds} while tracker funds {ModState.SimGameFunds[__instance.InstanceGUID]} at AddFunds, Pre");
             }
         }
@@ -354,7 +354,7 @@ namespace IRTweaks.Modules.Misc
             ModState.SimGameFunds[__instance.InstanceGUID] += val;
             if (__instance.Funds != ModState.SimGameFunds[__instance.InstanceGUID])
             {
-                __instance.CompanyStats.AddStatistic(Mod.Config.CheatDetection.CheatDetectionStat, true);
+                __instance.CompanyStats.AddStatistic(Mod.Config.CheatDetection.CheatDetectionStat, "FUNDS: SGS.AddFunds - Post");
                 Mod.Log.Info?.Write($"CHEATDETECTION: Caught you, you little shit. Cheated money. SGS Funds: {__instance.Funds} while tracker funds {ModState.SimGameFunds[__instance.InstanceGUID]} after adding {val} at AddFunds, Post");
 
                 if (Mod.Config.CheatDetection.CheatDetectionNotify) GenericPopupBuilder.Create("CHEAT DETECTED!", "t-bone thinks you're cheating. if you aren't, you should let the RT crew know on Discord.").AddButton("Okay", null, true, null).CancelOnEscape().AddFader(new UIColorRef?(LazySingletonBehavior<UIManager>.Instance.UILookAndColorConstants.PopupBackfill), 0f, true).Render();
@@ -400,7 +400,7 @@ namespace IRTweaks.Modules.Misc
                             if (pilot.UnspentXP != ModState.PilotCurrentFreeXP[pilot.GUID])
                             {
                                 Mod.Log.Info?.Write($"CHEATDETECTION: {pilot.Description.Id}: pilot UnspentXP was {pilot.UnspentXP} but state variable was {ModState.PilotCurrentFreeXP[pilot.GUID]}. At SetSimGameStat, Post.");
-                                sim.CompanyStats.AddStatistic(Mod.Config.CheatDetection.CheatDetectionStat, true);
+                                sim.CompanyStats.AddStatistic(Mod.Config.CheatDetection.CheatDetectionStat, "XP: at SGS.SetSimGameStat");
                                 Mod.Log.Info?.Write($"CHEATDETECTION: Caught you, you little shit. Cheated experience.");
 
                                 if (Mod.Config.CheatDetection.CheatDetectionNotify) GenericPopupBuilder
@@ -437,7 +437,7 @@ namespace IRTweaks.Modules.Misc
                         ModState.SimGameFunds[sim.InstanceGUID] += val;
                         if (sim.Funds != ModState.SimGameFunds[sim.InstanceGUID])
                         {
-                            sim.CompanyStats.AddStatistic(Mod.Config.CheatDetection.CheatDetectionStat, true);
+                            sim.CompanyStats.AddStatistic(Mod.Config.CheatDetection.CheatDetectionStat, "FUNDS: At SGS.SetSimGameStat");
                             Mod.Log.Info?.Write($"CHEATDETECTION: Caught you, you little shit. Cheated money. SGS Funds: {sim.Funds} while tracker funds {ModState.SimGameFunds[sim.InstanceGUID]} after adding {stat}. At SetSimGameStat, Post.");
 
                             if (Mod.Config.CheatDetection.CheatDetectionNotify) GenericPopupBuilder.Create("CHEAT DETECTED!", "t-bone thinks you're cheating. if you aren't, you should let the RT crew know on Discord.").AddButton("Okay", null, true, null).CancelOnEscape().AddFader(new UIColorRef?(LazySingletonBehavior<UIManager>.Instance.UILookAndColorConstants.PopupBackfill), 0f, true).Render();
@@ -448,8 +448,6 @@ namespace IRTweaks.Modules.Misc
         }
     }
 
-
-
     [HarmonyPatch(typeof(SimGameState))]
     [HarmonyPatch("Rehydrate")]
     public static class SimGameState_Rehydrate_CH
@@ -458,6 +456,15 @@ namespace IRTweaks.Modules.Misc
 
         public static void Postfix(SimGameState __instance)
         {
+            if (__instance.CompanyStats.ContainsStatistic(Mod.Config.CheatDetection.CheatDetectionStat))
+            {
+                var stat = __instance.CompanyStats.GetStatistic(Mod.Config.CheatDetection.CheatDetectionStat);
+                if (stat.CurrentValue.typeString == "System.Boolean")
+                {
+                    __instance.CompanyStats.RemoveStatistic(Mod.Config.CheatDetection.CheatDetectionStat);
+                }
+            }
+
             if (!ModState.SimGameFunds.ContainsKey(__instance.InstanceGUID))
             {
                 ModState.SimGameFunds.Add(__instance.InstanceGUID, __instance.Funds);
@@ -505,7 +512,7 @@ namespace IRTweaks.Modules.Misc
 
             if (__instance.Funds != ModState.SimGameFunds[__instance.InstanceGUID])
             {
-                __instance.CompanyStats.AddStatistic(Mod.Config.CheatDetection.CheatDetectionStat, true);
+                __instance.CompanyStats.AddStatistic(Mod.Config.CheatDetection.CheatDetectionStat, "FUNDS: At SGS.Dehydrate");
                 Mod.Log.Info?.Write($"CHEATDETECTION: Caught you, you little shit. Cheated money. SGS Funds: {__instance.Funds} while tracker funds {ModState.SimGameFunds[__instance.InstanceGUID]} on dehydrate, pre");
 
                 if (Mod.Config.CheatDetection.CheatDetectionNotify) GenericPopupBuilder.Create("CHEAT DETECTED!", "t-bone thinks you're cheating. if you aren't, you should let the RT crew know on Discord.").AddButton("Okay", null, true, null).CancelOnEscape().AddFader(new UIColorRef?(LazySingletonBehavior<UIManager>.Instance.UILookAndColorConstants.PopupBackfill), 0f, true).Render();
@@ -526,7 +533,7 @@ namespace IRTweaks.Modules.Misc
                 if (pilot.UnspentXP != ModState.PilotCurrentFreeXP[pilot.GUID])
                 {
                     Mod.Log.Info?.Write($"CHEATDETECTION: {pilot.Description.Id}: pilot UnspentXP was {pilot.UnspentXP} but state variable was {ModState.PilotCurrentFreeXP[pilot.GUID]} on dehydrate, pre.");
-                    __instance.CompanyStats.AddStatistic(Mod.Config.CheatDetection.CheatDetectionStat, true);
+                    __instance.CompanyStats.AddStatistic(Mod.Config.CheatDetection.CheatDetectionStat, "XP: At SGS.Dehydrate");
                     Mod.Log.Info?.Write($"CHEATDETECTION: Caught you, you little shit. Cheated experience.");
 
                     if (Mod.Config.CheatDetection.CheatDetectionNotify) GenericPopupBuilder
