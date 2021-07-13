@@ -359,10 +359,10 @@ namespace IRTweaks.Modules.Misc
     }
 
 
-    [HarmonyPatch(typeof(SGBarracksAdvancementPanel), "Close")]
-    public static class SGBarracksAdvancementPanel_Close_Patch
+    [HarmonyPatch(typeof(SGRoomController_Barracks), "LeaveRoom")]
+    public static class SGRoomController_Barracks_Close_Patch
     {
-        public static void Postfix(SGBarracksAdvancementPanel __instance)
+        public static void Postfix(SGRoomController_Barracks __instance)
         {
             var sim = UnityGameInstance.BattleTechGame.Simulation;
             var currentPilots = new List<Pilot>(sim.PilotRoster);

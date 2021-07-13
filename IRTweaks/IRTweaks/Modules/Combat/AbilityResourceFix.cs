@@ -38,6 +38,10 @@ namespace IRTweaks.Modules.Combat
             }
             else if (__instance.Ability.Def.Resource == AbilityDef.ResourceConsumed.ConsumesActivation)
             {
+                if (selectedActor is Mech mech)
+                {
+                    mech.GenerateAndPublishHeatSequence(-1, true, false, selectedActor.GUID);
+                }
                 selectedActor.OnActivationEnd(selectedActor.GUID, (__instance).GetInstanceID());
             }
         }
