@@ -169,6 +169,7 @@ namespace IRTweaks
     {
 
         // Combat
+        public bool AbilityResourceFix = true;
         public bool AlternateMechNamingStyle = true;
         public bool BuildingDamageColorChange = true;
         public bool BraceOnMeleeWithJuggernaut = true;
@@ -236,6 +237,7 @@ namespace IRTweaks
             Mod.Log.Info?.Write($"  DEBUG: {this.Debug} Trace: {this.Trace}");
 
             Mod.Log.Info?.Write("  -- Fixes --");
+            Mod.Log.Info?.Write($"  AbilityResourceFix:                 {this.Fixes.AbilityResourceFix}");
             Mod.Log.Info?.Write($"  AlternateMechNamingStyle:           {this.Fixes.AlternateMechNamingStyle}");
             Mod.Log.Info?.Write($"  BuildingDamageColorChange:          {this.Fixes.BuildingDamageColorChange}");
             Mod.Log.Info?.Write($"  BraceOnMeleeWithJuggernaut:         {this.Fixes.BraceOnMeleeWithJuggernaut}");
