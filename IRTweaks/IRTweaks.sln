@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.572
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31129.286
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IRTweaks", "IRTweaks\IRTweaks.csproj", "{D9366D67-F53F-445B-B198-E39C1E2373CD}"
 EndProject
@@ -9,12 +9,15 @@ Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
+		Release-NoCAC|Any CPU = Release-NoCAC|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{D9366D67-F53F-445B-B198-E39C1E2373CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D9366D67-F53F-445B-B198-E39C1E2373CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D9366D67-F53F-445B-B198-E39C1E2373CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D9366D67-F53F-445B-B198-E39C1E2373CD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D9366D67-F53F-445B-B198-E39C1E2373CD}.Release-NoCAC|Any CPU.ActiveCfg = Release-NoCAC|Any CPU
+		{D9366D67-F53F-445B-B198-E39C1E2373CD}.Release-NoCAC|Any CPU.Build.0 = Release-NoCAC|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

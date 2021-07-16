@@ -1,4 +1,7 @@
-﻿using BattleTech;
+﻿#if NO_CAC
+#else
+
+using BattleTech;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -191,3 +194,5 @@ namespace IRTweaks.Modules.Combat
         }
     }
 }
+
+#endif

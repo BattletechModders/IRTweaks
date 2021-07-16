@@ -34,6 +34,10 @@
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release-NoCAC|AnyCPU'">
+    <OutputPath>bin\Release-NoCAC\</OutputPath>
+    <DefineConstants>NO_CAC</DefineConstants>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="0Harmony, Version=1.2.0.1, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

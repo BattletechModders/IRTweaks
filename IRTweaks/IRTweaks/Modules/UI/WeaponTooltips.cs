@@ -1,4 +1,7 @@
-﻿using BattleTech;
+﻿#if NO_CAC
+#else
+
+using BattleTech;
 using BattleTech.UI.Tooltips;
 using CustAmmoCategories;
 using Harmony;
@@ -8,7 +11,7 @@ using UnityEngine.UI;
 
 namespace IRTweaks.Modules.UI
 {
-    
+
     // Update the tooltip to distinguish between different weapon types, and make CAC mannerisms clearer
     [HarmonyPatch(typeof(TooltipPrefab_Weapon), "SetData")]
     static class WeaponTooltips_TooltipPrefab_Weapon_SetData
@@ -223,3 +226,5 @@ namespace IRTweaks.Modules.UI
         }
     }
 }
+
+#endif
