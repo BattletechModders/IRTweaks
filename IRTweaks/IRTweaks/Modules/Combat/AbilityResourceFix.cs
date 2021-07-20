@@ -41,8 +41,11 @@ namespace IRTweaks.Modules.Combat
                 if (selectedActor is Mech mech)
                 {
                     mech.GenerateAndPublishHeatSequence(-1, true, false, selectedActor.GUID);
+                    Mod.Log.Info?.Write($"Generated and Published Heat Sequence for {mech.Description.UIName}.");
                 }
-                selectedActor.OnActivationEnd(selectedActor.GUID, (__instance).GetInstanceID());
+
+                selectedActor.DoneWithActor();//need to to onactivationend too
+                selectedActor.OnActivationEnd(selectedActor.GUID, __instance.GetInstanceID());
             }
         }
     }
