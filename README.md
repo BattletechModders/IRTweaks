@@ -22,6 +22,7 @@ This is a mod for the [HBS BattleTech](http://battletechgame.com/) game that inc
 * **MechbayLayoutFix**: Moves a few UI elements in the mechbay to work better in a MechEngineer based mod. Thanks to Tiraxx for the idea!
 * **MechbayAdvancedStripping**: Holding Left or Right Control while clicking the "Strip Equipment" button in the mechbay will strip <i>only</i> weapons and ammo.
 * **MultiTargetStat**: This allows units to gain the Multi-Target ability from a Statistic, which can be applied via effects.
+* **OnWeaponFireFix**: Fixes OnWeaponFire effects so that extendDurationOnTrigger and triggerLimit work properly for StatisticEffects.
 * **PainTolerance**: Provides Guts-based resistance to injuries. See below for details.
 * **PathfinderTeamFix**: Mission Control introduces pathfinding units that have no Team associated with them. This breaks some mods, which this fix remediates.
 * **Random Start by Difficulty Menu**: Allows an option in the new-game difficulty menu to be associated with user-created lists of starting mechs.
