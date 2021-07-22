@@ -28,13 +28,13 @@ namespace IRTweaks.Modules.Combat
             var selectedActor = HUD.SelectedActor;
             if (__instance.Ability.Def.Resource == AbilityDef.ResourceConsumed.ConsumesFiring)
             {
-//                selectedActor.HasFiredThisRound = true;
-// this doesnt work to disable firing.
+                //                selectedActor.HasFiredThisRound = true;
+                // this doesnt work to disable firing.
             }
             else if (__instance.Ability.Def.Resource == AbilityDef.ResourceConsumed.ConsumesMovement)
             {
-//                selectedActor.HasMovedThisRound = true;
-//this doesnt work to disable movement
+                //                selectedActor.HasMovedThisRound = true;
+                //this doesnt work to disable movement
             }
             else if (__instance.Ability.Def.Resource == AbilityDef.ResourceConsumed.ConsumesActivation)
             {
@@ -90,9 +90,7 @@ namespace IRTweaks.Modules.Combat
         }
     }
 
-
-
-    [HarmonyPatch(typeof(CombatHUDMechwarriorTray), "ResetAbilityButtons", new Type[] {typeof(AbstractActor)})]
+    [HarmonyPatch(typeof(CombatHUDMechwarriorTray), "ResetAbilityButtons", new Type[] { typeof(AbstractActor) })]
 
     public static class CombatHUDMechwarriorTray_ResetAbilityButtons_Patch
     {
@@ -100,7 +98,6 @@ namespace IRTweaks.Modules.Combat
         {
             return Mod.Config.Fixes.AbilityResourceFix;
         }
-
         public static void Postfix(CombatHUDMechwarriorTray __instance, AbstractActor actor)
         {
             var combat = UnityGameInstance.BattleTechGame.Combat;

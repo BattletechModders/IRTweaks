@@ -115,6 +115,7 @@
     <Compile Include="ModText.cs" />
     <Compile Include="ModConstants.cs" />
     <Compile Include="ModInit.cs" />
+    <Compile Include="Modules\Combat\OnWeaponFireFix.cs" />
     <Compile Include="Modules\Combat\BuildingDamageColorChange.cs" />
     <Compile Include="Modules\Combat\CalledShots.cs" />
     <Compile Include="Modules\CombatModule.cs" />
