@@ -239,7 +239,6 @@ namespace IRTweaks
 
             Mod.Log.Info?.Write("  -- Fixes --");
             Mod.Log.Info?.Write($"  AbilityResourceFix:                 {this.Fixes.AbilityResourceFix}");
-            Mod.Log.Info?.Write($"  OnWeaponFireFix:                    {this.Fixes.OnWeaponFireFix}");
             Mod.Log.Info?.Write($"  AlternateMechNamingStyle:           {this.Fixes.AlternateMechNamingStyle}");
             Mod.Log.Info?.Write($"  BuildingDamageColorChange:          {this.Fixes.BuildingDamageColorChange}");
             Mod.Log.Info?.Write($"  BraceOnMeleeWithJuggernaut:         {this.Fixes.BraceOnMeleeWithJuggernaut}");
@@ -258,7 +257,7 @@ namespace IRTweaks
             Mod.Log.Info?.Write($"  MechbayLayout:                      {this.Fixes.MechbayLayout}");
             Mod.Log.Info?.Write($"  MechbayLayoutDisableStore:          {this.Fixes.MechbayLayoutDisableStore}");
             Mod.Log.Info?.Write($"  MaxArmorMaxesArmor:                 {this.Fixes.MaxArmorMaxesArmor}");
-
+            Mod.Log.Info?.Write($"  OnWeaponFireFix:                    {this.Fixes.OnWeaponFireFix}");
             Mod.Log.Info?.Write($"  PainTolerance:                      {this.Fixes.PainTolerance}");
             Mod.Log.Info?.Write($"  PathfinderTeamFix:                  {this.Fixes.PathfinderTeamFix}");
             Mod.Log.Info?.Write($"  RandomStartByDifficulty:            {this.Fixes.RandomStartByDifficulty}");
