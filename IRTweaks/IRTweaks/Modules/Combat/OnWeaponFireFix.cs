@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BattleTech;
 using BattleTech.UI;
+using CustAmmoCategories;
 using Harmony;
 
 namespace IRTweaks.Modules.Combat
@@ -21,6 +22,31 @@ namespace IRTweaks.Modules.Combat
 
         public static void Postfix(Weapon __instance, CombatGameState ___combat)
         {
+            var effectsFromAmmoAndMode = new List<EffectData>();
+            effectsFromAmmoAndMode.AddRange(__instance.ammo().statusEffects.Where(x=>x.effectType == EffectType.StatisticEffect && x.targetingData.effectTriggerType == EffectTriggerType.OnWeaponFire));
+            effectsFromAmmoAndMode.AddRange(__instance.mode().statusEffects.Where(x => x.effectType == EffectType.StatisticEffect && x.targetingData.effectTriggerType == EffectTriggerType.OnWeaponFire));
+
+            foreach (var effect in effectsFromAmmoAndMode)
+            {
+                if (effect.targetingData.effectTriggerType == EffectTriggerType.OnWeaponFire)
+                {
+                    string effectID = string.Format("{0}Effect_{1}_{2}", effect.targetingData.effectTriggerType.ToString(), __instance.parent.GUID, -1);
+                    foreach (ICombatant combatant in ___combat.EffectManager.GetTargetCombatantForEffect(effect, __instance.parent, __instance.parent))
+                    {
+                        ___combat.EffectManager.CreateEffect(effect, effectID, -1, __instance.parent, combatant, default(WeaponHitInfo), 0, false);
+                        if (!effect.targetingData.hideApplicationFloatie)
+                        {
+                            ___combat.MessageCenter.PublishMessage(new FloatieMessage(__instance.parent.GUID, __instance.parent.GUID, effect.Description.Name, FloatieMessage.MessageNature.Buff));
+                        }
+                        if (!effect.targetingData.hideApplicationFloatie)
+                        {
+                            ___combat.MessageCenter.PublishMessage(new FloatieMessage(__instance.parent.GUID, combatant.GUID, effect.Description.Name, FloatieMessage.MessageNature.Buff));
+                        }
+                    }
+                }
+            }
+
+
             List<Effect> allEffectsTargeting = ___combat.EffectManager.GetAllEffectsTargeting(__instance.parent);
             for (int i = 0; i < allEffectsTargeting.Count; i++)
             {
