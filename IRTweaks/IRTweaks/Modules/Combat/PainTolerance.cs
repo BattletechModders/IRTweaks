@@ -99,13 +99,13 @@ namespace IRTweaks.Modules.Combat
             // DEBUG Line here: Someone is emitting an injuryReason of 101. Try to identify them by emitting a stack trace when this happens.
             if ((int)___injuryReason > 6)
             {
-                Mod.Log.Warn?.Write($"PainTolerance intercepted injuryReason with value of: {(int)___injuryReason} and desc: {___injuryReason}");
+                Mod.Log.Warn?.Write($"PainTolerance intercepted injuryReason with value of: {(int)___injuryReason} and desc: {___injuryReason}. Either TBAS or ME running InjureOnOverheat.");
                 Mod.Log.Info?.Write($"  -- injured actor was: {__instance.ParentActor.DistinctId()}");
                 System.Diagnostics.StackTrace t = new System.Diagnostics.StackTrace();
                 Mod.Log.Info?.Write($" -- PainTolerance:InjurePilot intercepted call stack:");
                 Mod.Log.Info?.Write($" --\n\n{t}");
-                Mod.Log.Info?.Write($" -- Skipping pain tolerance check!");
-                return true;
+//                Mod.Log.Info?.Write($" -- Skipping pain tolerance check!");
+//                return true;
             }
 
             if (__instance.ParentActor == null) return true;
@@ -139,8 +139,8 @@ namespace IRTweaks.Modules.Combat
                 ModState.WasCTDestroyed = false;
             }
 
-            else if (damageType == DamageType.Overheat || damageType == DamageType.OverheatSelf || 
-                "OVERHEATED".Equals(__instance.InjuryReasonDescription, StringComparison.InvariantCultureIgnoreCase))
+            else if (damageType == DamageType.Overheat || damageType == DamageType.OverheatSelf || (int)___injuryReason == 101 || (int) ___injuryReason == 666
+                                                       || "OVERHEATED".Equals(__instance.InjuryReasonDescription, StringComparison.InvariantCultureIgnoreCase))
             {
                 // comparison string must match label in https://github.com/BattletechModders/MechEngineer/blob/master/source/Features/ShutdownInjuryProtection/Patches/Pilot_InjuryReasonDescription_Patch.cs
                 Mod.Log.Debug?.Write($"  Actor damage from overheating or ME heatDamage injury, computing overheat ratio.");
