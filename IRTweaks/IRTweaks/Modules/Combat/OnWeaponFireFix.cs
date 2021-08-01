@@ -36,10 +36,6 @@ namespace IRTweaks.Modules.Combat
                         ___combat.EffectManager.CreateEffect(effect, effectID, -1, __instance.parent, combatant, default(WeaponHitInfo), 0, false);
                         if (!effect.targetingData.hideApplicationFloatie)
                         {
-                            ___combat.MessageCenter.PublishMessage(new FloatieMessage(__instance.parent.GUID, __instance.parent.GUID, effect.Description.Name, FloatieMessage.MessageNature.Buff));
-                        }
-                        if (!effect.targetingData.hideApplicationFloatie)
-                        {
                             ___combat.MessageCenter.PublishMessage(new FloatieMessage(__instance.parent.GUID, combatant.GUID, effect.Description.Name, FloatieMessage.MessageNature.Buff));
                         }
                     }
