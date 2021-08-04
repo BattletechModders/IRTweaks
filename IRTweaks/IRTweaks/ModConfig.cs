@@ -256,7 +256,6 @@ namespace IRTweaks
             Mod.Log.Info?.Write($"  MaxArmorMaxesArmor:                 {this.Fixes.MaxArmorMaxesArmor}");
             Mod.Log.Info?.Write($"  MechbayLayout:                      {this.Fixes.MechbayLayout}");
             Mod.Log.Info?.Write($"  MechbayLayoutDisableStore:          {this.Fixes.MechbayLayoutDisableStore}");
-            Mod.Log.Info?.Write($"  MaxArmorMaxesArmor:                 {this.Fixes.MaxArmorMaxesArmor}");
             Mod.Log.Info?.Write($"  OnWeaponFireFix:                    {this.Fixes.OnWeaponFireFix}");
             Mod.Log.Info?.Write($"  PainTolerance:                      {this.Fixes.PainTolerance}");
             Mod.Log.Info?.Write($"  PathfinderTeamFix:                  {this.Fixes.PathfinderTeamFix}");
