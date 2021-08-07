@@ -189,6 +189,7 @@ namespace IRTweaks
         // Misc
 
         public bool DisableCampaign = true;
+        public bool DisableDebug = true;
         public bool DisableLowFundsNotification = true;
         public bool DisableMPHashCalculation = true;
         public bool FactionValueFix = true;
@@ -247,6 +248,7 @@ namespace IRTweaks
             Mod.Log.Info?.Write($"  CalledShotTweaks:                   {this.Fixes.CalledShotTweaks}");
             Mod.Log.Info?.Write($"  CombatLog:                          {this.Fixes.CombatLog}");
             Mod.Log.Info?.Write($"  DisableCampaign:                    {this.Fixes.DisableCampaign}");
+            Mod.Log.Info?.Write($"  DisableDebug:                       {this.Fixes.DisableDebug}");
             Mod.Log.Info?.Write($"  DisableCombatRestarts:              {this.Fixes.DisableCombatRestarts}");
             Mod.Log.Info?.Write($"  DisableCombatSaves:                 {this.Fixes.DisableCombatSaves}");
             Mod.Log.Info?.Write($"  DisableMPHashCalculation:           {this.Fixes.DisableMPHashCalculation}");

@@ -16,40 +16,60 @@ namespace IRTweaks.Modules.Combat
 
         static void Postfix(Team __instance, AbstractActor unit)
         {
-            // The added unit is a reinforcement if round > 0
-            if (__instance.Combat.TurnDirector.CurrentRound > 1 && Mod.Config.Combat.SpawnProtection.ApplyToReinforcements)
+            if (__instance.Combat.TurnDirector.CurrentRound == 1) // always protect on first round of contract.
             {
                 HostilityMatrix hm = __instance.Combat.HostilityMatrix;
 
                 Mod.Log.Info?.Write($"Checking actor:{CombatantUtils.Label(unit)} that belongs to team:{unit?.team?.Name}");
 
-                List<AbstractActor> actors = new List<AbstractActor>();
                 if (hm.IsLocalPlayerEnemy(unit.TeamId) && Mod.Config.Combat.SpawnProtection.ApplyToEnemies)
                 {
-                    actors.Add(unit);
+                    ProtectionHelper.ProtectActor(unit);
                 }
                 else if (hm.IsLocalPlayerNeutral(unit.TeamId) && Mod.Config.Combat.SpawnProtection.ApplyToNeutrals)
                 {
-                    actors.Add(unit);
+                    ProtectionHelper.ProtectActor(unit);
                 }
                 else if (hm.IsLocalPlayerFriendly(unit.TeamId) && Mod.Config.Combat.SpawnProtection.ApplyToAllies)
                 {
-                    actors.Add(unit);
+                    ProtectionHelper.ProtectActor(unit);
                 }
                 else if (unit.team.IsLocalPlayer)
                 {
-                    actors.Add(unit);
+                    ProtectionHelper.ProtectActor(unit);
                 }
                 else
                 {
                     Mod.Log.Info?.Write($" -- skipping unknown actor: {unit.DistinctId()}");
                 }
+            }
 
+            // The added unit is a reinforcement if round > 1
+            else if (__instance.Combat.TurnDirector.CurrentRound > 1 && Mod.Config.Combat.SpawnProtection.ApplyToReinforcements)
+            {
+                HostilityMatrix hm = __instance.Combat.HostilityMatrix;
 
-                if (actors.Count == 1)
+                Mod.Log.Info?.Write($"Checking actor:{CombatantUtils.Label(unit)} that belongs to team:{unit?.team?.Name}");
+
+                if (hm.IsLocalPlayerEnemy(unit.TeamId) && Mod.Config.Combat.SpawnProtection.ApplyToEnemies)
                 {
-                    Mod.Log.Info?.Write($"Applying protection to reinforcement:{CombatantUtils.Label(unit)}");
-                    ProtectionHelper.ProtectActors(actors);
+                    ProtectionHelper.ProtectActor(unit);
+                }
+                else if (hm.IsLocalPlayerNeutral(unit.TeamId) && Mod.Config.Combat.SpawnProtection.ApplyToNeutrals)
+                {
+                    ProtectionHelper.ProtectActor(unit);
+                }
+                else if (hm.IsLocalPlayerFriendly(unit.TeamId) && Mod.Config.Combat.SpawnProtection.ApplyToAllies)
+                {
+                    ProtectionHelper.ProtectActor(unit);
+                }
+                else if (unit.team.IsLocalPlayer)
+                {
+                    ProtectionHelper.ProtectActor(unit);
+                }
+                else
+                {
+                    Mod.Log.Info?.Write($" -- skipping unknown actor: {unit.DistinctId()}");
                 }
             }
         }
@@ -58,7 +78,7 @@ namespace IRTweaks.Modules.Combat
     [HarmonyPatch(typeof(TurnDirector), "BeginNewRound")]
     static class SpawnProtection_TurnDirector_BeginNewRound
     {
-        static bool Prepare() => Mod.Config.Fixes.SpawnProtection;
+        static bool Prepare() => Mod.Config.Fixes.SpawnProtection && false; //disable for now
 
         static void Postfix(TurnDirector __instance)
         {
