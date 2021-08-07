@@ -11,6 +11,7 @@ This is a mod for the [HBS BattleTech](http://battletechgame.com/) game that inc
 * **CombatLog**: Provides an in-game log that captures text from floaties and preserves them in a readable format.
 * **CTDestructInjuryFix**: Re-enables CT destruction causing Maximum pilot injuries, forcing them to win a roll against `SimGameConstants.Pilot.IncapacitatedDeathChance` to survive at end of contract.
 * **DisableCampaign**: Disables the HBS campaign button, to prevent errors with various mod packs.
+* **DisableDebug**: Disables the "Debug career" buttons even when test tools enabled.
 * **DisableCombatRestarts**: Mission restarts lead to corruption at the salvage screen in vanilla, and especially in a modded game. This disables the UI selection that allows in-combat saves to be made.
 * **DisableCombatSaves**: Combat saves are prone to errors during vanilla gameplay, but especially so during modded gameplay. This disables the UI selection that allows in-combat saves to be made.
 * **DisableLowFundsNotification**: Disables the irritating "low funds" notification.
