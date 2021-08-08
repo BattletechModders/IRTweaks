@@ -16,7 +16,7 @@ namespace IRTweaks.Modules.Combat
 
         static void Postfix(Team __instance, AbstractActor unit)
         {
-            if (__instance.Combat.TurnDirector.CurrentRound == 1) // always protect on first round of contract.
+            if (__instance.Combat.TurnDirector.CurrentRound <= 1) // always protect on first round of contract.
             {
                 HostilityMatrix hm = __instance.Combat.HostilityMatrix;
 
