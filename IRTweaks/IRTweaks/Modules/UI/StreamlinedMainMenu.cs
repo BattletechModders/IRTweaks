@@ -197,7 +197,7 @@ namespace IRTweaks.Modules.UI {
 
         [HarmonyPatch(typeof(SGNavigationList), "RefreshButtonStates")]
         public static class SGNavigationList_RefreshButtonStates {
-            static bool Prepare() { return Mod.Config.Fixes.StreamlinedMainMenu; }
+            static bool Prepare() { return Mod.Config.Fixes.StreamlinedMainMenu && !Mod.Config.Fixes.CustomShopsRepHandling; }
 
             static void Postfix(SGNavigationList __instance, SimGameState simState) {
 
