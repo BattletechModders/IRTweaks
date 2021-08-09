@@ -213,6 +213,7 @@ namespace IRTweaks
         public bool SkirmishAlwaysUnlimited = true;
         public bool SimGameDifficultyLabelsReplacer = true;
         public bool StreamlinedMainMenu = true;
+        public bool ShiftMenuElements = false;
         public bool WeaponTooltip = true;
 
     }
