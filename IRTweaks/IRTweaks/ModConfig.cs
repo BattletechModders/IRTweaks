@@ -188,7 +188,6 @@ namespace IRTweaks
 
         // Misc
 
-        public bool CustomShopsRepHandling = false;
         public bool DisableCampaign = true;
         public bool DisableDebug = true;
         public bool DisableLowFundsNotification = true;
@@ -248,7 +247,6 @@ namespace IRTweaks
             Mod.Log.Info?.Write($"  BulkScrapping:                      {this.Fixes.BulkScrapping}");
             Mod.Log.Info?.Write($"  CalledShotTweaks:                   {this.Fixes.CalledShotTweaks}");
             Mod.Log.Info?.Write($"  CombatLog:                          {this.Fixes.CombatLog}");
-            Mod.Log.Info?.Write($"  CustomShopsRepHandling              {this.Fixes.CustomShopsRepHandling}");
             Mod.Log.Info?.Write($"  DisableCampaign:                    {this.Fixes.DisableCampaign}");
             Mod.Log.Info?.Write($"  DisableDebug:                       {this.Fixes.DisableDebug}");
             Mod.Log.Info?.Write($"  DisableCombatRestarts:              {this.Fixes.DisableCombatRestarts}");

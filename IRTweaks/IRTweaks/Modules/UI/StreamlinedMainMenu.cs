@@ -205,7 +205,7 @@ namespace IRTweaks.Modules.UI {
                 return reputation > -3;
             }
 
-            static bool Prepare() { return Mod.Config.Fixes.StreamlinedMainMenu && !Mod.Config.Fixes.CustomShopsRepHandling; }
+            static bool Prepare() { return Mod.Config.Fixes.StreamlinedMainMenu; }
 
             static void Postfix(SGNavigationList __instance, SimGameState simState) {
 
