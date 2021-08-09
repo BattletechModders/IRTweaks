@@ -198,7 +198,7 @@ namespace IRTweaks.Modules.UI {
         [HarmonyPatch(typeof(SGNavigationList), "RefreshButtonStates")]
         public static class SGNavigationList_RefreshButtonStates {
 
-            public static bool IsShowActive(SimGameState simState)
+            public static bool IsShopActive(SimGameState simState)
             {
                 FactionValue owner = simState.CurSystem.OwnerValue;
                 int reputation = (int)simState.GetReputation(owner);
@@ -210,7 +210,7 @@ namespace IRTweaks.Modules.UI {
             static void Postfix(SGNavigationList __instance, SimGameState simState) {
 
                 if (SGNavigationList_Start.storeButton != null) {
-                    if (!IsShowActive(simState)) {
+                    if (!IsShopActive(simState)) {
                         Mod.Log.Info?.Write("Faction reputation too low, disabling store button.");
                         SGNavigationList_Start.storeButton.SetState(ButtonState.Disabled);
                     }
