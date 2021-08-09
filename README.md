@@ -10,7 +10,7 @@ This is a mod for the [HBS BattleTech](http://battletechgame.com/) game that inc
 * **CalledShotTweaks**: The modifier for called shots (aka offensive push) is driven by the pilot's tactics skill, ability, and pilot tags. It can also be influenced by gear. Options allow disabling the ability to called shot 
 * **CombatLog**: Provides an in-game log that captures text from floaties and preserves them in a readable format.
 * **CTDestructInjuryFix**: Re-enables CT destruction causing Maximum pilot injuries, forcing them to win a roll against `SimGameConstants.Pilot.IncapacitatedDeathChance` to survive at end of contract.
-* **CustomShopsRepHandling**: Disables internal handling of shop button when using rearranged menu (so CustomShops can handle reputation-based enable/disable). false by default.
+* ~~**CustomShopsRepHandling**: Disables internal handling of shop button when using rearranged menu (so CustomShops can handle reputation-based enable/disable). false by default.~~ deprecated
 * **DisableCampaign**: Disables the HBS campaign button, to prevent errors with various mod packs.
 * **DisableDebug**: Disables the "Debug career" buttons even when test tools enabled.
 * **DisableCombatRestarts**: Mission restarts lead to corruption at the salvage screen in vanilla, and especially in a modded game. This disables the UI selection that allows in-combat saves to be made.
