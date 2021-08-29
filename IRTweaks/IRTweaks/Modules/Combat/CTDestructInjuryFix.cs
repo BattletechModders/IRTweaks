@@ -21,6 +21,8 @@ namespace IRTweaks.Modules.Combat
             {
                 if (location==ChassisLocations.CenterTorso)
                 {
+                    if (!__instance.MechDef.MechTags.Any(x => Mod.Config.Combat.DisableCTMaxInjureTags.Contains(x)))
+                        return;
                     var pilot = __instance.GetPilot();
                     pilot.MaxInjurePilot(__instance.Combat.Constants, hitInfo.attackerId, hitInfo.stackItemUID, damageType, null, __instance.Combat.FindActorByGUID(hitInfo.attackerId));
                     Mod.Log.Info?.Write($"CT Destroyed! Calling MaxInjurePilot on {pilot.Name}");

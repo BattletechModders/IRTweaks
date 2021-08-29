@@ -47,6 +47,8 @@ namespace IRTweaks
     {
         public int PilotAttributesMax = 13;
 
+        public List<string> DisableCTMaxInjureTags = new List<string>();
+
         public CalledShotOpts CalledShot = new CalledShotOpts();
         public class CalledShotOpts
         {
@@ -275,6 +277,7 @@ namespace IRTweaks
             Mod.Log.Info?.Write($"  UrbanExplosionsFix:                 {this.Fixes.UrbanExplosionsFix}");
             Mod.Log.Info?.Write($"  WeaponTooltips:                     {this.Fixes.WeaponTooltip}");
 
+            Mod.Log.Info?.Write($"  DisableCTMaxInjureTags:                     {this.Combat.DisableCTMaxInjureTags}");
             Mod.Log.Info?.Write("  -- Called Shot --");
             Mod.Log.Info?.Write($"   Disable => AllLocations: {Combat.CalledShot.DisableAllLocations}  Headshots: {Combat.CalledShot.DisableHeadshots}");
             Mod.Log.Info?.Write($"   Enable => ComplexTacticsModifier: {Combat.CalledShot.EnableTacticsModifier}");
