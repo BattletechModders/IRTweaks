@@ -63,6 +63,10 @@ This tweak makes minor changes to the store UI elements:
 * Allows Shift+Click on the -/+ in the bulk-purchase and bulk-sell screens to increment the count by -/+ 5. You can customize this value by setting `Store.QuantityOnShift` in mod.json.
 * Allows Control+Click on the -/+ in the bulk-purchase and bulk-sell screens to increment the count by -/+ 20. You can customize this value by setting `Store.QuantityOnControl` in mod.json.
 
+## Disable CT Destruction Max Injuries By Tag
+
+This setting, "DisableCTMaxInjureTags" under the "Combat" section of the mod.json settings, gives a list of MechDef tags which, if present, will prevent Max Injury from occurring when CT is destroyed. Intended for use with Battle Armor.
+
 ## Called Shot Tweaks
 
 This tweak makes two major changes to how Called Shot (i.e. Morale Attack aka Fury aka Precision Strike) works. The first change is that the modifier applied to the shot is no longer a fixed value (`CombatGameConstants:ToHitOffensivePush`), but rather calculated by a formula (see below). The second change is that choosing a location can be disabled entirely, or headshots can be disabled. 
