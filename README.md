@@ -121,9 +121,12 @@ This module allows the use of cheats such as CheatEngine or other memory address
 ## Damage Mods
 This tweak allows you to define multipliers to damage of various types: normal, heat, stability, and AP damage (from CAC). Units' access to the modifiers is first controlled via a stat check; the unit must have boolean true value for a statistic named the same as StatName in the following settings. This statistic can be added via equipment, pilot abilities, etc. Probability corresponds to the probability that the modifier will be applied; set to 1 to always apply the modifier. Multiplier represents the actual multiplier to be applied.
 
+if `DisplayFloatiesOnTrigger` = true, a floatie will be generated over the unit if/when the bonus damage is activated.
+
 These values are defined using the following settings:
 ```json
 "DamageModsBySkill": {
+		"DisplayFloatiesOnTrigger": true,
 		"StabilityMods": [
 			{
 				"StatName": "stabMod1",
