@@ -66,6 +66,7 @@ namespace IRTweaks
 
         public class DamageModsBySkillOpts
         {
+            public bool DisplayFloatiesOnTrigger = false;
             public List<StabilityMod> StabilityMods = new List<StabilityMod>();
             public List<HeatMod> HeatMods = new List<HeatMod>();
             public List<APDmgMod> APDmgMods = new List<APDmgMod>();
