@@ -36,7 +36,8 @@ This is a mod for the [HBS BattleTech](http://battletechgame.com/) game that inc
 * **SkirmishReset**: This fix is a modder's resource. Skirmish saves the mechDefs that were customized, which can result in an ever-spinny when itemDefs are changed or mods are disabled. When enabled, this fix will always reset the Skirmish lances and mech definitions to the base state by deleting all customizations.
 * **SkipDeleteSavePopup**: Disables the 'are you sure' prompt when you delete save games.
 * **Spawn Protection**: Provides high evasion, braced, and guarded status to units when they spawn. This can prevent first-turn damage during mission start, or to reinforcements that spawn close to the player.
-* **Streamlined Main Menu**: This tweaks the layout of the main Argo UI to move the most commonly accessed buttons directly to the sidebar. 
+* **Streamlined Main Menu**: This tweaks the layout of the main Argo UI to move the most commonly accessed buttons directly to the sidebar.
+* **Targeting Computer Tonnage**: This displays the tonnage of your target in the targeting computer display (next to where it displays weight class in vanilla). 
 * **Urban Explosions Fix**: This corrects a subtle bug in HBS code that causes exploding buildings to not sequence properly. Unfortunately enabling this fix makes buildings take significantly longer to be destroyed. This will be improved in a future fix.
 * **Weak Against Melee Fix**: Fixes the "Weak Against Melee" debuff for Turrets/Vehicles to accurately report melee damage modifiers from CombatGameConstants
 * **Weapon Tooltips**: Modifies the weapon tooltips to more accurately report damage when a weapon uses extensions provided by [CustomAmmoCategories](https://github.com/CMiSSioN/CustomAmmoCategories).
