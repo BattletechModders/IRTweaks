@@ -5,10 +5,15 @@ using BattleTech;
 
 namespace IRTweaks {
 
-    public static class ModState {
+    public static class ModState
+    {
+        public static Dictionary<string, List<ActiveDmgMod>> StabDmgMods = new Dictionary<string, List<ActiveDmgMod>>();
+        public static Dictionary<string, List<ActiveDmgMod>> HeatDmgMods = new Dictionary<string, List<ActiveDmgMod>>();
+        public static Dictionary<string, List<ActiveDmgMod>> APDmgMods = new Dictionary<string, List<ActiveDmgMod>>();
+        public static Dictionary<string, List<ActiveDmgMod>> StdDmgMods = new Dictionary<string, List<ActiveDmgMod>>();
 
-        public static List<SGDSToggle> instantiatedToggles = new List<SGDSToggle>();
-        public static List<SGDSDropdown> instantiatedDropdowns = new List<SGDSDropdown>();
+        public static List<SGDSToggle> InstantiatedToggles = new List<SGDSToggle>();
+        public static List<SGDSDropdown> InstantiatedDropdowns = new List<SGDSDropdown>();
         
 
         public static float MinDiffModifier = 0f;
@@ -46,8 +51,8 @@ namespace IRTweaks {
         public static void OnSimInit()
         {
             HaveDiffSettingsInitiated = false;
-            instantiatedDropdowns = new List<SGDSDropdown>();
-            instantiatedToggles = new List<SGDSToggle>();
+            InstantiatedDropdowns = new List<SGDSDropdown>();
+            InstantiatedToggles = new List<SGDSToggle>();
         }
 
         public static void Reset() {

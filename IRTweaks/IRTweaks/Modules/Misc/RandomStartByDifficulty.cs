@@ -254,12 +254,12 @@ namespace IRTweaks.Modules.Misc
                                 .GetValue<LocalizableText>();
                             dropdownLabel.enableWordWrapping = false;
 
-                            if (!ModState.instantiatedDropdowns.Contains(newDropDown))
+                            if (!ModState.InstantiatedDropdowns.Contains(newDropDown))
                             {
                                 ___activeDropdowns.Add(newDropDown);
                                 newDropDown.Initialize(__instance, setting, curSettingIndex);
                                 newDropDown.gameObject.SetActive(true);
-                                ModState.instantiatedDropdowns.Add(newDropDown);
+                                ModState.InstantiatedDropdowns.Add(newDropDown);
                             }
                         }
                         else if (setting.Toggle)
@@ -268,12 +268,12 @@ namespace IRTweaks.Modules.Misc
                             GameObject sourceDiffToggle = UnityEngine.Object.Instantiate<GameObject>(sourceDiffToggleGO, sourceDiffToggleGO.transform.parent);
                             SGDSToggle newToggle = sourceDiffToggle.GetOrAddComponent<SGDSToggle>();
 
-                            if (!ModState.instantiatedToggles.Contains(newToggle))
+                            if (!ModState.InstantiatedToggles.Contains(newToggle))
                             {
                                 ___activeToggles.Add(newToggle);
                                 newToggle.Initialize(__instance, setting, curSettingIndex);
                                 newToggle.gameObject.SetActive(true);
-                                ModState.instantiatedToggles.Add(newToggle);
+                                ModState.InstantiatedToggles.Add(newToggle);
                             }
                         }
                     }

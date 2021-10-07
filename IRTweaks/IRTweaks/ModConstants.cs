@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BattleTech;
+using Localize;
 
 namespace IRTweaks
 {
@@ -26,24 +28,53 @@ namespace IRTweaks
         public const string HBS_Building_Structure = "Structure";
 
     }
+
+    public enum DmgModType
+    {
+        NOT_SET,
+        Stability,
+        Heat,
+        AP,
+        Standard
+    }
+
+    public class ActiveDmgMod
+    {
+        public string WeaponGUID;
+        public DmgModType Type;
+        public float Mult;
+        public Text Txt;
+
+        public ActiveDmgMod(string weaponGUID, DmgModType type, float mult, Text txt)
+        {
+            this.WeaponGUID = weaponGUID;
+            this.Type = type;
+            this.Mult = mult;
+            this.Txt = txt;
+        }
+    }
+
     public class StabilityMod
     {
         public string StatName;
         public float Probability;
         public float Multiplier;
     }
+
     public class HeatMod
     {
         public string StatName;
         public float Probability;
         public float Multiplier;
     }
+
     public class APDmgMod
     {
         public string StatName;
         public float Probability;
         public float Multiplier;
     }
+
     public class StdDmgMod
     {
         public string StatName;

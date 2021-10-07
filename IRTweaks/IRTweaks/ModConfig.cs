@@ -185,6 +185,7 @@ namespace IRTweaks
         public bool PathfinderTeamFix = true;
         public bool ScaleObjectiveBuildingStructure = true;
         public bool SpawnProtection = true;
+        public bool TgtComputerTonnageDisplay = true;
         public bool TurnDirectorStartFirstRoundFix = true;
         public bool UrbanExplosionsFix = true;
         public bool WeakAgainstMeleeFix = true;
@@ -275,6 +276,7 @@ namespace IRTweaks
             Mod.Log.Info?.Write($"  SpawnProtection:                    {this.Fixes.SpawnProtection}");
             Mod.Log.Info?.Write($"  StreamlinedMainMenu:                {this.Fixes.StreamlinedMainMenu}");
             Mod.Log.Info?.Write($"  TurnDirectorStartFirstRoundFix:     {this.Fixes.TurnDirectorStartFirstRoundFix}");
+            Mod.Log.Info?.Write($"  TgtComputerTonnageDisplay:          {this.Fixes.TgtComputerTonnageDisplay}");
             Mod.Log.Info?.Write($"  UrbanExplosionsFix:                 {this.Fixes.UrbanExplosionsFix}");
             Mod.Log.Info?.Write($"  WeaponTooltips:                     {this.Fixes.WeaponTooltip}");
 

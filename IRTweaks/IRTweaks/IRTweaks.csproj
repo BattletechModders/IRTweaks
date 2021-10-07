@@ -52,7 +52,7 @@
       <HintPath>$(BattleTechGameDir)\BattleTech_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
     </Reference>
     <Reference Include="CustomAmmoCategories">
-      <HintPath>$(BattleTechGameDir)\Mods\CustomAmmoCategories\CustomAmmoCategories.dll</HintPath>
+      <HintPath>D:\SteamLibrary\steamapps\common\BATTLETECH\Mods\CustomAmmoCategories\CustomAmmoCategories.dll</HintPath>
     </Reference>
     <Reference Include="DOTweenPro, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -148,6 +148,7 @@
     <Compile Include="Modules\Misc\SkirmishReset.cs" />
     <Compile Include="Modules\UI\AlternateMechNamingStyle.cs" />
     <Compile Include="Modules\UI\BulkScrapping.cs" />
+    <Compile Include="Modules\UI\TgtComputerTonnage.cs" />
     <Compile Include="Modules\UI\CombatLog.cs" />
     <Compile Include="Modules\UI\CombatSaves.cs" />
     <Compile Include="Modules\UI\MapBoundary.cs" />
