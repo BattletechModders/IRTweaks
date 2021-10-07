@@ -1,4 +1,6 @@
-﻿using System;
+﻿#if NO_CAC
+#else
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -75,3 +77,4 @@ namespace IRTweaks.Modules.Combat
         }
     }
 }
+#endif
