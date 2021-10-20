@@ -11,6 +11,7 @@ This is a mod for the [HBS BattleTech](http://battletechgame.com/) game that inc
 * **CombatLog**: Provides an in-game log that captures text from floaties and preserves them in a readable format.
 * **CTDestructInjuryFix**: Re-enables CT destruction causing Maximum pilot injuries, forcing them to win a roll against `SimGameConstants.Pilot.IncapacitatedDeathChance` to survive at end of contract.
 * ~~**CustomShopsRepHandling**: Disables internal handling of shop button when using rearranged menu (so CustomShops can handle reputation-based enable/disable). false by default.~~ deprecated
+* **DifficultyModsFromStats**: Enables company stat "IRTweaks_DiffMod" to be added or subtracted (if negative) to career difficulty score modifier. Used in events or any Results block.
 * **DisableCampaign**: Disables the HBS campaign button, to prevent errors with various mod packs.
 * **DisableDebug**: Disables the "Debug career" buttons even when test tools enabled.
 * **DisableCombatRestarts**: Mission restarts lead to corruption at the salvage screen in vanilla, and especially in a modded game. This disables the UI selection that allows in-combat saves to be made.
@@ -63,6 +64,43 @@ This tweak makes minor changes to the store UI elements:
 * Enables bulk-purchase for items in the mech store
 * Allows Shift+Click on the -/+ in the bulk-purchase and bulk-sell screens to increment the count by -/+ 5. You can customize this value by setting `Store.QuantityOnShift` in mod.json.
 * Allows Control+Click on the -/+ in the bulk-purchase and bulk-sell screens to increment the count by -/+ 20. You can customize this value by setting `Store.QuantityOnControl` in mod.json.
+
+## DifficultyModsFromStats
+
+Enables Company stat "IRTweaks_DiffMod" to be added or subtracted (if negative) to career difficulty score modifier. Used in events or any Results block. E.g. an event with the following block would increase the Career Difficulty score by 0.1
+
+```
+"Stats": [
+	{
+		"typeString": "System.Single",
+		"name": "IRTweaks_DiffMod",
+		"value": "0.1",
+		"set": false,
+		"valueConstant": null
+	}
+],
+```
+
+IRTweaks is also now packaged with a SimGameStatDesc to prevent errors from displaying when setting the above company stat in events, as follows. Any field with "result" can also be set to `""` to hide the stat change from player view in the event screen.
+```
+{
+	"Description": {
+		"Id": "SimGameStatDesc_IRTweaks_DiffMod",
+		"Name": "IRTweaks_DiffMod",
+		"Details": "Career Difficulty Modified",
+		"Icon": null
+	},
+	"setResult": "Career Difficulty set to {RES_VALUE.ToString}",
+	"positiveResult": "Career Difficulty Modifier increased by {RES_VALUE.ToString}",
+	"negativeResult": "Career Difficulty Modifier decreased by {RES_VALUE.ToString}",
+	"temporalSetResult": "Career Difficulty set to {RES_VALUE.ToString} for {RES_DURATION.ToString} days",
+	"temporalPositiveResult": "Career Difficulty Modifier increased by {RES_VALUE.ToString} for {RES_DURATION.ToString} days",
+	"temporalNegativeResult": "Career Difficulty Modifier decreased by {RES_VALUE.ToString} for {RES_DURATION.ToString} days",
+	"infinitiveSetResult": "Career Difficulty set to {RES_VALUE.ToString}",
+	"infinitivePositiveResult": "Career Difficulty Modifier increased by {RES_VALUE.ToString}",
+	"infinitiveNegativeResult": "Career Difficulty Modifier decreased by {RES_VALUE.ToString}"
+}
+```
 
 ## Disable CT Destruction Max Injuries By Tag
 
