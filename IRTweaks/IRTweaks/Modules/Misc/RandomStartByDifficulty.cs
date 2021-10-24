@@ -404,7 +404,8 @@ namespace IRTweaks.Modules.Misc
                 careerScoreModifier = __instance.Setting.Options[___curIdx].CareerScoreModifier;
             }
 
-            __result = (careerScoreModifier <= -1f) ? 0f : careerScoreModifier;
+            __result = careerScoreModifier;
+            //__result = (careerScoreModifier <= -1f) ? 0f : careerScoreModifier;
 
             return false;
         }

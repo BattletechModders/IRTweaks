@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BattleTech;
+using BattleTech.UI;
 using Harmony;
 
 namespace IRTweaks.Modules.Misc
@@ -45,27 +46,56 @@ namespace IRTweaks.Modules.Misc
         }
     }
 
-
     [HarmonyPatch(typeof(SimGameDifficulty))]
     [HarmonyPatch("RefreshCareerScoreMultiplier")]
     public static class SimGameDifficulty_RefreshCareerScoreMultiplier
     {
         static bool Prepare() => Mod.Config.Fixes.DifficultyModsFromStats;
 
-        public static void Postfix(SimGameDifficulty __instance, ref float ___curCareerModifier)
+        public static bool Prefix(SimGameDifficulty __instance, Dictionary<string, SimGameDifficulty.DifficultySetting> ___difficultyDict, Dictionary<string, int> ___difficultyIndices, ref float ___curCareerModifier)
         {
+
+            float num = 0f;
+            foreach (string key in ___difficultyDict.Keys)
+            {
+                SimGameDifficulty.DifficultySetting difficultySetting = ___difficultyDict[key];
+                SimGameDifficulty.DifficultyOption difficultyOption = difficultySetting.Options[___difficultyIndices[key]];
+                if (difficultySetting.Enabled)
+                {
+                    num += difficultyOption.CareerScoreModifier;
+                }
+            }
+
+            ___curCareerModifier = num;
+
             var sim = UnityGameInstance.BattleTechGame.Simulation;
-            if (sim == null) return;
-            if (!sim.CompanyStats.ContainsStatistic("IRTweaks_DiffMod")) return;
+            if (sim == null) return false;
+            if (!sim.CompanyStats.ContainsStatistic("IRTweaks_DiffMod")) return false;
             
             var curMod = __instance.GetRawCareerModifier();
             var irMod = sim.CompanyStats.GetValue<float>("IRTweaks_DiffMod");
 
-            var newMod = curMod + irMod;
-            ___curCareerModifier = newMod;
+            ___curCareerModifier += irMod;
             //Traverse.Create(__instance).Field("curCareerModifier").SetValue(newMod);
             Mod.Log.Info?.Write(
-                $"DiffMods: Adding IRMod {irMod} to current career mod {curMod} for final career difficulty modifier {newMod}.");
+                $"DiffMods: Adding IRMod {irMod} to current career mod {curMod} for final career difficulty modifier {___curCareerModifier}.");
+            return false;
+        }
+    }
+
+    [HarmonyPatch(typeof(SimGameDifficultySettingsModule))]
+    [HarmonyPatch("CalculateRawScoreMod")]
+    public static class SimGameDifficultySettingsModule_CalculateRawScoreMod
+    {
+        static bool Prepare() => Mod.Config.Fixes.DifficultyModsFromStats;
+
+        public static void Postfix(SimGameDifficultySettingsModule __instance, ref float __result)
+        {
+            var sim = UnityGameInstance.BattleTechGame.Simulation;
+            if (sim == null) return;
+            if (!sim.CompanyStats.ContainsStatistic("IRTweaks_DiffMod")) return;
+            var irMod = sim.CompanyStats.GetValue<float>("IRTweaks_DiffMod");
+            __result += irMod;
         }
     }
 }
