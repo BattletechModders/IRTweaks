@@ -24,18 +24,20 @@ namespace IRTweaks.Modules.Combat
         [HarmonyPatch(typeof(Mech), "TakeWeaponDamage")] 
         public static class Mech_TakeWeaponDamage_DamageModsBySkill
         {
-            static bool Prepare() => Mod.Config.Combat.DamageModsBySkill.DisplayFloatiesOnTrigger && (Mod.Config.Combat.DamageModsBySkill.HeatMods.Count > 0 ||
-                                      Mod.Config.Combat.DamageModsBySkill.StabilityMods.Count > 0 ||
+            static bool Prepare() => Mod.Config.Combat.DamageModsBySkill.DisplayFloatiesOnTrigger && (Mod.Config.Combat.DamageModsBySkill?.HeatMods.Count > 0 ||
+                                      Mod.Config.Combat.DamageModsBySkill?.StabilityMods.Count > 0 ||
                                       Mod.Config.Combat.DamageModsBySkill.APDmgMods.Count > 0);
 
             static void Postfix(Mech __instance, WeaponHitInfo hitInfo, int hitLocation, Weapon weapon, float damageAmount, float directStructureDamage, int hitIndex, DamageType damageType)
             {
+                if (damageType == DamageType.DFASelf)
+
                 Mod.Log.Trace?.Write($"[Mech.TakeWeaponDamage] Processing dmg floaties for {weapon.Name} uid {weapon.uid}");
                 if (ModState.StabDmgMods.ContainsKey(hitInfo.attackerId))
                 {
-                    Mod.Log.Trace?.Write($"[Mech.TakeWeaponDamage] containskey true. count: {ModState.StabDmgMods[hitInfo.attackerId].Count}, matching guid? {ModState.StabDmgMods[hitInfo.attackerId].Any(x => x.WeaponGUID == weapon.uid)}.");
+                    Mod.Log.Trace?.Write($"[Mech.TakeWeaponDamage] containskey true. count: {ModState.StabDmgMods[hitInfo.attackerId].Count}, matching guid? {ModState.StabDmgMods[hitInfo.attackerId].Any(x => x?.WeaponGUID == weapon.uid)}.");
                 }
-                if (ModState.StabDmgMods.ContainsKey(hitInfo.attackerId) && ModState.StabDmgMods[hitInfo.attackerId].Count > 0 && ModState.StabDmgMods[hitInfo.attackerId].Any(x=>x.WeaponGUID == weapon.uid))
+                if (ModState.StabDmgMods.ContainsKey(hitInfo.attackerId) && ModState.StabDmgMods[hitInfo.attackerId].Count > 0 && ModState.StabDmgMods[hitInfo.attackerId].Any(x=>x?.WeaponGUID == weapon.uid))
                 {
                     var list = ModState.StabDmgMods[hitInfo.attackerId];
                     Mod.Log.Trace?.Write($"[Mech.TakeWeaponDamage] OUTPOT LIST #: {list.Count}");
@@ -43,7 +45,7 @@ namespace IRTweaks.Modules.Combat
                     var idx = 0;
                     for (int i = 0; i < ModState.StabDmgMods[hitInfo.attackerId].Count; i++)
                     {
-                        if (ModState.StabDmgMods[hitInfo.attackerId][i].Mult > 1 && hitInfo.advInfo().resolve(__instance).Stability > 0 && ModState.StabDmgMods[hitInfo.attackerId][i].WeaponGUID == weapon.uid)
+                        if (ModState.StabDmgMods[hitInfo.attackerId][i]?.Mult > 1 && hitInfo.advInfo()?.resolve(__instance)?.Stability > 0 && ModState.StabDmgMods[hitInfo.attackerId][i]?.WeaponGUID == weapon.uid)
                         {
                             var attacker = __instance.Combat.FindActorByGUID(hitInfo.attackerId);
                             var txt = ModState.StabDmgMods[hitInfo.attackerId][i].Txt;
@@ -51,7 +53,7 @@ namespace IRTweaks.Modules.Combat
                                 new AddSequenceToStackMessage(new ShowActorInfoSequence(attacker,
                                     txt,
                                     FloatieMessage.MessageNature.Buff, false)));
-                            Mod.Log.Trace?.Write($"[Mech.TakeWeaponDamage] HERE WE SHOULD SEE FLOATIE for {weapon.Name} with GUID {weapon.uid}, stored GUID was {ModState.StabDmgMods[hitInfo.attackerId][i].WeaponGUID}. AGI:{hitInfo.attackGroupIndex}, AWI:{hitInfo.attackWeaponIndex}");
+                            Mod.Log.Trace?.Write($"[Mech.TakeWeaponDamage] HERE WE SHOULD SEE FLOATIE for {weapon.Name} with GUID {weapon.uid}, stored GUID was {ModState.StabDmgMods[hitInfo.attackerId][i]?.WeaponGUID}. AGI:{hitInfo.attackGroupIndex}, AWI:{hitInfo.attackWeaponIndex}");
                             idx = i;
                             break;
                         }
@@ -60,7 +62,7 @@ namespace IRTweaks.Modules.Combat
                     ModState.StabDmgMods[hitInfo.attackerId].RemoveAt(idx);
                 }
 
-                if (ModState.HeatDmgMods.ContainsKey(hitInfo.attackerId) && ModState.HeatDmgMods[hitInfo.attackerId].Count > 0 && ModState.HeatDmgMods[hitInfo.attackerId].Any(x => x.WeaponGUID == weapon.uid))
+                if (ModState.HeatDmgMods.ContainsKey(hitInfo.attackerId) && ModState.HeatDmgMods[hitInfo.attackerId].Count > 0 && ModState.HeatDmgMods[hitInfo.attackerId].Any(x => x?.WeaponGUID == weapon.uid))
                 {
                     var list = ModState.HeatDmgMods[hitInfo.attackerId];
                     Mod.Log.Trace?.Write($"[Mech.TakeWeaponDamage] OUTPOT LIST #: {list.Count}");
@@ -68,7 +70,7 @@ namespace IRTweaks.Modules.Combat
                     var idx = 0;
                     for (int i = 0; i < ModState.HeatDmgMods[hitInfo.attackerId].Count; i++)
                     {
-                        if (ModState.HeatDmgMods[hitInfo.attackerId][i].Mult > 1 && hitInfo.advInfo().resolve(__instance).Heat > 0 && ModState.HeatDmgMods[hitInfo.attackerId][i].WeaponGUID == weapon.uid)
+                        if (ModState.HeatDmgMods[hitInfo.attackerId][i]?.Mult > 1 && hitInfo.advInfo()?.resolve(__instance)?.Heat > 0 && ModState.HeatDmgMods[hitInfo.attackerId][i]?.WeaponGUID == weapon.uid)
                         {
                             var attacker = __instance.Combat.FindActorByGUID(hitInfo.attackerId);
                             var txt = ModState.HeatDmgMods[hitInfo.attackerId][i].Txt;
@@ -76,7 +78,7 @@ namespace IRTweaks.Modules.Combat
                                 new AddSequenceToStackMessage(new ShowActorInfoSequence(attacker,
                                     txt,
                                     FloatieMessage.MessageNature.Buff, false)));
-                            Mod.Log.Trace?.Write($"[Mech.TakeWeaponDamage] HERE WE SHOULD SEE FLOATIE for {weapon.Name} with GUID {weapon.uid}, stored GUID was {ModState.HeatDmgMods[hitInfo.attackerId][i].WeaponGUID}. AGI:{hitInfo.attackGroupIndex}, AWI:{hitInfo.attackWeaponIndex}");
+                            Mod.Log.Trace?.Write($"[Mech.TakeWeaponDamage] HERE WE SHOULD SEE FLOATIE for {weapon.Name} with GUID {weapon.uid}, stored GUID was {ModState.HeatDmgMods[hitInfo.attackerId][i]?.WeaponGUID}. AGI:{hitInfo.attackGroupIndex}, AWI:{hitInfo.attackWeaponIndex}");
                             idx = i;
                             break;
                         }
@@ -85,7 +87,7 @@ namespace IRTweaks.Modules.Combat
                     ModState.HeatDmgMods[hitInfo.attackerId].RemoveAt(idx);
                 }
 
-                if (ModState.APDmgMods.ContainsKey(hitInfo.attackerId) && ModState.APDmgMods[hitInfo.attackerId].Count > 0 && ModState.APDmgMods[hitInfo.attackerId].Any(x => x.WeaponGUID == weapon.uid))
+                if (ModState.APDmgMods.ContainsKey(hitInfo.attackerId) && ModState.APDmgMods[hitInfo.attackerId].Count > 0 && ModState.APDmgMods[hitInfo.attackerId].Any(x => x?.WeaponGUID == weapon.uid))
                 {
                     var list = ModState.APDmgMods[hitInfo.attackerId];
                     Mod.Log.Trace?.Write($"[Mech.TakeWeaponDamage] OUTPOT LIST #: {list.Count}");
@@ -93,7 +95,7 @@ namespace IRTweaks.Modules.Combat
                     var idx = 0;
                     for (int i = 0; i < ModState.APDmgMods[hitInfo.attackerId].Count; i++)
                     {
-                        if (ModState.APDmgMods[hitInfo.attackerId][i].Mult > 1 && hitInfo.advInfo().resolve(__instance).cumulativeDamage > 0 && ModState.APDmgMods[hitInfo.attackerId][i].WeaponGUID == weapon.uid)
+                        if (ModState.APDmgMods[hitInfo.attackerId][i]?.Mult > 1 && hitInfo.advInfo()?.resolve(__instance)?.cumulativeDamage > 0 && ModState.APDmgMods[hitInfo.attackerId][i]?.WeaponGUID == weapon.uid)
                         {
                             var attacker = __instance.Combat.FindActorByGUID(hitInfo.attackerId);
                             var txt = ModState.APDmgMods[hitInfo.attackerId][i].Txt;
@@ -101,7 +103,7 @@ namespace IRTweaks.Modules.Combat
                                 new AddSequenceToStackMessage(new ShowActorInfoSequence(attacker,
                                     txt,
                                     FloatieMessage.MessageNature.Buff, false)));
-                            Mod.Log.Trace?.Write($"[Mech.TakeWeaponDamage] HERE WE SHOULD SEE FLOATIE for {weapon.Name} with GUID {weapon.uid}, stored GUID was {ModState.APDmgMods[hitInfo.attackerId][i].WeaponGUID}. AGI:{hitInfo.attackGroupIndex}, AWI:{hitInfo.attackWeaponIndex}");
+                            Mod.Log.Trace?.Write($"[Mech.TakeWeaponDamage] HERE WE SHOULD SEE FLOATIE for {weapon.Name} with GUID {weapon.uid}, stored GUID was {ModState.APDmgMods[hitInfo.attackerId][i]?.WeaponGUID}. AGI:{hitInfo.attackGroupIndex}, AWI:{hitInfo.attackWeaponIndex}");
                             idx = i;
                             break;
                         }
@@ -110,7 +112,7 @@ namespace IRTweaks.Modules.Combat
                     ModState.APDmgMods[hitInfo.attackerId].RemoveAt(idx);
                 }
 
-                if (ModState.StdDmgMods.ContainsKey(hitInfo.attackerId) && ModState.StdDmgMods[hitInfo.attackerId].Count > 0 && ModState.StdDmgMods[hitInfo.attackerId].Any(x => x.WeaponGUID == weapon.uid))
+                if (ModState.StdDmgMods.ContainsKey(hitInfo.attackerId) && ModState.StdDmgMods[hitInfo.attackerId].Count > 0 && ModState.StdDmgMods[hitInfo.attackerId].Any(x => x?.WeaponGUID == weapon.uid))
                 {
                     var list = ModState.StdDmgMods[hitInfo.attackerId];
                     Mod.Log.Trace?.Write($"[Mech.TakeWeaponDamage] OUTPOT LIST #: {list.Count}");
@@ -118,7 +120,7 @@ namespace IRTweaks.Modules.Combat
                     var idx = 0;
                     for (int i = 0; i < ModState.StdDmgMods[hitInfo.attackerId].Count; i++)
                     {
-                        if (ModState.StdDmgMods[hitInfo.attackerId][i].Mult > 1 && hitInfo.advInfo().resolve(__instance).cumulativeDamage > 0 && ModState.StdDmgMods[hitInfo.attackerId][i].WeaponGUID == weapon.uid)
+                        if (ModState.StdDmgMods[hitInfo.attackerId][i]?.Mult > 1 && hitInfo.advInfo()?.resolve(__instance)?.cumulativeDamage > 0 && ModState.StdDmgMods[hitInfo.attackerId][i]?.WeaponGUID == weapon.uid)
                         {
                             var attacker = __instance.Combat.FindActorByGUID(hitInfo.attackerId);
                             var txt = ModState.StdDmgMods[hitInfo.attackerId][i].Txt;
@@ -126,7 +128,7 @@ namespace IRTweaks.Modules.Combat
                                 new AddSequenceToStackMessage(new ShowActorInfoSequence(attacker,
                                     txt,
                                     FloatieMessage.MessageNature.Buff, false)));
-                            Mod.Log.Trace?.Write($"[Mech.TakeWeaponDamage] HERE WE SHOULD SEE FLOATIE for {weapon.Name} with GUID {weapon.uid}, stored GUID was {ModState.StdDmgMods[hitInfo.attackerId][i].WeaponGUID}. AGI:{hitInfo.attackGroupIndex}, AWI:{hitInfo.attackWeaponIndex}");
+                            Mod.Log.Trace?.Write($"[Mech.TakeWeaponDamage] HERE WE SHOULD SEE FLOATIE for {weapon.Name} with GUID {weapon.uid}, stored GUID was {ModState.StdDmgMods[hitInfo.attackerId][i]?.WeaponGUID}. AGI:{hitInfo.attackGroupIndex}, AWI:{hitInfo.attackWeaponIndex}");
                             idx = i;
                             break;
                         }
@@ -140,8 +142,8 @@ namespace IRTweaks.Modules.Combat
         [HarmonyPatch(typeof(Vehicle), "TakeWeaponDamage")]
         public static class Vehicle_TakeWeaponDamage_DamageModsBySkill
         {
-            static bool Prepare() => Mod.Config.Combat.DamageModsBySkill.DisplayFloatiesOnTrigger && (Mod.Config.Combat.DamageModsBySkill.HeatMods.Count > 0 ||
-                Mod.Config.Combat.DamageModsBySkill.StabilityMods.Count > 0 ||
+            static bool Prepare() => Mod.Config.Combat.DamageModsBySkill.DisplayFloatiesOnTrigger && (Mod.Config.Combat.DamageModsBySkill?.HeatMods.Count > 0 ||
+                Mod.Config.Combat.DamageModsBySkill?.StabilityMods.Count > 0 ||
                 Mod.Config.Combat.DamageModsBySkill.APDmgMods.Count > 0);
 
             static void Postfix(Vehicle __instance, WeaponHitInfo hitInfo, int hitLocation, Weapon weapon, float damageAmount, float directStructureDamage, int hitIndex, DamageType damageType)
@@ -150,10 +152,10 @@ namespace IRTweaks.Modules.Combat
 
                 if (ModState.StabDmgMods.ContainsKey(hitInfo.attackerId))
                 {
-                    Mod.Log.Trace?.Write($"[Vehicle.TakeWeaponDamage] containskey true. count: {ModState.StabDmgMods[hitInfo.attackerId].Count}, matching guid? {ModState.StabDmgMods[hitInfo.attackerId].Any(x => x.WeaponGUID == weapon.uid)}.");
+                    Mod.Log.Trace?.Write($"[Vehicle.TakeWeaponDamage] containskey true. count: {ModState.StabDmgMods[hitInfo.attackerId].Count}, matching guid? {ModState.StabDmgMods[hitInfo.attackerId].Any(x => x?.WeaponGUID == weapon.uid)}.");
                 }
 
-                if (ModState.StabDmgMods.ContainsKey(hitInfo.attackerId) && ModState.StabDmgMods[hitInfo.attackerId].Count > 0 && ModState.StabDmgMods[hitInfo.attackerId].Any(x => x.WeaponGUID == weapon.uid))
+                if (ModState.StabDmgMods.ContainsKey(hitInfo.attackerId) && ModState.StabDmgMods[hitInfo.attackerId].Count > 0 && ModState.StabDmgMods[hitInfo.attackerId].Any(x => x?.WeaponGUID == weapon.uid))
                 {
                     var list = ModState.StabDmgMods[hitInfo.attackerId];
                     Mod.Log.Trace?.Write($"[Vehicle.TakeWeaponDamage] OUTPOT LIST #: {list.Count}");
@@ -161,7 +163,7 @@ namespace IRTweaks.Modules.Combat
                     var idx = 0;
                     for (int i = 0; i < ModState.StabDmgMods[hitInfo.attackerId].Count; i++)
                     {
-                        if (ModState.StabDmgMods[hitInfo.attackerId][i].Mult > 1 && hitInfo.advInfo().resolve(__instance).Stability > 0 && ModState.StabDmgMods[hitInfo.attackerId][i].WeaponGUID == weapon.uid)
+                        if (ModState.StabDmgMods[hitInfo.attackerId][i].Mult > 1 && hitInfo.advInfo()?.resolve(__instance)?.Stability > 0 && ModState.StabDmgMods[hitInfo.attackerId][i]?.WeaponGUID == weapon.uid)
                         {
                             var attacker = __instance.Combat.FindActorByGUID(hitInfo.attackerId);
                             var txt = ModState.StabDmgMods[hitInfo.attackerId][i].Txt;
@@ -169,7 +171,7 @@ namespace IRTweaks.Modules.Combat
                                 new AddSequenceToStackMessage(new ShowActorInfoSequence(attacker,
                                     txt,
                                     FloatieMessage.MessageNature.Buff, false)));
-                            Mod.Log.Trace?.Write($"[Vehicle.TakeWeaponDamage] HERE WE SHOULD SEE FLOATIE for {weapon.Name} with GUID {weapon.uid}, stored GUID was {ModState.StabDmgMods[hitInfo.attackerId][i].WeaponGUID}. AGI:{hitInfo.attackGroupIndex}, AWI:{hitInfo.attackWeaponIndex}");
+                            Mod.Log.Trace?.Write($"[Vehicle.TakeWeaponDamage] HERE WE SHOULD SEE FLOATIE for {weapon.Name} with GUID {weapon.uid}, stored GUID was {ModState.StabDmgMods[hitInfo.attackerId][i]?.WeaponGUID}. AGI:{hitInfo.attackGroupIndex}, AWI:{hitInfo.attackWeaponIndex}");
                             idx = i;
                             break;
                         }
@@ -182,10 +184,10 @@ namespace IRTweaks.Modules.Combat
 
                 if (ModState.HeatDmgMods.ContainsKey(hitInfo.attackerId))
                 {
-                    Mod.Log.Trace?.Write($"[Vehicle.TakeWeaponDamage] containskey true. count: {ModState.HeatDmgMods[hitInfo.attackerId].Count}, matching guid? {ModState.HeatDmgMods[hitInfo.attackerId].Any(x => x.WeaponGUID == weapon.uid)}.");
+                    Mod.Log.Trace?.Write($"[Vehicle.TakeWeaponDamage] containskey true. count: {ModState.HeatDmgMods[hitInfo.attackerId].Count}, matching guid? {ModState.HeatDmgMods[hitInfo.attackerId].Any(x => x?.WeaponGUID == weapon.uid)}.");
                 }
 
-                if (ModState.HeatDmgMods.ContainsKey(hitInfo.attackerId) && ModState.HeatDmgMods[hitInfo.attackerId].Count > 0 && ModState.HeatDmgMods[hitInfo.attackerId].Any(x => x.WeaponGUID == weapon.uid))
+                if (ModState.HeatDmgMods.ContainsKey(hitInfo.attackerId) && ModState.HeatDmgMods[hitInfo.attackerId].Count > 0 && ModState.HeatDmgMods[hitInfo.attackerId].Any(x => x?.WeaponGUID == weapon.uid))
                 {
                     var list = ModState.HeatDmgMods[hitInfo.attackerId];
                     Mod.Log.Trace?.Write($"[Vehicle.TakeWeaponDamage] OUTPOT LIST #: {list.Count}");
@@ -193,7 +195,7 @@ namespace IRTweaks.Modules.Combat
                     var idx = 0;
                     for (int i = 0; i < ModState.HeatDmgMods[hitInfo.attackerId].Count; i++)
                     {
-                        if (ModState.HeatDmgMods[hitInfo.attackerId][i].Mult > 1 && hitInfo.advInfo().resolve(__instance).Heat > 0 && ModState.HeatDmgMods[hitInfo.attackerId][i].WeaponGUID == weapon.uid)
+                        if (ModState.HeatDmgMods[hitInfo.attackerId][i].Mult > 1 && hitInfo.advInfo()?.resolve(__instance)?.Heat > 0 && ModState.HeatDmgMods[hitInfo.attackerId][i]?.WeaponGUID == weapon.uid)
                         {
                             var attacker = __instance.Combat.FindActorByGUID(hitInfo.attackerId);
                             var txt = ModState.HeatDmgMods[hitInfo.attackerId][i].Txt;
@@ -201,7 +203,7 @@ namespace IRTweaks.Modules.Combat
                                 new AddSequenceToStackMessage(new ShowActorInfoSequence(attacker,
                                     txt,
                                     FloatieMessage.MessageNature.Buff, false)));
-                            Mod.Log.Trace?.Write($"[Vehicle.TakeWeaponDamage] HERE WE SHOULD SEE FLOATIE for {weapon.Name} with GUID {weapon.uid}, stored GUID was {ModState.HeatDmgMods[hitInfo.attackerId][i].WeaponGUID}. AGI:{hitInfo.attackGroupIndex}, AWI:{hitInfo.attackWeaponIndex}");
+                            Mod.Log.Trace?.Write($"[Vehicle.TakeWeaponDamage] HERE WE SHOULD SEE FLOATIE for {weapon.Name} with GUID {weapon.uid}, stored GUID was {ModState.HeatDmgMods[hitInfo.attackerId][i]?.WeaponGUID}. AGI:{hitInfo.attackGroupIndex}, AWI:{hitInfo.attackWeaponIndex}");
                             idx = i;
                             break;
                         }
@@ -214,10 +216,10 @@ namespace IRTweaks.Modules.Combat
 
                 if (ModState.APDmgMods.ContainsKey(hitInfo.attackerId))
                 {
-                    Mod.Log.Trace?.Write($"[Vehicle.TakeWeaponDamage] containskey true. count: {ModState.APDmgMods[hitInfo.attackerId].Count}, matching guid? {ModState.APDmgMods[hitInfo.attackerId].Any(x => x.WeaponGUID == weapon.uid)}.");
+                    Mod.Log.Trace?.Write($"[Vehicle.TakeWeaponDamage] containskey true. count: {ModState.APDmgMods[hitInfo.attackerId].Count}, matching guid? {ModState.APDmgMods[hitInfo.attackerId].Any(x => x?.WeaponGUID == weapon.uid)}.");
                 }
 
-                if (ModState.APDmgMods.ContainsKey(hitInfo.attackerId) && ModState.APDmgMods[hitInfo.attackerId].Count > 0 && ModState.APDmgMods[hitInfo.attackerId].Any(x => x.WeaponGUID == weapon.uid))
+                if (ModState.APDmgMods.ContainsKey(hitInfo.attackerId) && ModState.APDmgMods[hitInfo.attackerId].Count > 0 && ModState.APDmgMods[hitInfo.attackerId].Any(x => x?.WeaponGUID == weapon.uid))
                 {
                     var list = ModState.APDmgMods[hitInfo.attackerId];
                     Mod.Log.Trace?.Write($"[Vehicle.TakeWeaponDamage] OUTPOT LIST #: {list.Count}");
@@ -225,7 +227,7 @@ namespace IRTweaks.Modules.Combat
                     var idx = 0;
                     for (int i = 0; i < ModState.APDmgMods[hitInfo.attackerId].Count; i++)
                     {
-                        if (ModState.APDmgMods[hitInfo.attackerId][i].Mult > 1 && hitInfo.advInfo().resolve(__instance).cumulativeDamage > 0 && ModState.APDmgMods[hitInfo.attackerId][i].WeaponGUID == weapon.uid)
+                        if (ModState.APDmgMods[hitInfo.attackerId][i].Mult > 1 && hitInfo.advInfo()?.resolve(__instance)?.cumulativeDamage > 0 && ModState.APDmgMods[hitInfo.attackerId][i]?.WeaponGUID == weapon.uid)
                         {
                             var attacker = __instance.Combat.FindActorByGUID(hitInfo.attackerId);
                             var txt = ModState.APDmgMods[hitInfo.attackerId][i].Txt;
@@ -233,7 +235,7 @@ namespace IRTweaks.Modules.Combat
                                 new AddSequenceToStackMessage(new ShowActorInfoSequence(attacker,
                                     txt,
                                     FloatieMessage.MessageNature.Buff, false)));
-                            Mod.Log.Trace?.Write($"[Vehicle.TakeWeaponDamage] HERE WE SHOULD SEE FLOATIE for {weapon.Name} with GUID {weapon.uid}, stored GUID was {ModState.APDmgMods[hitInfo.attackerId][i].WeaponGUID}. AGI:{hitInfo.attackGroupIndex}, AWI:{hitInfo.attackWeaponIndex}");
+                            Mod.Log.Trace?.Write($"[Vehicle.TakeWeaponDamage] HERE WE SHOULD SEE FLOATIE for {weapon.Name} with GUID {weapon.uid}, stored GUID was {ModState.APDmgMods[hitInfo.attackerId][i]?.WeaponGUID}. AGI:{hitInfo.attackGroupIndex}, AWI:{hitInfo.attackWeaponIndex}");
                             idx = i;
                             break;
                         }
@@ -246,10 +248,10 @@ namespace IRTweaks.Modules.Combat
 
                 if (ModState.StdDmgMods.ContainsKey(hitInfo.attackerId))
                 {
-                    Mod.Log.Trace?.Write($"[Vehicle.TakeWeaponDamage] containskey true. count: {ModState.StdDmgMods[hitInfo.attackerId].Count}, matching guid? {ModState.StdDmgMods[hitInfo.attackerId].Any(x => x.WeaponGUID == weapon.uid)}.");
+                    Mod.Log.Trace?.Write($"[Vehicle.TakeWeaponDamage] containskey true. count: {ModState.StdDmgMods[hitInfo.attackerId].Count}, matching guid? {ModState.StdDmgMods[hitInfo.attackerId].Any(x => x?.WeaponGUID == weapon.uid)}.");
                 }
 
-                if (ModState.StdDmgMods.ContainsKey(hitInfo.attackerId) && ModState.StdDmgMods[hitInfo.attackerId].Count > 0 && ModState.StdDmgMods[hitInfo.attackerId].Any(x => x.WeaponGUID == weapon.uid))
+                if (ModState.StdDmgMods.ContainsKey(hitInfo.attackerId) && ModState.StdDmgMods[hitInfo.attackerId].Count > 0 && ModState.StdDmgMods[hitInfo.attackerId].Any(x => x?.WeaponGUID == weapon.uid))
                 {
                     var list = ModState.StdDmgMods[hitInfo.attackerId];
                     Mod.Log.Trace?.Write($"[Vehicle.TakeWeaponDamage] OUTPOT LIST #: {list.Count}");
@@ -257,7 +259,7 @@ namespace IRTweaks.Modules.Combat
                     var idx = 0;
                     for (int i = 0; i < ModState.StdDmgMods[hitInfo.attackerId].Count; i++)
                     {
-                        if (ModState.StdDmgMods[hitInfo.attackerId][i].Mult > 1 && hitInfo.advInfo().resolve(__instance).cumulativeDamage > 0 && ModState.StdDmgMods[hitInfo.attackerId][i].WeaponGUID == weapon.uid)
+                        if (ModState.StdDmgMods[hitInfo.attackerId][i].Mult > 1 && hitInfo.advInfo()?.resolve(__instance)?.cumulativeDamage > 0 && ModState.StdDmgMods[hitInfo.attackerId][i]?.WeaponGUID == weapon.uid)
                         {
                             var attacker = __instance.Combat.FindActorByGUID(hitInfo.attackerId);
                             var txt = ModState.StdDmgMods[hitInfo.attackerId][i].Txt;
@@ -265,7 +267,7 @@ namespace IRTweaks.Modules.Combat
                                 new AddSequenceToStackMessage(new ShowActorInfoSequence(attacker,
                                     txt,
                                     FloatieMessage.MessageNature.Buff, false)));
-                            Mod.Log.Trace?.Write($"[Vehicle.TakeWeaponDamage] HERE WE SHOULD SEE FLOATIE for {weapon.Name} with GUID {weapon.uid}, stored GUID was {ModState.StdDmgMods[hitInfo.attackerId][i].WeaponGUID}. AGI:{hitInfo.attackGroupIndex}, AWI:{hitInfo.attackWeaponIndex}");
+                            Mod.Log.Trace?.Write($"[Vehicle.TakeWeaponDamage] HERE WE SHOULD SEE FLOATIE for {weapon.Name} with GUID {weapon.uid}, stored GUID was {ModState.StdDmgMods[hitInfo.attackerId][i]?.WeaponGUID}. AGI:{hitInfo.attackGroupIndex}, AWI:{hitInfo.attackWeaponIndex}");
                             idx = i;
                             break;
                         }
@@ -279,8 +281,8 @@ namespace IRTweaks.Modules.Combat
         [HarmonyPatch(typeof(Turret), "TakeWeaponDamage")]
         public static class Turret_TakeWeaponDamage_DamageModsBySkill
         {
-            static bool Prepare() => Mod.Config.Combat.DamageModsBySkill.DisplayFloatiesOnTrigger && (Mod.Config.Combat.DamageModsBySkill.HeatMods.Count > 0 ||
-                Mod.Config.Combat.DamageModsBySkill.StabilityMods.Count > 0 ||
+            static bool Prepare() => Mod.Config.Combat.DamageModsBySkill.DisplayFloatiesOnTrigger && (Mod.Config.Combat.DamageModsBySkill?.HeatMods.Count > 0 ||
+                Mod.Config.Combat.DamageModsBySkill?.StabilityMods.Count > 0 ||
                 Mod.Config.Combat.DamageModsBySkill.APDmgMods.Count > 0);
 
             static void Postfix(Turret __instance, WeaponHitInfo hitInfo, int hitLocation, Weapon weapon, float damageAmount, float directStructureDamage, int hitIndex, DamageType damageType)
@@ -288,9 +290,9 @@ namespace IRTweaks.Modules.Combat
                 Mod.Log.Trace?.Write($"[Turret.TakeWeaponDamage] Processing dmg floaties for {weapon.Name} uid {weapon.uid}");
                 if (ModState.StabDmgMods.ContainsKey(hitInfo.attackerId))
                 {
-                    Mod.Log.Trace?.Write($"[Turret.TakeWeaponDamage] containskey true. count: {ModState.StabDmgMods[hitInfo.attackerId].Count}, matching guid? {ModState.StabDmgMods[hitInfo.attackerId].Any(x => x.WeaponGUID == weapon.uid)}.");
+                    Mod.Log.Trace?.Write($"[Turret.TakeWeaponDamage] containskey true. count: {ModState.StabDmgMods[hitInfo.attackerId].Count}, matching guid? {ModState.StabDmgMods[hitInfo.attackerId].Any(x => x?.WeaponGUID == weapon.uid)}.");
                 }
-                if (ModState.StabDmgMods.ContainsKey(hitInfo.attackerId) && ModState.StabDmgMods[hitInfo.attackerId].Count > 0 && ModState.StabDmgMods[hitInfo.attackerId].Any(x => x.WeaponGUID == weapon.uid))
+                if (ModState.StabDmgMods.ContainsKey(hitInfo.attackerId) && ModState.StabDmgMods[hitInfo.attackerId].Count > 0 && ModState.StabDmgMods[hitInfo.attackerId].Any(x => x?.WeaponGUID == weapon.uid))
                 {
                     var list = ModState.StabDmgMods[hitInfo.attackerId];
                     Mod.Log.Trace?.Write($"[Turret.TakeWeaponDamage] OUTPOT LIST #: {list.Count}");
@@ -298,7 +300,7 @@ namespace IRTweaks.Modules.Combat
                     var idx = 0;
                     for (int i = 0; i < ModState.StabDmgMods[hitInfo.attackerId].Count; i++)
                     {
-                        if (ModState.StabDmgMods[hitInfo.attackerId][i].Mult > 1 && hitInfo.advInfo().resolve(__instance).Stability > 0 && ModState.StabDmgMods[hitInfo.attackerId][i].WeaponGUID == weapon.uid)
+                        if (ModState.StabDmgMods[hitInfo.attackerId][i].Mult > 1 && hitInfo.advInfo()?.resolve(__instance)?.Stability > 0 && ModState.StabDmgMods[hitInfo.attackerId][i]?.WeaponGUID == weapon.uid)
                         {
                             var attacker = __instance.Combat.FindActorByGUID(hitInfo.attackerId);
                             var txt = ModState.StabDmgMods[hitInfo.attackerId][i].Txt;
@@ -306,7 +308,7 @@ namespace IRTweaks.Modules.Combat
                                 new AddSequenceToStackMessage(new ShowActorInfoSequence(attacker,
                                     txt,
                                     FloatieMessage.MessageNature.Buff, false)));
-                            Mod.Log.Trace?.Write($"[Turret.TakeWeaponDamage] HERE WE SHOULD SEE FLOATIE for {weapon.Name} with GUID {weapon.uid}, stored GUID was {ModState.StabDmgMods[hitInfo.attackerId][i].WeaponGUID}. AGI:{hitInfo.attackGroupIndex}, AWI:{hitInfo.attackWeaponIndex}");
+                            Mod.Log.Trace?.Write($"[Turret.TakeWeaponDamage] HERE WE SHOULD SEE FLOATIE for {weapon.Name} with GUID {weapon.uid}, stored GUID was {ModState.StabDmgMods[hitInfo.attackerId][i]?.WeaponGUID}. AGI:{hitInfo.attackGroupIndex}, AWI:{hitInfo.attackWeaponIndex}");
                             idx = i;
                             break;
                         }
@@ -315,7 +317,7 @@ namespace IRTweaks.Modules.Combat
                     ModState.StabDmgMods[hitInfo.attackerId].RemoveAt(idx);
                 }
 
-                if (ModState.HeatDmgMods.ContainsKey(hitInfo.attackerId) && ModState.HeatDmgMods[hitInfo.attackerId].Count > 0 && ModState.HeatDmgMods[hitInfo.attackerId].Any(x => x.WeaponGUID == weapon.uid))
+                if (ModState.HeatDmgMods.ContainsKey(hitInfo.attackerId) && ModState.HeatDmgMods[hitInfo.attackerId].Count > 0 && ModState.HeatDmgMods[hitInfo.attackerId].Any(x => x?.WeaponGUID == weapon.uid))
                 {
                     var list = ModState.HeatDmgMods[hitInfo.attackerId];
                     Mod.Log.Trace?.Write($"[Turret.TakeWeaponDamage] OUTPOT LIST #: {list.Count}");
@@ -323,7 +325,7 @@ namespace IRTweaks.Modules.Combat
                     var idx = 0;
                     for (int i = 0; i < ModState.HeatDmgMods[hitInfo.attackerId].Count; i++)
                     {
-                        if (ModState.HeatDmgMods[hitInfo.attackerId][i].Mult > 1 && hitInfo.advInfo().resolve(__instance).Heat > 0 && ModState.HeatDmgMods[hitInfo.attackerId][i].WeaponGUID == weapon.uid)
+                        if (ModState.HeatDmgMods[hitInfo.attackerId][i].Mult > 1 && hitInfo.advInfo()?.resolve(__instance)?.Heat > 0 && ModState.HeatDmgMods[hitInfo.attackerId][i]?.WeaponGUID == weapon.uid)
                         {
                             var attacker = __instance.Combat.FindActorByGUID(hitInfo.attackerId);
                             var txt = ModState.HeatDmgMods[hitInfo.attackerId][i].Txt;
@@ -331,7 +333,7 @@ namespace IRTweaks.Modules.Combat
                                 new AddSequenceToStackMessage(new ShowActorInfoSequence(attacker,
                                     txt,
                                     FloatieMessage.MessageNature.Buff, false)));
-                            Mod.Log.Trace?.Write($"[Turret.TakeWeaponDamage] HERE WE SHOULD SEE FLOATIE for {weapon.Name} with GUID {weapon.uid}, stored GUID was {ModState.HeatDmgMods[hitInfo.attackerId][i].WeaponGUID}. AGI:{hitInfo.attackGroupIndex}, AWI:{hitInfo.attackWeaponIndex}");
+                            Mod.Log.Trace?.Write($"[Turret.TakeWeaponDamage] HERE WE SHOULD SEE FLOATIE for {weapon.Name} with GUID {weapon.uid}, stored GUID was {ModState.HeatDmgMods[hitInfo.attackerId][i]?.WeaponGUID}. AGI:{hitInfo.attackGroupIndex}, AWI:{hitInfo.attackWeaponIndex}");
                             idx = i;
                             break;
                         }
@@ -340,7 +342,7 @@ namespace IRTweaks.Modules.Combat
                     ModState.HeatDmgMods[hitInfo.attackerId].RemoveAt(idx);
                 }
 
-                if (ModState.APDmgMods.ContainsKey(hitInfo.attackerId) && ModState.APDmgMods[hitInfo.attackerId].Count > 0 && ModState.APDmgMods[hitInfo.attackerId].Any(x => x.WeaponGUID == weapon.uid))
+                if (ModState.APDmgMods.ContainsKey(hitInfo.attackerId) && ModState.APDmgMods[hitInfo.attackerId].Count > 0 && ModState.APDmgMods[hitInfo.attackerId].Any(x => x?.WeaponGUID == weapon.uid))
                 {
                     var list = ModState.APDmgMods[hitInfo.attackerId];
                     Mod.Log.Trace?.Write($"[Turret.TakeWeaponDamage] OUTPOT LIST #: {list.Count}");
@@ -348,7 +350,7 @@ namespace IRTweaks.Modules.Combat
                     var idx = 0;
                     for (int i = 0; i < ModState.APDmgMods[hitInfo.attackerId].Count; i++)
                     {
-                        if (ModState.APDmgMods[hitInfo.attackerId][i].Mult > 1 && hitInfo.advInfo().resolve(__instance).cumulativeDamage > 0 && ModState.APDmgMods[hitInfo.attackerId][i].WeaponGUID == weapon.uid)
+                        if (ModState.APDmgMods[hitInfo.attackerId][i].Mult > 1 && hitInfo.advInfo()?.resolve(__instance)?.cumulativeDamage > 0 && ModState.APDmgMods[hitInfo.attackerId][i]?.WeaponGUID == weapon.uid)
                         {
                             var attacker = __instance.Combat.FindActorByGUID(hitInfo.attackerId);
                             var txt = ModState.APDmgMods[hitInfo.attackerId][i].Txt;
@@ -356,7 +358,7 @@ namespace IRTweaks.Modules.Combat
                                 new AddSequenceToStackMessage(new ShowActorInfoSequence(attacker,
                                     txt,
                                     FloatieMessage.MessageNature.Buff, false)));
-                            Mod.Log.Trace?.Write($"[Turret.TakeWeaponDamage] HERE WE SHOULD SEE FLOATIE for {weapon.Name} with GUID {weapon.uid}, stored GUID was {ModState.APDmgMods[hitInfo.attackerId][i].WeaponGUID}. AGI:{hitInfo.attackGroupIndex}, AWI:{hitInfo.attackWeaponIndex}");
+                            Mod.Log.Trace?.Write($"[Turret.TakeWeaponDamage] HERE WE SHOULD SEE FLOATIE for {weapon.Name} with GUID {weapon.uid}, stored GUID was {ModState.APDmgMods[hitInfo.attackerId][i]?.WeaponGUID}. AGI:{hitInfo.attackGroupIndex}, AWI:{hitInfo.attackWeaponIndex}");
                             idx = i;
                             break;
                         }
@@ -365,7 +367,7 @@ namespace IRTweaks.Modules.Combat
                     ModState.APDmgMods[hitInfo.attackerId].RemoveAt(idx);
                 }
 
-                if (ModState.StdDmgMods.ContainsKey(hitInfo.attackerId) && ModState.StdDmgMods[hitInfo.attackerId].Count > 0 && ModState.StdDmgMods[hitInfo.attackerId].Any(x => x.WeaponGUID == weapon.uid))
+                if (ModState.StdDmgMods.ContainsKey(hitInfo.attackerId) && ModState.StdDmgMods[hitInfo.attackerId].Count > 0 && ModState.StdDmgMods[hitInfo.attackerId].Any(x => x?.WeaponGUID == weapon.uid))
                 {
                     var list = ModState.StdDmgMods[hitInfo.attackerId];
                     Mod.Log.Trace?.Write($"[Turret.TakeWeaponDamage] OUTPOT LIST #: {list.Count}");
@@ -373,7 +375,7 @@ namespace IRTweaks.Modules.Combat
                     var idx = 0;
                     for (int i = 0; i < ModState.StdDmgMods[hitInfo.attackerId].Count; i++)
                     {
-                        if (ModState.StdDmgMods[hitInfo.attackerId][i].Mult > 1 && hitInfo.advInfo().resolve(__instance).cumulativeDamage > 0 && ModState.StdDmgMods[hitInfo.attackerId][i].WeaponGUID == weapon.uid)
+                        if (ModState.StdDmgMods[hitInfo.attackerId][i].Mult > 1 && hitInfo.advInfo()?.resolve(__instance)?.cumulativeDamage > 0 && ModState.StdDmgMods[hitInfo.attackerId][i]?.WeaponGUID == weapon.uid)
                         {
                             var attacker = __instance.Combat.FindActorByGUID(hitInfo.attackerId);
                             var txt = ModState.StdDmgMods[hitInfo.attackerId][i].Txt;
@@ -381,7 +383,7 @@ namespace IRTweaks.Modules.Combat
                                 new AddSequenceToStackMessage(new ShowActorInfoSequence(attacker,
                                     txt,
                                     FloatieMessage.MessageNature.Buff, false)));
-                            Mod.Log.Trace?.Write($"[Turret.TakeWeaponDamage] HERE WE SHOULD SEE FLOATIE for {weapon.Name} with GUID {weapon.uid}, stored GUID was {ModState.StdDmgMods[hitInfo.attackerId][i].WeaponGUID}. AGI:{hitInfo.attackGroupIndex}, AWI:{hitInfo.attackWeaponIndex}");
+                            Mod.Log.Trace?.Write($"[Turret.TakeWeaponDamage] HERE WE SHOULD SEE FLOATIE for {weapon.Name} with GUID {weapon.uid}, stored GUID was {ModState.StdDmgMods[hitInfo.attackerId][i]?.WeaponGUID}. AGI:{hitInfo.attackGroupIndex}, AWI:{hitInfo.attackWeaponIndex}");
                             idx = i;
                             break;
                         }
@@ -396,8 +398,8 @@ namespace IRTweaks.Modules.Combat
         [HarmonyPatch(typeof(BattleTech.Building), "TakeWeaponDamage")]
         public static class Building_TakeWeaponDamage_DamageModsBySkill
         {
-            static bool Prepare() => Mod.Config.Combat.DamageModsBySkill.DisplayFloatiesOnTrigger && (Mod.Config.Combat.DamageModsBySkill.HeatMods.Count > 0 ||
-                Mod.Config.Combat.DamageModsBySkill.StabilityMods.Count > 0 ||
+            static bool Prepare() => Mod.Config.Combat.DamageModsBySkill.DisplayFloatiesOnTrigger && (Mod.Config.Combat.DamageModsBySkill?.HeatMods.Count > 0 ||
+                Mod.Config.Combat.DamageModsBySkill?.StabilityMods.Count > 0 ||
                 Mod.Config.Combat.DamageModsBySkill.APDmgMods.Count > 0);
 
             static void Postfix(BattleTech.Building __instance, WeaponHitInfo hitInfo, int hitLocation, Weapon weapon, float damageAmount, float directStructureDamage, int hitIndex, DamageType damageType)
@@ -405,9 +407,9 @@ namespace IRTweaks.Modules.Combat
                 Mod.Log.Trace?.Write($"[Building.TakeWeaponDamage] Processing dmg floaties for {weapon.Name} uid {weapon.uid}");
                 if (ModState.StabDmgMods.ContainsKey(hitInfo.attackerId))
                 {
-                    Mod.Log.Trace?.Write($"[Building.TakeWeaponDamage] containskey true. count: {ModState.StabDmgMods[hitInfo.attackerId].Count}, matching guid? {ModState.StabDmgMods[hitInfo.attackerId].Any(x => x.WeaponGUID == weapon.uid)}.");
+                    Mod.Log.Trace?.Write($"[Building.TakeWeaponDamage] containskey true. count: {ModState.StabDmgMods[hitInfo.attackerId].Count}, matching guid? {ModState.StabDmgMods[hitInfo.attackerId].Any(x => x?.WeaponGUID == weapon.uid)}.");
                 }
-                if (ModState.StabDmgMods.ContainsKey(hitInfo.attackerId) && ModState.StabDmgMods[hitInfo.attackerId].Count > 0 && ModState.StabDmgMods[hitInfo.attackerId].Any(x => x.WeaponGUID == weapon.uid))
+                if (ModState.StabDmgMods.ContainsKey(hitInfo.attackerId) && ModState.StabDmgMods[hitInfo.attackerId].Count > 0 && ModState.StabDmgMods[hitInfo.attackerId].Any(x => x?.WeaponGUID == weapon.uid))
                 {
                     var list = ModState.StabDmgMods[hitInfo.attackerId];
                     Mod.Log.Trace?.Write($"[Building.TakeWeaponDamage] OUTPOT LIST #: {list.Count}");
@@ -415,7 +417,7 @@ namespace IRTweaks.Modules.Combat
                     var idx = 0;
                     for (int i = 0; i < ModState.StabDmgMods[hitInfo.attackerId].Count; i++)
                     {
-                        if (ModState.StabDmgMods[hitInfo.attackerId][i].Mult > 1 && hitInfo.advInfo().resolve(__instance).Stability > 0 && ModState.StabDmgMods[hitInfo.attackerId][i].WeaponGUID == weapon.uid)
+                        if (ModState.StabDmgMods[hitInfo.attackerId][i].Mult > 1 && hitInfo.advInfo()?.resolve(__instance)?.Stability > 0 && ModState.StabDmgMods[hitInfo.attackerId][i]?.WeaponGUID == weapon.uid)
                         {
                             var attacker = __instance.Combat.FindActorByGUID(hitInfo.attackerId);
                             var txt = ModState.StabDmgMods[hitInfo.attackerId][i].Txt;
@@ -423,7 +425,7 @@ namespace IRTweaks.Modules.Combat
                                 new AddSequenceToStackMessage(new ShowActorInfoSequence(attacker,
                                     txt,
                                     FloatieMessage.MessageNature.Buff, false)));
-                            Mod.Log.Trace?.Write($"[Building.TakeWeaponDamage] HERE WE SHOULD SEE FLOATIE for {weapon.Name} with GUID {weapon.uid}, stored GUID was {ModState.StabDmgMods[hitInfo.attackerId][i].WeaponGUID}. AGI:{hitInfo.attackGroupIndex}, AWI:{hitInfo.attackWeaponIndex}");
+                            Mod.Log.Trace?.Write($"[Building.TakeWeaponDamage] HERE WE SHOULD SEE FLOATIE for {weapon.Name} with GUID {weapon.uid}, stored GUID was {ModState.StabDmgMods[hitInfo.attackerId][i]?.WeaponGUID}. AGI:{hitInfo.attackGroupIndex}, AWI:{hitInfo.attackWeaponIndex}");
                             idx = i;
                             break;
                         }
@@ -432,7 +434,7 @@ namespace IRTweaks.Modules.Combat
                     ModState.StabDmgMods[hitInfo.attackerId].RemoveAt(idx);
                 }
 
-                if (ModState.HeatDmgMods.ContainsKey(hitInfo.attackerId) && ModState.HeatDmgMods[hitInfo.attackerId].Count > 0 && ModState.HeatDmgMods[hitInfo.attackerId].Any(x => x.WeaponGUID == weapon.uid))
+                if (ModState.HeatDmgMods.ContainsKey(hitInfo.attackerId) && ModState.HeatDmgMods[hitInfo.attackerId].Count > 0 && ModState.HeatDmgMods[hitInfo.attackerId].Any(x => x?.WeaponGUID == weapon.uid))
                 {
                     var list = ModState.HeatDmgMods[hitInfo.attackerId];
                     Mod.Log.Trace?.Write($"[Building.TakeWeaponDamage] OUTPOT LIST #: {list.Count}");
@@ -440,7 +442,7 @@ namespace IRTweaks.Modules.Combat
                     var idx = 0;
                     for (int i = 0; i < ModState.HeatDmgMods[hitInfo.attackerId].Count; i++)
                     {
-                        if (ModState.HeatDmgMods[hitInfo.attackerId][i].Mult > 1 && hitInfo.advInfo().resolve(__instance).Heat > 0 && ModState.HeatDmgMods[hitInfo.attackerId][i].WeaponGUID == weapon.uid)
+                        if (ModState.HeatDmgMods[hitInfo.attackerId][i].Mult > 1 && hitInfo.advInfo()?.resolve(__instance)?.Heat > 0 && ModState.HeatDmgMods[hitInfo.attackerId][i]?.WeaponGUID == weapon.uid)
                         {
                             var attacker = __instance.Combat.FindActorByGUID(hitInfo.attackerId);
                             var txt = ModState.HeatDmgMods[hitInfo.attackerId][i].Txt;
@@ -448,7 +450,7 @@ namespace IRTweaks.Modules.Combat
                                 new AddSequenceToStackMessage(new ShowActorInfoSequence(attacker,
                                     txt,
                                     FloatieMessage.MessageNature.Buff, false)));
-                            Mod.Log.Trace?.Write($"[Building.TakeWeaponDamage] HERE WE SHOULD SEE FLOATIE for {weapon.Name} with GUID {weapon.uid}, stored GUID was {ModState.HeatDmgMods[hitInfo.attackerId][i].WeaponGUID}. AGI:{hitInfo.attackGroupIndex}, AWI:{hitInfo.attackWeaponIndex}");
+                            Mod.Log.Trace?.Write($"[Building.TakeWeaponDamage] HERE WE SHOULD SEE FLOATIE for {weapon.Name} with GUID {weapon.uid}, stored GUID was {ModState.HeatDmgMods[hitInfo.attackerId][i]?.WeaponGUID}. AGI:{hitInfo.attackGroupIndex}, AWI:{hitInfo.attackWeaponIndex}");
                             idx = i;
                             break;
                         }
@@ -457,7 +459,7 @@ namespace IRTweaks.Modules.Combat
                     ModState.HeatDmgMods[hitInfo.attackerId].RemoveAt(idx);
                 }
 
-                if (ModState.APDmgMods.ContainsKey(hitInfo.attackerId) && ModState.APDmgMods[hitInfo.attackerId].Count > 0 && ModState.APDmgMods[hitInfo.attackerId].Any(x => x.WeaponGUID == weapon.uid))
+                if (ModState.APDmgMods.ContainsKey(hitInfo.attackerId) && ModState.APDmgMods[hitInfo.attackerId].Count > 0 && ModState.APDmgMods[hitInfo.attackerId].Any(x => x?.WeaponGUID == weapon.uid))
                 {
                     var list = ModState.APDmgMods[hitInfo.attackerId];
                     Mod.Log.Trace?.Write($"[Building.TakeWeaponDamage] OUTPOT LIST #: {list.Count}");
@@ -465,7 +467,7 @@ namespace IRTweaks.Modules.Combat
                     var idx = 0;
                     for (int i = 0; i < ModState.APDmgMods[hitInfo.attackerId].Count; i++)
                     {
-                        if (ModState.APDmgMods[hitInfo.attackerId][i].Mult > 1 && hitInfo.advInfo().resolve(__instance).cumulativeDamage > 0 && ModState.APDmgMods[hitInfo.attackerId][i].WeaponGUID == weapon.uid)
+                        if (ModState.APDmgMods[hitInfo.attackerId][i].Mult > 1 && hitInfo.advInfo()?.resolve(__instance)?.cumulativeDamage > 0 && ModState.APDmgMods[hitInfo.attackerId][i]?.WeaponGUID == weapon.uid)
                         {
                             var attacker = __instance.Combat.FindActorByGUID(hitInfo.attackerId);
                             var txt = ModState.APDmgMods[hitInfo.attackerId][i].Txt;
@@ -473,7 +475,7 @@ namespace IRTweaks.Modules.Combat
                                 new AddSequenceToStackMessage(new ShowActorInfoSequence(attacker,
                                     txt,
                                     FloatieMessage.MessageNature.Buff, false)));
-                            Mod.Log.Trace?.Write($"[Building.TakeWeaponDamage] HERE WE SHOULD SEE FLOATIE for {weapon.Name} with GUID {weapon.uid}, stored GUID was {ModState.APDmgMods[hitInfo.attackerId][i].WeaponGUID}. AGI:{hitInfo.attackGroupIndex}, AWI:{hitInfo.attackWeaponIndex}");
+                            Mod.Log.Trace?.Write($"[Building.TakeWeaponDamage] HERE WE SHOULD SEE FLOATIE for {weapon.Name} with GUID {weapon.uid}, stored GUID was {ModState.APDmgMods[hitInfo.attackerId][i]?.WeaponGUID}. AGI:{hitInfo.attackGroupIndex}, AWI:{hitInfo.attackWeaponIndex}");
                             idx = i;
                             break;
                         }
@@ -482,7 +484,7 @@ namespace IRTweaks.Modules.Combat
                     ModState.APDmgMods[hitInfo.attackerId].RemoveAt(idx);
                 }
 
-                if (ModState.StdDmgMods.ContainsKey(hitInfo.attackerId) && ModState.StdDmgMods[hitInfo.attackerId].Count > 0 && ModState.StdDmgMods[hitInfo.attackerId].Any(x => x.WeaponGUID == weapon.uid))
+                if (ModState.StdDmgMods.ContainsKey(hitInfo.attackerId) && ModState.StdDmgMods[hitInfo.attackerId].Count > 0 && ModState.StdDmgMods[hitInfo.attackerId].Any(x => x?.WeaponGUID == weapon.uid))
                 {
                     var list = ModState.StdDmgMods[hitInfo.attackerId];
                     Mod.Log.Trace?.Write($"[Building.TakeWeaponDamage] OUTPOT LIST #: {list.Count}");
@@ -490,7 +492,7 @@ namespace IRTweaks.Modules.Combat
                     var idx = 0;
                     for (int i = 0; i < ModState.StdDmgMods[hitInfo.attackerId].Count; i++)
                     {
-                        if (ModState.StdDmgMods[hitInfo.attackerId][i].Mult > 1 && hitInfo.advInfo().resolve(__instance).cumulativeDamage > 0 && ModState.StdDmgMods[hitInfo.attackerId][i].WeaponGUID == weapon.uid)
+                        if (ModState.StdDmgMods[hitInfo.attackerId][i].Mult > 1 && hitInfo.advInfo()?.resolve(__instance)?.cumulativeDamage > 0 && ModState.StdDmgMods[hitInfo.attackerId][i]?.WeaponGUID == weapon.uid)
                         {
                             var attacker = __instance.Combat.FindActorByGUID(hitInfo.attackerId);
                             var txt = ModState.StdDmgMods[hitInfo.attackerId][i].Txt;
@@ -498,7 +500,7 @@ namespace IRTweaks.Modules.Combat
                                 new AddSequenceToStackMessage(new ShowActorInfoSequence(attacker,
                                     txt,
                                     FloatieMessage.MessageNature.Buff, false)));
-                            Mod.Log.Trace?.Write($"[Building.TakeWeaponDamage] HERE WE SHOULD SEE FLOATIE for {weapon.Name} with GUID {weapon.uid}, stored GUID was {ModState.StdDmgMods[hitInfo.attackerId][i].WeaponGUID}. AGI:{hitInfo.attackGroupIndex}, AWI:{hitInfo.attackWeaponIndex}");
+                            Mod.Log.Trace?.Write($"[Building.TakeWeaponDamage] HERE WE SHOULD SEE FLOATIE for {weapon.Name} with GUID {weapon.uid}, stored GUID was {ModState.StdDmgMods[hitInfo.attackerId][i]?.WeaponGUID}. AGI:{hitInfo.attackGroupIndex}, AWI:{hitInfo.attackWeaponIndex}");
                             idx = i;
                             break;
                         }
@@ -512,8 +514,8 @@ namespace IRTweaks.Modules.Combat
         [HarmonyPatch(typeof(AbstractActor), "OnActivationEnd")]
         public static class AbstractActor_OnActivationEnd
         {
-            static bool Prepare() => Mod.Config.Combat.DamageModsBySkill.DisplayFloatiesOnTrigger && (Mod.Config.Combat.DamageModsBySkill.HeatMods.Count > 0 ||
-                Mod.Config.Combat.DamageModsBySkill.StabilityMods.Count > 0 ||
+            static bool Prepare() => Mod.Config.Combat.DamageModsBySkill.DisplayFloatiesOnTrigger && (Mod.Config.Combat.DamageModsBySkill?.HeatMods.Count > 0 ||
+                Mod.Config.Combat.DamageModsBySkill?.StabilityMods.Count > 0 ||
                 Mod.Config.Combat.DamageModsBySkill.APDmgMods.Count > 0);
 
             static void Prefix(AbstractActor __instance, string sourceID, int stackItemID)
@@ -544,22 +546,22 @@ namespace IRTweaks.Modules.Combat
         [HarmonyPatch(typeof(AbstractActor), "InitEffectStats")]
         public static class AbstractActor_InitEffectStats_DamageModsBySkill
         {
-            static bool Prepare() => Mod.Config.Combat.DamageModsBySkill.HeatMods.Count > 0 || Mod.Config.Combat.DamageModsBySkill.StabilityMods.Count > 0 ||Mod.Config.Combat.DamageModsBySkill.APDmgMods.Count > 0 || Mod.Config.Combat.DamageModsBySkill.StdDmgMods.Count > 0;
+            static bool Prepare() => Mod.Config.Combat.DamageModsBySkill?.HeatMods.Count > 0 || Mod.Config.Combat.DamageModsBySkill?.StabilityMods.Count > 0 ||Mod.Config.Combat.DamageModsBySkill.APDmgMods.Count > 0 || Mod.Config.Combat.DamageModsBySkill.StdDmgMods.Count > 0;
 
             static void Postfix(AbstractActor __instance)
             {
-                if (Mod.Config.Combat.DamageModsBySkill.HeatMods.Count > 0)
+                if (Mod.Config.Combat.DamageModsBySkill?.HeatMods.Count > 0)
                 {
-                    foreach (var heatMod in Mod.Config.Combat.DamageModsBySkill.HeatMods)
+                    foreach (var heatMod in Mod.Config.Combat.DamageModsBySkill?.HeatMods)
                     {
                         __instance.StatCollection.AddStatistic<bool>(heatMod.StatName, false);
                         Mod.Log.Trace?.Write($"Added heatMod stat {heatMod.StatName}.");
                     }
                 }
 
-                if (Mod.Config.Combat.DamageModsBySkill.StabilityMods.Count > 0)
+                if (Mod.Config.Combat.DamageModsBySkill?.StabilityMods.Count > 0)
                 {
-                    foreach (var stabMod in Mod.Config.Combat.DamageModsBySkill.StabilityMods)
+                    foreach (var stabMod in Mod.Config.Combat.DamageModsBySkill?.StabilityMods)
                     {
                         __instance.StatCollection.AddStatistic<bool>(stabMod.StatName, false);
                         Mod.Log.Trace?.Write($"Added stabMod stat {stabMod.StatName}.");
@@ -587,11 +589,11 @@ namespace IRTweaks.Modules.Combat
         }
         public static void FinishedLoading(List<string> loadOrder) 
         {
-            if (Mod.Config.Combat.DamageModsBySkill.StabilityMods.Count > 0)
+            if (Mod.Config.Combat.DamageModsBySkill?.StabilityMods.Count > 0)
             {
                 DamageModifiersCache.RegisterDamageModifier("IRTweaks_SkillDamage_StabMod", "IRT_CAC_SkillDamage_StabMod", false, false, false, false, true, IRT_CAC_SkillStabDmgMod, IRT_CAC_SkillStabDmgModName);
             }
-            if (Mod.Config.Combat.DamageModsBySkill.HeatMods.Count > 0)
+            if (Mod.Config.Combat.DamageModsBySkill?.HeatMods.Count > 0)
             {
                 DamageModifiersCache.RegisterDamageModifier("IRTweaks_SkillDamage_HeatMod", "IRT_CAC_SkillDamage_HeatMod", false, false, false, true, false, IRT_CAC_SkillHeatDmgMod, IRT_CAC_SkillHeatDmgModName);
             }
@@ -610,7 +612,7 @@ namespace IRTweaks.Modules.Combat
         {
             var mult = 1f;
 
-            foreach (var statmod in Mod.Config.Combat.DamageModsBySkill.StabilityMods)
+            foreach (var statmod in Mod.Config.Combat.DamageModsBySkill?.StabilityMods)
             {
                 Mod.Log.Info?.Write($"Checking for stat {statmod.StatName}; result: {weapon.parent.StatCollection.ContainsStatistic(statmod.StatName)}.");
                 if (weapon.parent.StatCollection.GetValue<bool>(statmod.StatName))
@@ -637,7 +639,7 @@ namespace IRTweaks.Modules.Combat
                 //var msg = new ShowActorInfoSequence(weapon.parent, txt, FloatieMessage.MessageNature.Buff, false);
                 
                 var activeDmgMod = new ActiveDmgMod(weapon.uid, DmgModType.Stability, mult, txt);
-                Mod.Log.Trace?.Write($"Created msg for floatie, but hsouldnt be firing it yet. actorKey: {weapon.parent.GUID} Type Weapon {weapon.Name} GUID:{activeDmgMod.WeaponGUID}, type: {activeDmgMod.Type}");
+                Mod.Log.Trace?.Write($"Created msg for floatie, but hsouldnt be firing it yet. actorKey: {weapon.parent.GUID} Type Weapon {weapon.Name} GUID:{activeDmgMod?.WeaponGUID}, type: {activeDmgMod.Type}");
                 if (!ModState.StabDmgMods.ContainsKey(weapon.parent.GUID))
                 {
                     ModState.StabDmgMods.Add(weapon.parent.GUID, new List<ActiveDmgMod> { activeDmgMod });
@@ -661,7 +663,7 @@ namespace IRTweaks.Modules.Combat
         {
             var mult = 1f;
 
-            foreach (var statmod in Mod.Config.Combat.DamageModsBySkill.HeatMods)
+            foreach (var statmod in Mod.Config.Combat.DamageModsBySkill?.HeatMods)
             {
                 Mod.Log.Info?.Write($"Checking for stat {statmod.StatName}; result: {weapon.parent.StatCollection.ContainsStatistic(statmod.StatName)} for weapon {weapon.Name}.");
                 if (weapon.parent.StatCollection.GetValue<bool>(statmod.StatName))
@@ -688,7 +690,7 @@ namespace IRTweaks.Modules.Combat
                 //var msg = new ShowActorInfoSequence(weapon.parent, txt, FloatieMessage.MessageNature.Buff, false);
                
                 var activeDmgMod = new ActiveDmgMod(weapon.uid, DmgModType.Heat, mult, txt);
-                Mod.Log.Trace?.Write($"Created msg for floatie, but hsouldnt be firing it yet. actorKey: {weapon.parent.GUID} Type Weapon {weapon.Name} GUID:{activeDmgMod.WeaponGUID}, type: {activeDmgMod.Type}");
+                Mod.Log.Trace?.Write($"Created msg for floatie, but hsouldnt be firing it yet. actorKey: {weapon.parent.GUID} Type Weapon {weapon.Name} GUID:{activeDmgMod?.WeaponGUID}, type: {activeDmgMod.Type}");
                 if (!ModState.HeatDmgMods.ContainsKey(weapon.parent.GUID))
                 {
                     ModState.HeatDmgMods.Add(weapon.parent.GUID, new List<ActiveDmgMod> { activeDmgMod });
@@ -739,7 +741,7 @@ namespace IRTweaks.Modules.Combat
                 //var msg = new ShowActorInfoSequence(weapon.parent, txt, FloatieMessage.MessageNature.Buff, false);
                 
                 var activeDmgMod = new ActiveDmgMod(weapon.uid, DmgModType.AP, mult, txt);
-                Mod.Log.Trace?.Write($"Created msg for floatie, but hsouldnt be firing it yet. actorKey: {weapon.parent.GUID} Type Weapon {weapon.Name} GUID:{activeDmgMod.WeaponGUID}, type: {activeDmgMod.Type}");
+                Mod.Log.Trace?.Write($"Created msg for floatie, but hsouldnt be firing it yet. actorKey: {weapon.parent.GUID} Type Weapon {weapon.Name} GUID:{activeDmgMod?.WeaponGUID}, type: {activeDmgMod.Type}");
                 if (!ModState.APDmgMods.ContainsKey(weapon.parent.GUID))
                 {
                     ModState.APDmgMods.Add(weapon.parent.GUID, new List<ActiveDmgMod> { activeDmgMod });
@@ -790,7 +792,7 @@ namespace IRTweaks.Modules.Combat
                 //var msg = new ShowActorInfoSequence(weapon.parent, txt, FloatieMessage.MessageNature.Buff, false);
                 
                 var activeDmgMod = new ActiveDmgMod(weapon.uid, DmgModType.Standard, mult, txt);
-                Mod.Log.Trace?.Write($"Created msg for floatie, but hsouldnt be firing it yet. actorKey: {weapon.parent.GUID} Type Weapon {weapon.Name} GUID:{activeDmgMod.WeaponGUID}, type: {activeDmgMod.Type}");
+                Mod.Log.Trace?.Write($"Created msg for floatie, but hsouldnt be firing it yet. actorKey: {weapon.parent.GUID} Type Weapon {weapon.Name} GUID:{activeDmgMod?.WeaponGUID}, type: {activeDmgMod.Type}");
                 if (!ModState.StdDmgMods.ContainsKey(weapon.parent.GUID))
                 {
                     ModState.StdDmgMods.Add(weapon.parent.GUID, new List<ActiveDmgMod> { activeDmgMod });
