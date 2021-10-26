@@ -106,6 +106,11 @@ IRTweaks is also now packaged with a SimGameStatDesc to prevent errors from disp
 
 This setting, "DisableCTMaxInjureTags" under the "Combat" section of the mod.json settings, gives a list of MechDef tags which, if present, will prevent Max Injury from occurring when CT is destroyed. Intended for use with Battle Armor.
 
+## TorsoMountStatName
+
+e.g. `"TorsoMountStatName": "isTorsoMount",`
+This setting under the "Combat" section of mod.json settings is simply the name of a boolean stat that torso-mounted cockpits set to true. If present on a mech, will prevent that mech from being destroyed when the head is destroyed. Temporary fix until MechEngineer implements it properly.
+
 ## Called Shot Tweaks
 
 This tweak makes two major changes to how Called Shot (i.e. Morale Attack aka Fury aka Precision Strike) works. The first change is that the modifier applied to the shot is no longer a fixed value (`CombatGameConstants:ToHitOffensivePush`), but rather calculated by a formula (see below). The second change is that choosing a location can be disabled entirely, or headshots can be disabled. 
