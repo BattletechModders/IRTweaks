@@ -122,7 +122,7 @@
     <Compile Include="Modules\CombatModule.cs" />
     <Compile Include="Modules\Combat\BraceOnMeleeWithJuggernaut.cs" />
     <Compile Include="Modules\Combat\AbilityResourceFix.cs" />
-    <Compile Include="Modules\Combat\CTDestructInjuryFix.cs" />
+    <Compile Include="Modules\Combat\MechLocationDestructFixes.cs" />
     <Compile Include="Modules\Combat\TurnDirectorOnFirstRoundFix.cs" />
     <Compile Include="Modules\Combat\WeakAgainstMeleeDisplay.cs" />
     <Compile Include="Modules\Combat\DamageModsBySkill_CAC.cs" />
