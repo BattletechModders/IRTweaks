@@ -222,7 +222,7 @@ As further examples, this would be a statusEffects block in a component for "tar
 			"effectType": "StatisticEffect",
 			"Description": {
 				"Id": "AEROUNIT",
-				"Name": "Taero unit",
+				"Name": "aero unit",
 				"Details": "aero unit thing",
 				"Icon": "uixSvgIcon_equipment_Cockpit"
 			},
