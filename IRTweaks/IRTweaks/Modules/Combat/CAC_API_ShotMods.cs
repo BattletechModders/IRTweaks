@@ -4,6 +4,7 @@
 using BattleTech;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -13,13 +14,14 @@ using System.Threading.Tasks;
 using CustAmmoCategories;
 using Harmony;
 using Localize;
+using RootMotion.FinalIK;
 using static CustAmmoCategories.CustomAmmoCategories;
 
 using UnityEngine;
 
 namespace IRTweaks.Modules.Combat 
 { 
-    public class IRT_CAC_DamageModsBySkill
+    public class CAC_API_ShotMods
     {
         [HarmonyPatch(typeof(Mech), "TakeWeaponDamage")] 
         public static class Mech_TakeWeaponDamage_DamageModsBySkill
@@ -32,7 +34,7 @@ namespace IRTweaks.Modules.Combat
             {
                 if (damageType == DamageType.DFASelf)
 
-                Mod.Log.Trace?.Write($"[Mech.TakeWeaponDamage] Processing dmg floaties for {weapon.Name} uid {weapon.uid}");
+                    Mod.Log.Trace?.Write($"[Mech.TakeWeaponDamage] Processing dmg floaties for {weapon.Name} uid {weapon.uid}");
                 if (ModState.StabDmgMods.ContainsKey(hitInfo.attackerId))
                 {
                     Mod.Log.Trace?.Write($"[Mech.TakeWeaponDamage] containskey true. count: {ModState.StabDmgMods[hitInfo.attackerId].Count}, matching guid? {ModState.StabDmgMods[hitInfo.attackerId].Any(x => x?.WeaponGUID == weapon.uid)}.");
@@ -543,13 +545,47 @@ namespace IRTweaks.Modules.Combat
             }
         }
 
+        [HarmonyPatch(typeof(Weapon), "InitStats")]
+        public static class Weapon_InitStats_Patch
+        {
+            static bool Prepare() => Mod.Config.Combat.ToHitStatMods.WeaponToHitMods.Count > 0;
+
+            static void Postfix(Weapon __instance)
+            {
+                foreach (var weaponToHitMod in Mod.Config.Combat.ToHitStatMods.WeaponToHitMods)
+                {
+                    __instance.StatCollection.AddStatistic<float>(weaponToHitMod.SourceStatName, 0);
+                    Mod.Log.Trace?.Write($"Added weaponToHitMod stat {weaponToHitMod.SourceStatName} at value 0.");
+                    if (__instance.componentDef.statusEffects.FirstOrDefault(x =>
+                            x.effectType == EffectType.StatisticEffect &&
+                            x.statisticData.statName == weaponToHitMod.SourceStatName) is EffectData effect)
+                    {
+                        var parsed = float.Parse(effect.statisticData.modValue, CultureInfo.InvariantCulture);
+                        __instance.StatCollection.ModifyStat("IRT_THM", -1, weaponToHitMod.SourceStatName,StatCollection.StatOperation.Set, parsed);
+                        Mod.Log.Trace?.Write($"weaponToHitMod stat {weaponToHitMod.SourceStatName} parsed and changed to {parsed}.");
+                    }
+                }
+            }
+        }
+
         [HarmonyPatch(typeof(AbstractActor), "InitEffectStats")]
         public static class AbstractActor_InitEffectStats_DamageModsBySkill
         {
-            static bool Prepare() => Mod.Config.Combat.DamageModsBySkill?.HeatMods.Count > 0 || Mod.Config.Combat.DamageModsBySkill?.StabilityMods.Count > 0 ||Mod.Config.Combat.DamageModsBySkill.APDmgMods.Count > 0 || Mod.Config.Combat.DamageModsBySkill.StdDmgMods.Count > 0;
+            static bool Prepare() => Mod.Config.Combat.ToHitStatMods.ActorToHitMods.Count > 0 || Mod.Config.Combat.DamageModsBySkill.HeatMods.Count > 0 || Mod.Config.Combat.DamageModsBySkill.StabilityMods.Count > 0 ||Mod.Config.Combat.DamageModsBySkill.APDmgMods.Count > 0 || Mod.Config.Combat.DamageModsBySkill.StdDmgMods.Count > 0;
 
             static void Postfix(AbstractActor __instance)
             {
+                if (Mod.Config.Combat.ToHitStatMods.ActorToHitMods.Count > 0)
+                {
+                    foreach (var toHitMod in Mod.Config.Combat.ToHitStatMods.ActorToHitMods)
+                    {
+                        __instance.StatCollection.AddStatistic<float>(toHitMod.SourceStatName, 0);
+                        Mod.Log.Trace?.Write($"Added toHitMod source stat {toHitMod.SourceStatName} at value 0.");
+                        __instance.StatCollection.AddStatistic<bool>(toHitMod.TargetStatName, false);
+                        Mod.Log.Trace?.Write($"Added toHitMod target stat {toHitMod.TargetStatName} at value false.");
+                    }
+                }
+
                 if (Mod.Config.Combat.DamageModsBySkill?.HeatMods.Count > 0)
                 {
                     foreach (var heatMod in Mod.Config.Combat.DamageModsBySkill?.HeatMods)
@@ -589,6 +625,11 @@ namespace IRTweaks.Modules.Combat
         }
         public static void FinishedLoading(List<string> loadOrder) 
         {
+            if (Mod.Config.Combat.ToHitStatMods.ActorToHitMods.Count > 0)
+            {
+                ToHitModifiersHelper.registerModifier("IRTweaks_ToHitMod", "CAC Accuracy Modifier", true, false, IRT_CAC_ToHitMod, IRT_CAC_ToHitModName);
+            }
+
             if (Mod.Config.Combat.DamageModsBySkill?.StabilityMods.Count > 0)
             {
                 DamageModifiersCache.RegisterDamageModifier("IRTweaks_SkillDamage_StabMod", "IRT_CAC_SkillDamage_StabMod", false, false, false, false, true, IRT_CAC_SkillStabDmgMod, IRT_CAC_SkillStabDmgModName);
@@ -607,6 +648,251 @@ namespace IRTweaks.Modules.Combat
             }
         }
 
+        public static float IRT_CAC_ToHitMod(ToHit toHit, AbstractActor attacker, Weapon weapon, ICombatant target, Vector3 attackPos, Vector3 targetPos, LineOfFireLevel lof, MeleeAttackType meleType, bool isCalled)
+        {
+            var mod = 0f;
+
+            var defenseModTotal = 0f;
+            var evasiveModTotal = 0f;
+            var currentDefense = toHit.GetEnemyEffectModifier(target, weapon);
+            var currentEvasive = toHit.GetTargetSpeedModifier(target, weapon);
+            foreach (var weaponToHitMod in Mod.Config.Combat.ToHitStatMods.WeaponToHitMods)
+            {
+                Mod.Log.Trace?.Write($"Checking for source stat {weaponToHitMod.SourceStatName}; result: {weapon.StatCollection.ContainsStatistic(weaponToHitMod.SourceStatName)}.");
+                var weaponStatVal = weapon.StatCollection.GetValue<float>(weaponToHitMod.SourceStatName);
+                if (weaponStatVal != 0)
+                {
+                    Mod.Log.Trace?.Write($"Checking for target stat {weaponToHitMod.TargetStatName}; result: {weapon.StatCollection.ContainsStatistic(weaponToHitMod.TargetStatName)}.");
+                    if (target.StatCollection.GetValue<bool>(weaponToHitMod.TargetStatName)) // like IsAerialUnit or whatever
+                    {
+                        Mod.Log.Info?.Write($"found stat {weaponToHitMod.TargetStatName} on target, processing weapon statvalue {weaponStatVal}");
+                        if (weaponToHitMod.Multi)
+                        {
+                            if (weaponToHitMod.Type == "ABSOLUTE")
+                            {
+                                Mod.Log.Error?.Write($"ERROR: toHitMod.Multi on stat {weaponToHitMod.SourceStatName} not allowed with toHitMod.Type 'ABSOLUTE'. Doing nothing!");
+                            }
+                            else if (weaponToHitMod.Type == "DEFENSE")
+                            {
+                                var defenseMod = currentDefense * weaponStatVal;
+                                defenseModTotal += defenseMod;
+                                mod += defenseMod;
+                                Mod.Log.Trace?.Write($"found stat {weaponToHitMod.TargetStatName} on target {target?.DisplayName}, processing source weaponstat {attacker?.DisplayName} {weapon?.UIName} statvalue {weaponStatVal}. defenseMod {defenseMod}, total mod {mod}");
+                            }
+                            else if (weaponToHitMod.Type == "EVASIVE")
+                            {
+                                
+                                var evasiveMod = currentEvasive * weaponStatVal;
+                                evasiveModTotal += evasiveMod;
+                                mod += evasiveMod;
+                                Mod.Log.Trace?.Write($"found stat {weaponToHitMod.TargetStatName} on target {target?.DisplayName}, processing source weaponstat {attacker?.DisplayName} {weapon?.UIName} statvalue {weaponStatVal}. evasiveMod {evasiveMod}, total mod {mod}");
+                            }
+                        }
+                        else if (!weaponToHitMod.Multi)
+                        {
+                            if (weaponToHitMod.Type == "ABSOLUTE")
+                            {
+                                mod += weaponStatVal;
+                                Mod.Log.Trace?.Write($"found stat {weaponToHitMod.TargetStatName} on target {target?.DisplayName}, processing source weaponstat {attacker?.DisplayName} {weapon?.UIName} statvalue {weaponStatVal}. absolute mod {weaponStatVal}, total mod {mod}");
+                            }
+                            else if (weaponToHitMod.Type == "DEFENSE")
+                            {
+                                //var defenseNet = currentDefense + weaponStatVal;
+                                //var finalVal = weaponStatVal;
+                                //if (defenseNet <= 0) finalVal = 0;
+                                defenseModTotal += weaponStatVal;
+                                mod += weaponStatVal;
+                                Mod.Log.Trace?.Write($"found stat {weaponToHitMod.TargetStatName} on target {target?.DisplayName}, processing source weaponstat {attacker?.DisplayName} {weapon?.UIName} statvalue {weaponStatVal}. defenseMod {weaponStatVal}, total mod {mod}");
+                            }
+                            else if (weaponToHitMod.Type == "EVASIVE")
+                            {
+                                //var evasiveNet = currentEvasive + weaponStatVal;
+                                //var finalVal = weaponStatVal;
+                                //if (evasiveNet <= 0) finalVal = 0;
+                                evasiveModTotal += weaponStatVal;
+                                mod += weaponStatVal;
+                                Mod.Log.Trace?.Write($"found stat {weaponToHitMod.TargetStatName} on target {target?.DisplayName}, processing source weaponstat {attacker?.DisplayName} {weapon?.UIName} statvalue {weaponStatVal}. evasiveMod {weaponStatVal}, total mod {mod}");
+                            }
+                        }
+                    }
+                }
+            }
+
+            foreach (var toHitMod in Mod.Config.Combat.ToHitStatMods.ActorToHitMods)
+            {
+                Mod.Log.Trace?.Write($"Checking for source stat {toHitMod.SourceStatName}; result: {attacker.StatCollection.ContainsStatistic(toHitMod.SourceStatName)}.");
+                var statVal = attacker.StatCollection.GetValue<float>(toHitMod.SourceStatName);
+                if (statVal != 0)
+                {
+                    Mod.Log.Trace?.Write($"Checking for target stat {toHitMod.TargetStatName}; result: {attacker.StatCollection.ContainsStatistic(toHitMod.TargetStatName)}.");
+                    if (target.StatCollection.GetValue<bool>(toHitMod.TargetStatName)) // like IsAerialUnit or whatever
+                    {
+                        if (toHitMod.Multi)
+                        {
+                            if (toHitMod.Type == "ABSOLUTE")
+                            {
+                                Mod.Log.Error?.Write($"ERROR: toHitMod.Multi on stat {toHitMod.SourceStatName} not allowed with toHitMod.Type 'ABSOLUTE'. Doing nothing!");
+                            }
+                            else if (toHitMod.Type == "DEFENSE")
+                            {
+                                var defenseMod = currentDefense * statVal;
+                                defenseModTotal += defenseMod;
+                                mod += defenseMod;
+                                Mod.Log.Trace?.Write($"found stat {toHitMod.TargetStatName} on target {target?.DisplayName}, processing source {attacker?.DisplayName} statvalue {statVal}. defenseMod {defenseMod}, total mod {mod}");
+                            }
+                            else if (toHitMod.Type == "EVASIVE")
+                            {
+                                var evasiveMod = currentEvasive * statVal;
+                                evasiveModTotal += evasiveMod;
+                                mod += evasiveMod;
+                                Mod.Log.Trace?.Write($"found stat {toHitMod.TargetStatName} on target {target?.DisplayName}, processing source {attacker?.DisplayName} statvalue {statVal}. evasiveMod {evasiveMod}, total mod {mod}");
+                            }
+                        }
+                        else if (!toHitMod.Multi)
+                        {
+                            if (toHitMod.Type == "ABSOLUTE")
+                            {
+                                mod += statVal;
+                                Mod.Log.Trace?.Write($"found stat {toHitMod.TargetStatName} on target {target?.DisplayName}, processing source {attacker?.DisplayName} statvalue {statVal}. absolute mod {statVal}, total mod {mod}");
+                            }
+                            else if (toHitMod.Type == "DEFENSE")
+                            {
+                                //var defenseNet = currentDefense + statVal;
+                                //var finalVal = statVal;
+                                //if (defenseNet <= 0) finalVal = 0;
+                                defenseModTotal += statVal;
+                                mod += statVal;
+                                Mod.Log.Trace?.Write($"found stat {toHitMod.TargetStatName} on target {target?.DisplayName}, processing source {attacker?.DisplayName} statvalue {statVal}. defenseMod {statVal}, total mod {mod}");
+                            }
+                            else if (toHitMod.Type == "EVASIVE")
+                            {
+                                //var evasiveNet = currentEvasive + statVal;
+                                //var finalVal = statVal;
+                                //if (evasiveNet <= 0) finalVal = 0;
+                                evasiveModTotal += statVal;
+                                mod += statVal;
+                                Mod.Log.Trace?.Write($"found stat {toHitMod.TargetStatName} on target {target?.DisplayName}, processing source {attacker?.DisplayName} statvalue {statVal}. evasiveMod {statVal}, total mod {mod}");
+                            }
+                        }
+                    }
+                }
+            }
+
+            var defenseNetFinal = currentDefense + defenseModTotal;
+            Mod.Log.Trace?.Write($"Final mod summary: defenseNetFinal {defenseNetFinal}, mod {mod}");
+            if (defenseNetFinal < 0) mod -= defenseNetFinal;
+            var evasiveNetFinal = currentEvasive + evasiveModTotal;
+            Mod.Log.Trace?.Write($"Final mod summary: evasiveNetFinal {evasiveNetFinal}, mod {mod}");
+            if (evasiveNetFinal < 0) mod -= evasiveNetFinal;
+            Mod.Log.Trace?.Write($"Final mod: {mod}");
+            return mod;
+        }
+
+        public static string IRT_CAC_ToHitModName(ToHit toHit, AbstractActor attacker, Weapon weapon, ICombatant target, Vector3 attackPos, Vector3 targetPos, LineOfFireLevel lof, MeleeAttackType meleType, bool isCalled)
+        {
+            var name = "";
+            var defenseModTotal = 0f;
+            var evasiveModTotal = 0f;
+            var currentDefense = toHit.GetEnemyEffectModifier(target, weapon);
+            var currentEvasive = toHit.GetTargetSpeedModifier(target, weapon);
+            foreach (var weaponToHitMod in Mod.Config.Combat.ToHitStatMods.WeaponToHitMods)
+            {
+                var weaponStatVal = weapon.StatCollection.GetValue<float>(weaponToHitMod.SourceStatName);
+                if (weaponStatVal != 0)
+                {
+                    if (target.StatCollection.GetValue<bool>(weaponToHitMod.TargetStatName)) // like IsAerialUnit or whatever
+                    {
+                        if (weaponToHitMod.Multi)
+                        {
+                            if (weaponToHitMod.Type == "ABSOLUTE")
+                            {
+                                Mod.Log.Error?.Write($"ERROR: toHitMod.Multi on stat {weaponToHitMod.SourceStatName} not allowed with toHitMod.Type 'ABSOLUTE'. Doing nothing!");
+                            }
+                            else if (weaponToHitMod.Type == "DEFENSE")
+                            {
+                                var defenseMod = currentDefense * weaponStatVal;
+                                defenseModTotal += defenseMod;
+                                name += $"+ WEAPON [TGT DEF x{weaponStatVal}] ";
+                            }
+                            else if (weaponToHitMod.Type == "EVASIVE")
+                            {
+                                var evasiveMod = currentEvasive * weaponStatVal;
+                                evasiveModTotal += evasiveMod;
+                                name += $"+ WEAPON [TGT EV x{weaponStatVal}] ";
+                            }
+                        }
+                        else if (!weaponToHitMod.Multi)
+                        {
+                            if (weaponToHitMod.Type == "ABSOLUTE")
+                            {
+                                name += $"+ WEAPON [{weaponStatVal}] ";
+                            }
+                            else if (weaponToHitMod.Type == "DEFENSE")
+                            {
+                                defenseModTotal += weaponStatVal;
+                                name += $"+ WEAPON [{weaponStatVal}] ";
+                            }
+                            else if (weaponToHitMod.Type == "EVASIVE")
+                            {
+                                evasiveModTotal += weaponStatVal;
+                                name += $"+ WEAPON [{weaponStatVal}] ";
+                            }
+                        }
+                    }
+                }
+            }
+
+            foreach (var toHitMod in Mod.Config.Combat.ToHitStatMods.ActorToHitMods)
+            {
+                var statVal = attacker.StatCollection.GetValue<float>(toHitMod.SourceStatName);
+                if (statVal != 0)
+                {
+                    if (target.StatCollection.GetValue<bool>(toHitMod.TargetStatName)) // like IsAerialUnit or whatever
+                    {
+                        if (toHitMod.Multi)
+                        {
+                            if (toHitMod.Type == "ABSOLUTE")
+                            {
+                                Mod.Log.Error?.Write($"ERROR: toHitMod.Multi on stat {toHitMod.SourceStatName} not allowed with toHitMod.Type 'ABSOLUTE'. Doing nothing!");
+                            }
+                            else if (toHitMod.Type == "DEFENSE")
+                            {
+                                var defenseMod = currentDefense * statVal;
+                                defenseModTotal += defenseMod;
+                                name += $"+ UNIT [TGT DEF x{statVal}] ";
+                            }
+                            else if (toHitMod.Type == "EVASIVE")
+                            {
+                                var evasiveMod = currentEvasive * statVal;
+                                evasiveModTotal += evasiveMod;
+                                name += $"+ UNIT [TGT EV x{statVal}] ";
+                            }
+                        }
+                        else if (!toHitMod.Multi)
+                        {
+                            if (toHitMod.Type == "ABSOLUTE")
+                            {
+                                name += $"+ UNIT [{statVal}] ";
+                            }
+                            else if (toHitMod.Type == "DEFENSE")
+                            {
+                                defenseModTotal += statVal;
+                                name += $"+ UNIT [{statVal}] ";
+                            }
+                            else if (toHitMod.Type == "EVASIVE")
+                            {
+                                evasiveModTotal += statVal;
+                                name += $"+ UNIT [{statVal}] ";
+                            }
+                        }
+                    }
+                }
+            }
+
+            return name;
+        }
+
+
         public static float IRT_CAC_SkillStabDmgMod(Weapon weapon, Vector3 attackPosition, ICombatant target, bool IsBreachingShot,
             int location, float dmg, float ap, float heat, float stab)
         {
@@ -614,7 +900,7 @@ namespace IRTweaks.Modules.Combat
 
             foreach (var statmod in Mod.Config.Combat.DamageModsBySkill?.StabilityMods)
             {
-                Mod.Log.Info?.Write($"Checking for stat {statmod.StatName}; result: {weapon.parent.StatCollection.ContainsStatistic(statmod.StatName)}.");
+                Mod.Log.Trace?.Write($"Checking for stat {statmod.StatName}; result: {weapon.parent.StatCollection.ContainsStatistic(statmod.StatName)}.");
                 if (weapon.parent.StatCollection.GetValue<bool>(statmod.StatName))
                 {
                     Mod.Log.Info?.Write($"Found StabilityMod stat, rolling vs {statmod.Probability}.");
@@ -665,7 +951,7 @@ namespace IRTweaks.Modules.Combat
 
             foreach (var statmod in Mod.Config.Combat.DamageModsBySkill?.HeatMods)
             {
-                Mod.Log.Info?.Write($"Checking for stat {statmod.StatName}; result: {weapon.parent.StatCollection.ContainsStatistic(statmod.StatName)} for weapon {weapon.Name}.");
+                Mod.Log.Trace?.Write($"Checking for stat {statmod.StatName}; result: {weapon.parent.StatCollection.ContainsStatistic(statmod.StatName)} for weapon {weapon.Name}.");
                 if (weapon.parent.StatCollection.GetValue<bool>(statmod.StatName))
                 {
                     Mod.Log.Info?.Write($"Found HeatMod stat, rolling vs {statmod.Probability}.");
@@ -716,7 +1002,7 @@ namespace IRTweaks.Modules.Combat
 
             foreach (var statmod in Mod.Config.Combat.DamageModsBySkill.APDmgMods)
             {
-                Mod.Log.Info?.Write($"Checking for stat {statmod.StatName}; result: {weapon.parent.StatCollection.ContainsStatistic(statmod.StatName)} for weapon {weapon.Name}.");
+                Mod.Log.Trace?.Write($"Checking for stat {statmod.StatName}; result: {weapon.parent.StatCollection.ContainsStatistic(statmod.StatName)} for weapon {weapon.Name}.");
                 if (weapon.parent.StatCollection.GetValue<bool>(statmod.StatName))
                 {
                     Mod.Log.Info?.Write($"Found APDmgMod stat, rolling vs {statmod.Probability}.");
@@ -770,10 +1056,10 @@ namespace IRTweaks.Modules.Combat
                 Mod.Log.Trace?.Write($"Checking for stat {statmod.StatName}; result: {weapon.parent.StatCollection.ContainsStatistic(statmod.StatName)} for weapon {weapon.Name}.");
                 if (weapon.parent.StatCollection.GetValue<bool>(statmod.StatName))
                 {
-                    Mod.Log.Trace?.Write($"Found StdDmgMod stat, rolling vs {statmod.Probability}.");
+                    Mod.Log.Info?.Write($"Found StdDmgMod stat, rolling vs {statmod.Probability}.");
                     if (Mod.Random.NextDouble() <= statmod.Probability)
                     {
-                        Mod.Log.Trace?.Write($"Roll succeeded, multiplying {mult} by {statmod.Multiplier}.");
+                        Mod.Log.Info?.Write($"Roll succeeded, multiplying {mult} by {statmod.Multiplier}.");
                         mult *= statmod.Multiplier;
                     }
                 }

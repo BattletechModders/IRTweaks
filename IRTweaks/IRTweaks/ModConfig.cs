@@ -62,6 +62,14 @@ namespace IRTweaks
             public Dictionary<string, int> PilotTags = new Dictionary<string, int>();
         }
 
+        public ToHitStatModOpts ToHitStatMods = new ToHitStatModOpts();
+
+        public class ToHitStatModOpts
+        {
+            public List<ToHitMod> WeaponToHitMods = new List<ToHitMod>();
+            public List<ToHitMod> ActorToHitMods = new List<ToHitMod>();
+        }
+
         public DamageModsBySkillOpts DamageModsBySkill = new DamageModsBySkillOpts();
 
         public class DamageModsBySkillOpts

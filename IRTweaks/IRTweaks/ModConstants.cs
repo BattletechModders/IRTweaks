@@ -54,6 +54,14 @@ namespace IRTweaks
         }
     }
 
+    public class ToHitMod
+    {
+        public string SourceStatName;
+        public string TargetStatName;
+        public bool Multi;
+        public string Type; //options are EVASIVE (mod on existing evasive pips modifier), ABSOLUTE (straight accuracy buff/debuff), DEFENSE (mod on existing ToHitThisActor of target) 
+    }
+
     public class StabilityMod
     {
         public string StatName;

@@ -125,7 +125,7 @@
     <Compile Include="Modules\Combat\MechLocationDestructFixes.cs" />
     <Compile Include="Modules\Combat\TurnDirectorOnFirstRoundFix.cs" />
     <Compile Include="Modules\Combat\WeakAgainstMeleeDisplay.cs" />
-    <Compile Include="Modules\Combat\DamageModsBySkill_CAC.cs" />
+    <Compile Include="Modules\Combat\CAC_API_ShotMods.cs" />
     <Compile Include="Modules\Combat\TurretArmorAndStructureMult.cs" />
     <Compile Include="Modules\Combat\ObstructionTweaks_CAC.cs" />
     <Compile Include="Modules\Combat\PainTolerance.cs" />
