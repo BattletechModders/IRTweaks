@@ -162,6 +162,149 @@ This module allows the use of cheats such as CheatEngine or other memory address
 
 `CheatDetectionStat` - string, statname of bool statistic written to CompanyStats when a cheat has been detected.
 
+## To Hit Mods
+This tweaks allows you to define modifiers on hitchance based on matching statistic values between attacker and target. These modifiers may be absolute (accuracy is always affected) or they may be relative, i.e a multiplier of target Defense and/or Evasion. Further, these matching statistic values can be applied to specific weapons, or to all weapons on the unit. All references to "ToHit" use the "lower values = better hit %" convention; a negative modifier improves chances to hit. EVASIVE and DEFENSE values refered to are the raw effect on ToHit; offsetting 1 EVASIVE is the same as giving -1 ToHit (or +1 Accuracy from the players point of view). These examples are all aimed toward _improving_ ToHit, but developers can certainly assign positive values to the statistics to creat accuracy penalties if desired. You can make AC2's offset some evasion on LAMs and make it functionally impossible to hit a Kirov with a Long Tom, etc.
+
+The following is an example settings block in mod.json for this tweak:
+
+```
+"ToHitStatMods": {
+				"WeaponToHitMods": [
+					{
+						"SourceStatName": "WeaponIgnoreEVASIVE_AeroUnit",
+						"TargetStatName": "AeroUnit",
+						"Multi": false,
+						"Type": "EVASIVE"
+					}
+				],
+				"ActorToHitMods": [
+					{
+						"SourceStatName": "ActorIgnoreDEFENSE_AeroUnit",
+						"TargetStatName": "AeroUnit",
+						"Multi": true,
+						"Type": "DEFENSE"
+					},
+					{
+						"SourceStatName": "ActorABSOLUTE_AeroUnit",
+						"TargetStatName": "AeroUnit",
+						"Multi": false,
+						"Type": "ABSOLUTE"
+					}
+				]
+			},
+```
+The only fundamental difference is that WeaponToHitMods will only apply to the weapon that carries the statistic, while ActorToHitMods apply to all weapons on the unit. For both WeaponToHitMods and ActorToHitMods the subfields function identically:
+
+`SourceStatName` - name of float statistic (name is arbitrary) on either a weapondef (for WeaponToHitMods) or otherwise given to a unit that defines the ToHit modifier. **the actual value of the statistic should be set by equipment, ability, etc**
+
+`TargetStatName` - name of bool statistic (name is arbitrary) on the intended target units. For example, a target has `AeroUnit`, and the attacker has `ActorIgnoreDEFENSE_AeroUnit` set to a value other than 0, then the ToHit modifier value of `ActorIgnoreDEFENSE_AeroUnit` will apply.
+
+`Multi`: bool. If true, the value of SourceStatName statistic is taken to be a multiplier of either EVASION or DEFENSE. If false, the value of SourceStatName is added directly to ToHit.
+
+`Type`: string, valid values are "ABSOLUTE", "DEFENSE", and "EVASION". DEFENSE and EVASION make the effect of the modifier dependent on the target defense or evasion. 
+
+For example, if a units value for SourceStatName is set to -0.5, `Multi: true`, and `Type: "EVASION"`, the target would have half of their evasion "offset" by the modifier. If it were set to -1, <i>all</i> of their evasion would be offset by the modifier. As another example, if a units value for SourceStatName was -4, `Multi: false`, and `Type: "DEFENSE"`, and the target unit only had a defense modifier of 2, then _only_ those 2 would be offset by the modifier. Similar to vanilla functionality that ignores evasion pips, Type settings of "DEFENSE" and "EVASION" cannot improve hit chance past simply offsetting target evasion or defense. `Type: "ABSOLUTE"` _always_ applies, similar to a normal weapon accuracy buff. Finally **Multi: true cannot be used with "ABSOLUTE"** and will result in an error in logs and no effect in-game.
+
+As further examples, this would be a statusEffects block in a component for "target" units using the above setting block:
+```
+"statusEffects": [
+		{
+			"durationData": {
+				"duration": -1,
+				"stackLimit": 1
+			},
+			"targetingData": {
+				"effectTriggerType": "Passive",
+				"effectTargetType": "Creator",
+				"showInTargetPreview": false,
+				"showInStatusPanel": false
+			},
+			"effectType": "StatisticEffect",
+			"Description": {
+				"Id": "AEROUNIT",
+				"Name": "Taero unit",
+				"Details": "aero unit thing",
+				"Icon": "uixSvgIcon_equipment_Cockpit"
+			},
+			"nature": "Buff",
+			"statisticData": {
+				"statName": "AeroUnit",
+				"operation": "Set",
+				"modValue": "true",
+				"modType": "System.Boolean"
+			}
+		}
+	],
+```
+
+This would be a statusEffects block on a component for the attacking unit using the above settings block. The statistic sets -1, and the corresponding mod.json setting has `"Multi": true`, so all of the target Defense would be offset.
+
+```
+"statusEffects": [
+		{
+			"durationData": {
+				"duration": -1,
+				"stackLimit": 1
+			},
+			"targetingData": {
+				"effectTriggerType": "Passive",
+				"effectTargetType": "Creator",
+				"showInTargetPreview": true,
+				"showInStatusPanel": true
+			},
+			"effectType": "StatisticEffect",
+			"Description": {
+				"Id": "ActorIgnoreDEFENSE_AeroUnitStat",
+				"Name": "Ignore Aero Defense",
+				"Details": "Increased Sight/Sensors more better thing",
+				"Icon": "uixSvgIcon_equipment_Cockpit"
+			},
+			"nature": "Buff",
+			"statisticData": {
+				"statName": "ActorIgnoreDEFENSE_AeroUnit",
+				"operation": "Set",
+				"modValue": "-1",
+				"modType": "System.Single"
+			}
+		}
+	],
+```
+
+This would be a statusEffects block on a WeaponDef for the attacking unit using the above settings block. The statistic sets -2, and the corresponding mod.json setting has `"Multi": false` so the ToHit chance would be improved by at most 2 (or 1 evasion pip).
+
+**Note that any statusEffect defined in a component propagates to the whole unit, so if your intent is to have the ToHit modifier only affect this weaspon, the `statName` MUST be defined in WeaponToHitMods in the mod.json.
+
+```
+"statusEffects": [
+		{
+			"durationData": {
+				"duration": -1,
+				"stackLimit": 1
+			},
+			"targetingData": {
+				"effectTriggerType": "Passive",
+				"effectTargetType": "Creator",
+				"showInTargetPreview": true,
+				"showInStatusPanel": true
+			},
+			"effectType": "StatisticEffect",
+			"Description": {
+				"Id": "WeaponIgnoreEVASIVE_AeroUnitStat",
+				"Name": "Ignore Aero Evasive",
+				"Details": "Increased Sight/Sensors more better thing",
+				"Icon": "uixSvgIcon_equipment_Cockpit"
+			},
+			"nature": "Buff",
+			"statisticData": {
+				"statName": "WeaponIgnoreEVASIVE_AeroUnit",
+				"operation": "Set",
+				"modValue": "-2",
+				"modType": "System.Single"
+			}
+		}
+	],
+```
+
 ## Damage Mods
 This tweak allows you to define multipliers to damage of various types: normal, heat, stability, and AP damage (from CAC). Units' access to the modifiers is first controlled via a stat check; the unit must have boolean true value for a statistic named the same as StatName in the following settings. This statistic can be added via equipment, pilot abilities, etc. Probability corresponds to the probability that the modifier will be applied; set to 1 to always apply the modifier. Multiplier represents the actual multiplier to be applied.
 
