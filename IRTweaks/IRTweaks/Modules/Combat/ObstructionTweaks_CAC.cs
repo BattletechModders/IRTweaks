@@ -90,10 +90,10 @@ namespace IRTweaks.Modules.Combat
             }
             else if (target is Mech vmech && vmech.GetCustomInfo().FakeVehicle)
             {
-                var loc = (ArmorLocation) location;
+                var loc = (ChassisLocations) location;
                 if (Mod.Config.Combat.ObstructionTweaks.DRVehicleLocs.Contains(loc.toFakeVehicleChassis()))
                 {
-                    Mod.Log.Debug?.Write($"{(VehicleChassisLocations)location} loc cast to VehicleChassisLocation; {loc.toFakeVehicleChassis()} after processing; is valid hit location for damage reduction.");
+                    Mod.Log.Debug?.Write($"Location is int value {location}: {(VehicleChassisLocations)location} as VehicleChassisLocation; {loc.toFakeVehicleChassis()} after processing; is valid hit location for damage reduction.");
                     var damageReduction = Mod.Config.Combat.ObstructionTweaks.ObstructionDRByTags
                         .Where(x => vmech.MechDef.MechTags.Contains(x.Key)).Select(y => y.Value).ToList()
                         .Max();
