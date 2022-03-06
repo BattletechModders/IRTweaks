@@ -162,8 +162,6 @@ This module allows the use of cheats such as CheatEngine or other memory address
 
 `CheatDetectionStat` - string, statname of bool statistic written to CompanyStats when a cheat has been detected.
 
-
-
 ## To Hit Mods
 This tweaks allows you to define modifiers on hitchance based on matching statistic values between attacker and target. These modifiers may be absolute (accuracy is always affected) or they may be relative, i.e a multiplier of target Defense and/or Evasion. Further, these matching statistic values can be applied to specific weapons, or to all weapons on the unit. All references to "ToHit" use the "lower values = better hit %" convention; a negative modifier improves chances to hit. EVASIVE and DEFENSE values refered to are the raw effect on ToHit; offsetting 1 EVASIVE is the same as giving -1 ToHit (or +1 Accuracy from the players point of view). These examples are all aimed toward _improving_ ToHit, but developers can certainly assign positive values to the statistics to creat accuracy penalties if desired. You can make AC2's offset some evasion on LAMs and make it functionally impossible to hit a Kirov with a Long Tom, etc.
 
@@ -436,7 +434,6 @@ Example stat block on weapon; if two of these weapons would fire, the "base chan
 		}
 	],
 ```
-
 
 ## Pain Tolerance
 This tweak makes skilled pilots more resistant to injuries. Any time the pilot would normally be injured by a head hit, torso destruction, ammo explosion, or knockdown, they make a check against their Guts skill rating to determine if they can shrug off the effect. 
