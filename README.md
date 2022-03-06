@@ -5,6 +5,7 @@ This is a mod for the [HBS BattleTech](http://battletechgame.com/) game that inc
 * **AlternativeMechNamingStyle**: Used by RogueTech to set unique naming styles consistent with the **LowVisiblity** mod. No other systems should use this.
 * **BuildingDamageColorChange**: Changes the floating damage on buildings to be dark blue to distinguish this damage type. Thanks to **Gnivler** for this fix!
 * **BraceOnMeleeWithJuggernaut**: If a pilot has the Guts 8 ability (typically Juggernaut), braces the unit after a melee or DFA attack. A direct copy of [RealityMachina's Better-Juggernaut](https://github.com/RealityMachina/Better-Juggernaut).
+* **BreachingShotIgnoresAllDR**: Makes breaching shot and rear-arc shots ignore damage resistance from `DamageReductionMultiplierAll` as well
 * **BulkPurchasing**: Provides buttons and keyboard shortcuts that allow bulk purchasing and selling of items in the store.
 * **BulkScrapping**: Allows players to scrap all chassis of a given weight from the storage screen at once. Hold Alt and click one of the weight filters at the top of the storage screen to scrap everything in that category.
 * **CalledShotTweaks**: The modifier for called shots (aka offensive push) is driven by the pilot's tactics skill, ability, and pilot tags. It can also be influenced by gear. Options allow disabling the ability to called shot 
@@ -57,7 +58,6 @@ This mod requires the latest releases of the following mods:
 * [Custom Ammo Categories](https://github.com/BattletechModders/CustomBundle/releases) - for enhanced weapon tooltips
 
 ## Bulk Purchasing
-
 
 This tweak makes minor changes to the store UI elements:
 
@@ -161,6 +161,8 @@ This module allows the use of cheats such as CheatEngine or other memory address
 `CheatDetectionNotify` - bool, if true a popup is displayed ingame when a cheat was detected.
 
 `CheatDetectionStat` - string, statname of bool statistic written to CompanyStats when a cheat has been detected.
+
+
 
 ## To Hit Mods
 This tweaks allows you to define modifiers on hitchance based on matching statistic values between attacker and target. These modifiers may be absolute (accuracy is always affected) or they may be relative, i.e a multiplier of target Defense and/or Evasion. Further, these matching statistic values can be applied to specific weapons, or to all weapons on the unit. All references to "ToHit" use the "lower values = better hit %" convention; a negative modifier improves chances to hit. EVASIVE and DEFENSE values refered to are the raw effect on ToHit; offsetting 1 EVASIVE is the same as giving -1 ToHit (or +1 Accuracy from the players point of view). These examples are all aimed toward _improving_ ToHit, but developers can certainly assign positive values to the statistics to creat accuracy penalties if desired. You can make AC2's offset some evasion on LAMs and make it functionally impossible to hit a Kirov with a Long Tom, etc.
@@ -344,10 +346,97 @@ These values are defined using the following settings:
 ```
 Using the above example, a unit with a stat effect `stabMod1 = true` would inflict 25 times as much stability damage 90% of the time, while a unit with `stabMod2 = true` would inflict 10% of normal stability damage 20% of the time.
 
-## Flexible Sensor Lock
-This tweak allows units to use sensor lock without it consuming their action or movement. This can be limited to units with a specific ability or stat. The ability to restrict this is defined by the `AbilityOpts.FlexibleSensorLockId` value in mod.json, which defaults to `AbilityDefT8A`. The stat is defined in `AbilityOpts.FreeActionStatName`, which defaults `IR_FreeSensorLock`. 
+## Effects on Brace `BraceEffectConfig`
 
-If the `Combat.FlexibleSensorLock.AlsoAppliesToActiveProbe` is true, the ActiveProbe ability that some units possess will also not require an action or movement.
+This option defines a block of stat effects to be applied when a unit issues a "Brace" command. Intended to be used for an overhaul of the Cover/Braced/Bulwark damage resistance system, in conjunction with the `BreachingShotIgnoresAllDR` tweak (since `DamageReductionMultiplierAll` effects would replace the standard Cover/Braced/Bulwark DR set in combatgameconstants.
+
+Example config block:
+```"BraceEffectConfig": {
+	"ID": "EffectsOnBrace",
+	"Name": "EffectsOnBracing",
+	"Description": "Effects happen on brace",
+	"effectDataJO": [
+		{
+			`"durationData": {
+			"duration": 1,
+			"stackLimit": 1
+			},
+			"targetingData": {
+				"effectTriggerType": "Passive",
+				"effectTargetType": "Creator",
+				"showInStatusPanel": true
+			},
+			"effectType": "StatisticEffect",
+			"Description": {
+				"Id": "BraceAOE_DR",
+				"Name": "AOE DR",
+				"Details": "Braced Units take 20% less AOE damage.",
+				"Icon": "allied-star"
+			},
+			"nature": "Buff",
+			"statisticData": {
+				"statName": "CACAoEDamageMult",
+				"operation": "Float_Add",
+				"modValue": "-0.2",
+				"modType": "System.Single"
+			}
+		}
+```
+
+## Flexible Sensor Lock
+This tweak allows units to use sensor lock without it consuming their action or movement. This can be limited to units with a specific ability or stat. The ability to restrict this is defined by the `AbilityOpts.FlexibleSensorLockId` value in mod.json, which defaults to `AbilityDefT8A`. The stat is defined in `AbilityOpts.FreeActionStatName`, which defaults `IR_FreeSensorLock`. If the `Combat.FlexibleSensorLock.AlsoAppliesToActiveProbe` is true, the ActiveProbe ability that some units possess will also not require an action or movement.
+
+## OnWeaponFire special effects - `OnWeaponFireOpts` REQUIRES CAC
+
+This "tweak" is currently only configured for a single functionality, but can be extended if requested. Current configuration allows for forcing a save against self-knockdown when weapons with the appropriate OnWeaponFire effects block are fired. The actual roll for knockdown takes place after the attacksequence has completed, so knockdown chance from multiple weapons can stack and become progressively more difficult or impossible to beat.
+
+Example mod.json settings:
+```
+"OnWeaponFireOpts": {
+	"SelfKnockdownCheckStatName": "SelfknockdownCheck_OnFire",
+	"IgnoreSelfKnockdownTag": "big_chungus",
+	"SelfKnockdownPilotingFactor": 0.01,
+	"SelfKnockdownBracedFactor": 100.0
+},
+```
+`SelfKnockdownCheckStatName` - name of statistic (_statistic_ *not* effect!) set in weapon that represents the "base chance" of suffering a knockdown due to firing that weapon.
+`IgnoreSelfKnockdownTag` - units with this mechdef (or vehicledef) tag will ignore self-knockdown rolls (basically turns off this whole functionality for that unit)
+`SelfKnockdownPilotingFactor` - this value X Piloting skill offset chance to self-knockdown
+`SelfKnockdownBracedFactor` - if unit braced the previous round *and has not moved this round* this value will be added to offset chance of self-knockdown. Unit *can* still rotate in place.
+
+So final formula for % to self-knockdown is SelfKnockdownCheckStatName - (SelfKnockdownPilotingFactor + SelfKnockdownBracedFactor)
+
+Example stat block on weapon; if two of these weapons would fire, the "base chance" of self-knockdown would be 2.0 - (SelfKnockdownPilotingFactor + SelfKnockdownBracedFactor)
+```
+"statusEffects": [
+		{
+			"durationData": {
+				"duration": 1,
+				"stackLimit": 1
+			},
+			"targetingData": {
+				"effectTriggerType": "OnWeaponFire",
+				"effectTargetType": "Creator",
+				"showInStatusPanel": false
+			},
+			"effectType": "StatisticEffect",
+			"Description": {
+				"Id": "WeaponEffect-SelfknockdownCheck_OnFire",
+				"Name": "self knockdown check",
+				"Details": "self knockdown check.",
+				"Icon": "uixSvgIcon_run_n_gun"
+			},
+			"statisticData": {
+				"statName": "SelfknockdownCheck_OnFire",
+				"operation": "Float_Add",
+				"modValue": "1.0",
+				"modType": "System.Single"
+			},
+			"nature": "Buff"
+		}
+	],
+```
+
 
 ## Pain Tolerance
 This tweak makes skilled pilots more resistant to injuries. Any time the pilot would normally be injured by a head hit, torso destruction, ammo explosion, or knockdown, they make a check against their Guts skill rating to determine if they can shrug off the effect. 
