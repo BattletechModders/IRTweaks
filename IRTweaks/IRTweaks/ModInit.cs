@@ -76,10 +76,9 @@ namespace IRTweaks {
             // Enable DEBUG below to print a log of emitted IL to the desktop. Useful for debugging transpilers
             //HarmonyInstance.DEBUG = true;
             harmony.PatchAll(Assembly.GetExecutingAssembly());
-
+            ModState.InitializeEffects();
             // Setup the diag for me 
             //Helper.DiagnosticLogger.PatchAllMethods();
         }
-
     }
 }

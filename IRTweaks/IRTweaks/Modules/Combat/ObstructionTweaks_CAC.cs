@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using CustAmmoCategories;
+using CustomUnits;
 using static CustAmmoCategories.CustomAmmoCategories;
 using UnityEngine;
 
@@ -85,6 +86,21 @@ namespace IRTweaks.Modules.Combat
                             $"Applied {damageReduction} multiplier for armor damage reduction to {(VehicleChassisLocations)location}.");
                         return damageReduction;
                     }
+                }
+            }
+            else if (target is Mech vmech && vmech.GetCustomInfo().FakeVehicle)
+            {
+                var loc = (ChassisLocations) location;
+                if (Mod.Config.Combat.ObstructionTweaks.DRVehicleLocs.Contains(loc.toFakeVehicleChassis()))
+                {
+                    Mod.Log.Debug?.Write($"Location is int value {location}: {(VehicleChassisLocations)location} as VehicleChassisLocation; {loc.toFakeVehicleChassis()} after processing; is valid hit location for damage reduction.");
+                    var damageReduction = Mod.Config.Combat.ObstructionTweaks.ObstructionDRByTags
+                        .Where(x => vmech.MechDef.MechTags.Contains(x.Key)).Select(y => y.Value).ToList()
+                        .Max();
+
+                    Mod.Log.Info?.Write(
+                        $"Applied {damageReduction} multiplier for armor damage reduction to {(VehicleChassisLocations)location}.");
+                    return damageReduction;
                 }
             }
 

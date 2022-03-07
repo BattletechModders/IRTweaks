@@ -518,10 +518,22 @@ namespace IRTweaks.Modules.Combat
         {
             static bool Prepare() => Mod.Config.Combat.DamageModsBySkill.DisplayFloatiesOnTrigger && (Mod.Config.Combat.DamageModsBySkill?.HeatMods.Count > 0 ||
                 Mod.Config.Combat.DamageModsBySkill?.StabilityMods.Count > 0 ||
-                Mod.Config.Combat.DamageModsBySkill.APDmgMods.Count > 0);
+                Mod.Config.Combat.DamageModsBySkill.APDmgMods.Count > 0 || Mod.Config.Combat.OnWeaponFireOpts.SelfKnockdownBracedFactor > 0f);
 
             static void Prefix(AbstractActor __instance, string sourceID, int stackItemID)
             {
+                if (Mod.Config.Combat.OnWeaponFireOpts.SelfKnockdownBracedFactor > 0f)
+                {
+                    if (!__instance.BracedLastRound)
+                    {
+                        if (ModState.DidActorBraceLastRoundBeforeFiring.ContainsKey(__instance.GUID))
+                        {
+                            ModState.DidActorBraceLastRoundBeforeFiring.Remove(__instance.GUID);
+                            Mod.Log.Trace?.Write($"[AbstractActor.OnActivationEnd] {__instance.DisplayName} is not BracedLastRound, removing DidActorBraceLastRoundBeforeFiring state");
+                        }
+                    }
+                }
+
                 if (ModState.StabDmgMods.ContainsKey(__instance.GUID))
                 {
                     ModState.StabDmgMods.Remove(__instance.GUID);
@@ -575,6 +587,13 @@ namespace IRTweaks.Modules.Combat
 
             static void Postfix(AbstractActor __instance)
             {
+                if (!string.IsNullOrEmpty(Mod.Config.Combat.OnWeaponFireOpts.SelfKnockdownCheckStatName))
+                {
+                    __instance.StatCollection.AddStatistic<float>(
+                        Mod.Config.Combat.OnWeaponFireOpts.SelfKnockdownCheckStatName, 0f);
+                    Mod.Log.Trace?.Write($"Added SelfKnockdownCheckEffectID source stat {Mod.Config.Combat.OnWeaponFireOpts.SelfKnockdownCheckStatName} at value 0f.");
+                }
+
                 if (Mod.Config.Combat.ToHitStatMods.ActorToHitMods.Count > 0)
                 {
                     foreach (var toHitMod in Mod.Config.Combat.ToHitStatMods.ActorToHitMods)
