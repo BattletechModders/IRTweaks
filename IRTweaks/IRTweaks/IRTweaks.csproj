@@ -51,6 +51,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>$(BattleTechGameDir)\BattleTech_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
     </Reference>
+    <Reference Include="AttackImprovementMod">
+      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\BATTLETECH\Mods\CustomAmmoCategories\AttackImprovementMod.dll</HintPath>
+    </Reference>
     <Reference Include="CustomAmmoCategories, Version=0.0.1.183, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>$(BattleTechGameDir)\Mods\CustomAmmoCategories\CustomAmmoCategories.dll</HintPath>
@@ -119,6 +122,8 @@
     <Compile Include="ModText.cs" />
     <Compile Include="ModConstants.cs" />
     <Compile Include="ModInit.cs" />
+    <Compile Include="Modules\Combat\BreachingShotIgnoreDR.cs" />
+    <Compile Include="Modules\Combat\EffectsOnBrace.cs" />
     <Compile Include="Modules\Combat\OnWeaponFireFix_CAC.cs" />
     <Compile Include="Modules\Combat\BuildingDamageColorChange.cs" />
     <Compile Include="Modules\Combat\CalledShots.cs" />

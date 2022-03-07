@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using BattleTech;
 using Localize;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace IRTweaks
 {
@@ -27,6 +29,17 @@ namespace IRTweaks
 
         public const string HBS_Building_Structure = "Structure";
 
+    }
+
+    public class BraceEffects
+    {
+        public string ID = "";
+        public string Name = "";
+        public string Description = "";
+
+        [JsonIgnore]
+        public List<EffectData> effects = new List<EffectData>();
+        public List<JObject> effectDataJO = new List<JObject>();
     }
 
     public enum DmgModType

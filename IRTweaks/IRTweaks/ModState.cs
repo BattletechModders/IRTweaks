@@ -47,12 +47,32 @@ namespace IRTweaks {
         public static Dictionary<string, int> PilotCurrentFreeXP = new Dictionary<string, int>();
         public static Dictionary<string, int> PilotDefCurrentFreeXP = new Dictionary<string, int>();
         public static Dictionary<string, int> SimGameFunds = new Dictionary<string, int>();
+        public static BraceEffects BraceEffectsInit = new BraceEffects();
+
+        public static bool ShouldGetReducedDamageIgnoreDR = false;
+        public static bool AttackShouldCheckForKnockDown = false;
+
+        public static Dictionary<string, bool> DidActorBraceLastRoundBeforeFiring = new Dictionary<string, bool>();
 
         public static void OnSimInit()
         {
             HaveDiffSettingsInitiated = false;
             InstantiatedDropdowns = new List<SGDSDropdown>();
             InstantiatedToggles = new List<SGDSToggle>();
+        }
+
+        public static void InitializeEffects()
+        {
+            BraceEffectsInit = new BraceEffects();
+
+            Mod.Log.Info?.Write($"[InitializeEffects] Initializing effects for Brace Effects");
+            foreach (var jObject in Mod.Config.Abilities.BraceEffectConfig.effectDataJO)
+            {
+                var effectData = new EffectData();
+                effectData.FromJSON(jObject.ToString());
+                BraceEffectsInit.effects.Add(effectData);
+                Mod.Log.Info?.Write($"EffectData statname: {effectData?.statisticData?.statName}");
+            }
         }
 
         public static void Reset() {

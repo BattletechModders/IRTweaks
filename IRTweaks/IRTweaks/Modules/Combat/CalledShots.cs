@@ -85,7 +85,6 @@ namespace IRTweaks.Modules.Combat
                     Mod.Log.Info?.Write($"  Disabling headshot from attacker: {__instance.SelectedActor.DistinctId()} against target mech: {__instance.TargetedCombatant.DistinctId()}");
                     Traverse.Create(__instance).Method("ClearCalledShot").GetValue();
                 }
-
             }
         }
     }

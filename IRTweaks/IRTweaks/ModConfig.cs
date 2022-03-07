@@ -11,6 +11,8 @@ namespace IRTweaks
         public string FlexibleSensorLockId = "AbilityDefT8A";
         public string JuggernautId = "AbilityDefGu8";
         public string MultiTargetId = "AbilityDefG5";
+
+        public BraceEffects BraceEffectConfig = new BraceEffects();
     }
 
     public class StoreOpts
@@ -45,9 +47,7 @@ namespace IRTweaks
 
     public class CombatOpts
     {
-        
         public int PilotAttributesMax = 13;
-
         public List<string> DisableCTMaxInjureTags = new List<string>();
         public string TorsoMountStatName = "";
         public CalledShotOpts CalledShot = new CalledShotOpts();
@@ -103,6 +103,15 @@ namespace IRTweaks
             public List<string> QuadTags = new List<string>();
             public Dictionary<string, float> ObstructionDRByTags = new Dictionary<string, float>(); 
 
+        }
+
+        public OnWeaponFireSpecialEffectOpts OnWeaponFireOpts = new OnWeaponFireSpecialEffectOpts();
+        public class OnWeaponFireSpecialEffectOpts
+        {
+            public string SelfKnockdownCheckStatName = ""; // stat NAME will be this", should be float, and is base chance of resisting self-knockdown
+            public float SelfKnockdownPilotingFactor = 0f;
+            public float SelfKnockdownBracedFactor = 0f;
+            public string IgnoreSelfKnockdownTag = "";
         }
 
         public PainToleranceOpts PainTolerance = new PainToleranceOpts();
@@ -184,6 +193,7 @@ namespace IRTweaks
         public bool OnWeaponFireFix = true;
         public bool AlternateMechNamingStyle = true;
         public bool BuildingDamageColorChange = true;
+        public bool BreachingShotIgnoresAllDR = false;
         public bool BraceOnMeleeWithJuggernaut = true;
         public bool CalledShotTweaks = true;
         public bool CTDestructInjuryFix = true;
@@ -256,6 +266,7 @@ namespace IRTweaks
             Mod.Log.Info?.Write($"  AlternateMechNamingStyle:           {this.Fixes.AlternateMechNamingStyle}");
             Mod.Log.Info?.Write($"  BuildingDamageColorChange:          {this.Fixes.BuildingDamageColorChange}");
             Mod.Log.Info?.Write($"  BraceOnMeleeWithJuggernaut:         {this.Fixes.BraceOnMeleeWithJuggernaut}");
+            Mod.Log.Info?.Write($"  BreachingShotIgnoresAllDR:          {this.Fixes.BreachingShotIgnoresAllDR}");
             Mod.Log.Info?.Write($"  BulkPurchasing:                     {this.Fixes.BulkPurchasing}");
             Mod.Log.Info?.Write($"  BulkScrapping:                      {this.Fixes.BulkScrapping}");
             Mod.Log.Info?.Write($"  CalledShotTweaks:                   {this.Fixes.CalledShotTweaks}");
