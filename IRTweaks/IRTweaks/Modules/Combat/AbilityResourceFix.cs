@@ -41,7 +41,7 @@ namespace IRTweaks.Modules.Combat
                 if (selectedActor is Mech mech)
                 {
                     mech.GenerateAndPublishHeatSequence(-1, true, false, selectedActor.GUID);
-                    Mod.Log.Info?.Write($"Generated and Published Heat Sequence for {mech.Description.UIName}.");
+                    Mod.Log.Trace?.Write($"Generated and Published Heat Sequence for {mech.Description.UIName}.");
                 }
 
                 selectedActor.DoneWithActor();//need to to onactivationend too

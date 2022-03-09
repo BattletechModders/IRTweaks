@@ -114,6 +114,14 @@ namespace IRTweaks
             public string IgnoreSelfKnockdownTag = "";
         }
 
+        public OnWeaponHitSpecialEffectOpts OnWeaponHitOpts = new OnWeaponHitSpecialEffectOpts();
+        public class OnWeaponHitSpecialEffectOpts
+        {
+            public string ForceShutdownOnHitStat = ""; // stat NAME will be this", should be float, and is base chance of resisting self-knockdown
+            public float ResistShutdownGutsFactor = 0f;
+            public string IgnoreShutdownTag = "";
+        }
+
         public PainToleranceOpts PainTolerance = new PainToleranceOpts();
         public class PainToleranceOpts
         {

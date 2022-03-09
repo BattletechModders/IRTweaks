@@ -107,7 +107,46 @@ namespace IRTweaks.Modules.Combat
         }
     }
 
-    [HarmonyPatch(typeof(AttackDirector), "OnAttackComplete", new Type[] {typeof(MessageCenterMessage)})]
+   [HarmonyPatch(typeof(AttackDirector.AttackSequence), "OnAttackSequenceResolveDamage", new Type[] { typeof(MessageCenterMessage) })]
+    public static class AttackDirectorAttackSequence_OnAttackSequenceResolveDamage
+    {
+        public static bool Prepare()
+        {
+            return !string.IsNullOrEmpty(Mod.Config.Combat.OnWeaponHitOpts.ForceShutdownOnHitStat) && Mod.Config.Fixes.OnWeaponFireFix;
+        }
+
+        public static void Postfix(AttackDirector.AttackSequence __instance, MessageCenterMessage message)
+        {
+            AttackSequenceResolveDamageMessage attackSequenceResolveDamageMessage = (AttackSequenceResolveDamageMessage)message;
+            WeaponHitInfo hitInfo = attackSequenceResolveDamageMessage.hitInfo;
+            AttackDirector.AttackSequence attackSequence = __instance.Director.GetAttackSequence(hitInfo.attackSequenceId);
+            Weapon weapon = __instance.GetWeapon(attackSequenceResolveDamageMessage.hitInfo.attackGroupIndex, attackSequenceResolveDamageMessage.hitInfo.attackWeaponIndex);
+            for (int j = 0; j < attackSequence.allAffectedTargetIds.Count; j++)
+            {
+                AbstractActor abstractActor =
+                    __instance.Director.Combat.FindActorByGUID(attackSequence.allAffectedTargetIds[j]);
+                if (abstractActor is Mech mech && !mech.IsShutDown)
+                {
+                    if (mech.GetTags().Contains(Mod.Config.Combat.OnWeaponHitOpts.IgnoreShutdownTag)) continue;
+                    int firstHitLocationForTarget = hitInfo.GetFirstHitLocationForTarget(abstractActor.GUID);
+                    if (firstHitLocationForTarget >= 0 && !abstractActor.IsDead)
+                    {
+                        foreach (EffectData effectData in weapon.weaponDef.statusEffects)
+                        {
+                            if (effectData.targetingData.effectTriggerType == EffectTriggerType.OnHit &&
+                                effectData.statisticData.statName ==
+                                Mod.Config.Combat.OnWeaponHitOpts.ForceShutdownOnHitStat)
+                            {
+                                ModState.AttackShouldCheckActorsForShutdown.Add(mech.GUID);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    [HarmonyPatch(typeof(AttackDirector), "OnAttackComplete", new Type[] { typeof(MessageCenterMessage) })]
     public static class AttackDirector_OnAttackComplete
     {
         public static bool Prepare()
@@ -117,45 +156,94 @@ namespace IRTweaks.Modules.Combat
 
         public static void Prefix(AttackDirector __instance, MessageCenterMessage message)
         {
-            if (!ModState.AttackShouldCheckForKnockDown) return;
-            ModState.AttackShouldCheckForKnockDown = false;
             AttackCompleteMessage attackCompleteMessage = (AttackCompleteMessage)message;
             int sequenceId = attackCompleteMessage.sequenceId;
             AttackDirector.AttackSequence attackSequence = __instance.GetAttackSequence(sequenceId);
             if (attackSequence != null)
             {
-                var attacker = attackSequence.attacker;
-                if (attacker.isHasStability())
+                if (ModState.AttackShouldCheckForKnockDown)
                 {
-                    Mod.Log.Info?.Write(
-                        $"[OnAttackComplete] Processing OnWeaponFire self-knockdown check for {attacker.DisplayName}.");
+                    ModState.AttackShouldCheckForKnockDown = false;
 
-                    var knockdownChance =
-                        attacker.StatCollection.GetValue<float>(
-                            Mod.Config.Combat.OnWeaponFireOpts.SelfKnockdownCheckStatName);
-                    var fromBraced = 0f;
-                    if (ModState.DidActorBraceLastRoundBeforeFiring.ContainsKey(attacker.GUID) &&
-                        attacker.DistMovedThisRound <= 5f)
+                    var attacker = attackSequence.attacker;
+                    if (attacker.isHasStability())
                     {
-                        fromBraced = Mod.Config.Combat.OnWeaponFireOpts.SelfKnockdownBracedFactor;
-                    }
-
-                    var fromPiloting = attacker.GetPilot().Piloting *
-                                       Mod.Config.Combat.OnWeaponFireOpts.SelfKnockdownPilotingFactor;
-                    var finalChance = knockdownChance - (fromBraced + fromPiloting);
-                    var roll = Mod.Random.NextDouble();
-
-                    Mod.Log.Info?.Write(
-                        $"[OnAttackComplete] Final self-knockdown chance: {finalChance} from weapon effect {knockdownChance} - (braced state: {fromBraced} + piloting factor {fromPiloting}) VS roll {roll}.");
-                    if (roll <= finalChance)
-                    {
-                        if (attacker.IsFlaggedForKnockdown) return;
-                        attacker.FlagForKnockdown();
-                        attacker.HandleKnockdown(-1,
-                            $"{attacker.DisplayName}_{Mod.Config.Combat.OnWeaponFireOpts.SelfKnockdownCheckStatName}",
-                            attacker.CurrentPosition, null);
                         Mod.Log.Info?.Write(
-                            $"[AttackDirector.OnAttackComplete] Found knockdown flag at OnAttackComplete, knocking down {attacker.DisplayName}.");
+                            $"[OnAttackComplete] Processing OnWeaponFire self-knockdown check for {attacker.DisplayName}.");
+
+                        var knockdownChance =
+                            attacker.StatCollection.GetValue<float>(
+                                Mod.Config.Combat.OnWeaponFireOpts.SelfKnockdownCheckStatName);
+                        var fromBraced = 0f;
+                        if (ModState.DidActorBraceLastRoundBeforeFiring.ContainsKey(attacker.GUID) &&
+                            attacker.DistMovedThisRound <= 20f)
+                        {
+                            fromBraced = Mod.Config.Combat.OnWeaponFireOpts.SelfKnockdownBracedFactor;
+                        }
+
+                        var fromPiloting = attacker.GetPilot().Piloting *
+                                           Mod.Config.Combat.OnWeaponFireOpts.SelfKnockdownPilotingFactor;
+                        var finalChance = knockdownChance - (fromBraced + fromPiloting);
+                        var roll = Mod.Random.NextDouble();
+
+                        Mod.Log.Info?.Write(
+                            $"[OnAttackComplete] Final self-knockdown chance: {finalChance} from weapon effects {knockdownChance} - (braced state: {fromBraced} + piloting factor {fromPiloting}) VS roll {roll}.");
+                        if (roll <= finalChance)
+                        {
+                            if (!attacker.IsFlaggedForKnockdown)
+                            {
+                                attacker.FlagForKnockdown();
+                                attacker.HandleKnockdown(-1,
+                                    $"{attacker.DisplayName}_{Mod.Config.Combat.OnWeaponFireOpts.SelfKnockdownCheckStatName}",
+                                    attacker.CurrentPosition, null);
+                                Mod.Log.Info?.Write(
+                                    $"[AttackDirector.OnAttackComplete] Found knockdown flag at OnAttackComplete, knocking down {attacker.DisplayName}.");
+
+                                if (attacker is Mech mech)
+                                {
+                                    mech.GenerateAndPublishHeatSequence(-1, true, false, mech.GUID);
+                                    Mod.Log.Trace?.Write(
+                                        $"Generated and Published Heat Sequence for {mech.Description.UIName}.");
+                                }
+
+                                attacker.DoneWithActor(); //need to to onactivationend too
+                                attacker.OnActivationEnd(attacker.GUID, -1);
+                            }
+                        }
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(Mod.Config.Combat.OnWeaponHitOpts.ForceShutdownOnHitStat))
+                {
+                    foreach (var targetActorID in attackSequence.allAffectedTargetIds)
+                    {
+                        if (!ModState.AttackShouldCheckActorsForShutdown.Contains(targetActorID)) continue;
+                        
+                        ModState.AttackShouldCheckActorsForShutdown.Remove(targetActorID);
+                        var targetActor = __instance.Combat.FindActorByGUID(targetActorID);
+                        if (targetActor is Mech mech)
+                        {
+                            Mod.Log.Info?.Write($"[OnAttackComplete] Processing OnHit forced shutdown check for {mech.DisplayName}.");
+                            var shutdownChance =
+                                mech.StatCollection.GetValue<float>(
+                                    Mod.Config.Combat.OnWeaponHitOpts.ForceShutdownOnHitStat);
+
+                            var fromGuts = mech.GetPilot().Guts *
+                                           Mod.Config.Combat.OnWeaponHitOpts.ResistShutdownGutsFactor;
+                            var finalChance = shutdownChance - fromGuts;
+                            var roll = Mod.Random.NextDouble();
+
+                            Mod.Log.Info?.Write(
+                                $"[OnAttackComplete] Final shutdown on hit chance: {finalChance} from weapon effects {shutdownChance} - guts factor {fromGuts}) VS roll {roll}.");
+                            if (roll <= finalChance)
+                            {
+                                MechShutdownSequence mechShutdownSequence =
+                                    new MechShutdownSequence(mech, attackSequence.attacker.GUID);
+                                mechShutdownSequence.RootSequenceGUID = attackSequence.stackItemUID;
+                                mech.Combat.MessageCenter.PublishMessage(
+                                    new AddSequenceToStackMessage(mechShutdownSequence));
+                            }
+                        }
                     }
                 }
             }
