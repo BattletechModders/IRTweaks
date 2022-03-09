@@ -26,7 +26,7 @@ This is a mod for the [HBS BattleTech](http://battletechgame.com/) game that inc
 * **MechbayLayoutFix**: Moves a few UI elements in the mechbay to work better in a MechEngineer based mod. Thanks to Tiraxx for the idea!
 * **MechbayAdvancedStripping**: Holding Left or Right Control while clicking the "Strip Equipment" button in the mechbay will strip <i>only</i> weapons and ammo.
 * **MultiTargetStat**: This allows units to gain the Multi-Target ability from a Statistic, which can be applied via effects.
-* **OnWeaponFireFix**: Fixes OnWeaponFire effects so that extendDurationOnTrigger and triggerLimit work properly for StatisticEffects.
+* **OnWeaponFireFix**: Fixes OnWeaponFire effects so that extendDurationOnTrigger and triggerLimit work properly for StatisticEffects. Also necessary for OnWeaponHit effects and self-knockdown check
 * **PainTolerance**: Provides Guts-based resistance to injuries. See below for details.
 * **PathfinderTeamFix**: Mission Control introduces pathfinding units that have no Team associated with them. This breaks some mods, which this fix remediates.
 * **Random Start by Difficulty Menu**: Allows an option in the new-game difficulty menu to be associated with user-created lists of starting mechs.
@@ -384,7 +384,7 @@ Example config block:
 ## Flexible Sensor Lock
 This tweak allows units to use sensor lock without it consuming their action or movement. This can be limited to units with a specific ability or stat. The ability to restrict this is defined by the `AbilityOpts.FlexibleSensorLockId` value in mod.json, which defaults to `AbilityDefT8A`. The stat is defined in `AbilityOpts.FreeActionStatName`, which defaults `IR_FreeSensorLock`. If the `Combat.FlexibleSensorLock.AlsoAppliesToActiveProbe` is true, the ActiveProbe ability that some units possess will also not require an action or movement.
 
-## OnWeaponFire special effects - `OnWeaponFireOpts` REQUIRES CAC
+## OnWeaponFire special effects - `OnWeaponFireOpts` REQUIRES CAC and OnWeaponFireFix enabled
 
 This "tweak" is currently only configured for a single functionality, but can be extended if requested. Current configuration allows for forcing a save against self-knockdown when weapons with the appropriate OnWeaponFire effects block are fired. The actual roll for knockdown takes place after the attacksequence has completed, so knockdown chance from multiple weapons can stack and become progressively more difficult or impossible to beat.
 
@@ -404,7 +404,7 @@ Example mod.json settings:
 
 So final formula for % to self-knockdown is SelfKnockdownCheckStatName - (SelfKnockdownPilotingFactor + SelfKnockdownBracedFactor)
 
-Example stat block on weapon; if two of these weapons would fire, the "base chance" of self-knockdown would be 2.0 - (SelfKnockdownPilotingFactor + SelfKnockdownBracedFactor)
+Example stat block on weapon; if two of these weapons would fire, the "base chance" of self-knockdown would be 2.0
 ```
 "statusEffects": [
 		{
@@ -426,6 +426,56 @@ Example stat block on weapon; if two of these weapons would fire, the "base chan
 			},
 			"statisticData": {
 				"statName": "SelfknockdownCheck_OnFire",
+				"operation": "Float_Add",
+				"modValue": "1.0",
+				"modType": "System.Single"
+			},
+			"nature": "Buff"
+		}
+	],
+```
+
+## OnWeaponHit special effects - `OnWeaponHitOpts` REQUIRES CAC and OnWeaponFireFix enabled
+
+This "tweak" is currently only configured for a single functionality, but can be extended if requested. Current configuration allows for forcing a save against shutdown when hit with a weapon using the appropriate OnFire effects. The actual roll for shutdown takes place after the attacksequence has completed, so shutdown chance from multiple weapons can stack and become progressively more difficult or impossible to beat.
+
+Example mod.json settings:
+
+```
+"OnWeaponHitOpts": {
+	"ForceShutdownOnHitStat": "OnHitShutdownChance",
+	"IgnoreShutdownTag": "DontTazeMeBro",
+	"ResistShutdownGutsFactor": 0.01
+}
+```
+
+`ForceShutdownOnHitStat` - name of statistic (_statistic_ *not* effect!) set in weapon that represents the "base chance" of suffering a shutdown due to being hit by that weapon.
+`IgnoreShutdownTag` - units with this mechdef (or vehicledef) tag will ignore shutdown rolls (basically turns off this whole functionality for that unit)
+`ResistShutdownGutsFactor` - this value X Guts skill offset chance to shutdown
+
+So final formula for % to self-knockdown is ForceShutdownOnHitStat - ResistShutdownGutsFactor
+
+Example stat block on weapon; if two of these weapons would fire, the "base chance" of shutdown would be 2.0
+```
+"statusEffects": [
+		{
+			"durationData": {
+				"duration": 1,
+				"stackLimit": 1
+			},
+			"targetingData": {
+				"effectTriggerType": "OnHit",
+				"showInStatusPanel": false
+			},
+			"effectType": "StatisticEffect",
+			"Description": {
+				"Id": "WeaponEffect-OnHitShutdownChance",
+				"Name": "on hit shutdown check",
+				"Details": "on hit shutdown check.",
+				"Icon": "uixSvgIcon_run_n_gun"
+			},
+			"statisticData": {
+				"statName": "OnHitShutdownChance",
 				"operation": "Float_Add",
 				"modValue": "1.0",
 				"modType": "System.Single"
