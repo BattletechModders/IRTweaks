@@ -117,7 +117,7 @@ namespace IRTweaks.Modules.Combat
                 !mech.GetTags().Contains(Mod.Config.Combat.OnWeaponFireOpts.IgnoreSelfKnockdownTag))
             {
                 if (__instance.StatusEffects().Any(x =>
-                        x.statisticData.statName == Mod.Config.Combat.OnWeaponFireOpts.SelfKnockdownCheckStatName))
+                        x?.statisticData?.statName == Mod.Config.Combat.OnWeaponFireOpts.SelfKnockdownCheckStatName))
                 {
                     ModState.AttackShouldCheckForKnockDown = true;
                 }
@@ -152,7 +152,7 @@ namespace IRTweaks.Modules.Combat
                         foreach (EffectData effectData in weapon.weaponDef.statusEffects)
                         {
                             if (effectData.targetingData.effectTriggerType == EffectTriggerType.OnHit &&
-                                effectData.statisticData.statName ==
+                                effectData?.statisticData?.statName ==
                                 Mod.Config.Combat.OnWeaponHitOpts.ForceShutdownOnHitStat)
                             {
                                 ModState.AttackShouldCheckActorsForShutdown.Add(mech.GUID);

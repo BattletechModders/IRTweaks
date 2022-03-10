@@ -570,7 +570,7 @@ namespace IRTweaks.Modules.Combat
                     Mod.Log.Trace?.Write($"Added weaponToHitMod stat {weaponToHitMod.SourceStatName} at value 0.");
                     if (__instance.componentDef.statusEffects.FirstOrDefault(x =>
                             x.effectType == EffectType.StatisticEffect &&
-                            x.statisticData.statName == weaponToHitMod.SourceStatName) is EffectData effect)
+                            x?.statisticData?.statName == weaponToHitMod.SourceStatName) is EffectData effect)
                     {
                         var parsed = float.Parse(effect.statisticData.modValue, CultureInfo.InvariantCulture);
                         __instance.StatCollection.ModifyStat("IRT_THM", -1, weaponToHitMod.SourceStatName,StatCollection.StatOperation.Set, parsed);
