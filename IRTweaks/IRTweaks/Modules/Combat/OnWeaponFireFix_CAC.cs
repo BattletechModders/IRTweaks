@@ -10,28 +10,46 @@ using BattleTech;
 using BattleTech.UI;
 using CustAmmoCategories;
 using CustomAmmoCategoriesPatches;
+using CustomUnits;
 using Harmony;
 
 namespace IRTweaks.Modules.Combat
 {
-    [HarmonyPatch(typeof(AbstractActor))]
-    [HarmonyPatch("BracedLastRound", MethodType.Setter)]
-    public static class AbstractActor_BracedLastRound
+    [HarmonyPatch(typeof(CustomMech))]
+    [HarmonyPatch("ApplyBraced", new Type[] { })]
+    public static class CustomMech_ApplyBraced_OnFire
     {
         public static bool Prepare()
         {
             return Mod.Config.Fixes.OnWeaponFireFix;
         }
-        public static void Postfix(AbstractActor __instance, bool value)
+        public static void Postfix(CustomMech __instance)
         {
-            if (value)
+            Mod.Log.Trace?.Write($"[BracedLastRound] Processing BracedLastRound for {__instance.DisplayName} {__instance.GUID}.");
+            if (!ModState.DidActorBraceLastRoundBeforeFiring.ContainsKey(__instance.GUID))
             {
-                if (!ModState.DidActorBraceLastRoundBeforeFiring.ContainsKey(__instance.GUID))
-                {
-                    ModState.DidActorBraceLastRoundBeforeFiring.Add(__instance.GUID, true);
-                }
-                else ModState.DidActorBraceLastRoundBeforeFiring[__instance.GUID] = true;
+                ModState.DidActorBraceLastRoundBeforeFiring.Add(__instance.GUID, true);
             }
+            else ModState.DidActorBraceLastRoundBeforeFiring[__instance.GUID] = true;
+        }
+    }
+
+    [HarmonyPatch(typeof(Mech))]
+    [HarmonyPatch("ApplyBraced", new Type[] { })]
+    public static class Mech_ApplyBraced_OnFire
+    {
+        public static bool Prepare()
+        {
+            return Mod.Config.Fixes.OnWeaponFireFix;
+        }
+        public static void Postfix(Mech __instance)
+        {
+            Mod.Log.Trace?.Write($"[BracedLastRound] Processing BracedLastRound for {__instance.DisplayName} {__instance.GUID}.");
+            if (!ModState.DidActorBraceLastRoundBeforeFiring.ContainsKey(__instance.GUID))
+            {
+                ModState.DidActorBraceLastRoundBeforeFiring.Add(__instance.GUID, true);
+            }
+            else ModState.DidActorBraceLastRoundBeforeFiring[__instance.GUID] = true;
         }
     }
 
@@ -175,6 +193,7 @@ namespace IRTweaks.Modules.Combat
                             attacker.StatCollection.GetValue<float>(
                                 Mod.Config.Combat.OnWeaponFireOpts.SelfKnockdownCheckStatName);
                         var fromBraced = 0f;
+                        Mod.Log.Trace?.Write($"[OnAttackComplete] TRACE {attacker.DisplayName} {attacker.GUID} Actor braced last round? {ModState.DidActorBraceLastRoundBeforeFiring.ContainsKey(attacker.GUID)}. DistMovedThisRound: {attacker.DistMovedThisRound}");
                         if (ModState.DidActorBraceLastRoundBeforeFiring.ContainsKey(attacker.GUID) &&
                             attacker.DistMovedThisRound <= 20f)
                         {

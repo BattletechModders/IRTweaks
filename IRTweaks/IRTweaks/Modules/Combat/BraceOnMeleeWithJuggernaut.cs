@@ -25,9 +25,10 @@ namespace IRTweaks.Modules.Combat
                 {
                     if (ability.Def.Description.Id.Equals(Mod.Config.Abilities.JuggernautId, StringComparison.InvariantCultureIgnoreCase))
                     {
-                        Mod.Log.Info?.Write("Pilot has Juggernaut, bracing after melee attack.");
-                        __instance.OwningMech.BracedLastRound = true;
-                        __instance.OwningMech.ApplyInstabilityReduction(StabilityChangeSource.Bracing);
+                        Mod.Log.Info?.Write("Pilot has Juggernaut, bracing after melee attack using Mech.ApplyBraced.");
+                        __instance.OwningMech.ApplyBraced();
+                        //__instance.OwningMech.BracedLastRound = true;
+                        //__instance.OwningMech.ApplyInstabilityReduction(StabilityChangeSource.Bracing);
                     }
                 }
             }
@@ -53,9 +54,10 @@ namespace IRTweaks.Modules.Combat
                 {
                     if (ability.Def.Description.Id.Equals(Mod.Config.Abilities.JuggernautId, StringComparison.InvariantCultureIgnoreCase))
                     {
-                        Mod.Log.Info?.Write("Pilot has Juggernaut, bracing after DFA attack.");
-                        __instance.OwningMech.BracedLastRound = true;
-                        __instance.OwningMech.ApplyInstabilityReduction(StabilityChangeSource.Bracing);
+                        Mod.Log.Info?.Write("Pilot has Juggernaut, bracing after DFA attack using Mech.ApplyBraced.");
+                        __instance.OwningMech.ApplyBraced();
+                        //__instance.OwningMech.BracedLastRound = true;
+                        //__instance.OwningMech.ApplyInstabilityReduction(StabilityChangeSource.Bracing);
                     }
                 }
             }
