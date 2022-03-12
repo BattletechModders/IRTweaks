@@ -227,6 +227,7 @@ namespace IRTweaks
         public bool MultiTargetStat = true;
         public bool RandomStartByDifficulty = true;
         public bool ReduceSaveCompression = true;
+        public bool RestoreMechTagsOnReady = true;
         public bool ShowAllArgoUpgrades = true;
         public bool SkipDeleteSavePopup = true;
         public bool SkirmishReset = false;
