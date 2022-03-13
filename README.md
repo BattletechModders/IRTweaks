@@ -31,6 +31,7 @@ This is a mod for the [HBS BattleTech](http://battletechgame.com/) game that inc
 * **PathfinderTeamFix**: Mission Control introduces pathfinding units that have no Team associated with them. This breaks some mods, which this fix remediates.
 * **Random Start by Difficulty Menu**: Allows an option in the new-game difficulty menu to be associated with user-created lists of starting mechs.
 * **ReduceSaveCompression**: By default the game is setup to use an aggressive compression on save game files. This slows down game load. By setting this to true saves will use more space on disk but load faster. Thanks to **Gnivler** for this fix!
+* **RestoreMechTagsOnReady**: Restores MechTags when Mechs are readied from storage (necessary for knockdown on fire ignore tags, shutdown on-hit ignore tags, and anything else that checks player mech tags to do magic.
 * **ScaleObjectiveBuildingStructure**: Increases the structure of any building that is the target of an objective. This allows high difficulty attack bases to be more difficult, and high difficulty defend bases to be easier.
 * **ShowAllArgoUpgrades**: Shows all available argo upgrades, instead of hiding the ones that require additional unlocks.
 * **SimGameDifficultyLabelsReplacer**: Allows customization of the labels on the 'difficulty' bar when you start a new career or campaign game. 
