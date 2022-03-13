@@ -149,7 +149,7 @@ namespace IRTweaks.Modules.Combat
                     int firstHitLocationForTarget = hitInfo.GetFirstHitLocationForTarget(abstractActor.GUID);
                     if (firstHitLocationForTarget >= 0 && !abstractActor.IsDead)
                     {
-                        foreach (EffectData effectData in weapon.weaponDef.statusEffects)
+                        foreach (EffectData effectData in weapon.StatusEffects())
                         {
                             if (effectData.targetingData.effectTriggerType == EffectTriggerType.OnHit &&
                                 effectData?.statisticData?.statName ==
