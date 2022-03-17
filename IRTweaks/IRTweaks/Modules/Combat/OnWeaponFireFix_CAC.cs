@@ -139,7 +139,7 @@ namespace IRTweaks.Modules.Combat
             WeaponHitInfo hitInfo = attackSequenceResolveDamageMessage.hitInfo;
             AttackDirector.AttackSequence attackSequence = __instance.Director.GetAttackSequence(hitInfo.attackSequenceId);
             Weapon weapon = __instance.GetWeapon(attackSequenceResolveDamageMessage.hitInfo.attackGroupIndex, attackSequenceResolveDamageMessage.hitInfo.attackWeaponIndex);
-            for (int j = 0; j < attackSequence.allAffectedTargetIds.Count; j++)
+            for (int j = 0; j < attackSequence?.allAffectedTargetIds.Count; j++)
             {
                 AbstractActor abstractActor =
                     __instance.Director.Combat.FindActorByGUID(attackSequence.allAffectedTargetIds[j]);
