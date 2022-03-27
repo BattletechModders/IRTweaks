@@ -516,9 +516,9 @@ namespace IRTweaks.Modules.Combat
         [HarmonyPatch(typeof(AbstractActor), "OnActivationEnd")]
         public static class AbstractActor_OnActivationEnd
         {
-            static bool Prepare() => Mod.Config.Combat.DamageModsBySkill.DisplayFloatiesOnTrigger && (Mod.Config.Combat.DamageModsBySkill?.HeatMods.Count > 0 ||
+            static bool Prepare() => Mod.Config.Combat.OnWeaponFireOpts.SelfKnockdownBracedFactor > 0f || Mod.Config.Combat.DamageModsBySkill.DisplayFloatiesOnTrigger && (Mod.Config.Combat.DamageModsBySkill?.HeatMods.Count > 0 ||
                 Mod.Config.Combat.DamageModsBySkill?.StabilityMods.Count > 0 ||
-                Mod.Config.Combat.DamageModsBySkill.APDmgMods.Count > 0 || Mod.Config.Combat.OnWeaponFireOpts.SelfKnockdownBracedFactor > 0f);
+                Mod.Config.Combat.DamageModsBySkill.APDmgMods.Count > 0);
 
             static void Prefix(AbstractActor __instance, string sourceID, int stackItemID)
             {
@@ -529,7 +529,7 @@ namespace IRTweaks.Modules.Combat
                         if (ModState.DidActorBraceLastRoundBeforeFiring.ContainsKey(__instance.GUID))
                         {
                             ModState.DidActorBraceLastRoundBeforeFiring.Remove(__instance.GUID);
-                            Mod.Log.Trace?.Write($"[AbstractActor.OnActivationEnd] {__instance.DisplayName} is not BracedLastRound, removing DidActorBraceLastRoundBeforeFiring state");
+                            Mod.Log.Debug?.Write($"[AbstractActor.OnActivationEnd] {__instance.DisplayName} is not BracedLastRound, removing DidActorBraceLastRoundBeforeFiring state");
                         }
                     }
                 }

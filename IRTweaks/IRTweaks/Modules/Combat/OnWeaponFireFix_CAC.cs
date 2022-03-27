@@ -25,7 +25,7 @@ namespace IRTweaks.Modules.Combat
         }
         public static void Postfix(CustomMech __instance)
         {
-            Mod.Log.Trace?.Write($"[BracedLastRound] Processing BracedLastRound for {__instance.DisplayName} {__instance.GUID}.");
+            Mod.Log.Debug?.Write($"[BracedLastRound] Processing BracedLastRound for {__instance.DisplayName} {__instance.GUID}.");
             if (!ModState.DidActorBraceLastRoundBeforeFiring.ContainsKey(__instance.GUID))
             {
                 ModState.DidActorBraceLastRoundBeforeFiring.Add(__instance.GUID, true);
@@ -44,7 +44,7 @@ namespace IRTweaks.Modules.Combat
         }
         public static void Postfix(Mech __instance)
         {
-            Mod.Log.Trace?.Write($"[BracedLastRound] Processing BracedLastRound for {__instance.DisplayName} {__instance.GUID}.");
+            Mod.Log.Debug?.Write($"[BracedLastRound] Processing BracedLastRound for {__instance.DisplayName} {__instance.GUID}.");
             if (!ModState.DidActorBraceLastRoundBeforeFiring.ContainsKey(__instance.GUID))
             {
                 ModState.DidActorBraceLastRoundBeforeFiring.Add(__instance.GUID, true);
@@ -112,7 +112,7 @@ namespace IRTweaks.Modules.Combat
                     }
                 }
             }
-            Mod.Log.Trace?.Write($"[ProcessOnFiredFloatieEffects] Dumping tags: {__instance.parent.GetTags().ToJSON()}.");
+            Mod.Log.Debug?.Write($"[ProcessOnFiredFloatieEffects] Dumping tags: {__instance.parent.GetTags().ToJSON()}.");
             if (__instance.parent is Mech mech && mech.isHasStability() &&
                 !mech.GetTags().Contains(Mod.Config.Combat.OnWeaponFireOpts.IgnoreSelfKnockdownTag))
             {
@@ -221,7 +221,7 @@ namespace IRTweaks.Modules.Combat
                                 if (attacker is Mech mech)
                                 {
                                     mech.GenerateAndPublishHeatSequence(-1, true, false, mech.GUID);
-                                    Mod.Log.Trace?.Write(
+                                    Mod.Log.Debug?.Write(
                                         $"Generated and Published Heat Sequence for {mech.Description.UIName}.");
                                 }
 
