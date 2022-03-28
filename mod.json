@@ -47,7 +47,8 @@
 			"TurnDirectorStartFirstRoundFix" : true,
 			"UrbanExplosionsFix": false,
 			"WeakAgainstMeleeFix": true,
-			"WeaponTooltip": true
+			"WeaponTooltip": true,
+			"DamageReductionInCombatHud": false
 		},
 		"Abilities": {
 			"FlexibleSensorLockId": "AbilityDefT5A",

@@ -44,6 +44,7 @@ This is a mod for the [HBS BattleTech](http://battletechgame.com/) game that inc
 * **Urban Explosions Fix**: This corrects a subtle bug in HBS code that causes exploding buildings to not sequence properly. Unfortunately enabling this fix makes buildings take significantly longer to be destroyed. This will be improved in a future fix.
 * **Weak Against Melee Fix**: Fixes the "Weak Against Melee" debuff for Turrets/Vehicles to accurately report melee damage modifiers from CombatGameConstants
 * **Weapon Tooltips**: Modifies the weapon tooltips to more accurately report damage when a weapon uses extensions provided by [CustomAmmoCategories](https://github.com/CMiSSioN/CustomAmmoCategories).
+* **Damage Reduction In Combat Hud**: If compiled with CAC support (and CustomAmmoCategories is active), displays each unit's damage reduction alongside its evasion pips. While using this, strongly consider `"EvasiveNumberWidth": 90` in CustomAmmoCategories's settings - the default value of 25 will *not* look good.
 
 This mod replaces the following mods, which used to be stand-alone:
 
@@ -827,3 +828,22 @@ This tweak makes minor changes to the tooltips shown when hovering over weapons:
 * Overrides damage calculation on weapon display to show full damage potential (shots * projectiles)
 
 This tweak is enabled if `Fixes.WeaponTooltip=true` is set to true in _mod.json_. There are no customizations for this tweak.
+
+## Damage Reduction In Combat Hud
+
+This tweak replaces CAC's evasion number in the UI with a combined damage reduction and evasion pips display. Eg, instead of
+
+```
+3 >>>
+```
+
+the UI will now display something like
+
+```
+24% DR
+3 pips >>>
+```
+
+(but more nicely alligned).
+
+If you enable this, you will need to set `"EvasiveNumberWidth": 90` in your CustomAmmoCategoriesSettings.json. Failure to do this will result in weird UI interactions (ugly vertical text).
