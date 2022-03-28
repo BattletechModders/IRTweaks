@@ -111,6 +111,8 @@ namespace IRTweaks.Modules.Tooltip
                     if (Mod.Config.Fixes.WeaponTooltip)
                         Mod.Log.Info?.Write("Activating Fix: WeaponTooltip");
 
+                    if (Mod.Config.Fixes.DamageReductionInCombatHud)
+                        Mod.Log.Info?.Write("Activating Fix: DamageReductionInCombatHud");
                 }
                 catch (Exception e)
                 {
