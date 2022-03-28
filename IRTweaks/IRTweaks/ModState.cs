@@ -55,6 +55,8 @@ namespace IRTweaks {
 
         public static Dictionary<string, bool> DidActorBraceLastRoundBeforeFiring = new Dictionary<string, bool>();
 
+        public static Dictionary<CombatHUDEvasiveBarPips, AbstractActor> DamageReductionInCombatHud = new Dictionary<CombatHUDEvasiveBarPips, AbstractActor>();
+
         public static void OnSimInit()
         {
             HaveDiffSettingsInitiated = false;
@@ -88,6 +90,7 @@ namespace IRTweaks {
             ActiveContractBuildingScaling = Mod.Config.Combat.ScaledStructure.DefaultScale;
 
             SpawnProtectedUnits.Clear();
+            DamageReductionInCombatHud.Clear();
 
             WasCTDestroyed = false;
             AttackShouldCheckActorsForShutdown = new List<string>();

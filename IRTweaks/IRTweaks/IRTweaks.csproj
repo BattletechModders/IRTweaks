@@ -52,14 +52,14 @@
       <HintPath>$(BattleTechGameDir)\BattleTech_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
     </Reference>
     <Reference Include="AttackImprovementMod">
-      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\BATTLETECH\Mods\CustomAmmoCategories\AttackImprovementMod.dll</HintPath>
+      <HintPath>$(BattleTechGameDir)\Mods\CustomAmmoCategories\AttackImprovementMod.dll</HintPath>
     </Reference>
     <Reference Include="CustomAmmoCategories, Version=0.0.1.183, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>$(BattleTechGameDir)\Mods\CustomAmmoCategories\CustomAmmoCategories.dll</HintPath>
     </Reference>
     <Reference Include="CustomUnits">
-      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\BATTLETECH\Mods\CustomUnits\CustomUnits.dll</HintPath>
+      <HintPath>$(BattleTechGameDir)\Mods\CustomUnits\CustomUnits.dll</HintPath>
     </Reference>
     <Reference Include="DOTweenPro, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -169,6 +169,7 @@
     <Compile Include="Modules\UI\StreamlinedMainMenu.cs" />
     <Compile Include="Modules\UI\StoreHelper.cs" />
     <Compile Include="Modules\UI\StoreQuantities.cs" />
+    <Compile Include="Modules\UI\DamageReductionInCombatHud.cs" />
     <Compile Include="Modules\UIModule.cs" />
     <Compile Include="Modules\UI\WeaponTooltips.cs" />
     <Compile Include="Patches\CombatGameStatePatches.cs" />
@@ -177,10 +178,12 @@
     <Compile Include="ModState.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>time /t
-if exist "$(BattleTechGame)\Mods\IRTweaks" (	
-xcopy "$(TargetDir)$(TargetFileName)" "$(BattleTechGame)\Mods\IRTweaks" /y
-)</PostBuildEvent>
-  </PropertyGroup>
+  <Target Name="AfterBuild">
+    <Copy
+      SourceFiles="$(TargetPath)"
+      DestinationFolder="$(BattleTechGameDir)\Mods\IRTweaks"
+      OverwriteReadOnlyFiles="true"
+      SkipUnchangedFiles="false"
+    />
+  </Target>
 </Project>

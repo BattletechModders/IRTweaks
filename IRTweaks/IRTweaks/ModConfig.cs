@@ -246,6 +246,7 @@ namespace IRTweaks
         public bool SimGameDifficultyLabelsReplacer = true;
         public bool StreamlinedMainMenu = true;
         public bool WeaponTooltip = true;
+        public bool DamageReductionInCombatHud = false;
 
     }
 
@@ -309,6 +310,7 @@ namespace IRTweaks
             Mod.Log.Info?.Write($"  TgtComputerTonnageDisplay:          {this.Fixes.TgtComputerTonnageDisplay}");
             Mod.Log.Info?.Write($"  UrbanExplosionsFix:                 {this.Fixes.UrbanExplosionsFix}");
             Mod.Log.Info?.Write($"  WeaponTooltips:                     {this.Fixes.WeaponTooltip}");
+            Mod.Log.Info?.Write($"  DamageReductionInCombatHud:         {this.Fixes.DamageReductionInCombatHud}");
 
             Mod.Log.Info?.Write($"  DisableCTMaxInjureTags:                     {this.Combat.DisableCTMaxInjureTags}");
             Mod.Log.Info?.Write($"  TorsoMountStatName:                     {this.Combat.TorsoMountStatName}");
