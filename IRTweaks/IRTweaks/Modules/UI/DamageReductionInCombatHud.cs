@@ -20,28 +20,39 @@ namespace IRTweaks.Modules.UI
 
         static void Postfix(CombatHUDEvasiveBarPips __instance)
         {
-            CombatHUDEvasivePipsText pipsText = __instance.gameObject.GetComponent<CombatHUDEvasivePipsText>();
+            if (ModState.DamageReductionInCombatHud.ContainsKey(__instance)) {
+                RefreshText(__instance, ModState.DamageReductionInCombatHud[__instance]);
+            }
+        }
 
-            if (pipsText != null && ModState.DamageReductionInCombatHud.ContainsKey(__instance)) {
-                StatCollection stats = ModState.DamageReductionInCombatHud[__instance].StatCollection;
-                float damageReduction = 1 - stats.GetStatistic("DamageReductionMultiplierAll").Value<float>();
+        public static void RefreshText(CombatHUDEvasiveBarPips pips, AbstractActor actor) {
+            CombatHUDEvasivePipsText pipsText = pips.gameObject.GetComponent<CombatHUDEvasivePipsText>();
+            if (pipsText == null) {
+                return;
+            }
 
-                string text = "";
-                if (damageReduction > 0) {
-                    text += $"{Math.Round(damageReduction * 100)}% DR ";
-                }
-                if (__instance.Current > 0) {
-                    text += __instance.Current + " pips";
-                }
+            float damageReduction = 1 - actor.StatCollection.GetStatistic("DamageReductionMultiplierAll").Value<float>();
 
-                if (string.IsNullOrEmpty(text)) {
-                    pipsText.text.gameObject.SetActive(value: false);
-                }
-                else
-                {
-                    pipsText.text.SetText(text);
-                    pipsText.text.gameObject.SetActive(value: true);
-                }
+            string text = "";
+            if (damageReduction > 0) {
+                text += $"{Math.Round(damageReduction * 100)}% DR\n";
+            }
+            if (pips.Current > 0) {
+                text += Math.Round(pips.Current) + " pips";
+            }
+
+            if (string.IsNullOrEmpty(text)) {
+                pipsText.text.gameObject.SetActive(value: false);
+                pipsText.text.enableWordWrapping = false;
+            }
+            else
+            {
+                pipsText.text.SetText(text);
+                pipsText.text.gameObject.SetActive(value: true);
+
+                // There are floating point rounding errors in HBS's logic, resulting in an incorrect number of pips being active.
+                // RefreshText therefore sets this explicitly to bypass the problem.
+                pips.ActivatePips((int)Math.Round(pips.Current));
             }
         }
     }
@@ -54,6 +65,7 @@ namespace IRTweaks.Modules.UI
         static void Postfix(CombatHUDEvasiveBarPips __instance, AbstractActor actor)
         {
             ModState.DamageReductionInCombatHud[__instance] = actor;
+            ModState.DamageReductionInCombatHudActors[actor] = __instance;
         }
     }
 
@@ -69,6 +81,22 @@ namespace IRTweaks.Modules.UI
             if (damageReduction > 0)
             {
                 __instance.evasiveDisplay.gameObject.SetActive(value: true);
+            }
+        }
+    }
+
+
+    [HarmonyPatch(typeof(EffectManager), "CreateEffect", new Type[] { typeof(EffectData), typeof(string), typeof(int), typeof(ICombatant), typeof(ICombatant), typeof(WeaponHitInfo), typeof(int), typeof(bool) })]
+    static class EffectManager_CreateEffect
+    {
+        static bool Prepare() => Mod.Config.Fixes.DamageReductionInCombatHud;
+
+        static void Postfix(ICombatant target) {
+            AbstractActor actor = target as AbstractActor;
+
+            // This might be a building, in which case casting as an AbstractActor will return null.
+            if (actor != null && ModState.DamageReductionInCombatHudActors.ContainsKey(actor)) {
+                CombatHUDEvasiveBarPips_ShowCurrent.RefreshText(ModState.DamageReductionInCombatHudActors[actor], actor);
             }
         }
     }

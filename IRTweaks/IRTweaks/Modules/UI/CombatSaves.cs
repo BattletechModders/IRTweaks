@@ -14,8 +14,8 @@ namespace IRTweaks.Modules.UI
     {
         static bool Prepare() => Mod.Config.Fixes.DisableCombatSaves || Mod.Config.Fixes.DisableCombatRestarts;
 
-        static void Postfix(SimGameOptionsMenu __instance, 
-            HBSDOTweenButton ___saveGame, HBSTooltipHBSButton ___saveTooltip, 
+        static void Postfix(SimGameOptionsMenu __instance,
+            HBSDOTweenButton ___saveGame, HBSTooltipHBSButton ___saveTooltip,
             HBSDOTweenButton ___restartMission, HBSTooltipHBSButton ___restartTooltip)
         {
             CombatGameState combatGameState = SharedState.Combat;

@@ -56,6 +56,7 @@ namespace IRTweaks {
         public static Dictionary<string, bool> DidActorBraceLastRoundBeforeFiring = new Dictionary<string, bool>();
 
         public static Dictionary<CombatHUDEvasiveBarPips, AbstractActor> DamageReductionInCombatHud = new Dictionary<CombatHUDEvasiveBarPips, AbstractActor>();
+        public static Dictionary<AbstractActor, CombatHUDEvasiveBarPips> DamageReductionInCombatHudActors = new Dictionary<AbstractActor, CombatHUDEvasiveBarPips>();
 
         public static void OnSimInit()
         {
@@ -91,6 +92,7 @@ namespace IRTweaks {
 
             SpawnProtectedUnits.Clear();
             DamageReductionInCombatHud.Clear();
+            DamageReductionInCombatHudActors.Clear();
 
             WasCTDestroyed = false;
             AttackShouldCheckActorsForShutdown = new List<string>();
