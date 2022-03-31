@@ -112,7 +112,7 @@ namespace IRTweaks.Modules.Combat
                     }
                 }
             }
-            Mod.Log.Debug?.Write($"[ProcessOnFiredFloatieEffects] Dumping tags: {__instance.parent.GetTags().ToJSON()}.");
+            Mod.Log.Trace?.Write($"[ProcessOnFiredFloatieEffects] Dumping tags: {__instance.parent.GetTags().ToJSON()}.");
             if (__instance.parent is Mech mech && mech.isHasStability() &&
                 !mech.GetTags().Contains(Mod.Config.Combat.OnWeaponFireOpts.IgnoreSelfKnockdownTag))
             {
