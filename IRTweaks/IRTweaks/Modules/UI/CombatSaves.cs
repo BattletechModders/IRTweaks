@@ -25,7 +25,7 @@ namespace IRTweaks.Modules.UI
 
                 if (Mod.Config.Fixes.DisableCombatRestarts)
                 {
-                    Mod.Log.Debug?.Write("Disabling combat restarts.");
+                    Mod.Log.Trace?.Write("Disabling combat restarts.");
                     ___restartMission.SetState(ButtonState.Disabled);
 
                     string title = new Text(Mod.LocalizedText.Tooltips[ModText.TT_CombatRestartMission_Title]).ToString();
@@ -36,7 +36,7 @@ namespace IRTweaks.Modules.UI
 
                 if (Mod.Config.Fixes.DisableCombatSaves && ___saveGame.State != ButtonState.Disabled)
                 {
-                    Mod.Log.Debug?.Write("Disabling combat saves.");
+                    Mod.Log.Trace?.Write("Disabling combat saves.");
                     ___saveGame.SetState(ButtonState.Disabled);
 
                     string title = new Text(Mod.LocalizedText.Tooltips[ModText.TT_CombatSave_Title]).ToString();
@@ -44,7 +44,6 @@ namespace IRTweaks.Modules.UI
                     BaseDescriptionDef def = new BaseDescriptionDef("SGMTipData", title, details, null);
                     ___saveTooltip.SetStateDataForButtonState(ButtonState.Disabled, TooltipUtilities.GetStateDataFromObject(def));
                 }
-
             }
         }
     }
