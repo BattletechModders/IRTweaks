@@ -202,11 +202,16 @@ namespace IRTweaks.Modules.Combat
 
                         var fromPiloting = attacker.GetPilot().Piloting *
                                            Mod.Config.Combat.OnWeaponFireOpts.SelfKnockdownPilotingFactor;
-                        var finalChance = knockdownChance - (fromBraced + fromPiloting);
+                        var fromTonnage = 0f;
+                        if (attacker is Mech mechTonnage)
+                        {
+                            fromTonnage = mechTonnage.tonnage * Mod.Config.Combat.OnWeaponFireOpts.SelfKnockdownTonnageFactor;
+                        }
+                        var finalChance = knockdownChance - (fromBraced + fromPiloting + fromTonnage);
                         var roll = Mod.Random.NextDouble();
 
                         Mod.Log.Info?.Write(
-                            $"[OnAttackComplete] Final self-knockdown chance: {finalChance} from weapon effects {knockdownChance} - (braced state: {fromBraced} + piloting factor {fromPiloting}) VS roll {roll}.");
+                            $"[OnAttackComplete] Final self-knockdown chance: {finalChance} from weapon effects {knockdownChance} - (braced state: {fromBraced} + piloting factor {fromPiloting} + tonnage factor {fromTonnage}) VS roll {roll}.");
                         if (roll <= finalChance)
                         {
                             if (!attacker.IsFlaggedForKnockdown)
