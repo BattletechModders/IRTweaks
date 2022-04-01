@@ -395,8 +395,9 @@ Example mod.json settings:
 "OnWeaponFireOpts": {
 	"SelfKnockdownCheckStatName": "SelfknockdownCheck_OnFire",
 	"IgnoreSelfKnockdownTag": "big_chungus",
+	"SelfKnockdownTonnageFactor": 0.01,
 	"SelfKnockdownPilotingFactor": 0.01,
-	"SelfKnockdownBracedFactor": 100.0
+	"SelfKnockdownBracedFactor": 100.0,
 },
 ```
 `SelfKnockdownCheckStatName` - name of statistic (_statistic_ *not* effect!) set in weapon that represents the "base chance" of suffering a knockdown due to firing that weapon.
