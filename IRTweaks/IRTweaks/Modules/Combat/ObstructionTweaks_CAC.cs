@@ -58,13 +58,15 @@ namespace IRTweaks.Modules.Combat
                     if (validLocs.Contains((ArmorLocation)location))
                     {
                         Mod.Log.Debug?.Write($"{(ArmorLocation)location} is valid hit location for damage reduction.");
-                        var damageReduction = Mod.Config.Combat.ObstructionTweaks.ObstructionDRByTags
-                            .Where(x => mech.MechDef.MechTags.Contains(x.Key)).Select(y => y.Value).ToList()
-                            .Min();
-
-                        Mod.Log.Info?.Write(
-                            $"Applied {damageReduction} multiplier for armor damage reduction to {(ArmorLocation)location}.");
-                        return damageReduction;
+                        var damageReductions = Mod.Config.Combat.ObstructionTweaks.ObstructionDRByTags
+                            .Where(x => mech.MechDef.MechTags.Contains(x.Key)).Select(y => y.Value).ToList();
+                        if (damageReductions.Count > 0)
+                        {
+                            var damageReduction = damageReductions.Min();
+                            Mod.Log.Info?.Write(
+                                $"Applied {damageReduction} multiplier for armor damage reduction to {(ArmorLocation)location}.");
+                            return damageReduction;
+                        }
                     }
                 }
             }
@@ -78,13 +80,15 @@ namespace IRTweaks.Modules.Combat
                     if (Mod.Config.Combat.ObstructionTweaks.DRVehicleLocs.Contains((VehicleChassisLocations)location))
                     {
                         Mod.Log.Debug?.Write($"{(VehicleChassisLocations)location} is valid hit location for damage reduction.");
-                        var damageReduction = Mod.Config.Combat.ObstructionTweaks.ObstructionDRByTags
-                            .Where(x => vehicle.VehicleDef.VehicleTags.Contains(x.Key)).Select(y => y.Value).ToList()
-                            .Max();
-
-                        Mod.Log.Info?.Write(
-                            $"Applied {damageReduction} multiplier for armor damage reduction to {(VehicleChassisLocations)location}.");
-                        return damageReduction;
+                        var damageReductions = Mod.Config.Combat.ObstructionTweaks.ObstructionDRByTags
+                            .Where(x => vehicle.VehicleDef.VehicleTags.Contains(x.Key)).Select(y => y.Value).ToList();
+                        if (damageReductions.Count > 0)
+                        {
+                            var damageReduction = damageReductions.Min();
+                            Mod.Log.Info?.Write(
+                                $"Applied {damageReduction} multiplier for armor damage reduction to {(VehicleChassisLocations)location}.");
+                            return damageReduction;
+                        }
                     }
                 }
             }
@@ -94,13 +98,16 @@ namespace IRTweaks.Modules.Combat
                 if (Mod.Config.Combat.ObstructionTweaks.DRVehicleLocs.Contains(loc.toFakeVehicleChassis()))
                 {
                     Mod.Log.Debug?.Write($"Location is int value {location}: {(VehicleChassisLocations)location} as VehicleChassisLocation; {loc.toFakeVehicleChassis()} after processing; is valid hit location for damage reduction.");
-                    var damageReduction = Mod.Config.Combat.ObstructionTweaks.ObstructionDRByTags
-                        .Where(x => vmech.MechDef.MechTags.Contains(x.Key)).Select(y => y.Value).ToList()
-                        .Max();
+                    var damageReductions = Mod.Config.Combat.ObstructionTweaks.ObstructionDRByTags
+                        .Where(x => vmech.MechDef.MechTags.Contains(x.Key)).Select(y => y.Value).ToList();
 
-                    Mod.Log.Info?.Write(
-                        $"Applied {damageReduction} multiplier for armor damage reduction to {(VehicleChassisLocations)location}.");
-                    return damageReduction;
+                    if (damageReductions.Count > 0)
+                    {
+                        var damageReduction = damageReductions.Min();
+                        Mod.Log.Info?.Write(
+                            $"Applied {damageReduction} multiplier for armor damage reduction to {(VehicleChassisLocations)location}.");
+                        return damageReduction;
+                    }
                 }
             }
 
