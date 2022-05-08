@@ -50,9 +50,8 @@ namespace IRTweaks.Modules.UI
                 pipsText.text.SetText(text);
                 pipsText.text.gameObject.SetActive(value: true);
 
-                // There are floating point rounding errors in HBS's logic, resulting in an incorrect number of pips being active.
-                // RefreshText therefore sets this explicitly to bypass the problem.
-                pips.ActivatePips((int)Math.Round(pips.Current));
+                // We replace the vanilla pips with our own display text. No more >>>>.
+                pips.ActivatePips(0);
             }
         }
     }
@@ -85,7 +84,6 @@ namespace IRTweaks.Modules.UI
         }
     }
 
-
     [HarmonyPatch(typeof(EffectManager), "CreateEffect", new Type[] { typeof(EffectData), typeof(string), typeof(int), typeof(ICombatant), typeof(ICombatant), typeof(WeaponHitInfo), typeof(int), typeof(bool) })]
     static class EffectManager_CreateEffect
     {
@@ -93,6 +91,21 @@ namespace IRTweaks.Modules.UI
 
         static void Postfix(ICombatant target) {
             AbstractActor actor = target as AbstractActor;
+
+            // This might be a building, in which case casting as an AbstractActor will return null.
+            if (actor != null && ModState.DamageReductionInCombatHudActors.ContainsKey(actor)) {
+                CombatHUDEvasiveBarPips_ShowCurrent.RefreshText(ModState.DamageReductionInCombatHudActors[actor], actor);
+            }
+        }
+    }
+
+    [HarmonyPatch(typeof(EffectManager), "EffectComplete")]
+    static class EffectManager_EffectComplete
+    {
+        static bool Prepare() => Mod.Config.Fixes.DamageReductionInCombatHud;
+
+        static void Postfix(Effect e) {
+            AbstractActor actor = e.Target as AbstractActor;
 
             // This might be a building, in which case casting as an AbstractActor will return null.
             if (actor != null && ModState.DamageReductionInCombatHudActors.ContainsKey(actor)) {
