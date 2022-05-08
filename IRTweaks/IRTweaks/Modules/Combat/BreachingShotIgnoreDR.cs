@@ -18,23 +18,10 @@ namespace IRTweaks.Modules.Combat
 
         static void Postfix(ref float __result, Weapon weapon, Vector3 attackPosition, ICombatant target, bool IsBreachingShot, int location, float dmg, float ap, float heat, float stab)
         {
-            if (IsBreachingShot || weapon.parent.Combat.HitLocation.GetAttackDirection(attackPosition, target) == AttackDirection.FromBack)
+            if (IsBreachingShot || weapon.parent.Combat.HitLocation.GetAttackDirection(attackPosition, target) == AttackDirection.FromBack || weapon.uid == "CBTBE_FAKE_MELEE" || weapon.uid == "CBTBE_FAKE_DFA" || weapon.uid.EndsWith("_Melee") || weapon.uid.EndsWith("_DFA"))
             {
-                __result = 1f;
-            }
-        }
-    }
-
-    [HarmonyPatch(typeof(DamageModifiers), "DamageReductionMultiplierType", new Type[] { typeof(Weapon), typeof(Vector3), typeof(ICombatant), typeof(bool), typeof(int), typeof(float), typeof(float), typeof(float), typeof(float) })]
-    static class DamageModifiers_DamageReductionMultiplierType
-    {
-        static bool Prepare() => Mod.Config.Fixes.BreachingShotIgnoresAllDR && false; //disable for now
-
-        static void Postfix(ref float __result, Weapon weapon, Vector3 attackPosition, ICombatant target, bool IsBreachingShot, int location, float dmg, float ap, float heat, float stab)
-        {
-            if (IsBreachingShot || weapon.parent.Combat.HitLocation.GetAttackDirection(attackPosition, target) == AttackDirection.FromBack)
-            {
-                __result = 1f;
+                if (__result <= 1f)
+                    __result = 1f;
             }
         }
     }
@@ -52,7 +39,7 @@ namespace IRTweaks.Modules.Combat
         {
             var combat = UnityGameInstance.BattleTechGame.Combat;
             var attackSequence = combat.AttackDirector.GetAttackSequence(hitInfo.attackSequenceId);
-            if (attackSequence.IsBreachingShot || combat.HitLocation.GetAttackDirection(attackSequence.attackPosition, attackSequence.chosenTarget) == AttackDirection.FromBack)
+            if (attackSequence.IsBreachingShot || combat.HitLocation.GetAttackDirection(attackSequence.attackPosition, attackSequence.chosenTarget) == AttackDirection.FromBack || attackSequence.meleeAttackType != MeleeAttackType.NotSet)
             {
                 ModState.ShouldGetReducedDamageIgnoreDR = true;
             }
@@ -79,6 +66,12 @@ namespace IRTweaks.Modules.Combat
         {
             if (!ModState.ShouldGetReducedDamageIgnoreDR) return true;
             var num = 1f;
+            var dmgReductionCurrent = __instance.StatCollection.GetValue<float>("DamageReductionMultiplierAll");
+            if (dmgReductionCurrent > 1f)
+            {
+                num = dmgReductionCurrent;
+            }
+            
             if (doLogging && AbstractActor.damageLogger.IsLogEnabled)
             {
                 string message1 = __instance.BuildLogMessage(string.Format("!!! Found IgnoreDR flag from breaching shot! Ignoring value of DamageReductionMultiplierAll!"));
@@ -136,7 +129,7 @@ namespace IRTweaks.Modules.Combat
         {
             var combat = UnityGameInstance.BattleTechGame.Combat;
             var attackSequence = combat.AttackDirector.GetAttackSequence(hitInfo.attackSequenceId);
-            if (attackSequence.IsBreachingShot || combat.HitLocation.GetAttackDirection(attackSequence.attackPosition, attackSequence.chosenTarget) == AttackDirection.FromBack)
+            if (attackSequence.IsBreachingShot || combat.HitLocation.GetAttackDirection(attackSequence.attackPosition, attackSequence.chosenTarget) == AttackDirection.FromBack || attackSequence.meleeAttackType != MeleeAttackType.NotSet)
             {
                 ModState.ShouldGetReducedDamageIgnoreDR = true;
             }
@@ -161,7 +154,7 @@ namespace IRTweaks.Modules.Combat
         {
             var combat = UnityGameInstance.BattleTechGame.Combat;
             //var attackSequence = combat.AttackDirector.GetAttackSequence(hitInfo.attackSequenceId);
-            if (__instance.IsBreachingShot || combat.HitLocation.GetAttackDirection(__instance.attackPosition, __instance.chosenTarget) == AttackDirection.FromBack)
+            if (__instance.IsBreachingShot || combat.HitLocation.GetAttackDirection(__instance.attackPosition, __instance.chosenTarget) == AttackDirection.FromBack || __instance.meleeAttackType != MeleeAttackType.NotSet)
             {
                 ModState.ShouldGetReducedDamageIgnoreDR = true;
             }

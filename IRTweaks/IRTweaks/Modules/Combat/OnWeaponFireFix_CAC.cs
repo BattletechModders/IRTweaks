@@ -139,23 +139,39 @@ namespace IRTweaks.Modules.Combat
             WeaponHitInfo hitInfo = attackSequenceResolveDamageMessage.hitInfo;
             AttackDirector.AttackSequence attackSequence = __instance.Director.GetAttackSequence(hitInfo.attackSequenceId);
             Weapon weapon = __instance.GetWeapon(attackSequenceResolveDamageMessage.hitInfo.attackGroupIndex, attackSequenceResolveDamageMessage.hitInfo.attackWeaponIndex);
-            for (int j = 0; j < attackSequence?.allAffectedTargetIds.Count; j++)
+            foreach (EffectData effectData in weapon.StatusEffects())
             {
-                AbstractActor abstractActor =
-                    __instance.Director.Combat.FindActorByGUID(attackSequence.allAffectedTargetIds[j]);
-                if (abstractActor is Mech mech && !mech.IsShutDown)
+                if (effectData.targetingData.effectTriggerType == EffectTriggerType.OnHit &&
+                    effectData?.statisticData?.statName ==
+                    Mod.Config.Combat.OnWeaponHitOpts.ForceShutdownOnHitStat)
                 {
-                    if (mech.GetTags().Contains(Mod.Config.Combat.OnWeaponHitOpts.IgnoreShutdownTag)) continue;
-                    int firstHitLocationForTarget = hitInfo.GetFirstHitLocationForTarget(abstractActor.GUID);
-                    if (firstHitLocationForTarget >= 0 && !abstractActor.IsDead)
+                    for (int j = 0; j < attackSequence?.allAffectedTargetIds.Count; j++)
                     {
-                        foreach (EffectData effectData in weapon.StatusEffects())
+                        AbstractActor abstractActor =
+                            __instance.Director.Combat.FindActorByGUID(attackSequence.allAffectedTargetIds[j]);
+                        if (abstractActor is Mech mech && !mech.IsShutDown)
                         {
-                            if (effectData.targetingData.effectTriggerType == EffectTriggerType.OnHit &&
-                                effectData?.statisticData?.statName ==
-                                Mod.Config.Combat.OnWeaponHitOpts.ForceShutdownOnHitStat)
+                            if (mech.GetTags().Contains(Mod.Config.Combat.OnWeaponHitOpts.IgnoreShutdownTag)) continue;
+                            int firstHitLocationForTarget = hitInfo.GetFirstHitLocationForTarget(abstractActor.GUID);
+                            if (firstHitLocationForTarget >= 0 && !abstractActor.IsDead)
                             {
                                 ModState.AttackShouldCheckActorsForShutdown.Add(mech.GUID);
+                            }
+                        }
+                    }
+
+                    var advInfo = hitInfo.advInfo();
+                    if (advInfo == null) continue;
+                    foreach (var aoeRecord in advInfo.hits)
+                    {
+                        if (aoeRecord.isHit && aoeRecord.isAOE && aoeRecord.target is Mech aoeMech && !aoeMech.IsShutDown)
+                        {
+                            if (aoeMech.GetTags().Contains(Mod.Config.Combat.OnWeaponHitOpts.IgnoreShutdownTag)) continue;
+                            //int firstHitLocationForTarget = hitInfo.GetFirstHitLocationForTarget(aoeMech.GUID);
+                            if (!aoeMech.IsDead && !ModState.AttackShouldCheckActorsForShutdown.Contains(aoeMech.GUID))
+                            {
+                                ModState.AttackShouldCheckActorsForShutdown.Add(aoeMech.GUID);
+                                Mod.Log.Info?.Write($"[OnAttackSequenceResolveDamage] Added {aoeMech.DisplayName} to state for AOE shutdown check.");
                             }
                         }
                     }
@@ -202,11 +218,27 @@ namespace IRTweaks.Modules.Combat
 
                         var fromPiloting = attacker.GetPilot().Piloting *
                                            Mod.Config.Combat.OnWeaponFireOpts.SelfKnockdownPilotingFactor;
-                        var finalChance = knockdownChance - (fromBraced + fromPiloting);
+                        var fromTonnage = 0f;
+                        if (attacker is Mech mechTonnage)
+                        {
+                            if (mechTonnage.tonnage < Mod.Config.Combat.OnWeaponFireOpts
+                                    .SelfKnockdownTonnageBonusThreshold)
+                            {
+                                fromTonnage = mechTonnage.tonnage * Mod.Config.Combat.OnWeaponFireOpts.SelfKnockdownTonnageFactor;
+                            }
+                            else
+                            {
+                                var baseTonnageFactor = mechTonnage.tonnage * Mod.Config.Combat.OnWeaponFireOpts.SelfKnockdownTonnageFactor;
+                                var bonusTonnage = mechTonnage.tonnage - Mod.Config.Combat.OnWeaponFireOpts
+                                    .SelfKnockdownTonnageBonusThreshold;
+                                fromTonnage = baseTonnageFactor + (bonusTonnage * Mod.Config.Combat.OnWeaponFireOpts.SelfKnockdownTonnageBonusFactor);
+                            }
+                        }
+                        var finalChance = knockdownChance - (fromBraced + fromPiloting + fromTonnage);
                         var roll = Mod.Random.NextDouble();
 
                         Mod.Log.Info?.Write(
-                            $"[OnAttackComplete] Final self-knockdown chance: {finalChance} from weapon effects {knockdownChance} - (braced state: {fromBraced} + piloting factor {fromPiloting}) VS roll {roll}.");
+                            $"[OnAttackComplete] Final self-knockdown chance: {finalChance} from weapon effects {knockdownChance} - (braced state: {fromBraced} + piloting factor {fromPiloting} + tonnage factor {fromTonnage}) VS roll {roll}.");
                         if (roll <= finalChance)
                         {
                             if (!attacker.IsFlaggedForKnockdown)
@@ -234,15 +266,18 @@ namespace IRTweaks.Modules.Combat
 
                 if (!string.IsNullOrEmpty(Mod.Config.Combat.OnWeaponHitOpts.ForceShutdownOnHitStat))
                 {
-                    foreach (var targetActorID in attackSequence.allAffectedTargetIds)
+                    for (var index = ModState.AttackShouldCheckActorsForShutdown.Count - 1; index >= 0; index--)
                     {
-                        if (!ModState.AttackShouldCheckActorsForShutdown.Contains(targetActorID)) continue;
-                        
+                        var targetActorID = ModState.AttackShouldCheckActorsForShutdown[index];
+                        //if (!ModState.AttackShouldCheckActorsForShutdown.Contains(targetActorID)) continue;
+                        Mod.Log.Info?.Write(
+                            $"[OnAttackComplete] Processing OnHit forced shutdown check for {targetActorID}.");
                         ModState.AttackShouldCheckActorsForShutdown.Remove(targetActorID);
                         var targetActor = __instance.Combat.FindActorByGUID(targetActorID);
                         if (targetActor is Mech mech)
                         {
-                            Mod.Log.Info?.Write($"[OnAttackComplete] Processing OnHit forced shutdown check for {mech.DisplayName}.");
+                            Mod.Log.Info?.Write(
+                                $"[OnAttackComplete] Processing OnHit forced shutdown check for {mech.DisplayName}.");
                             var shutdownChance =
                                 mech.StatCollection.GetValue<float>(
                                     Mod.Config.Combat.OnWeaponHitOpts.ForceShutdownOnHitStat);

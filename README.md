@@ -395,14 +395,19 @@ Example mod.json settings:
 "OnWeaponFireOpts": {
 	"SelfKnockdownCheckStatName": "SelfknockdownCheck_OnFire",
 	"IgnoreSelfKnockdownTag": "big_chungus",
+	"SelfKnockdownTonnageFactor": 0.01,
 	"SelfKnockdownPilotingFactor": 0.01,
-	"SelfKnockdownBracedFactor": 100.0
+	"SelfKnockdownTonnageBonusThreshold": 100,
+	"SelfKnockdownTonnageBonusFactor" = 0.05
+	"SelfKnockdownBracedFactor": 100.0,
 },
 ```
 `SelfKnockdownCheckStatName` - name of statistic (_statistic_ *not* effect!) set in weapon that represents the "base chance" of suffering a knockdown due to firing that weapon.
 `IgnoreSelfKnockdownTag` - units with this mechdef (or vehicledef) tag will ignore self-knockdown rolls (basically turns off this whole functionality for that unit)
 `SelfKnockdownPilotingFactor` - this value X Piloting skill offset chance to self-knockdown
 `SelfKnockdownBracedFactor` - if unit braced the previous round *and has not moved this round* this value will be added to offset chance of self-knockdown. Unit *can* still rotate in place.
+`SelfKnockdownTonnageFactor` - unit tonnage x this value is added to knockdown resistance
+`SelfKnockdownTonnageBonusThreshold` and `SelfKnockdownTonnageBonusFactor` - if the unit tonnage exceeds SelfKnockdownTonnageBonusThreshold, the tonnage up to the threshold gives resistance per SelfKnockdownTonnageFactor, while the remaining tons will gain per-ton resistance per SelfKnockdownTonnageBonusThreshold
 
 So final formula for % to self-knockdown is SelfKnockdownCheckStatName - (SelfKnockdownPilotingFactor + SelfKnockdownBracedFactor)
 
