@@ -26,6 +26,13 @@ namespace IRTweaks.Modules.Combat
                 return;
             }
 
+            if (Mod.Config.Combat.ScaledStructure.UseStoryScale && (SharedState.Combat.ActiveContract.IsStoryContract || SharedState.Combat.ActiveContract.IsRestorationContract))
+            {
+                Mod.Log.Info?.Write($"Story mission found, using story value: {Mod.Config.Combat.ScaledStructure.StoryScale}");
+                ModState.ActiveContractBuildingScaling = Mod.Config.Combat.ScaledStructure.StoryScale;
+                return;
+            }
+
             // Determine scale, if any
             Mod.Log.Info?.Write("Checking contract for objective building scaling:");
             Mod.Log.Info?.Write($"  -- contract has " +

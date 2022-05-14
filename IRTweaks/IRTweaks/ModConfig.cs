@@ -1,7 +1,6 @@
-﻿using System;
+﻿using BattleTech;
 using System.Collections.Generic;
 using System.Linq;
-using BattleTech;
 
 namespace IRTweaks
 {
@@ -162,6 +161,8 @@ namespace IRTweaks
             };
 
             public StructureScale DefaultScale = new StructureScale() { Mod = 0, Multi = 1f };
+            public StructureScale StoryScale = new StructureScale() { Mod = 0, Multi = 1f };
+            public bool UseStoryScale = false;
 
             public int MinDifficulty = 1;
             public int MaxDifficulty = 10;
