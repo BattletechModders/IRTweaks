@@ -113,6 +113,44 @@ namespace IRTweaks.Modules.UI
             }
         }
     }
+
+    // We replace the vanilla FireSequence method because it fires a number of unnecessary / incorrect floaties.
+    // The game logic is identical, but this version emits different floaties.
+    [HarmonyPatch(typeof(AttackStackSequence), "FireSequence")]
+    static class AttackStackSequence_FireSequence
+    {
+        static bool Prepare() => Mod.Config.Fixes.DamageReductionInCombatHud;
+
+        static bool Prefix(AttackStackSequence __instance, AttackDirector.AttackSequence sequence) {
+            CombatGameState combat = Traverse.Create(__instance).Property("Combat").GetValue<CombatGameState>();
+            EffectData effect = combat.Constants.Visibility.FiredWeaponsEffect;
+
+            combat.EffectManager.CreateEffect(effect, sequence.id.ToString(), sequence.stackItemUID, __instance.owningActor, __instance.owningActor, default(WeaponHitInfo), -1);
+            __instance.owningActor.UpdateVisibilityCache(combat.GetAllCombatants());
+            combat.AttackDirector.PerformAttack(sequence);
+
+            AbstractActor abstractActor = sequence.chosenTarget as AbstractActor;
+
+            if (abstractActor != null) {
+                string floatie = "";
+                if (sequence.meleeAttackType == MeleeAttackType.DFA) {
+                    floatie = "DFA - Ignores DR";
+                } else if (sequence.isMelee) {
+                    floatie = "Melee - Ignores DR";
+                } else if (sequence.IsBreachingShot) {
+                    floatie = "Breaching Shot - Ignores DR";
+                } else if (combat.HitLocation.GetAttackDirection(__instance.owningActor, abstractActor) == AttackDirection.FromBack) {
+                    floatie = "Rear Attack - Ignores DR";
+                }
+
+                if (floatie != "") {
+                    combat.MessageCenter.PublishMessage(new AddSequenceToStackMessage(new ShowActorInfoSequence(abstractActor, floatie, FloatieMessage.MessageNature.Debuff, useCamera: false)));
+                }
+            }
+
+            return false;
+        }
+    }
 }
 
 #endif
