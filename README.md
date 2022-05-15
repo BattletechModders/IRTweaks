@@ -45,6 +45,7 @@ This is a mod for the [HBS BattleTech](http://battletechgame.com/) game that inc
 * **Weak Against Melee Fix**: Fixes the "Weak Against Melee" debuff for Turrets/Vehicles to accurately report melee damage modifiers from CombatGameConstants
 * **Weapon Tooltips**: Modifies the weapon tooltips to more accurately report damage when a weapon uses extensions provided by [CustomAmmoCategories](https://github.com/CMiSSioN/CustomAmmoCategories).
 * **DamageReductionInCombatHud**: If compiled with CAC support (and CustomAmmoCategories is active), displays each unit's damage reduction alongside its evasion pips, removing the default >>>> evasion display. While using this, strongly consider `"EvasiveNumberWidth": 90` in CustomAmmoCategories's settings - the default value of 25 will *not* look good.
+* **DeathChanceStat**: Fixes post contract pilot death check, to include the company statistics `LethalDeathChance` and `IncapacitatedDeathChance`. In vanilla, they are set by the Hospital upgrade, but never used for anything.
 
 This mod replaces the following mods, which used to be stand-alone:
 
@@ -783,6 +784,8 @@ This tweak can be customized in mod.json through the `Combat.ScaledStructure` se
 
 
  `ScaledStructure.DefaultScale` defines the modifications that should be used when no difficulty-based scaling can be found. If the __finalDifficulty_ of a contract cannot be found, but the __finalDifficulty_ is within the minimum and maximum values defined in `DifficultyScaling` the default scale will be used.
+
+If `ScaledStructure.UseStoryScale` is set, then `ScaledStructure.StoryScale` is used for all Campaign missions (as they usually already have reasonable HP values).
 
 ## Sensor Lock Freedom
 
