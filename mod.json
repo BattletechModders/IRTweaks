@@ -48,7 +48,8 @@
 			"UrbanExplosionsFix": false,
 			"WeakAgainstMeleeFix": true,
 			"WeaponTooltip": true,
-			"DamageReductionInCombatHud": false
+			"DamageReductionInCombatHud": false,
+      "DeathChanceStat": true
 		},
 		"Abilities": {
 			"FlexibleSensorLockId": "AbilityDefT5A",

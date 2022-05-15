@@ -235,6 +235,7 @@ namespace IRTweaks
         public bool ShowAllArgoUpgrades = true;
         public bool SkipDeleteSavePopup = true;
         public bool SkirmishReset = false;
+        public bool DeathChanceStat = true;
 
         // UI
         public bool BulkPurchasing = true;
@@ -315,6 +316,7 @@ namespace IRTweaks
             Mod.Log.Info?.Write($"  UrbanExplosionsFix:                 {this.Fixes.UrbanExplosionsFix}");
             Mod.Log.Info?.Write($"  WeaponTooltips:                     {this.Fixes.WeaponTooltip}");
             Mod.Log.Info?.Write($"  DamageReductionInCombatHud:         {this.Fixes.DamageReductionInCombatHud}");
+            Mod.Log.Info?.Write($"  DeathChanceStat:                    {this.Fixes.DeathChanceStat}");
 
             Mod.Log.Info?.Write($"  DisableCTMaxInjureTags:                     {this.Combat.DisableCTMaxInjureTags}");
             Mod.Log.Info?.Write($"  TorsoMountStatName:                     {this.Combat.TorsoMountStatName}");
