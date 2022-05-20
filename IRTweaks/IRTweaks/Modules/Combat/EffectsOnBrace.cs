@@ -23,7 +23,8 @@ namespace IRTweaks.Modules.Combat
         {
             foreach (var effectData in ModState.BraceEffectsInit.effects)
             {
-                __instance.Combat.EffectManager.CreateEffect(effectData, effectData.Description.Id, -1,__instance, __instance, default(WeaponHitInfo),1);
+                __instance.CreateEffect(effectData, null, effectData.Description.Id, -1, __instance);
+                //__instance.Combat.EffectManager.CreateEffect(effectData, effectData.Description.Id, -1,__instance, __instance, default(WeaponHitInfo),1);
                 Mod.Log.Info?.Write($"[Mech_ApplyBraced] Applying effect with ID {effectData.Description.Id}.");
             }
         }
@@ -43,7 +44,8 @@ namespace IRTweaks.Modules.Combat
         {
             foreach (var effectData in ModState.BraceEffectsInit.effects)
             {
-                __instance.Combat.EffectManager.CreateEffect(effectData, effectData.Description.Id, -1, __instance, __instance, default(WeaponHitInfo), 1);
+                __instance.CreateEffect(effectData, null, effectData.Description.Id, -1, __instance);
+                //__instance.Combat.EffectManager.CreateEffect(effectData, effectData.Description.Id, -1, __instance, __instance, default(WeaponHitInfo), 1);
                 Mod.Log.Info?.Write($"[CustomMech_ApplyBraced] Applying effect with ID {effectData.Description.Id}.");
             }
         }

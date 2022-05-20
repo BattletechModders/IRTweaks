@@ -124,8 +124,8 @@ namespace IRTweaks.Modules.UI
         static bool Prefix(AttackStackSequence __instance, AttackDirector.AttackSequence sequence) {
             CombatGameState combat = Traverse.Create(__instance).Property("Combat").GetValue<CombatGameState>();
             EffectData effect = combat.Constants.Visibility.FiredWeaponsEffect;
-
-            combat.EffectManager.CreateEffect(effect, sequence.id.ToString(), sequence.stackItemUID, __instance.owningActor, __instance.owningActor, default(WeaponHitInfo), -1);
+            __instance.owningActor.CreateEffect(effect, null, sequence.id.ToString(), sequence.stackItemUID, __instance.owningActor);
+            //combat.EffectManager.CreateEffect(effect, sequence.id.ToString(), sequence.stackItemUID, __instance.owningActor, __instance.owningActor, default(WeaponHitInfo), -1);
             __instance.owningActor.UpdateVisibilityCache(combat.GetAllCombatants());
             combat.AttackDirector.PerformAttack(sequence);
 
