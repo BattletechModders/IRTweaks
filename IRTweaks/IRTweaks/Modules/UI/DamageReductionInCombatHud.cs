@@ -56,6 +56,19 @@ namespace IRTweaks.Modules.UI
         }
     }
 
+    [HarmonyPatch(typeof(CombatHUDEvasiveBarPips), "CalcPipsAndActivate")]
+    static class CombatHUDEvasiveBarPips_CalcPipsAndActivate
+    {
+        static bool Prepare() => Mod.Config.Fixes.DamageReductionInCombatHud;
+
+        static void Postfix(CombatHUDEvasiveBarPips __instance)
+        {
+            if (ModState.DamageReductionInCombatHud.ContainsKey(__instance)) {
+                CombatHUDEvasiveBarPips_ShowCurrent.RefreshText(__instance, ModState.DamageReductionInCombatHud[__instance]);
+            }
+        }
+    }
+
     [HarmonyPatch(typeof(CombatHUDEvasiveBarPips), "CacheActorData")]
     static class CombatHUDEvasiveBarPips_CacheActorData
     {
