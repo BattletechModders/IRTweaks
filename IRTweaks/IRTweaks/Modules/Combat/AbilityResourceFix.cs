@@ -16,6 +16,27 @@ namespace IRTweaks.Modules.Combat
         {
             return actor.StatCollection.GetValue<bool>("ActorConsumedFiring");
         }
+
+        public static void DisableAbilitiesUsingResource(this CombatSelectionHandler handler, AbilityDef.ResourceConsumed resource)
+        {
+            for (int i = handler.ActivatedAbilityButtons.Count - 1; i >= 0; i--)
+            {
+                if (resource == AbilityDef.ResourceConsumed.ConsumesFiring)
+                {
+                    if (handler.ActivatedAbilityButtons[i].Ability.Def.ActivationTime == AbilityDef.ActivationTiming.ConsumedByFiring)
+                    {
+                        handler.ActivatedAbilityButtons[i].DisableButton();
+                    }
+                }
+                else if (resource == AbilityDef.ResourceConsumed.ConsumesMovement)
+                {
+                    if (handler.ActivatedAbilityButtons[i].Ability.Def.ActivationTime == AbilityDef.ActivationTiming.ConsumedByMovement)
+                    {
+                        handler.ActivatedAbilityButtons[i].DisableButton();
+                    }
+                }
+            }
+        }
         public static EffectDurationData Duration => new EffectDurationData {duration = 1, stackLimit = 1};
 
         public static EffectTargetingData TargetingData =>
@@ -78,6 +99,63 @@ namespace IRTweaks.Modules.Combat
         }
     }
 
+    [HarmonyPatch(typeof(AbstractActor), "OnNewRound")]
+    [HarmonyPatch(new Type[]
+    {
+        typeof(int)
+    })]
+    public static class AbstractActor_OnNewRound
+    {
+        static bool Prepare() => Mod.Config.Fixes.AbilityResourceFix;
+
+        public static void Postfix(AbstractActor __instance)
+        {
+            __instance.StatCollection.Set<bool>("ActorConsumedFiring", false);
+        }
+    }
+
+    [HarmonyPatch(typeof(SelectionStateMove), "GetAllMeleeTargets", new Type[]{})]
+    public static class SelectionStateMove_GetAllMeleeTargets
+    {
+        static bool Prepare() => Mod.Config.Fixes.AbilityResourceFix;
+        
+        public static void Postfix(SelectionStateMove __instance, List<ICombatant> __result)
+        {
+            if (__instance.SelectedActor.GetAbilityUsedFiring())
+            {
+                __result = new List<ICombatant>();
+            }
+        }
+    }
+
+    [HarmonyPatch(typeof(CombatHUDMechwarriorTray), "ResetAbilityButton", new Type[] {typeof(AbstractActor), typeof(CombatHUDActionButton), typeof(Ability), typeof(bool) })]
+    public static class CombatHUDMechwarriorTray_ResetAbilityButton
+    {
+        static bool Prepare() => Mod.Config.Fixes.AbilityResourceFix;
+
+        public static void Postfix(CombatHUDMechwarriorTray __instance, AbstractActor actor, CombatHUDActionButton button, Ability ability, bool forceInactive)
+        {
+            if (actor != null && ability != null && actor.GetAbilityUsedFiring())
+            {
+                if (ability.Def.ActivationTime == AbilityDef.ActivationTiming.ConsumedByFiring) button.DisableButton();
+            }
+        }
+    }
+
+    [HarmonyPatch(typeof(CombatHUDWeaponPanel), "ResetAbilityButton", new Type[] { typeof(AbstractActor), typeof(CombatHUDActionButton), typeof(Ability), typeof(bool) })]
+    public static class CombatHUDWeaponPanel_ResetAbilityButton
+    {
+        static bool Prepare() => Mod.Config.Fixes.AbilityResourceFix;
+
+        public static void Postfix(CombatHUDMechwarriorTray __instance, AbstractActor actor, CombatHUDActionButton button, Ability ability, bool forceInactive)
+        {
+            if (actor != null && ability != null && actor.GetAbilityUsedFiring())
+            {
+                if (ability.Def.ActivationTime == AbilityDef.ActivationTiming.ConsumedByFiring) button.DisableButton();
+            }
+        }
+    }
+
     [HarmonyPatch(typeof(CombatSelectionHandler), "AddFireState", new Type[] { typeof(AbstractActor) })]
     public static class CombatSelectionHandler_AddFireState
     {
@@ -96,6 +174,7 @@ namespace IRTweaks.Modules.Combat
                     .GetValue<List<SelectionState>>();
                 if (!selectionStack.Any(x => x is SelectionStateDoneWithMech) && actor.HasMovedThisRound)
                 {
+                    Mod.Log.Trace?.Write($"[CombatSelectionHandler_AddFireState] Adding SelectionStateDoneWithMech.");
                     var doneState = new SelectionStateDoneWithMech(actor.Combat, HUD,
                         HUD.MechWarriorTray.DoneWithMechButton, actor);
                     var addState = Traverse.Create(HUD.SelectionHandler)
@@ -174,29 +253,37 @@ namespace IRTweaks.Modules.Combat
                         selectionStateFire.OnRemoveFromStack();
                         selectionStack.Remove(selectionStateFire);
                     }
-                    else if (selectionStack[i] is SelectionStateFireMulti selectionStateFireMulti)
+                    else switch (selectionStack[i])
                     {
-                        selectionStateFireMulti.OnInactivate();
-                        selectionStateFireMulti.OnRemoveFromStack();
-                        selectionStack.Remove(selectionStateFireMulti);
-                        
-                    }
-                    else if (selectionStack[i] is SelectionStateMoraleAttack selectionStateMoraleAttack)
-                    {
-                        selectionStateMoraleAttack.OnInactivate();
-                        selectionStateMoraleAttack.OnRemoveFromStack();
-                        selectionStack.Remove(selectionStateMoraleAttack);
+                        case SelectionStateFireMulti selectionStateFireMulti:
+                            selectionStateFireMulti.OnInactivate();
+                            selectionStateFireMulti.OnRemoveFromStack();
+                            selectionStack.Remove(selectionStateFireMulti);
+                            break;
+                        case SelectionStateMoraleAttack selectionStateMoraleAttack:
+                            selectionStateMoraleAttack.OnInactivate();
+                            selectionStateMoraleAttack.OnRemoveFromStack();
+                            selectionStack.Remove(selectionStateMoraleAttack);
+                            break;
+                        case SelectionStateMove selectionStateMove:
+                            selectionStateMove.RefreshPossibleTargets();
+                            break;
+                        case SelectionStateJump selectionStateJump:
+                            selectionStateJump.RefreshPossibleTargets();
+                            break;
                     }
                 }
                 HUD.MechWarriorTray.FireButton.DisableButton();
                 if (!selectionStack.Any(x => x is SelectionStateDoneWithMech) && selectedActor.HasMovedThisRound)
                 {
+                    Mod.Log.Trace?.Write($"[CombatHUDActionButton_ActivateAbility_Confirmed] Adding SelectionStateDoneWithMech.");
                     var doneState = new SelectionStateDoneWithMech(selectedActor.Combat, HUD,
                         HUD.MechWarriorTray.DoneWithMechButton, selectedActor);
                     var addState = Traverse.Create(HUD.SelectionHandler)
                         .Method("addNewState", new Type[] { typeof(SelectionState) });
                     addState.GetValue(doneState);
                 }
+                HUD.SelectionHandler.DisableAbilitiesUsingResource(AbilityDef.ResourceConsumed.ConsumesFiring);
                 // this DOES work to disable firing.
             }
             else if (__instance.Ability.Def.Resource == AbilityDef.ResourceConsumed.ConsumesMovement)
@@ -204,6 +291,7 @@ namespace IRTweaks.Modules.Combat
 
                 //selectedActor.HasMovedThisRound = true;
                 selectedActor.CreateEffect(AbilityResourceEffects.ImmobileEffectData, null, AbilityResourceEffects.ImmobileEffectData.Description.Id, -1, selectedActor);
+                HUD.SelectionHandler.DisableAbilitiesUsingResource(AbilityDef.ResourceConsumed.ConsumesMovement);
                 //this DOES work to disable movement
             }
             else if (__instance.Ability.Def.Resource == AbilityDef.ResourceConsumed.ConsumesActivation)
@@ -261,6 +349,7 @@ namespace IRTweaks.Modules.Combat
                 HUD.MechWarriorTray.FireButton.DisableButton();
                 if (!selectionStack.Any(x => x is SelectionStateDoneWithMech) && selectedActor.HasMovedThisRound)
                 {
+                    Mod.Log.Trace?.Write($"[CombatHUDEquipmentSlot_ActivateAbility_Confirmed] Adding SelectionStateDoneWithMech.");
                     var doneState = new SelectionStateDoneWithMech(selectedActor.Combat, HUD,
                         HUD.MechWarriorTray.DoneWithMechButton, selectedActor);
                     var addState = Traverse.Create(HUD.SelectionHandler)
