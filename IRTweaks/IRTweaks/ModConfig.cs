@@ -1,7 +1,6 @@
-﻿using System;
+﻿using BattleTech;
 using System.Collections.Generic;
 using System.Linq;
-using BattleTech;
 
 namespace IRTweaks
 {
@@ -162,6 +161,8 @@ namespace IRTweaks
             };
 
             public StructureScale DefaultScale = new StructureScale() { Mod = 0, Multi = 1f };
+            public StructureScale StoryScale = new StructureScale() { Mod = 0, Multi = 1f };
+            public bool UseStoryScale = false;
 
             public int MinDifficulty = 1;
             public int MaxDifficulty = 10;
@@ -234,6 +235,7 @@ namespace IRTweaks
         public bool ShowAllArgoUpgrades = true;
         public bool SkipDeleteSavePopup = true;
         public bool SkirmishReset = false;
+        public bool DeathChanceStat = true;
 
         // UI
         public bool BulkPurchasing = true;
@@ -314,6 +316,7 @@ namespace IRTweaks
             Mod.Log.Info?.Write($"  UrbanExplosionsFix:                 {this.Fixes.UrbanExplosionsFix}");
             Mod.Log.Info?.Write($"  WeaponTooltips:                     {this.Fixes.WeaponTooltip}");
             Mod.Log.Info?.Write($"  DamageReductionInCombatHud:         {this.Fixes.DamageReductionInCombatHud}");
+            Mod.Log.Info?.Write($"  DeathChanceStat:                    {this.Fixes.DeathChanceStat}");
 
             Mod.Log.Info?.Write($"  DisableCTMaxInjureTags:                     {this.Combat.DisableCTMaxInjureTags}");
             Mod.Log.Info?.Write($"  TorsoMountStatName:                     {this.Combat.TorsoMountStatName}");
