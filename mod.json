@@ -49,7 +49,7 @@
 			"WeakAgainstMeleeFix": true,
 			"WeaponTooltip": true,
 			"DamageReductionInCombatHud": false,
-      "DeathChanceStat": true
+			"DeathChanceStat": true
 		},
 		"Abilities": {
 			"FlexibleSensorLockId": "AbilityDefT5A",
@@ -124,10 +124,10 @@
 				"SideLocationDestroyedResistPenalty": 10
 			},
 			"ScaledStructure" : {
-        "DefaultScale" : { "Mod" : 0, "Multi" : 1.0 },
+				"DefaultScale" : { "Mod" : 0, "Multi" : 1.0 },
 				"StoryScale": { "Mod": 0, "Multi": 1.0 },
-        "UseStoryScale": false,
-        "DifficultyScaling" : {
+				"UseStoryScale": false,
+				"DifficultyScaling" : {
 					"1" : { "Mod" : 5, "Multi" : 1.0 },
 					"2" : { "Mod" : 10, "Multi" : 1.25 },
 					"3" : { "Mod" : 15, "Multi" : 1.5 },

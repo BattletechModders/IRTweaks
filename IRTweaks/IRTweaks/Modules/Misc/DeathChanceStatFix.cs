@@ -16,19 +16,20 @@ namespace IRTweaks.Modules.Misc
 
         public static float CalcChance(float minchance, float basechance, float gutsReduction, float gutsAmount, SimGameState s, Pilot p)
         {
-            float statmodifier = p.LethalInjuries ? GetStat(s, "LethalDeathChance") : GetStat(s, "IncapacitatedDeathChance");
+            float statmodifier = s.CompanyStats.GetValue<float>(p.LethalInjuries ? "LethalDeathChance" : "IncapacitatedDeathChance");
             return Math.Max(minchance, basechance - gutsReduction * gutsAmount + statmodifier);
         }
 
-        public static float GetStat(SimGameState s, string stat)
-        {
-            if (s.CompanyStats.ContainsStatistic(stat))
-            {
-                return s.CompanyStats.GetValue<float>(stat);
-            }
-            return 0;
-        }
-
+        /// <summary>
+        /// changes
+        /// <code>float num = pilot.LethalInjuries ? sim.Constants.Pilot.LethalDeathChance : sim.Constants.Pilot.IncapacitatedDeathChance;
+        /// num = Mathf.Max(0f, num - sim.Constants.Pilot.GutsDeathReduction * (float)pilot.Guts);
+        /// float num2 = sim.NetworkRandom.Float(0f, 1f);</code>
+        /// to
+        /// <code>float num = pilot.LethalInjuries ? sim.Constants.Pilot.LethalDeathChance : sim.Constants.Pilot.IncapacitatedDeathChance;
+        /// num = CalcChance(0f, num, sim.Constants.Pilot.GutsDeathReduction, (float)pilot.Guts, sim, pilot);
+        /// float num2 = sim.NetworkRandom.Float(0f, 1f);</code>
+        /// </summary>
         public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> code)
         {
             LinkedList<CodeInstruction> prev = new LinkedList<CodeInstruction>();

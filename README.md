@@ -45,7 +45,7 @@ This is a mod for the [HBS BattleTech](http://battletechgame.com/) game that inc
 * **Weak Against Melee Fix**: Fixes the "Weak Against Melee" debuff for Turrets/Vehicles to accurately report melee damage modifiers from CombatGameConstants
 * **Weapon Tooltips**: Modifies the weapon tooltips to more accurately report damage when a weapon uses extensions provided by [CustomAmmoCategories](https://github.com/CMiSSioN/CustomAmmoCategories).
 * **DamageReductionInCombatHud**: If compiled with CAC support (and CustomAmmoCategories is active), displays each unit's damage reduction alongside its evasion pips, removing the default >>>> evasion display. While using this, strongly consider `"EvasiveNumberWidth": 90` in CustomAmmoCategories's settings - the default value of 25 will *not* look good. Also adjusts vanilla floaties to more accurately represent what's happening with damage reduction.
-* **DeathChanceStat**: Fixes post contract pilot death check, to include the company statistics `LethalDeathChance` and `IncapacitatedDeathChance`. In vanilla, they are set by the Hospital upgrade, but never used for anything.
+* **DeathChanceStat**: Fixes post contract pilot death check, to include the company statistics `LethalDeathChance` and `IncapacitatedDeathChance`. In vanilla, they are set by the Hospital upgrade, but never used for anything. Not compatible with [TisButAScratch](https://github.com/ajkroeg/TisButAScratch).
 
 This mod replaces the following mods, which used to be stand-alone:
 
