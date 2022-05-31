@@ -783,9 +783,11 @@ This tweak can be customized in mod.json through the `Combat.ScaledStructure` se
 `AdjustedStructure = (BaseStructure x Multi) + Mod`
 
 
- `ScaledStructure.DefaultScale` defines the modifications that should be used when no difficulty-based scaling can be found. If the __finalDifficulty_ of a contract cannot be found, but the __finalDifficulty_ is within the minimum and maximum values defined in `DifficultyScaling` the default scale will be used.
+ `ScaledStructure.DefaultScale` defines the modifications that should be used when no difficulty-based scaling can be found. If the __finalDifficulty__ of a contract cannot be found, but the __finalDifficulty__ is within the minimum and maximum values defined in `DifficultyScaling` the default scale will be used.
 
 If `ScaledStructure.UseStoryScale` is set, then `ScaledStructure.StoryScale` is used for all Campaign missions (as they usually already have reasonable HP values).
+
+`ScaledStructure.ContractScaling` is a dictionary keyed by the current contracts **ID**, e.g. `Assassinate_EscapingSpy`. If found, then the corresponding scaling is used for that contract whenever it appears. This scaling overrides any scaling from the regular DifficultyScaling.
 
 ## Sensor Lock Freedom
 
