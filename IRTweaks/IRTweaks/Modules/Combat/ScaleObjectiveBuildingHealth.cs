@@ -25,14 +25,22 @@ namespace IRTweaks.Modules.Combat
                 ModState.ActiveContractBuildingScaling = Mod.Config.Combat.ScaledStructure.DefaultScale;
                 return;
             }
-
+            Mod.Log.Info?.Write("Checking contract for contract-specific building scaling:");
+            
+            //Next check if contract is story contract
             if (Mod.Config.Combat.ScaledStructure.UseStoryScale && (SharedState.Combat.ActiveContract.IsStoryContract || SharedState.Combat.ActiveContract.IsRestorationContract))
             {
                 Mod.Log.Info?.Write($"Story mission found, using story value: {Mod.Config.Combat.ScaledStructure.StoryScale}");
                 ModState.ActiveContractBuildingScaling = Mod.Config.Combat.ScaledStructure.StoryScale;
                 return;
             }
-
+            // Next check if contract ID is defined in ContractScaling
+            if (Mod.Config.Combat.ScaledStructure.ContractScaling.ContainsKey(SharedState.Combat.ActiveContract.Override.ID))
+            {
+                Mod.Log.Info?.Write($"Building scaling set to: {Mod.Config.Combat.ScaledStructure.ContractScaling[SharedState.Combat.ActiveContract.Override.ID]}");
+                ModState.ActiveContractBuildingScaling = Mod.Config.Combat.ScaledStructure.ContractScaling[SharedState.Combat.ActiveContract.Override.ID];
+                return;
+            }
             // Determine scale, if any
             Mod.Log.Info?.Write("Checking contract for objective building scaling:");
             Mod.Log.Info?.Write($"  -- contract has " +
@@ -59,7 +67,6 @@ namespace IRTweaks.Modules.Combat
                 ModState.ActiveContractBuildingScaling = scale;
             }
             Mod.Log.Info?.Write($"Building scaling set to: {ModState.ActiveContractBuildingScaling}");
-
         }
     }
 

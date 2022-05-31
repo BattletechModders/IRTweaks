@@ -146,6 +146,7 @@ namespace IRTweaks
         public ScaledStructureOpts ScaledStructure = new ScaledStructureOpts();
         public class ScaledStructureOpts
         {
+            public Dictionary<string, StructureScale> ContractScaling = new Dictionary<string, StructureScale>();
             public Dictionary<int, StructureScale> DifficultyScaling = new Dictionary<int, StructureScale>()
             {
                 {  1, new StructureScale() { Mod = 0, Multi = 1f } },
@@ -364,7 +365,7 @@ namespace IRTweaks
             if (Mod.Config.Fixes.ScaleObjectiveBuildingStructure)
             {
                 if (Combat.ScaledStructure.DifficultyScaling.Keys.Count <= 0)
-                    Mod.Log.Warn?.Write($"ScaleObjectiveBuildingStructure enabled but configuration is corrupt! This likely will cause errors!");
+                    Mod.Log.Warn?.Write($"ScaleObjectiveBuildingStructure enabled but configuration is empty!");
 
                 if (Combat.ScaledStructure.DifficultyScaling.Keys.Count > 0)
                 {
