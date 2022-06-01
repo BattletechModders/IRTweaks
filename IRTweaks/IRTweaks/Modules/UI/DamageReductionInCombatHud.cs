@@ -12,22 +12,64 @@ using UnityEngine.UI;
 
 namespace IRTweaks.Modules.UI
 {
-    // Add damage reduction to the combat hud, next to evasion pips.
-    [HarmonyPatch(typeof(CombatHUDEvasiveBarPips), "ShowCurrent")]
-    static class CombatHUDEvasiveBarPips_ShowCurrent
+    static class DamageReductionInCombatHud
     {
-        static bool Prepare() => Mod.Config.Fixes.DamageReductionInCombatHud;
-
-        static void Postfix(CombatHUDEvasiveBarPips __instance)
+        public static void RefreshPips(CombatHUDEvasiveBarPips pips)
         {
-            if (ModState.DamageReductionInCombatHud.ContainsKey(__instance)) {
-                RefreshText(__instance, ModState.DamageReductionInCombatHud[__instance]);
+            AbstractActor actor = null;
+            if (ModState.DamageReductionInCombatHud.ContainsKey(pips)) {
+                actor = ModState.DamageReductionInCombatHud[pips];
+            }
+
+            if (actor == null) {
+                CombatHUDActorInfo actorInfo = pips.gameObject.transform.parent.gameObject.GetComponent<CombatHUDActorInfo>();
+                Mod.Log.Debug?.Write($"DRInCH: Locating actor for {pips} from parent actorInfo: {actorInfo}");
+                if (actorInfo != null) {
+                    actor = actorInfo.DisplayedCombatant as AbstractActor;
+                    if (actor != null) {
+                        ModState.DamageReductionInCombatHud[pips] = actor;
+                    }
+                }
+            }
+
+            if (actor != null) {
+                RefreshText(pips, actor);
+            } else {
+                Mod.Log.Debug?.Write($"DRInCH: No actor for {pips}.");
+            }
+        }
+
+        public static void RefreshActor(AbstractActor actor)
+        {
+            CombatHUDEvasiveBarPips pips = null;
+            if (ModState.DamageReductionInCombatHudActors.ContainsKey(actor)) {
+                pips = ModState.DamageReductionInCombatHudActors[actor];
+            }
+
+            if (pips == null) {
+                Mod.Log.Debug?.Write($"DRInCH: Looking for actor for {pips} based on unity tree.");
+                foreach (CombatHUDActorInfo actorInfo in Resources.FindObjectsOfTypeAll(typeof(CombatHUDActorInfo)) as CombatHUDActorInfo[])
+                {
+                    AbstractActor thisActor = actorInfo.DisplayedCombatant as AbstractActor;
+                    if (thisActor == actor) {
+                        pips = actorInfo.EvasiveDisplay;
+                        break;
+                    }
+                }
+                ModState.DamageReductionInCombatHudActors[actor] = pips;
+            }
+
+            if (pips != null) {
+                RefreshText(pips, actor);
+            } else {
+                Mod.Log.Debug?.Write($"DRInCH: No pips for actor {actor} {actor.UnitName}");
             }
         }
 
         public static void RefreshText(CombatHUDEvasiveBarPips pips, AbstractActor actor) {
             CombatHUDEvasivePipsText pipsText = pips.gameObject.GetComponent<CombatHUDEvasivePipsText>();
             if (pipsText == null) {
+                Mod.Log.Debug?.Write($"DRInCH: No pipsText for pips {pips}, actor {actor} {actor.UnitName}");
                 return;
             }
 
@@ -56,6 +98,23 @@ namespace IRTweaks.Modules.UI
         }
     }
 
+    // Add damage reduction to the combat hud, next to evasion pips.
+    [HarmonyPatch(typeof(CombatHUDEvasiveBarPips), "ShowCurrent")]
+    static class CombatHUDEvasiveBarPips_ShowCurrent
+    {
+        static bool Prepare() => Mod.Config.Fixes.DamageReductionInCombatHud;
+
+        static void Postfix(CombatHUDEvasiveBarPips __instance)
+        {
+            // This method is also called for CombatHUDStabilityBarPips, CombatHUDLifeBarPips, etc. We only care about actual EvasiveBarPips instances
+            if (__instance.GetType() == typeof(CombatHUDEvasiveBarPips))
+            {
+                DamageReductionInCombatHud.RefreshPips(__instance);
+            }
+        }
+
+    }
+
     [HarmonyPatch(typeof(CombatHUDEvasiveBarPips), "CalcPipsAndActivate")]
     static class CombatHUDEvasiveBarPips_CalcPipsAndActivate
     {
@@ -63,8 +122,10 @@ namespace IRTweaks.Modules.UI
 
         static void Postfix(CombatHUDEvasiveBarPips __instance)
         {
-            if (ModState.DamageReductionInCombatHud.ContainsKey(__instance)) {
-                CombatHUDEvasiveBarPips_ShowCurrent.RefreshText(__instance, ModState.DamageReductionInCombatHud[__instance]);
+            // This method is also called for CombatHUDStabilityBarPips, CombatHUDLifeBarPips, etc. We only care about actual EvasiveBarPips instances
+            if (__instance.GetType() == typeof(CombatHUDEvasiveBarPips))
+            {
+                DamageReductionInCombatHud.RefreshPips(__instance);
             }
         }
     }
@@ -89,11 +150,7 @@ namespace IRTweaks.Modules.UI
         // We want to display damage reduction even if there are 0 evasion pips.
         static void Postfix(CombatHUDStatusPanel __instance, AbstractActor target, float currentEvasive)
         {
-            float damageReduction = 1 - target.StatCollection.GetStatistic("DamageReductionMultiplierAll").Value<float>();
-            if (damageReduction > 0)
-            {
-                __instance.evasiveDisplay.gameObject.SetActive(value: true);
-            }
+            __instance.evasiveDisplay.gameObject.SetActive(value: true);
         }
     }
 
@@ -106,8 +163,8 @@ namespace IRTweaks.Modules.UI
             AbstractActor actor = target as AbstractActor;
 
             // This might be a building, in which case casting as an AbstractActor will return null.
-            if (actor != null && ModState.DamageReductionInCombatHudActors.ContainsKey(actor)) {
-                CombatHUDEvasiveBarPips_ShowCurrent.RefreshText(ModState.DamageReductionInCombatHudActors[actor], actor);
+            if (actor != null) {
+                DamageReductionInCombatHud.RefreshActor(actor);
             }
         }
     }
@@ -121,8 +178,8 @@ namespace IRTweaks.Modules.UI
             AbstractActor actor = e.Target as AbstractActor;
 
             // This might be a building, in which case casting as an AbstractActor will return null.
-            if (actor != null && ModState.DamageReductionInCombatHudActors.ContainsKey(actor)) {
-                CombatHUDEvasiveBarPips_ShowCurrent.RefreshText(ModState.DamageReductionInCombatHudActors[actor], actor);
+            if (actor != null) {
+                DamageReductionInCombatHud.RefreshActor(actor);
             }
         }
     }
