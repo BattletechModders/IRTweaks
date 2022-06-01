@@ -787,7 +787,7 @@ This tweak can be customized in mod.json through the `Combat.ScaledStructure` se
 
 If `ScaledStructure.UseStoryScale` is set true, then `ScaledStructure.StoryScale` is used for all Campaign missions (as they usually already have reasonable HP values).
 
-`ScaledStructure.ContractScaling` is a dictionary keyed by the current contracts **ID**, e.g. `Assassinate_EscapingSpy`. If found, then the corresponding scaling is used for that contract whenever it appears. This scaling overrides any scaling from the regular DifficultyScaling.
+`ScaledStructure.ContractScaling` is a dictionary keyed by the current contracts **ID**, e.g. `DestroyBase_DeniableDestruction`. If found, then the corresponding scaling is used for that contract whenever it appears. This scaling overrides any scaling from the regular DifficultyScaling.
 
 ## Sensor Lock Freedom
 
