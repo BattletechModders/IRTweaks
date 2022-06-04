@@ -212,7 +212,7 @@ namespace IRTweaks.Modules.Combat
             }
             else
             {
-                Mod.Log.Debug?.Write("Not FireMorale, skipping!");
+                Mod.Log.Trace?.Write("Not FireMorale, skipping!");
             }
         }
     }

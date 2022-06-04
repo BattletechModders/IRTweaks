@@ -47,22 +47,23 @@ namespace IRTweaks.Modules.UI
             }
 
             if (pips == null) {
-                Mod.Log.Debug?.Write($"DRInCH: Looking for actor for {pips} based on unity tree.");
+                Mod.Log.Trace?.Write($"DRInCH: Looking for actor for {actor} based on unity tree.");
                 foreach (CombatHUDActorInfo actorInfo in Resources.FindObjectsOfTypeAll(typeof(CombatHUDActorInfo)) as CombatHUDActorInfo[])
                 {
                     AbstractActor thisActor = actorInfo.DisplayedCombatant as AbstractActor;
+                    Mod.Log.Trace?.Write($"DRInCH: Checking thisActor {thisActor} == actor {actor}");
                     if (thisActor == actor) {
                         pips = actorInfo.EvasiveDisplay;
+                        ModState.DamageReductionInCombatHudActors[actor] = pips;
                         break;
                     }
                 }
-                ModState.DamageReductionInCombatHudActors[actor] = pips;
             }
 
             if (pips != null) {
                 RefreshText(pips, actor);
             } else {
-                Mod.Log.Debug?.Write($"DRInCH: No pips for actor {actor} {actor.UnitName}");
+                Mod.Log.Trace?.Write($"DRInCH: No pips for actor {actor} {actor.UnitName}");
             }
         }
 
@@ -83,18 +84,13 @@ namespace IRTweaks.Modules.UI
                 text += Math.Round(pips.Current) + " pips";
             }
 
-            if (string.IsNullOrEmpty(text)) {
-                pipsText.text.gameObject.SetActive(value: false);
-                pipsText.text.enableWordWrapping = false;
-            }
-            else
-            {
-                pipsText.text.SetText(text);
-                pipsText.text.gameObject.SetActive(value: true);
+            // We replace the vanilla pips with our own display text. No more >>>>.
+            pips.ActivatePips(0);
 
-                // We replace the vanilla pips with our own display text. No more >>>>.
-                pips.ActivatePips(0);
-            }
+            pipsText.text.SetText(text);
+            pipsText.text.color = Color.white;
+            pipsText.gameObject.SetActive(value: true);
+            pipsText.text.gameObject.SetActive(value: true);
         }
     }
 
@@ -181,6 +177,17 @@ namespace IRTweaks.Modules.UI
             if (actor != null) {
                 DamageReductionInCombatHud.RefreshActor(actor);
             }
+        }
+    }
+
+    // Override CAC's logic with our own. We always activate the pips text, and put different text in it.
+    [HarmonyPatch(typeof(CustAmmoCategories.CombatHUDEvasiveBarPips_ShowCurrent), "Postfix")]
+    static class CombatHUDEvasiveBarPips_ShowCurrent_Postfix_Patch
+    {
+        static bool Prepare() => Mod.Config.Fixes.DamageReductionInCombatHud;
+
+        static bool Prefix() {
+            return false;
         }
     }
 
