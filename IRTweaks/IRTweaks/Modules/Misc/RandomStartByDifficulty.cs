@@ -159,6 +159,7 @@ namespace IRTweaks.Modules.Misc
             var startOnly = GameObject.Find("OBJ_startOnly_settings");
             var startRect = startOnly.GetComponent<RectTransform>();
 
+            //try to move bottons down?
 
             if (startYAdjust > 0 )
             {
@@ -197,6 +198,12 @@ namespace IRTweaks.Modules.Misc
                 currentRegPosition.y += Mod.Config.Misc.DifficultyUIScaling.RegularPositionY;
                 currentRegPosition.y -= (startYAdjust * Mod.Config.Misc.DifficultyUIScaling.StartOnlyPositionY);
                 regularRect.position = currentRegPosition;
+
+                var bottomButtons = GameObject.Find("bottomBarButtons");
+                var bottomRect = bottomButtons.GetComponent<RectTransform>();
+                var currentBottomPosition = bottomRect.position;
+                currentBottomPosition.y = 0;
+                bottomRect.position = currentBottomPosition;
             }
 
             var startTransformLayoutGroup = startOnly.GetComponent<RectTransform>().GetComponent<GridLayoutGroup>();
