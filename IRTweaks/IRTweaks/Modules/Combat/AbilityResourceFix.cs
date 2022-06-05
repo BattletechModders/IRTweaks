@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using BattleTech;
 using BattleTech.UI;
 using Harmony;
+using HBS;
+using SVGImporter;
 
 namespace IRTweaks.Modules.Combat
 {
@@ -174,7 +176,7 @@ namespace IRTweaks.Modules.Combat
                     .GetValue<List<SelectionState>>();
                 if (!selectionStack.Any(x => x is SelectionStateDoneWithMech) && actor.HasMovedThisRound)
                 {
-                    Mod.Log.Trace?.Write($"[CombatSelectionHandler_AddFireState] Adding SelectionStateDoneWithMech.");
+                    Mod.Log.Info?.Write($"[CombatSelectionHandler_AddFireState] Adding SelectionStateDoneWithMech.");
                     var doneState = new SelectionStateDoneWithMech(actor.Combat, HUD,
                         HUD.MechWarriorTray.DoneWithMechButton, actor);
                     var addState = Traverse.Create(HUD.SelectionHandler)
@@ -244,6 +246,19 @@ namespace IRTweaks.Modules.Combat
                 .GetValue<List<SelectionState>>();
             if (__instance.Ability.Def.Resource == AbilityDef.ResourceConsumed.ConsumesFiring)
             {
+                if (selectedActor.HasBegunActivation || selectedActor.HasMovedThisRound && !selectedActor.HasActivatedThisRound)
+                {
+                    if (selectedActor is Mech mech)
+                    {
+                        mech.GenerateAndPublishHeatSequence(-1, true, false, selectedActor.GUID);
+                        Mod.Log.Info?.Write($"Generated and Published Heat Sequence for {mech.Description.UIName}.");
+                    }
+
+                    selectedActor.DoneWithActor(); //need to to onactivationend too
+                    selectedActor.OnActivationEnd(selectedActor.GUID, __instance.GetInstanceID());
+                    return;
+                }
+
                 selectedActor.CreateEffect(AbilityResourceEffects.AbilityUsedFiringData, null, AbilityResourceEffects.AbilityUsedFiringData.Description.Id, -1, selectedActor);
                 for (int i = selectionStack.Count - 1; i >= 0; i--)
                 {
@@ -276,7 +291,7 @@ namespace IRTweaks.Modules.Combat
                 HUD.MechWarriorTray.FireButton.DisableButton();
                 if (!selectionStack.Any(x => x is SelectionStateDoneWithMech) && selectedActor.HasMovedThisRound)
                 {
-                    Mod.Log.Trace?.Write($"[CombatHUDActionButton_ActivateAbility_Confirmed] Adding SelectionStateDoneWithMech.");
+                    Mod.Log.Info?.Write($"[CombatHUDActionButton_ActivateAbility_Confirmed] Adding SelectionStateDoneWithMech.");
                     var doneState = new SelectionStateDoneWithMech(selectedActor.Combat, HUD,
                         HUD.MechWarriorTray.DoneWithMechButton, selectedActor);
                     var addState = Traverse.Create(HUD.SelectionHandler)
@@ -299,7 +314,7 @@ namespace IRTweaks.Modules.Combat
                 if (selectedActor is Mech mech)
                 {
                     mech.GenerateAndPublishHeatSequence(-1, true, false, selectedActor.GUID);
-                    Mod.Log.Trace?.Write($"Generated and Published Heat Sequence for {mech.Description.UIName}.");
+                    Mod.Log.Info?.Write($"Generated and Published Heat Sequence for {mech.Description.UIName}.");
                 }
 
                 selectedActor.DoneWithActor();//need to to onactivationend too
@@ -324,6 +339,19 @@ namespace IRTweaks.Modules.Combat
                 .GetValue<List<SelectionState>>();
             if (__instance.Ability.Def.Resource == AbilityDef.ResourceConsumed.ConsumesFiring)
             {
+                if (selectedActor.HasBegunActivation || selectedActor.HasMovedThisRound && !selectedActor.HasActivatedThisRound)
+                {
+                    if (selectedActor is Mech mech)
+                    {
+                        mech.GenerateAndPublishHeatSequence(-1, true, false, selectedActor.GUID);
+                        Mod.Log.Info?.Write($"Generated and Published Heat Sequence for {mech.Description.UIName}.");
+                    }
+
+                    selectedActor.DoneWithActor(); //need to to onactivationend too
+                    selectedActor.OnActivationEnd(selectedActor.GUID, __instance.GetInstanceID());
+                    return;
+                }
+
                 selectedActor.CreateEffect(AbilityResourceEffects.AbilityUsedFiringData, null, AbilityResourceEffects.AbilityUsedFiringData.Description.Id, -1, selectedActor);
                 for (int i = selectionStack.Count - 1; i >= 0; i--)
                 {
@@ -349,7 +377,7 @@ namespace IRTweaks.Modules.Combat
                 HUD.MechWarriorTray.FireButton.DisableButton();
                 if (!selectionStack.Any(x => x is SelectionStateDoneWithMech) && selectedActor.HasMovedThisRound)
                 {
-                    Mod.Log.Trace?.Write($"[CombatHUDEquipmentSlot_ActivateAbility_Confirmed] Adding SelectionStateDoneWithMech.");
+                    Mod.Log.Info?.Write($"[CombatHUDEquipmentSlot_ActivateAbility_Confirmed] Adding SelectionStateDoneWithMech.");
                     var doneState = new SelectionStateDoneWithMech(selectedActor.Combat, HUD,
                         HUD.MechWarriorTray.DoneWithMechButton, selectedActor);
                     var addState = Traverse.Create(HUD.SelectionHandler)
@@ -380,7 +408,6 @@ namespace IRTweaks.Modules.Combat
     }
     
     [HarmonyPatch(typeof(CombatHUDMechwarriorTray), "ResetAbilityButtons", new Type[] { typeof(AbstractActor) })]
-
     public static class CombatHUDMechwarriorTray_ResetAbilityButtons_Patch
     {
         public static bool Prepare()
@@ -389,16 +416,15 @@ namespace IRTweaks.Modules.Combat
         }
         public static void Postfix(CombatHUDMechwarriorTray __instance, AbstractActor actor)
         {
-            var combat = UnityGameInstance.BattleTechGame.Combat;
             var forceInactive = actor.HasMovedThisRound || actor.HasFiredThisRound; // need to figure this part out; do other checks? this is still disabling the butons. integrat with CU?
             var abilityButtons = Traverse.Create(__instance).Property("AbilityButtons")
                 .GetValue<CombatHUDActionButton[]>();
             foreach (var button in abilityButtons)
             {
-                Mod.Log.Trace?.Write($"Processing button for {button?.Ability?.Def?.Description?.Name}.");
+                Mod.Log.Info?.Write($"Processing button for {button?.Ability?.Def?.Description?.Name}.");
                 if (button?.Ability?.Def?.Resource == AbilityDef.ResourceConsumed.ConsumesActivation && forceInactive)
                 {
-                    Mod.Log.Trace?.Write($"Disabling button for {button.Ability.Def.Description?.Name}.");
+                    Mod.Log.Info?.Write($"Disabling button for {button.Ability.Def.Description?.Name}.");
                     button.DisableButton();
                 }
             }
