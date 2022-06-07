@@ -516,13 +516,13 @@ namespace IRTweaks.Modules.Combat
         [HarmonyPatch(typeof(AbstractActor), "OnActivationEnd")]
         public static class AbstractActor_OnActivationEnd
         {
-            static bool Prepare() => Mod.Config.Combat.OnWeaponFireOpts.SelfKnockdownBracedFactor > 0f || Mod.Config.Combat.DamageModsBySkill.DisplayFloatiesOnTrigger && (Mod.Config.Combat.DamageModsBySkill?.HeatMods.Count > 0 ||
+            static bool Prepare() => Mod.Config.Combat.OnWeaponFireOpts.SelfInstabilityBracedFactor > 0f || Mod.Config.Combat.OnWeaponFireOpts.SelfKnockdownBracedFactor > 0f || Mod.Config.Combat.DamageModsBySkill.DisplayFloatiesOnTrigger && (Mod.Config.Combat.DamageModsBySkill?.HeatMods.Count > 0 ||
                 Mod.Config.Combat.DamageModsBySkill?.StabilityMods.Count > 0 ||
-                Mod.Config.Combat.DamageModsBySkill.APDmgMods.Count > 0);
+                Mod.Config.Combat.DamageModsBySkill?.APDmgMods.Count > 0);
 
             static void Prefix(AbstractActor __instance, string sourceID, int stackItemID)
             {
-                if (Mod.Config.Combat.OnWeaponFireOpts.SelfKnockdownBracedFactor > 0f)
+                if (Mod.Config.Combat.OnWeaponFireOpts.SelfKnockdownBracedFactor > 0f || Mod.Config.Combat.OnWeaponFireOpts.SelfInstabilityBracedFactor > 0f)
                 {
                     if (!__instance.BracedLastRound)
                     {
@@ -583,7 +583,7 @@ namespace IRTweaks.Modules.Combat
         [HarmonyPatch(typeof(AbstractActor), "InitEffectStats")]
         public static class AbstractActor_InitEffectStats_DamageModsBySkill
         {
-            static bool Prepare() => Mod.Config.Combat.ToHitStatMods.ActorToHitMods.Count > 0 || Mod.Config.Combat.DamageModsBySkill.HeatMods.Count > 0 || Mod.Config.Combat.DamageModsBySkill.StabilityMods.Count > 0 ||Mod.Config.Combat.DamageModsBySkill.APDmgMods.Count > 0 || Mod.Config.Combat.DamageModsBySkill.StdDmgMods.Count > 0 || !string.IsNullOrEmpty(Mod.Config.Combat.OnWeaponFireOpts.SelfKnockdownCheckStatName) || !string.IsNullOrEmpty(Mod.Config.Combat.OnWeaponHitOpts.ForceShutdownOnHitStat);
+            static bool Prepare() => Mod.Config.Combat.ToHitStatMods.ActorToHitMods.Count > 0 || Mod.Config.Combat.DamageModsBySkill.HeatMods.Count > 0 || Mod.Config.Combat.DamageModsBySkill.StabilityMods.Count > 0 ||Mod.Config.Combat.DamageModsBySkill.APDmgMods.Count > 0 || Mod.Config.Combat.DamageModsBySkill.StdDmgMods.Count > 0 || !string.IsNullOrEmpty(Mod.Config.Combat.OnWeaponFireOpts.SelfKnockdownCheckStatName) || !string.IsNullOrEmpty(Mod.Config.Combat.OnWeaponFireOpts.SelfInstabilityStatName) || !string.IsNullOrEmpty(Mod.Config.Combat.OnWeaponHitOpts.ForceShutdownOnHitStat);
 
             static void Postfix(AbstractActor __instance)
             {
@@ -592,6 +592,13 @@ namespace IRTweaks.Modules.Combat
                     __instance.StatCollection.AddStatistic<float>(
                         Mod.Config.Combat.OnWeaponFireOpts.SelfKnockdownCheckStatName, 0f);
                     Mod.Log.Trace?.Write($"Added SelfKnockdownCheckEffectID source stat {Mod.Config.Combat.OnWeaponFireOpts.SelfKnockdownCheckStatName} at value 0f.");
+                }
+
+                if (!string.IsNullOrEmpty(Mod.Config.Combat.OnWeaponFireOpts.SelfInstabilityStatName))
+                {
+                    __instance.StatCollection.AddStatistic<float>(
+                        Mod.Config.Combat.OnWeaponFireOpts.SelfInstabilityStatName, 0f);
+                    Mod.Log.Trace?.Write($"Added SelfInstabilityCheckEffectID source stat {Mod.Config.Combat.OnWeaponFireOpts.SelfInstabilityStatName} at value 0f.");
                 }
 
                 if (!string.IsNullOrEmpty(Mod.Config.Combat.OnWeaponHitOpts.ForceShutdownOnHitStat))

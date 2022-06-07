@@ -114,15 +114,26 @@ namespace IRTweaks.Modules.Combat
                 }
             }
             Mod.Log.Trace?.Write($"[ProcessOnFiredFloatieEffects] Dumping tags: {__instance.parent.GetTags().ToJSON()}.");
-            if (__instance.parent is Mech mech && mech.isHasStability() &&
-                !mech.GetTags().Contains(Mod.Config.Combat.OnWeaponFireOpts.IgnoreSelfKnockdownTag))
+            if (__instance.parent is Mech mech && mech.isHasStability())
             {
-                if (__instance.StatusEffects().Any(x =>
-                        x?.statisticData?.statName == Mod.Config.Combat.OnWeaponFireOpts.SelfKnockdownCheckStatName))
+                if (!mech.GetTags().Contains(Mod.Config.Combat.OnWeaponFireOpts.IgnoreSelfKnockdownTag))
                 {
-                    ModState.AttackShouldCheckForKnockDown = true;
+                    if (__instance.StatusEffects().Any(x =>
+                            x?.statisticData?.statName == Mod.Config.Combat.OnWeaponFireOpts.SelfKnockdownCheckStatName))
+                    {
+                        ModState.AttackShouldCheckForKnockDown = true;
+                    }
+                }
+                if (!mech.GetTags().Contains(Mod.Config.Combat.OnWeaponFireOpts.IgnoreSelfInstabilityTag))
+                {
+                    if (__instance.StatusEffects().Any(x =>
+                            x?.statisticData?.statName == Mod.Config.Combat.OnWeaponFireOpts.SelfInstabilityStatName))
+                    {
+                        ModState.AttackShouldCheckForInstability = true;
+                    }
                 }
             }
+                
         }
     }
 
@@ -196,6 +207,66 @@ namespace IRTweaks.Modules.Combat
             AttackDirector.AttackSequence attackSequence = __instance.GetAttackSequence(sequenceId);
             if (attackSequence != null)
             {
+                if (ModState.AttackShouldCheckForInstability)
+                {
+                    ModState.AttackShouldCheckForInstability = false;
+
+                    var attacker = attackSequence.attacker;
+                    if (attacker is Mech mech && attacker.isHasStability())
+                    {
+                        Mod.Log.Info?.Write(
+                            $"[OnAttackComplete] Processing OnWeaponFire self-instability check for {attacker.DisplayName}.");
+
+                        var selfInstability =
+                            attacker.StatCollection.GetValue<float>(
+                                Mod.Config.Combat.OnWeaponFireOpts.SelfInstabilityStatName);
+                        var fromBraced = 0f;
+                        Mod.Log.Trace?.Write($"[OnAttackComplete] TRACE {attacker.DisplayName} {attacker.GUID} Actor braced last round? {ModState.DidActorBraceLastRoundBeforeFiring.ContainsKey(attacker.GUID)}. DistMovedThisRound: {attacker.DistMovedThisRound}");
+                        if (ModState.DidActorBraceLastRoundBeforeFiring.ContainsKey(attacker.GUID) &&
+                            attacker.DistMovedThisRound <= 20f)
+                        {
+                            fromBraced = Mod.Config.Combat.OnWeaponFireOpts.SelfInstabilityBracedFactor;
+                        }
+
+                        var fromPiloting = attacker.GetPilot().Piloting *
+                                           Mod.Config.Combat.OnWeaponFireOpts.SelfInstabilityPilotingFactor;
+                        var fromTonnage = 0f;
+                        
+                        if (mech.tonnage < Mod.Config.Combat.OnWeaponFireOpts
+                                .SelfInstabilityTonnageFactor)
+                        {
+                            fromTonnage = mech.tonnage * Mod.Config.Combat.OnWeaponFireOpts.SelfInstabilityTonnageFactor;
+                        }
+                        else
+                        {
+                            var baseTonnageFactor = mech.tonnage * Mod.Config.Combat.OnWeaponFireOpts.SelfInstabilityTonnageFactor;
+                            var bonusTonnage = mech.tonnage - Mod.Config.Combat.OnWeaponFireOpts
+                                .SelfInstabilityTonnageBonusThreshold;
+                            fromTonnage = baseTonnageFactor + (bonusTonnage * Mod.Config.Combat.OnWeaponFireOpts.SelfInstabilityTonnageBonusFactor);
+                        }
+                        
+                        var finalInstability= selfInstability - (fromBraced + fromPiloting + fromTonnage);
+
+                        if (finalInstability > 0)
+                        {
+                            Mod.Log.Info?.Write(
+                                $"[OnAttackComplete] Final self-instability added: {finalInstability} from weapon effects {selfInstability} - (braced state: {fromBraced} + piloting factor {fromPiloting} + tonnage factor {fromTonnage}).");
+                            mech.AddAbsoluteInstability(finalInstability, StabilityChangeSource.Effect, mech.GUID);
+                            if (mech.NeedsInstabilityCheck)
+                            {
+                                mech.CheckForInstability();
+                                if (mech.IsFlaggedForKnockdown)
+                                {
+                                    attacker.HandleKnockdown(-1,
+                                        $"{attacker.DisplayName}_FromSelfInstability",
+                                        attacker.CurrentPosition, null);
+                                    attacker.DoneWithActor(); //need to to onactivationend too
+                                    attacker.OnActivationEnd(attacker.GUID, -1);
+                                }
+                            }
+                        }
+                    }
+                }
                 if (ModState.AttackShouldCheckForKnockDown)
                 {
                     ModState.AttackShouldCheckForKnockDown = false;

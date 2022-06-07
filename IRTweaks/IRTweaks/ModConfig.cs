@@ -114,6 +114,14 @@ namespace IRTweaks
             public float SelfKnockdownTonnageBonusThreshold = 100f; //units less than this use linear formula only
             public float SelfKnockdownTonnageBonusFactor = 1f; //z of ln((tonnage/divisor)*z)
             public string IgnoreSelfKnockdownTag = "";
+
+            public string SelfInstabilityStatName = ""; // stat NAME will be this", should be float, and is base chance of resisting self-knockdown
+            public float SelfInstabilityPilotingFactor = 0f;
+            public float SelfInstabilityBracedFactor = 0f;
+            public float SelfInstabilityTonnageFactor = 0f;
+            public float SelfInstabilityTonnageBonusThreshold = 100f; //units less than this use linear formula only
+            public float SelfInstabilityTonnageBonusFactor = 1f; //z of ln((tonnage/divisor)*z)
+            public string IgnoreSelfInstabilityTag = "";
         }
 
         public OnWeaponHitSpecialEffectOpts OnWeaponHitOpts = new OnWeaponHitSpecialEffectOpts();
