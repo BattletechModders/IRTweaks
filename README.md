@@ -389,19 +389,20 @@ This tweak allows units to use sensor lock without it consuming their action or 
 
 ## OnWeaponFire special effects - `OnWeaponFireOpts` REQUIRES CAC and OnWeaponFireFix enabled
 
-This "tweak" is currently only configured for a single functionality, but can be extended if requested. Current configuration allows for forcing a save against self-knockdown when weapons with the appropriate OnWeaponFire effects block are fired. The actual roll for knockdown takes place after the attacksequence has completed, so knockdown chance from multiple weapons can stack and become progressively more difficult or impossible to beat.
+Under `OnWeaponFireOpts` in mod.json
+
+### self Knockdown config
+Current configuration allows for forcing a save against self-knockdown when weapons with the appropriate OnWeaponFire effects block are fired. The actual roll for knockdown takes place after the attacksequence has completed, so knockdown chance from multiple weapons can stack and become progressively more difficult or impossible to beat.
 
 Example mod.json settings:
 ```
-"OnWeaponFireOpts": {
 	"SelfKnockdownCheckStatName": "SelfknockdownCheck_OnFire",
 	"IgnoreSelfKnockdownTag": "big_chungus",
 	"SelfKnockdownTonnageFactor": 0.01,
 	"SelfKnockdownPilotingFactor": 0.01,
 	"SelfKnockdownTonnageBonusThreshold": 100,
 	"SelfKnockdownTonnageBonusFactor" = 0.05
-	"SelfKnockdownBracedFactor": 100.0,
-},
+	"SelfKnockdownBracedFactor": 100.0
 ```
 `SelfKnockdownCheckStatName` - name of statistic (_statistic_ *not* effect!) set in weapon that represents the "base chance" of suffering a knockdown due to firing that weapon.
 `IgnoreSelfKnockdownTag` - units with this mechdef (or vehicledef) tag will ignore self-knockdown rolls (basically turns off this whole functionality for that unit)
@@ -409,8 +410,6 @@ Example mod.json settings:
 `SelfKnockdownBracedFactor` - if unit braced the previous round *and has not moved this round* this value will be added to offset chance of self-knockdown. Unit *can* still rotate in place.
 `SelfKnockdownTonnageFactor` - unit tonnage x this value is added to knockdown resistance
 `SelfKnockdownTonnageBonusThreshold` and `SelfKnockdownTonnageBonusFactor` - if the unit tonnage exceeds SelfKnockdownTonnageBonusThreshold, the tonnage up to the threshold gives resistance per SelfKnockdownTonnageFactor, while the remaining tons will gain per-ton resistance per SelfKnockdownTonnageBonusThreshold
-
-So final formula for % to self-knockdown is SelfKnockdownCheckStatName - (SelfKnockdownPilotingFactor + SelfKnockdownBracedFactor)
 
 Example stat block on weapon; if two of these weapons would fire, the "base chance" of self-knockdown would be 2.0
 ```
@@ -436,6 +435,58 @@ Example stat block on weapon; if two of these weapons would fire, the "base chan
 				"statName": "SelfknockdownCheck_OnFire",
 				"operation": "Float_Add",
 				"modValue": "1.0",
+				"modType": "System.Single"
+			},
+			"nature": "Buff"
+		}
+	],
+```
+
+### self Instability config
+
+```
+	"SelfInstabilityStatName": "SelfInstability_OnFire",
+	"IgnoreSelfInstabilityTag": "big_chungus",
+	"SelfInstabilityPilotingFactor": 1.5,
+	"SelfInstabilityTonnageFactor": 0.25,
+	"SelfInstabilityTonnageBonusThreshold": 100.0,
+	"SelfInstabilityTonnageBonusFactor": 0.05,
+	"SelfInstabilityBracedFactor": 100.0
+```
+
+Very similar to self-knockdown config above:
+
+`SelfInstabilityStatName` - name of statistic (_statistic_ *not* effect!) set in weapon that represents the baseline instability added to the firing unit due to firing that weapon.
+`IgnoreSelfInstabilityTag` - units with this mechdef (or vehicledef) tag will ignore self-instability from this weapon (basically turns off this whole functionality for that unit)
+`SelfInstabilityPilotingFactor` - this value X Piloting skill is subtracted from the SelfInstabilityStatName value
+`SelfInstabilityBracedFactor` - if unit braced the previous round *and has not moved this round* this value is subtracted from the SelfInstabilityStatName value. Unit *can* still rotate in place.
+`SelfInstabilityTonnageFactor` - unit tonnage x this value is subtracted from the SelfInstabilityStatName value
+`SelfInstabilityTonnageBonusThreshold` and `SelfInstabilityTonnageBonusFactor` - if the unit tonnage exceeds SelfInstabilityTonnageBonusThreshold, the tonnage up to the threshold decreases self-instability per SelfInstabilityTonnageFactor, while the remaining tons will decrease self-instability per SelfInstabilityTonnageBonusFactor
+
+Example stat block on weapon; if two of these weapons would fire, the "base chance" of self-knockdown would be 2.0
+```
+"statusEffects": [
+		{
+			"durationData": {
+				"duration": 1,
+				"stackLimit": 1
+			},
+			"targetingData": {
+				"effectTriggerType": "OnWeaponFire",
+				"effectTargetType": "Creator",
+				"showInStatusPanel": false
+			},
+			"effectType": "StatisticEffect",
+			"Description": {
+				"Id": "WeaponEffect-SelfInstability_OnFire",
+				"Name": "self instability added",
+				"Details": "self instability added.",
+				"Icon": "uixSvgIcon_run_n_gun"
+			},
+			"statisticData": {
+				"statName": "SelfInstability_OnFire",
+				"operation": "Float_Add",
+				"modValue": "100.0",
 				"modType": "System.Single"
 			},
 			"nature": "Buff"
