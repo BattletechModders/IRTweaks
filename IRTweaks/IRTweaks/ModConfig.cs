@@ -236,6 +236,7 @@ namespace IRTweaks
         public bool DisableDebug = true;
         public bool DisableLowFundsNotification = true;
         public bool DisableMPHashCalculation = true;
+        public bool EventRequirementsScopeFix = true;
         public bool FactionValueFix = true;
         public bool MultiTargetStat = true;
         public bool RandomStartByDifficulty = true;
@@ -302,6 +303,7 @@ namespace IRTweaks
             Mod.Log.Info?.Write($"  DisableCombatSaves:                 {this.Fixes.DisableCombatSaves}");
             Mod.Log.Info?.Write($"  DisableMPHashCalculation:           {this.Fixes.DisableMPHashCalculation}");
             Mod.Log.Info?.Write($"  DisableLowFundsNotification:        {this.Fixes.DisableLowFundsNotification}");
+            Mod.Log.Info?.Write($"  EventRequirementsScopeFix:          {this.Fixes.EventRequirementsScopeFix}");
             Mod.Log.Info?.Write($"  ExtendedStats:                      {this.Fixes.ExtendedStats}");
             Mod.Log.Info?.Write($"  FlexibleSensorLock:                 {this.Fixes.FlexibleSensorLock}");
             Mod.Log.Info?.Write($"  MaxArmorMaxesArmor:                 {this.Fixes.MaxArmorMaxesArmor}");
