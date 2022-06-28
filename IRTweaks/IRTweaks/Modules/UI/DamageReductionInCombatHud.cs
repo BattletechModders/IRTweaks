@@ -77,11 +77,11 @@ namespace IRTweaks.Modules.UI
             float damageReduction = 1 - actor.StatCollection.GetStatistic("DamageReductionMultiplierAll").Value<float>();
 
             string text = "";
-            if (damageReduction > 0) {
+            if (damageReduction != 0) {
                 text += $"{Math.Round(damageReduction * 100)}% DR\n";
             }
             if (pips.Current > 0) {
-                text += Math.Round(pips.Current) + " pips";
+                text += Math.Round(pips.Current) + " EVA";
             }
 
             // We replace the vanilla pips with our own display text. No more >>>>.
