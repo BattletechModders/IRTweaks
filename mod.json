@@ -19,6 +19,7 @@
 			"BulkPurchasing": false,
 			"BulkScrapping": false,
 			"CombatLog": false,
+			"CombatLogNameModifiers": false,
 			"DisableCampaign": true,
 			"DisableCombatSaves": true,
 			"DisableCombatRestarts": true,

@@ -10,6 +10,7 @@ This is a mod for the [HBS BattleTech](http://battletechgame.com/) game that inc
 * **BulkScrapping**: Allows players to scrap all chassis of a given weight from the storage screen at once. Hold Alt and click one of the weight filters at the top of the storage screen to scrap everything in that category.
 * **CalledShotTweaks**: The modifier for called shots (aka offensive push) is driven by the pilot's tactics skill, ability, and pilot tags. It can also be influenced by gear. Options allow disabling the ability to called shot 
 * **CombatLog**: Provides an in-game log that captures text from floaties and preserves them in a readable format.
+* **CombatLogNameModifiers**: Allows modification of displayed unit and pilot names in the Combat Log from other Mods through extension methods. Supported by LowVisibility currently.
 * **CTDestructInjuryFix**: Re-enables CT destruction causing Maximum pilot injuries, forcing them to win a roll against `SimGameConstants.Pilot.IncapacitatedDeathChance` to survive at end of contract.
 * ~~**CustomShopsRepHandling**: Disables internal handling of shop button when using rearranged menu (so CustomShops can handle reputation-based enable/disable). false by default.~~ deprecated
 * **DifficultyModsFromStats**: Enables company stat "IRTweaks_DiffMod" to be added or subtracted (if negative) to career difficulty score modifier. Used in events or any Results block.

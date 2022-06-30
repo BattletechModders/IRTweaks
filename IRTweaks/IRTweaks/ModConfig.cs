@@ -251,6 +251,7 @@ namespace IRTweaks
         public bool BulkPurchasing = true;
         public bool BulkScrapping = true;
         public bool CombatLog = true;
+        public bool CombatLogNameModifiers = true;
         public bool DisableCombatRestarts = true;
         public bool DisableCombatSaves = true;
         public bool MaxArmorMaxesArmor = false;

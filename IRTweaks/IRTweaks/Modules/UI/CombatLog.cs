@@ -16,6 +16,7 @@ using UnityEngine.UI;
 using static BattleTech.FloatieMessage;
 using BattleTech.UI.ObjectModel;
 using HBS.Pooling;
+using System.Linq;
 
 namespace IRTweaks.Modules.UI {
     public static class CombatLog {
@@ -50,6 +51,15 @@ namespace IRTweaks.Modules.UI {
             gen.Emit(OpCodes.Ret);
             CombatChatModule_UIModule_Update = (Action<CombatChatModule>)dm.CreateDelegate(typeof(Action<CombatChatModule>));
             return true;
+        }
+
+        public static void RegisterUnitNameModifier(CombatLogNameModifier unitNameModifier) { 
+            if (Mod.Config.Fixes.CombatLogNameModifiers) ModState.ExtCombatLogUnitName.Add(unitNameModifier);
+        }
+
+        public static void RegisterPilotNameModifier(CombatLogNameModifier pilotNameModifier)
+        {
+            if (Mod.Config.Fixes.CombatLogNameModifiers) ModState.ExtCombatLogPilotName.Add(pilotNameModifier);
         }
 
         public static void CombatHUD_Init_Postfix(CombatHUD __instance, CombatGameState Combat) {
@@ -125,6 +135,27 @@ namespace IRTweaks.Modules.UI {
             messageCenter = null;
         }
 
+        private static string GetUnitLogName(AbstractActor actor)
+        {
+            string defaultName = actor.DisplayName;
+            return ModState.ExtCombatLogUnitName.Aggregate(defaultName, (currentName, next) => next(currentName, actor));
+        }
+
+        private static string GetPilotLogName(AbstractActor actor)
+        {
+            string defaultName = actor.GetPilot().Name;
+            return ModState.ExtCombatLogPilotName.Aggregate(defaultName, (currentName, next) => next(currentName, actor));
+        }
+
+        private static string GetLogSenderString(AbstractActor sender)
+        {
+            if (sender.IsPilotable && sender.GetPilot() != null) {
+                string pilotName = GetPilotLogName(sender);
+                if (!String.IsNullOrEmpty(pilotName)) return $"{GetUnitLogName(sender)} - {pilotName}:";
+            }
+            return $"{GetUnitLogName(sender)}:";
+        }
+
         private static void OnFloatie(MessageCenterMessage message) {
             FloatieMessage floatieMessage = (FloatieMessage)message;
 
@@ -143,7 +174,8 @@ namespace IRTweaks.Modules.UI {
                     senderColor = "#" + ColorUtility.ToHtmlStringRGBA(LazySingletonBehavior<UIManager>.Instance.UIColorRefs.greenHalf);
                 }
 
-                string sender = (target.IsPilotable && target.GetPilot() != null) ? $"{target.DisplayName}-{target.GetPilot().Name}" : $"{target.DisplayName}";
+                string sender = GetLogSenderString(target);
+                if (sender == "DEPLOY") return;
                 string senderWithColor = $"&lt;{senderColor}&gt;{sender}&lt;/color&gt;";
                 Mod.Log.Debug?.Write($"ChatMessage senderWithColor: '{senderWithColor}'");
 
@@ -333,4 +365,6 @@ namespace IRTweaks.Modules.UI {
         }
 
     }
+
+    public delegate string CombatLogNameModifier(string currentName, AbstractActor abstractActor);
 }
