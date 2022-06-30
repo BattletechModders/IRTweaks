@@ -2,6 +2,7 @@
 using BattleTech.UI;
 using System.Collections.Generic;
 using BattleTech;
+using IRTweaks.Modules.UI;
 
 namespace IRTweaks {
 
@@ -58,6 +59,9 @@ namespace IRTweaks {
 
         public static Dictionary<CombatHUDEvasiveBarPips, AbstractActor> DamageReductionInCombatHud = new Dictionary<CombatHUDEvasiveBarPips, AbstractActor>();
         public static Dictionary<AbstractActor, CombatHUDEvasiveBarPips> DamageReductionInCombatHudActors = new Dictionary<AbstractActor, CombatHUDEvasiveBarPips>();
+
+        internal static List<CombatLogNameModifier> ExtCombatLogUnitName = new List<CombatLogNameModifier>();
+        internal static List<CombatLogNameModifier> ExtCombatLogPilotName = new List<CombatLogNameModifier>();
 
         public static void OnSimInit()
         {
