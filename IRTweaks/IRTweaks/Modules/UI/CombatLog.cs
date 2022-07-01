@@ -175,7 +175,7 @@ namespace IRTweaks.Modules.UI {
                 }
 
                 string sender = GetLogSenderString(target);
-                if (sender == "DEPLOY") return;
+                if (sender.StartsWith("DEPLOY - Deploy")) return;
                 string senderWithColor = $"&lt;{senderColor}&gt;{sender}&lt;/color&gt;";
                 Mod.Log.Debug?.Write($"ChatMessage senderWithColor: '{senderWithColor}'");
 
