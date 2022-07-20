@@ -154,7 +154,7 @@ namespace IRTweaks.Modules.Combat
             }
 
             // Check head injury
-            if (__instance.ParentActor.ImmuneToHeadInjuries())
+            if (__instance.ParentActor.ImmuneToHeadInjuries() && (damageType == DamageType.HeadShot || damageType == DamageType.HeadShotMelee))
             {
                 Mod.Log.Info?.Write($"Ignoring head injury on actor: {__instance.ParentActor.DistinctId()} due to stat");
                 return false;
