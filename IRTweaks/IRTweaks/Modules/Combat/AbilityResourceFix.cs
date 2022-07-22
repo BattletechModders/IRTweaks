@@ -421,10 +421,10 @@ namespace IRTweaks.Modules.Combat
                 .GetValue<CombatHUDActionButton[]>();
             foreach (var button in abilityButtons)
             {
-                Mod.Log.Info?.Write($"Processing button for {button?.Ability?.Def?.Description?.Name}.");
+                Mod.Log.Trace?.Write($"Processing button for {button?.Ability?.Def?.Description?.Name}.");
                 if (button?.Ability?.Def?.Resource == AbilityDef.ResourceConsumed.ConsumesActivation && forceInactive)
                 {
-                    Mod.Log.Info?.Write($"Disabling button for {button.Ability.Def.Description?.Name}.");
+                    Mod.Log.Trace?.Write($"Disabling button for {button.Ability.Def.Description?.Name}.");
                     button.DisableButton();
                 }
             }
