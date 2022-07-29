@@ -157,17 +157,22 @@ namespace IRTweaks.Modules.Combat
                     effectData?.statisticData?.statName ==
                     Mod.Config.Combat.OnWeaponHitOpts.ForceShutdownOnHitStat)
                 {
-                    for (int j = 0; j < attackSequence?.allAffectedTargetIds.Count; j++)
+                    if (attackSequence?.allAffectedTargetIds != null)
                     {
-                        AbstractActor abstractActor =
-                            __instance.Director.Combat.FindActorByGUID(attackSequence.allAffectedTargetIds[j]);
-                        if (abstractActor is Mech mech && !mech.IsShutDown)
+                        for (int j = 0; j < attackSequence.allAffectedTargetIds.Count; j++)
                         {
-                            if (mech.GetTags().Contains(Mod.Config.Combat.OnWeaponHitOpts.IgnoreShutdownTag)) continue;
-                            int firstHitLocationForTarget = hitInfo.GetFirstHitLocationForTarget(abstractActor.GUID);
-                            if (firstHitLocationForTarget >= 0 && !abstractActor.IsDead)
+                            AbstractActor abstractActor =
+                                __instance.Director.Combat.FindActorByGUID(attackSequence.allAffectedTargetIds[j]);
+                            if (abstractActor is Mech mech && !mech.IsShutDown)
                             {
-                                ModState.AttackShouldCheckActorsForShutdown.Add(mech.GUID);
+                                if (mech.GetTags().Contains(Mod.Config.Combat.OnWeaponHitOpts.IgnoreShutdownTag))
+                                    continue;
+                                int firstHitLocationForTarget =
+                                    hitInfo.GetFirstHitLocationForTarget(abstractActor.GUID);
+                                if (firstHitLocationForTarget >= 0 && !abstractActor.IsDead)
+                                {
+                                    ModState.AttackShouldCheckActorsForShutdown.Add(mech.GUID);
+                                }
                             }
                         }
                     }
