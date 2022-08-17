@@ -53,7 +53,7 @@ namespace IRTweaks {
         public static bool ShouldGetReducedDamageIgnoreDR = false;
         public static bool AttackShouldCheckForKnockDown = false;
         public static bool AttackShouldCheckForInstability = false;
-        public static List<string> AttackShouldCheckActorsForShutdown = new List<string>();
+        public static HashSet<string> AttackShouldCheckActorsForShutdown = new HashSet<string>();
 
         public static Dictionary<string, bool> DidActorBraceLastRoundBeforeFiring = new Dictionary<string, bool>();
 
@@ -100,7 +100,7 @@ namespace IRTweaks {
             DamageReductionInCombatHudActors.Clear();
 
             WasCTDestroyed = false;
-            AttackShouldCheckActorsForShutdown = new List<string>();
+            AttackShouldCheckActorsForShutdown = new HashSet<string>();
         }
     }
 

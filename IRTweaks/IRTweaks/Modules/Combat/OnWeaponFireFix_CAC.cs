@@ -343,13 +343,12 @@ namespace IRTweaks.Modules.Combat
 
                 if (!string.IsNullOrEmpty(Mod.Config.Combat.OnWeaponHitOpts.ForceShutdownOnHitStat))
                 {
-                    for (var index = ModState.AttackShouldCheckActorsForShutdown.Count - 1; index >= 0; index--)
+                    foreach (var targetActorID in ModState.AttackShouldCheckActorsForShutdown)
                     {
-                        var targetActorID = ModState.AttackShouldCheckActorsForShutdown[index];
+                        //var targetActorID = ModState.AttackShouldCheckActorsForShutdown[index];
                         //if (!ModState.AttackShouldCheckActorsForShutdown.Contains(targetActorID)) continue;
                         Mod.Log.Info?.Write(
                             $"[OnAttackComplete] Processing OnHit forced shutdown check for {targetActorID}.");
-                        ModState.AttackShouldCheckActorsForShutdown.Remove(targetActorID);
                         var targetActor = __instance.Combat.FindActorByGUID(targetActorID);
                         if (targetActor is Mech mech)
                         {
@@ -376,6 +375,7 @@ namespace IRTweaks.Modules.Combat
                             }
                         }
                     }
+                    ModState.AttackShouldCheckActorsForShutdown = new HashSet<string>();
                 }
             }
         }
