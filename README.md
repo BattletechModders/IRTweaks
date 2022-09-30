@@ -465,7 +465,7 @@ Very similar to self-knockdown config above:
 `SelfInstabilityTonnageFactor` - unit tonnage x this value is subtracted from the SelfInstabilityStatName value
 `SelfInstabilityTonnageBonusThreshold` and `SelfInstabilityTonnageBonusFactor` - if the unit tonnage exceeds SelfInstabilityTonnageBonusThreshold, the tonnage up to the threshold decreases self-instability per SelfInstabilityTonnageFactor, while the remaining tons will decrease self-instability per SelfInstabilityTonnageBonusFactor
 
-Example stat block on weapon; if two of these weapons would fire, the "base chance" of self-knockdown would be 2.0
+Example stat block on weapon; if two of these weapons would fire, the "base amount" of instability added to the firing unit would be 200.0
 ```
 "statusEffects": [
 		{
