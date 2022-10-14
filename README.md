@@ -20,6 +20,7 @@ This is a mod for the [HBS BattleTech](http://battletechgame.com/) game that inc
 * **DisableCombatSaves**: Combat saves are prone to errors during vanilla gameplay, but especially so during modded gameplay. This disables the UI selection that allows in-combat saves to be made.
 * **DisableLowFundsNotification**: Disables the irritating "low funds" notification.
 * **DisableMPHashCalculation**: Disables a mod-hash calculated on startup that's only used to validate multiplayer games are compatible. Saves 2-3s of load time.
+* **ExplodingBuildingFix**: Use Vector3 distance calculation instead of Unity physics collider for transformer/cooling building explosions. Hopefully no more random damage to units halfway across the map.
 * **EventRequirementsScopeFix**: Fixes SimGameEventOption requirements to check all appropriate scope objects (previously would ignore SecondaryMechWarrior, TertiaryMechWarrior, and SecondaryMech).
 * **ExtendedStats**: Allows pilots to be assigned Statistic values above the normal bounds of 1-10.
 * **FactionValueFix**: Fixes career FactionValues in saves when FactionValues are changed mid-career. Previously, if a FactionValue was set to "IsCareerIgnoredContractTarget": false,, that false value would persist in saves even when the actual FactionValue in Faction.json was changed, preventing that faction from appearing as a procedural contract target for that career.
