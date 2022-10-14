@@ -218,6 +218,7 @@ namespace IRTweaks
         public bool BraceOnMeleeWithJuggernaut = true;
         public bool CalledShotTweaks = true;
         public bool CTDestructInjuryFix = true;
+        public bool ExplodingBuildingFix = true;
         public bool ExtendedStats = true;
         public bool FlexibleSensorLock = true;
         public bool PainTolerance = true;
@@ -304,6 +305,7 @@ namespace IRTweaks
             Mod.Log.Info?.Write($"  DisableCombatSaves:                 {this.Fixes.DisableCombatSaves}");
             Mod.Log.Info?.Write($"  DisableMPHashCalculation:           {this.Fixes.DisableMPHashCalculation}");
             Mod.Log.Info?.Write($"  DisableLowFundsNotification:        {this.Fixes.DisableLowFundsNotification}");
+            Mod.Log.Info?.Write($"  ExplodingBuildingFix:               {this.Fixes.ExplodingBuildingFix}");
             Mod.Log.Info?.Write($"  EventRequirementsScopeFix:          {this.Fixes.EventRequirementsScopeFix}");
             Mod.Log.Info?.Write($"  ExtendedStats:                      {this.Fixes.ExtendedStats}");
             Mod.Log.Info?.Write($"  FlexibleSensorLock:                 {this.Fixes.FlexibleSensorLock}");
