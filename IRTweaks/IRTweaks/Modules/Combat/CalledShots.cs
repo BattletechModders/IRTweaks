@@ -120,7 +120,8 @@ namespace IRTweaks.Modules.Combat
             if (__result == true)
             {
                 bool attackerCanAlwaysMakeCalledShot = __instance.SelectedActor.CanAlwaysUseCalledShot();
-                if (!attackerCanAlwaysMakeCalledShot && Mod.Config.Combat.CalledShot.DisableAllLocations)
+                bool targetCanBeCalledShot = __instance.TargetedCombatant.IsShutDown || __instance.TargetedCombatant.IsProne || attackerCanAlwaysMakeCalledShot;
+                if (!targetCanBeCalledShot && Mod.Config.Combat.CalledShot.DisableAllLocations)
                 {
                     Mod.Log.Debug?.Write($"  Disabling NeedsCalledShot from attacker: {__instance.SelectedActor.DistinctId()} against target vehicle: {__instance.TargetedCombatant.DistinctId()}");
                     __result = false;
