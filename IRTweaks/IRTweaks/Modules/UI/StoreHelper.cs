@@ -16,8 +16,8 @@ namespace IRTweaks.Modules.StoreUI {
             this.simGameState = simGameState;
             shopIDO = selectedController;
 
-            Traverse traverse = Traverse.Create(shopScreen).Field("inventoryWidget");
-            inventoryWidget = (MechLabInventoryWidget_ListView)traverse.GetValue();
+            //Traverse traverse = Traverse.Create(shopScreen).Field("inventoryWidget");
+            inventoryWidget = shopScreen.inventoryWidget; //(MechLabInventoryWidget_ListView)traverse.GetValue();
         }
 
         // Clone of SoldMultipleItems
@@ -100,8 +100,9 @@ namespace IRTweaks.Modules.StoreUI {
             }
 
             Mod.Log.Debug?.Write("BH:BMI - triggering iron man save");
-            Traverse ironManT = Traverse.Create(shopScreen).Field("triggerIronManAutoSave");
-            ironManT.SetValue(true);
+            //Traverse ironManT = Traverse.Create(shopScreen).Field("triggerIronManAutoSave");
+            //ironManT.SetValue(true);
+            shopScreen.triggerIronManAutoSave = true;
         }
     }
 }

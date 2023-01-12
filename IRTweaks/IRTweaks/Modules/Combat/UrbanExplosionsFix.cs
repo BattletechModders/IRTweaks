@@ -29,13 +29,13 @@ namespace IRTweaks.Modules.Combat
                     Mod.Log.Info?.Write($"  -- target position: {targetPos}");
                 }
 
-                Traverse allTargetsT = Traverse.Create(__instance).Property("AllTargets");
-                List<ICombatant> allTargets = allTargetsT.GetValue<List<ICombatant>>();
-
+                //Traverse allTargetsT = Traverse.Create(__instance).Property("AllTargets");
+                //List<ICombatant> allTargets = allTargetsT.GetValue<List<ICombatant>>();
+                var allTargets = __instance.AllTargets;
                 // Find all buildings that were included as targets. HBS code can't handle these, so cut them out 
                 //  of AllTargets and we'll destroy them independently in AttackNextTarget.
                 List<AbstractActor> actorTargets = new List<AbstractActor>();
-                foreach (ICombatant target in allTargets)
+                foreach (ICombatant target in __instance.AllTargets)
                 {
                     Mod.Log.Info?.Write($"  -- target: {target.DistinctId()}");
                     if (target is BattleTech.Building building)

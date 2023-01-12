@@ -139,9 +139,9 @@ namespace IRTweaks.Modules.Combat
 
             // Update Structure stat and StartingStructure value
             building.StatCollection.ModifyStat("IRTweaks", -1, ModStats.HBS_Building_Structure, StatCollection.StatOperation.Set, adjustedStruct);
-            Traverse startingStructT = Traverse.Create(building).Property("StartingStructure");
-            startingStructT.SetValue(adjustedStruct);
-
+            //Traverse startingStructT = Traverse.Create(building).Property("StartingStructure");
+            //startingStructT.SetValue(adjustedStruct);
+            building.StartingStructure = adjustedStruct;
             // Update the destructable group
             if (building.DestructibleObjectGroup != null)
             {

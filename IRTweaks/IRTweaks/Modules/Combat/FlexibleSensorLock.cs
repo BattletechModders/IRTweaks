@@ -55,9 +55,9 @@ namespace IRTweaks.Modules.Combat
                 if (ModState.SelectionStateSensorLock != null)
                 {
                     Mod.Log.Debug?.Write($"  Calling clearTargetedActor");
-                    Traverse traverse = Traverse.Create(ModState.SelectionStateSensorLock).Method("ClearTargetedActor");
-                    traverse.GetValue();
-
+                    //Traverse traverse = Traverse.Create(ModState.SelectionStateSensorLock).Method("ClearTargetedActor");
+                    //traverse.GetValue();
+                    ModState.SelectionStateSensorLock.ClearTargetedActor();
                     //State.SelectionStateSensorLock.BackOut();
 
                     ModState.SelectionStateSensorLock = null;
@@ -79,14 +79,17 @@ namespace IRTweaks.Modules.Combat
 
                 Mod.Log.Trace?.Write(" SensorLockSequence, skipping.");
 
-                Traverse.Create(__instance).Method("ClearShownList").GetValue();
-                Traverse.Create(__instance).Method("ClearCamera").GetValue();
-                Traverse.Create(__instance).Method("ClearFocalPoint").GetValue();
-
+                //Traverse.Create(__instance).Method("ClearShownList").GetValue();
+                //Traverse.Create(__instance).Method("ClearCamera").GetValue();
+                //Traverse.Create(__instance).Method("ClearFocalPoint").GetValue();
+                __instance.ClearShownList();
+                __instance.ClearCamera();
+                __instance.ClearFocalPoint();
                 if (__instance.CompletedCallback != null)
                 {
                     Mod.Log.Trace?.Write(" Getting SequenceFinished");
-                    Traverse.Create(__instance).Property("CompletedCallback").GetValue<SequenceFinished>();
+                    __instance.CompletedCallback.Invoke();
+                    //Traverse.Create(__instance).Property("CompletedCallback").GetValue<SequenceFinished>();
                 }
 
                 return true;
@@ -189,11 +192,11 @@ namespace IRTweaks.Modules.Combat
             // Force the ability to be on cooldown
             if (ActorHasFreeSensorLock(___owningActor))
             {
-                CombatGameState ___Combat = Traverse.Create(__instance).Property("Combat").GetValue<CombatGameState>();
+                //CombatGameState ___Combat = Traverse.Create(__instance).Property("Combat").GetValue<CombatGameState>();
                 if (___probeParticles != null)
                 {
                     ___probeParticles.Stop(true);
-                    ___Combat.DataManager.PoolGameObject(___Combat.Constants.VFXNames.active_probe_effect, ___probeParticles.gameObject);
+                    __instance.Combat.DataManager.PoolGameObject(__instance.Combat.Constants.VFXNames.active_probe_effect, ___probeParticles.gameObject);
                 }
                 WwiseManager.PostEvent(AudioEventList_activeProbe.activeProbe_stop, WwiseManager.GlobalAudioObject, null, null);
 
@@ -202,9 +205,9 @@ namespace IRTweaks.Modules.Combat
                 if (ModState.SelectionStateActiveProbe != null)
                 {
                     Mod.Log.Debug?.Write($"  Calling clearTargetedActor");
-                    Traverse traverse = Traverse.Create(ModState.SelectionStateActiveProbe).Method("RefreshPossibleTargets");
-                    traverse.GetValue();
-
+                    //Traverse traverse = Traverse.Create(ModState.SelectionStateActiveProbe).Method("RefreshPossibleTargets");
+                    //traverse.GetValue();
+                    ModState.SelectionStateActiveProbe.RefreshPossibleTargets();
                     //State.SelectionStateSensorLock.BackOut();
 
                     ModState.SelectionStateActiveProbe = null;

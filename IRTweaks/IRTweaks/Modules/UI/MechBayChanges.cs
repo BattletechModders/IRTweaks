@@ -174,7 +174,7 @@ namespace IRTweaks.Modules.UI
                 return;
             }
 
-            var loclInv = Traverse.Create(widget).Field("localInventory").GetValue<List<MechLabItemSlotElement>>();
+            var loclInv = widget.localInventory;//Traverse.Create(widget).Field("localInventory").GetValue<List<MechLabItemSlotElement>>();
 
             for (int i = loclInv.Count - 1; i >= 0; i--)
             {
@@ -213,12 +213,10 @@ namespace IRTweaks.Modules.UI
                         sim.DataManager.ShipUpgradeDefs.TryGet(
                             Mod.Config.Misc.MechLabRefitReqs.MechLabRefitReqs[tag], out ShipModuleUpgrade upgrade);
 
-                        var SetErrorMsg = Traverse.Create(__instance).Method("SetDropErrorMessage",
-                            new Type[] {typeof(string), typeof(object[])});
+                        //var SetErrorMsg = Traverse.Create(__instance).Method("SetDropErrorMessage", new Type[] {typeof(string), typeof(object[])});
 
-                        SetErrorMsg.GetValue(
-                            $"Cannot fit {newComponent.Def.Description.Name} to unit, requires Argo upgrade {upgrade.Description.Name}.", new object[]{});
-
+                        //SetErrorMsg.GetValue($"Cannot fit {newComponent.Def.Description.Name} to unit, requires Argo upgrade {upgrade.Description.Name}.", new object[]{});
+                        __instance.SetDropErrorMessage($"Cannot fit {newComponent.Def.Description.Name} to unit, requires Argo upgrade {upgrade.Description.Name}.", new object[] { });
                         ModState.IsComponentValidForRefit = false;
                         return;
                     }

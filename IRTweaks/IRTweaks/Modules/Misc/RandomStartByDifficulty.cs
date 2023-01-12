@@ -253,12 +253,11 @@ namespace IRTweaks.Modules.Misc
 
                             SGDSDropdown newDropDown = newDropDownObject.GetOrAddComponent<SGDSDropdown>();
 
-                            var dropdown = Traverse.Create(newDropDown).Field("dropdown").GetValue<HBS_Dropdown>();
+                            var dropdown = newDropDown.dropdown;//Traverse.Create(newDropDown).Field("dropdown").GetValue<HBS_Dropdown>();
                             var dropdownrect = dropdown.gameObject.GetComponent<RectTransform>();
                             dropdownrect.sizeDelta = new Vector2(170, 40);
 
-                            var dropdownLabel = Traverse.Create(dropdown).Field("m_CaptionText")
-                                .GetValue<LocalizableText>();
+                            var dropdownLabel = dropdown.m_CaptionText;//Traverse.Create(dropdown).Field("m_CaptionText").GetValue<LocalizableText>();
                             dropdownLabel.enableWordWrapping = false;
 
                             if (!ModState.InstantiatedDropdowns.Contains(newDropDown))
@@ -354,7 +353,7 @@ namespace IRTweaks.Modules.Misc
     {
         static bool Prepare() => Mod.Config.Fixes.RandomStartByDifficulty;
 
-        static void Postfix(SimGameConstantOverride __instance, string constantType, string constantName, SimGameState ___simState)
+        static void Postfix(SimGameConstantOverride __instance, string constantType, string constantName)
         {
             Mod.Log.Trace?.Write("SGCO:AO entered.");
 
@@ -362,11 +361,12 @@ namespace IRTweaks.Modules.Misc
             {
                 bool value = Convert.ToBoolean(__instance.ConstantOverrides[constantType][constantName]);
                 Mod.Log.Debug?.Write($" Setting StrayShotsEnabled to {value} ");
-                ToHitConstantsDef thcd = ___simState.CombatConstants.ToHit;
+                ToHitConstantsDef thcd = __instance.simState.CombatConstants.ToHit;
                 thcd.StrayShotsEnabled = value;
 
-                Traverse traverse = Traverse.Create(___simState.CombatConstants).Property("ToHit");
-                traverse.SetValue(thcd);
+                //Traverse traverse = Traverse.Create(___simState.CombatConstants).Property("ToHit");
+                //traverse.SetValue(thcd);
+                __instance.simState.CombatConstants.ToHit = thcd;
                 Mod.Log.Debug?.Write($" Replaced ToHit");
             }
 
@@ -374,11 +374,12 @@ namespace IRTweaks.Modules.Misc
             {
                 bool value = Convert.ToBoolean(__instance.ConstantOverrides[constantType][constantName]);
                 Mod.Log.Debug?.Write($" Setting StrayShotsHitUnits to {value} ");
-                ToHitConstantsDef thcd = ___simState.CombatConstants.ToHit;
+                ToHitConstantsDef thcd = __instance.simState.CombatConstants.ToHit;
                 thcd.StrayShotsHitUnits = value;
 
-                Traverse traverse = Traverse.Create(___simState.CombatConstants).Property("ToHit");
-                traverse.SetValue(thcd);
+                //Traverse traverse = Traverse.Create(___simState.CombatConstants).Property("ToHit");
+                //traverse.SetValue(thcd);
+                __instance.simState.CombatConstants.ToHit = thcd;
                 Mod.Log.Debug?.Write($" Replaced ToHit");
             }
 
@@ -386,11 +387,12 @@ namespace IRTweaks.Modules.Misc
             {
                 string value = __instance.ConstantOverrides[constantType][constantName];
                 Mod.Log.Debug?.Write($" Setting StrayShotValidTargets to {value} ");
-                ToHitConstantsDef thcd = ___simState.CombatConstants.ToHit;
+                ToHitConstantsDef thcd = __instance.simState.CombatConstants.ToHit;
                 thcd.StrayShotValidTargets = (StrayShotValidTargets)Enum.Parse(typeof(StrayShotValidTargets), value);
 
-                Traverse traverse = Traverse.Create(___simState.CombatConstants).Property("ToHit");
-                traverse.SetValue(thcd);
+                //Traverse traverse = Traverse.Create(___simState.CombatConstants).Property("ToHit");
+                //traverse.SetValue(thcd);
+                __instance.simState.CombatConstants.ToHit = thcd;
                 Mod.Log.Debug?.Write($" Replaced ToHit");
             }
         }

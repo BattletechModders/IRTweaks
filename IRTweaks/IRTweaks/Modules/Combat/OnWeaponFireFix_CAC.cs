@@ -97,18 +97,17 @@ namespace IRTweaks.Modules.Combat
                 {
                     if (allEffectsTargeting[i] is StatisticEffect effect)
                     {
-                        var effectData = Traverse.Create(allEffectsTargeting[i]).Field("effectData")
-                            .GetValue<EffectData>();
+                        var effectData = allEffectsTargeting[i].effectData;//Traverse.Create(allEffectsTargeting[i]).Field("effectData").GetValue<EffectData>();
 
                         if (effectData.targetingData.triggerLimit <= 0 || effect.triggerCount <
                             effectData.targetingData.triggerLimit)
                         {
                             int triggerCount = effect.triggerCount + 1;
-                            Traverse.Create(effect).Property("triggerCount").SetValue(triggerCount);
+                            effect.triggerCount = triggerCount;//Traverse.Create(effect).Property("triggerCount").SetValue(triggerCount);
 
-                            var timer = Traverse.Create(effect).Field("eTimer").GetValue<ETimer>();
-                            timer.IncrementActivations(effectData.targetingData.extendDurationOnTrigger);
-                            timer.IncrementActivations(effectData.targetingData.extendDurationOnTrigger);
+                            //var timer = Traverse.Create(effect).Field("eTimer").GetValue<ETimer>();
+                            effect.eTimer.IncrementActivations(effectData.targetingData.extendDurationOnTrigger);
+                            effect.eTimer.IncrementActivations(effectData.targetingData.extendDurationOnTrigger);
                         }
                     }
                 }

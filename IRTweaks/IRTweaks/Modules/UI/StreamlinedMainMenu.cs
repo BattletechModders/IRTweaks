@@ -243,8 +243,9 @@ namespace IRTweaks.Modules.UI {
                         storeButtonGO.transform.SetSiblingIndex(1);
 
                         storeButton = storeButtonGO.GetComponent<SGNavigationButton>();
-                        Traverse storeButtonT = Traverse.Create(storeButton).Field("id");
-                        storeButtonT.SetValue(DropshipLocation.SHIP);
+                        //Traverse storeButtonT = Traverse.Create(storeButton).Field("id");
+                        //storeButtonT.SetValue(DropshipLocation.SHIP);
+                        storeButton.id = DropshipLocation.SHIP;
                         storeButton.SetupElement(__instance, ___radioSet, "Store",
                             LazySingletonBehavior<UIManager>.Instance.UILookAndColorConstants.DropshipRoomCaptainsQuartersIcon, simulation);
 
@@ -258,8 +259,9 @@ namespace IRTweaks.Modules.UI {
                         staffButtonGO.transform.SetSiblingIndex(7);
 
                         staffButton = staffButtonGO.GetComponent<SGNavigationButton>();
-                        Traverse staffButtonT = Traverse.Create(staffButton).Field("id");
-                        staffButtonT.SetValue(DropshipLocation.CMD_CENTER);
+                        //Traverse staffButtonT = Traverse.Create(staffButton).Field("id");
+                        //staffButtonT.SetValue(DropshipLocation.CMD_CENTER);
+                        staffButton.id = DropshipLocation.CMD_CENTER;
 
                         staffButton.SetupElement(__instance, ___radioSet, "CMD Staff",
                             LazySingletonBehavior<UIManager>.Instance.UILookAndColorConstants.DropshipRoomCommandCenterIcon, simulation);
@@ -281,8 +283,9 @@ namespace IRTweaks.Modules.UI {
                         memorialButtonGO.transform.SetSiblingIndex(9);
 
                         memorialButton = memorialButtonGO.GetComponent<SGNavigationButton>();
-                        Traverse memorialButtonT = Traverse.Create(memorialButton).Field("id");
-                        memorialButtonT.SetValue(DropshipLocation.BARRACKS);
+                        //Traverse memorialButtonT = Traverse.Create(memorialButton).Field("id");
+                        //memorialButtonT.SetValue(DropshipLocation.BARRACKS);
+                        memorialButton.id = DropshipLocation.BARRACKS;
 
                         memorialButton.SetupElement(__instance, ___radioSet, "Memorial",
                             LazySingletonBehavior<UIManager>.Instance.UILookAndColorConstants.DropshipRoomBarracksIcon, simulation);

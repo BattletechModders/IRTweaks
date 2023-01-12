@@ -21,7 +21,8 @@ namespace IRTweaks.Modules.Misc
 
         public static void Postfix(MechDef __instance, ChassisDef chassis, string newGUID, MechDef stockMech)
         {
-            Traverse.Create(__instance).Property("MechTags").SetValue(stockMech.MechTags);
+            __instance.MechTags = stockMech.MechTags;
+            //Traverse.Create(__instance).Property("MechTags").SetValue(stockMech.MechTags);
             Mod.Log.Trace?.Write($"Patched MechDef cctor to restore tags: {__instance.MechTags.ToJSON()}.");
         }
     }

@@ -170,18 +170,17 @@ namespace IRTweaks.Modules.Combat
         {
             if (actor != null && actor.GetAbilityUsedFiring())
             {
-                var HUD = Traverse.Create(__instance).Property("HUD").GetValue<CombatHUD>();
+                var HUD = __instance.HUD;//Traverse.Create(__instance).Property("HUD").GetValue<CombatHUD>();
                 HUD.MechWarriorTray.FireButton.DisableButton();
-                var selectionStack = Traverse.Create(HUD.SelectionHandler).Property("SelectionStack")
-                    .GetValue<List<SelectionState>>();
+                var selectionStack = HUD.SelectionHandler.SelectionStack;//Traverse.Create(HUD.SelectionHandler).Property("SelectionStack").GetValue<List<SelectionState>>();
                 if (!selectionStack.Any(x => x is SelectionStateDoneWithMech) && actor.HasMovedThisRound)
                 {
                     Mod.Log.Info?.Write($"[CombatSelectionHandler_AddFireState] Adding SelectionStateDoneWithMech.");
                     var doneState = new SelectionStateDoneWithMech(actor.Combat, HUD,
                         HUD.MechWarriorTray.DoneWithMechButton, actor);
-                    var addState = Traverse.Create(HUD.SelectionHandler)
-                        .Method("addNewState", new Type[] { typeof(SelectionState) });
-                    addState.GetValue(doneState);
+                    //var addState = Traverse.Create(HUD.SelectionHandler).Method("addNewState", new Type[] { typeof(SelectionState) });
+                    //addState.GetValue(doneState);
+                    HUD.SelectionHandler.addNewState(doneState);
                 }
                 return false;
             }
@@ -202,7 +201,7 @@ namespace IRTweaks.Modules.Combat
         {
             if (actor != null && actor.GetAbilityUsedFiring())
             {
-                var HUD = Traverse.Create(__instance).Property("HUD").GetValue<CombatHUD>();
+                var HUD = __instance.HUD;//Traverse.Create(__instance).Property("HUD").GetValue<CombatHUD>();
                 HUD.MechWarriorTray.FireButton.DisableButton(); //donewithmech button getting disabled after movement
                 return false;
             }
@@ -240,10 +239,9 @@ namespace IRTweaks.Modules.Combat
 
         public static void Postfix(CombatHUDActionButton __instance, string creatorGUID, string targetGUID)
         {
-            var HUD = Traverse.Create((object)__instance).Property("HUD", (object[])null).GetValue<CombatHUD>();
+            var HUD = __instance.HUD;//Traverse.Create((object)__instance).Property("HUD", (object[])null).GetValue<CombatHUD>();
             var selectedActor = HUD.SelectedActor;
-            var selectionStack = Traverse.Create(HUD.SelectionHandler).Property("SelectionStack")
-                .GetValue<List<SelectionState>>();
+            var selectionStack = HUD.SelectionHandler.SelectionStack;//Traverse.Create(HUD.SelectionHandler).Property("SelectionStack").GetValue<List<SelectionState>>();
             if (__instance.Ability.Def.Resource == AbilityDef.ResourceConsumed.ConsumesFiring)
             {
                 if (selectedActor.HasBegunActivation || selectedActor.HasMovedThisRound && !selectedActor.HasActivatedThisRound)
@@ -294,9 +292,9 @@ namespace IRTweaks.Modules.Combat
                     Mod.Log.Info?.Write($"[CombatHUDActionButton_ActivateAbility_Confirmed] Adding SelectionStateDoneWithMech.");
                     var doneState = new SelectionStateDoneWithMech(selectedActor.Combat, HUD,
                         HUD.MechWarriorTray.DoneWithMechButton, selectedActor);
-                    var addState = Traverse.Create(HUD.SelectionHandler)
-                        .Method("addNewState", new Type[] { typeof(SelectionState) });
-                    addState.GetValue(doneState);
+                    //var addState = Traverse.Create(HUD.SelectionHandler).Method("addNewState", new Type[] { typeof(SelectionState) });
+                    //addState.GetValue(doneState);
+                    HUD.SelectionHandler.addNewState(doneState);
                 }
                 HUD.SelectionHandler.DisableAbilitiesUsingResource(AbilityDef.ResourceConsumed.ConsumesFiring);
                 // this DOES work to disable firing.
@@ -333,10 +331,9 @@ namespace IRTweaks.Modules.Combat
 
         public static void Postfix(CombatHUDEquipmentSlot __instance, string creatorGUID, string targetGUID)
         {
-            var HUD = Traverse.Create((object)__instance).Property("HUD", (object[])null).GetValue<CombatHUD>();
+            var HUD = __instance.HUD;//Traverse.Create((object)__instance).Property("HUD", (object[])null).GetValue<CombatHUD>();
             var selectedActor = HUD.SelectedActor;
-            var selectionStack = Traverse.Create(HUD.SelectionHandler).Property("SelectionStack")
-                .GetValue<List<SelectionState>>();
+            var selectionStack = HUD.SelectionHandler.SelectionStack;//Traverse.Create(HUD.SelectionHandler).Property("SelectionStack").GetValue<List<SelectionState>>();
             if (__instance.Ability.Def.Resource == AbilityDef.ResourceConsumed.ConsumesFiring)
             {
                 if (selectedActor.HasBegunActivation || selectedActor.HasMovedThisRound && !selectedActor.HasActivatedThisRound)
@@ -380,9 +377,9 @@ namespace IRTweaks.Modules.Combat
                     Mod.Log.Info?.Write($"[CombatHUDEquipmentSlot_ActivateAbility_Confirmed] Adding SelectionStateDoneWithMech.");
                     var doneState = new SelectionStateDoneWithMech(selectedActor.Combat, HUD,
                         HUD.MechWarriorTray.DoneWithMechButton, selectedActor);
-                    var addState = Traverse.Create(HUD.SelectionHandler)
-                        .Method("addNewState", new Type[] { typeof(SelectionState) });
-                    addState.GetValue(doneState);
+                    //var addState = Traverse.Create(HUD.SelectionHandler).Method("addNewState", new Type[] { typeof(SelectionState) });
+                    //addState.GetValue(doneState);
+                    HUD.SelectionHandler.addNewState(doneState);
                 }
                 // this DOES work to disable firing.
             }
@@ -417,8 +414,7 @@ namespace IRTweaks.Modules.Combat
         public static void Postfix(CombatHUDMechwarriorTray __instance, AbstractActor actor)
         {
             var forceInactive = actor.HasMovedThisRound || actor.HasFiredThisRound; // need to figure this part out; do other checks? this is still disabling the butons. integrat with CU?
-            var abilityButtons = Traverse.Create(__instance).Property("AbilityButtons")
-                .GetValue<CombatHUDActionButton[]>();
+            var abilityButtons = __instance.AbilityButtons;//Traverse.Create(__instance).Property("AbilityButtons").GetValue<CombatHUDActionButton[]>();
             foreach (var button in abilityButtons)
             {
                 Mod.Log.Trace?.Write($"Processing button for {button?.Ability?.Def?.Description?.Name}.");

@@ -31,8 +31,9 @@ namespace IRTweaks.Helper
                 {
                     Mod.Log.Info?.Write($" -- setting evasion pips to: {Mod.Config.Combat.SpawnProtection.EvasionPips}");
                     actor.EvasivePipsCurrent = Mod.Config.Combat.SpawnProtection.EvasionPips;
-                    Traverse.Create(actor).Property("EvasivePipsTotal").SetValue(actor.EvasivePipsCurrent);
+                    //Traverse.Create(actor).Property("EvasivePipsTotal").SetValue(actor.EvasivePipsCurrent);
                     //AccessTools.Property(typeof(AbstractActor), "EvasivePipsTotal").SetValue(actor, actor.EvasivePipsCurrent, null);
+                    actor.EvasivePipsTotal = actor.EvasivePipsCurrent;
                     SharedState.Combat.MessageCenter.PublishMessage(new EvasiveChangedMessage(actor.GUID, actor.EvasivePipsCurrent));
                 }
 
@@ -69,7 +70,8 @@ namespace IRTweaks.Helper
                     {
                         Mod.Log.Info?.Write($" -- setting evasion pips to: {Mod.Config.Combat.SpawnProtection.EvasionPips}");
                         actor.EvasivePipsCurrent = Mod.Config.Combat.SpawnProtection.EvasionPips;
-                        AccessTools.Property(typeof(AbstractActor), "EvasivePipsTotal").SetValue(actor, actor.EvasivePipsCurrent, null);
+                        //AccessTools.Property(typeof(AbstractActor), "EvasivePipsTotal").SetValue(actor, actor.EvasivePipsCurrent, null);
+                        actor.EvasivePipsTotal = actor.EvasivePipsCurrent;
                         SharedState.Combat.MessageCenter.PublishMessage(new EvasiveChangedMessage(actor.GUID, actor.EvasivePipsCurrent));
                     }
 

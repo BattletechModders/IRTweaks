@@ -78,12 +78,14 @@ namespace IRTweaks.Modules.Combat
                 if (Mod.Config.Combat.CalledShot.DisableAllLocations)
                 {
                     Mod.Log.Info?.Write($"  Disabling called shot from attacker: {__instance.SelectedActor.DistinctId()} against target: {__instance.TargetedCombatant.DistinctId()}");
-                    Traverse.Create(__instance).Method("ClearCalledShot").GetValue();
+                    //Traverse.Create(__instance).Method("ClearCalledShot").GetValue();
+                    __instance.ClearCalledShot();
                 }
                 else if (Mod.Config.Combat.CalledShot.DisableHeadshots && location == ArmorLocation.Head)
                 {
                     Mod.Log.Info?.Write($"  Disabling headshot from attacker: {__instance.SelectedActor.DistinctId()} against target mech: {__instance.TargetedCombatant.DistinctId()}");
-                    Traverse.Create(__instance).Method("ClearCalledShot").GetValue();
+                   //Traverse.Create(__instance).Method("ClearCalledShot").GetValue();
+                   __instance.ClearCalledShot();
                 }
             }
         }
@@ -100,10 +102,12 @@ namespace IRTweaks.Modules.Combat
             Mod.Log.Trace?.Write("SSF:SCS entered");
 
             bool attackerCanAlwaysMakeCalledShot = __instance.SelectedActor.CanAlwaysUseCalledShot();
-            if (!attackerCanAlwaysMakeCalledShot && Mod.Config.Combat.CalledShot.DisableAllLocations)
+            bool targetCanBeCalledShot = __instance.TargetedCombatant.IsShutDown || __instance.TargetedCombatant.IsProne || attackerCanAlwaysMakeCalledShot;
+            if (!targetCanBeCalledShot && Mod.Config.Combat.CalledShot.DisableAllLocations)
             {
                 Mod.Log.Info?.Write($"  Disabling called shot from attacker: {__instance.SelectedActor.DistinctId()} against target vehicle: {__instance.TargetedCombatant.DistinctId()}");
-                Traverse.Create(__instance).Method("ClearCalledShot").GetValue();
+                //Traverse.Create(__instance).Method("ClearCalledShot").GetValue();
+                __instance.ClearCalledShot();
             }
         }
     }
@@ -202,11 +206,11 @@ namespace IRTweaks.Modules.Combat
                 if (calledShotMod != 0)
                 {
 
-                    Traverse addToolTipDetailT = Traverse.Create(__instance)
-                        .Method("AddToolTipDetail", new Type[] { typeof(string), typeof(int) });
+                    //Traverse addToolTipDetailT = Traverse.Create(__instance).Method("AddToolTipDetail", new Type[] { typeof(string), typeof(int) });
 
                     string localText = new Text(Mod.LocalizedText.Modifiers[ModText.Mod_CalledShot]).ToString();
-                    addToolTipDetailT.GetValue(new object[] { localText, calledShotMod });
+                    //addToolTipDetailT.GetValue(new object[] { localText, calledShotMod });
+                    __instance.AddToolTipDetail(localText, calledShotMod);
                     Mod.Log.Debug?.Write($"Adding calledShot tooltip with text: {localText} and mod: {calledShotMod}");
                 }
                 Mod.Log.Debug?.Write($"Updated TooltipsForFiring for actor: {___HUD.SelectedActor} with mod: {calledShotMod}");

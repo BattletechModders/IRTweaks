@@ -199,12 +199,12 @@ namespace IRTweaks.Modules.UI
         static bool Prepare() => Mod.Config.Fixes.DamageReductionInCombatHud;
 
         static bool Prefix(AttackStackSequence __instance, AttackDirector.AttackSequence sequence) {
-            CombatGameState combat = Traverse.Create(__instance).Property("Combat").GetValue<CombatGameState>();
-            EffectData effect = combat.Constants.Visibility.FiredWeaponsEffect;
+            //CombatGameState combat = Traverse.Create(__instance).Property("Combat").GetValue<CombatGameState>();
+            EffectData effect = __instance.Combat.Constants.Visibility.FiredWeaponsEffect;
             __instance.owningActor.CreateEffect(effect, null, sequence.id.ToString(), sequence.stackItemUID, __instance.owningActor);
             //combat.EffectManager.CreateEffect(effect, sequence.id.ToString(), sequence.stackItemUID, __instance.owningActor, __instance.owningActor, default(WeaponHitInfo), -1);
-            __instance.owningActor.UpdateVisibilityCache(combat.GetAllCombatants());
-            combat.AttackDirector.PerformAttack(sequence);
+            __instance.owningActor.UpdateVisibilityCache(__instance.Combat.GetAllCombatants());
+            __instance.Combat.AttackDirector.PerformAttack(sequence);
 
             AbstractActor abstractActor = sequence.chosenTarget as AbstractActor;
 
@@ -216,12 +216,12 @@ namespace IRTweaks.Modules.UI
                     floatie = "Melee - Ignores DR";
                 } else if (sequence.IsBreachingShot) {
                     floatie = "Breaching Shot - Ignores DR";
-                } else if (combat.HitLocation.GetAttackDirection(__instance.owningActor, abstractActor) == AttackDirection.FromBack) {
+                } else if (__instance.Combat.HitLocation.GetAttackDirection(__instance.owningActor, abstractActor) == AttackDirection.FromBack) {
                     floatie = "Rear Attack - Ignores DR";
                 }
 
                 if (floatie != "") {
-                    combat.MessageCenter.PublishMessage(new AddSequenceToStackMessage(new ShowActorInfoSequence(abstractActor, floatie, FloatieMessage.MessageNature.Debuff, useCamera: false)));
+                    __instance.Combat.MessageCenter.PublishMessage(new AddSequenceToStackMessage(new ShowActorInfoSequence(abstractActor, floatie, FloatieMessage.MessageNature.Debuff, useCamera: false)));
                 }
             }
 

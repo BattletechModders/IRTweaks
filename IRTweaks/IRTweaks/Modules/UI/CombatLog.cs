@@ -342,14 +342,15 @@ namespace IRTweaks.Modules.UI {
 
         public static bool CombatHUDInWorldElementMgr_AddFloatieMessage_Prefix(CombatHUDInWorldElementMgr __instance, MessageCenterMessage message, CombatGameState ___combat) {
 
-            Traverse showFloatieT = Traverse.Create(__instance).Method("ShowFloatie", new Type[] { typeof(FloatieMessage) });
+            //Traverse showFloatieT = Traverse.Create(__instance).Method("ShowFloatie", new Type[] { typeof(FloatieMessage) });
             FloatieMessage floatieMessage = message as FloatieMessage;
             switch (floatieMessage.nature) {
                 case MessageNature.ArmorDamage:
                 case MessageNature.StructureDamage:
                 case MessageNature.Buff:
                 case MessageNature.Debuff:
-                    showFloatieT.GetValue(new object[] { floatieMessage });
+                    //showFloatieT.GetValue(new object[] { floatieMessage });
+                    __instance.ShowFloatie(floatieMessage);
                     break;
                 case MessageNature.Miss:
                 case MessageNature.MeleeMiss:
