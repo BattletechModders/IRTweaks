@@ -362,6 +362,7 @@ namespace IRTweaks.Modules.Misc
     [HarmonyPatch(typeof(SGRoomController_Barracks), "LeaveRoom")]
     public static class SGRoomController_Barracks_Close_Patch
     {
+        static bool Prepare() => Mod.Config.CheatDetection.CheatDetection;
         public static void Postfix(SGRoomController_Barracks __instance)
         {
             var sim = UnityGameInstance.BattleTechGame.Simulation;
