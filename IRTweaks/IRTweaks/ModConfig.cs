@@ -238,6 +238,7 @@ namespace IRTweaks
         public bool DisableLowFundsNotification = true;
         public bool DisableMPHashCalculation = true;
         public bool EventRequirementsScopeFix = true;
+        public bool FactionReputationFixes = true;
         public bool FactionValueFix = true;
         public bool MultiTargetStat = true;
         public bool RandomStartByDifficulty = true;
@@ -308,6 +309,7 @@ namespace IRTweaks
             Mod.Log.Info?.Write($"  ExplodingBuildingFix:               {this.Fixes.ExplodingBuildingFix}");
             Mod.Log.Info?.Write($"  EventRequirementsScopeFix:          {this.Fixes.EventRequirementsScopeFix}");
             Mod.Log.Info?.Write($"  ExtendedStats:                      {this.Fixes.ExtendedStats}");
+            Mod.Log.Info?.Write($"  FactionReputationFixes:             {this.Fixes.FactionReputationFixes}");
             Mod.Log.Info?.Write($"  FlexibleSensorLock:                 {this.Fixes.FlexibleSensorLock}");
             Mod.Log.Info?.Write($"  MaxArmorMaxesArmor:                 {this.Fixes.MaxArmorMaxesArmor}");
             Mod.Log.Info?.Write($"  MechbayLayout:                      {this.Fixes.MechbayLayout}");

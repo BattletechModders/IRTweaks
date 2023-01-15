@@ -14,18 +14,18 @@ namespace IRTweaks.Modules.Misc
     {
         static bool Prepare() => Mod.Config.Fixes.FactionValueFix;
 
-        public static void Postfix(SimGameState __instance, GameInstanceSave gameInstanceSave, ref List<string> ___ignoredContractTargets)
+        public static void Postfix(SimGameState __instance, GameInstanceSave gameInstanceSave)
         {
             var save = gameInstanceSave.SimGameSave;
             if (save.IgnoredContractTargets == null) return;
-            ___ignoredContractTargets = new List<string>();
+            __instance.ignoredContractTargets = new List<string>();
             foreach (var factionID2 in save.IgnoredContractTargets)
             {
                 var factionValue = FactionEnumeration.GetFactionByID(factionID2);
                 if (!factionValue.IsCareerIgnoredContractTarget)
                 {
                     Mod.Log.Info?.Write($"FactionValueFix: {factionValue.Name} is no longer IsCareerIgnoredContractTarget = true, removing from ignoredContractTargets.");
-                    ___ignoredContractTargets.RemoveAll(x => x == factionValue.Name);
+                    __instance.ignoredContractTargets.RemoveAll(x => x == factionValue.Name);
                 }
             }
         }

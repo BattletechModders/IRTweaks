@@ -144,6 +144,7 @@
     <Compile Include="Modules\Combat\SpawnProtection.cs" />
     <Compile Include="Modules\Combat\UrbanExplosionsFix.cs" />
     <Compile Include="Modules\Misc\CheatDetection.cs" />
+    <Compile Include="Modules\Misc\FactionReputationFixes.cs" />
     <Compile Include="Modules\Misc\EventRequirementsScopeFix.cs" />
     <Compile Include="Modules\Misc\DeathChanceStatFix.cs" />
     <Compile Include="Modules\Misc\RestoreMechTagsOnReady.cs" />

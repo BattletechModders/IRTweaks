@@ -11,13 +11,13 @@ namespace IRTweaks.Modules.Misc {
 
         static bool Prepare() => Mod.Config.Fixes.DisableCampaign || Mod.Config.Fixes.DisableDebug;
 
-        public static void Prefix(HBSRadioSet ___topLevelMenu) {
+        public static void Prefix(MainMenu __instance) {
             if (Mod.Config.Fixes.DisableCampaign)
             {
                 Mod.Log.Info?.Write($"Disabling the campaign button on the main menu.");
                 try
                 {
-                    foreach (HBSButton button in ___topLevelMenu.RadioButtons)
+                    foreach (HBSButton button in __instance.topLevelMenu.RadioButtons)
                     {
                         if (button.gameObject != null && button.gameObject.name == "button-CAMPAIGN")
                         {
@@ -33,14 +33,14 @@ namespace IRTweaks.Modules.Misc {
             }
         }
 
-        public static void Postfix(MainMenu __instance, GameObject[] ___enableInDevelopmentbuildsOnly)
+        public static void Postfix(MainMenu __instance)
         {
             if (Mod.Config.Fixes.DisableDebug)
             {
                 Mod.Log.Info?.Write($"Disabling the debug buttons in the main menu.");
                 try
                 {
-                    GameObject[] array = ___enableInDevelopmentbuildsOnly;
+                    GameObject[] array = __instance.enableInDevelopmentbuildsOnly;
                     for (int i = 0; i < array.Length; i++)
                     {
                         array[i].SetActive(false);

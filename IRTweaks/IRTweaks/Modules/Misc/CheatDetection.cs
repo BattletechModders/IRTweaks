@@ -280,21 +280,21 @@ namespace IRTweaks.Modules.Misc
     {
         static bool Prepare() => Mod.Config.CheatDetection.CheatDetection;
 
-        public static void Postfix(SGBarracksMWDetailPanel __instance, Pilot ___tempPilot, Pilot ___curPilot)
+        public static void Postfix(SGBarracksMWDetailPanel __instance)
         {
             var sim = UnityGameInstance.BattleTechGame.Simulation;
             if (sim == null) return;
-            if (String.IsNullOrEmpty(___curPilot.GUID)) return;
-            if (!ModState.PilotCurrentFreeXP.ContainsKey(___curPilot.GUID))
+            if (String.IsNullOrEmpty(__instance.curPilot.GUID)) return;
+            if (!ModState.PilotCurrentFreeXP.ContainsKey(__instance.curPilot.GUID))
             {
-                ModState.PilotCurrentFreeXP.Add(___curPilot.GUID, ___curPilot.UnspentXP);
+                ModState.PilotCurrentFreeXP.Add(__instance.curPilot.GUID, __instance.curPilot.UnspentXP);
                 Mod.Log.Info?.Write(
-                    $"CHEATDETECTION: {___curPilot.Description.Id}: Added key  {___curPilot.GUID}  to PilotCurrentXP with UnspentXP {___curPilot.UnspentXP} but should have been done already. At OnPilotReset, Post.");
+                    $"CHEATDETECTION: {__instance.curPilot.Description.Id}: Added key  {__instance.curPilot.GUID}  to PilotCurrentXP with UnspentXP {__instance.curPilot.UnspentXP} but should have been done already. At OnPilotReset, Post.");
             }
 
-            ModState.PilotCurrentFreeXP[___curPilot.GUID] = ___curPilot.UnspentXP;
+            ModState.PilotCurrentFreeXP[__instance.curPilot.GUID] = __instance.curPilot.UnspentXP;
             Mod.Log.Info?.Write(
-                $"CHEATDETECTION: {___curPilot.Description.Id}:  {___curPilot.GUID} Free XP state was {ModState.PilotCurrentFreeXP[___curPilot.GUID]} after changing to basePilot {___curPilot.UnspentXP} at OnPilotReset, Post.");
+                $"CHEATDETECTION: {__instance.curPilot.Description.Id}:  {__instance.curPilot.GUID} Free XP state was {ModState.PilotCurrentFreeXP[__instance.curPilot.GUID]} after changing to basePilot {__instance.curPilot.UnspentXP} at OnPilotReset, Post.");
         }
     }
 
@@ -303,8 +303,7 @@ namespace IRTweaks.Modules.Misc
     {
         static bool Prepare() => Mod.Config.CheatDetection.CheatDetection;
 
-        public static void Postfix(SGBarracksWidget __instance, string button,
-            SGBarracksMWDetailPanel ___mechWarriorDetails)
+        public static void Postfix(SGBarracksWidget __instance, string button)
         {
             if (button != "Close") return;
             var sim = UnityGameInstance.BattleTechGame.Simulation;
@@ -335,25 +334,23 @@ namespace IRTweaks.Modules.Misc
     {
         static bool Prepare() => Mod.Config.CheatDetection.CheatDetection;
 
-        public static void Prefix(SGBarracksAdvancementPanel __instance, Pilot ___curPilot, Pilot ___basePilot,
-            List<SGBarracksSkillPip> ___gunPips, List<SGBarracksSkillPip> ___pilotPips,
-            List<SGBarracksSkillPip> ___gutPips, List<SGBarracksSkillPip> ___tacPips, string type, int value)
+        public static void Prefix(SGBarracksAdvancementPanel __instance, string type, int value)
         {
-            if (___curPilot.StatCollection.GetValue<int>(type) > value)
+            if (__instance.curPilot.StatCollection.GetValue<int>(type) > value)
             {
                 var sim = UnityGameInstance.BattleTechGame.Simulation;
                 if (sim == null) return;
-                if (String.IsNullOrEmpty(___curPilot.GUID)) return;
-                if (!ModState.PilotCurrentFreeXP.ContainsKey(___curPilot.GUID))
+                if (String.IsNullOrEmpty(__instance.curPilot.GUID)) return;
+                if (!ModState.PilotCurrentFreeXP.ContainsKey(__instance.curPilot.GUID))
                 {
-                    ModState.PilotCurrentFreeXP.Add(___curPilot.GUID, ___curPilot.UnspentXP);
+                    ModState.PilotCurrentFreeXP.Add(__instance.curPilot.GUID, __instance.curPilot.UnspentXP);
                     Mod.Log.Info?.Write(
-                        $"CHEATDETECTION: {___curPilot.Description.Id}: Added key  {___curPilot.GUID} to PilotCurrentXP with UnspentXP {___curPilot.UnspentXP} but should have been done already. At SGBarracksAdvancementPanel.OnValueClick, Pre.");
+                        $"CHEATDETECTION: {__instance.curPilot.Description.Id}: Added key  {__instance.curPilot.GUID} to PilotCurrentXP with UnspentXP {__instance.curPilot.UnspentXP} but should have been done already. At SGBarracksAdvancementPanel.OnValueClick, Pre.");
                 }
 
-                ModState.PilotCurrentFreeXP[___curPilot.GUID] = ___basePilot.UnspentXP;
+                ModState.PilotCurrentFreeXP[__instance.curPilot.GUID] = __instance.basePilot.UnspentXP;
                 Mod.Log.Info?.Write(
-                    $"CHEATDETECTION: {___curPilot.Description.Id}:  {___curPilot.GUID} Free XP state was {ModState.PilotCurrentFreeXP[___curPilot.GUID]} after changing to basePilot {___basePilot.UnspentXP} At SGBarracksAdvancementPanel.OnValueClick, Pre.");
+                    $"CHEATDETECTION: {__instance.curPilot.Description.Id}:  {__instance.curPilot.GUID} Free XP state was {ModState.PilotCurrentFreeXP[__instance.curPilot.GUID]} after changing to basePilot {__instance.curPilot.UnspentXP} At SGBarracksAdvancementPanel.OnValueClick, Pre.");
             }
         }
     }
