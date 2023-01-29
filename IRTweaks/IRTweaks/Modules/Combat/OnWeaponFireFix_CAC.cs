@@ -107,7 +107,7 @@ namespace IRTweaks.Modules.Combat
 
                             //var timer = Traverse.Create(effect).Field("eTimer").GetValue<ETimer>();
                             effect.eTimer.IncrementActivations(effectData.targetingData.extendDurationOnTrigger);
-                            effect.eTimer.IncrementActivations(effectData.targetingData.extendDurationOnTrigger);
+                            //effect.eTimer.IncrementActivations(effectData.targetingData.extendDurationOnTrigger);
                         }
                     }
                 }
