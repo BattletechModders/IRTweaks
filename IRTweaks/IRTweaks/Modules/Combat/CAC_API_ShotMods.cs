@@ -27,7 +27,7 @@ namespace IRTweaks.Modules.Combat
         public static class Mech_TakeWeaponDamage_DamageModsBySkill
         {
             static bool Prepare() => Mod.Config.Combat.DamageModsBySkill.DisplayFloatiesOnTrigger && (Mod.Config.Combat.DamageModsBySkill?.HeatMods.Count > 0 ||
-                                      Mod.Config.Combat.DamageModsBySkill?.StabilityMods.Count > 0 ||
+                                      Mod.Config.Combat.DamageModsBySkill.StabilityMods.Count > 0 ||
                                       Mod.Config.Combat.DamageModsBySkill.APDmgMods.Count > 0);
 
             static void Postfix(Mech __instance, WeaponHitInfo hitInfo, int hitLocation, Weapon weapon, float damageAmount, float directStructureDamage, int hitIndex, DamageType damageType)
@@ -144,8 +144,8 @@ namespace IRTweaks.Modules.Combat
         [HarmonyPatch(typeof(Vehicle), "TakeWeaponDamage")]
         public static class Vehicle_TakeWeaponDamage_DamageModsBySkill
         {
-            static bool Prepare() => Mod.Config.Combat.DamageModsBySkill.DisplayFloatiesOnTrigger && (Mod.Config.Combat.DamageModsBySkill?.HeatMods.Count > 0 ||
-                Mod.Config.Combat.DamageModsBySkill?.StabilityMods.Count > 0 ||
+            static bool Prepare() => Mod.Config.Combat.DamageModsBySkill.DisplayFloatiesOnTrigger && (Mod.Config.Combat.DamageModsBySkill.HeatMods.Count > 0 ||
+                Mod.Config.Combat.DamageModsBySkill.StabilityMods.Count > 0 ||
                 Mod.Config.Combat.DamageModsBySkill.APDmgMods.Count > 0);
 
             static void Postfix(Vehicle __instance, WeaponHitInfo hitInfo, int hitLocation, Weapon weapon, float damageAmount, float directStructureDamage, int hitIndex, DamageType damageType)
@@ -283,8 +283,8 @@ namespace IRTweaks.Modules.Combat
         [HarmonyPatch(typeof(Turret), "TakeWeaponDamage")]
         public static class Turret_TakeWeaponDamage_DamageModsBySkill
         {
-            static bool Prepare() => Mod.Config.Combat.DamageModsBySkill.DisplayFloatiesOnTrigger && (Mod.Config.Combat.DamageModsBySkill?.HeatMods.Count > 0 ||
-                Mod.Config.Combat.DamageModsBySkill?.StabilityMods.Count > 0 ||
+            static bool Prepare() => Mod.Config.Combat.DamageModsBySkill.DisplayFloatiesOnTrigger && (Mod.Config.Combat.DamageModsBySkill.HeatMods.Count > 0 ||
+                Mod.Config.Combat.DamageModsBySkill.StabilityMods.Count > 0 ||
                 Mod.Config.Combat.DamageModsBySkill.APDmgMods.Count > 0);
 
             static void Postfix(Turret __instance, WeaponHitInfo hitInfo, int hitLocation, Weapon weapon, float damageAmount, float directStructureDamage, int hitIndex, DamageType damageType)
@@ -400,8 +400,8 @@ namespace IRTweaks.Modules.Combat
         [HarmonyPatch(typeof(BattleTech.Building), "TakeWeaponDamage")]
         public static class Building_TakeWeaponDamage_DamageModsBySkill
         {
-            static bool Prepare() => Mod.Config.Combat.DamageModsBySkill.DisplayFloatiesOnTrigger && (Mod.Config.Combat.DamageModsBySkill?.HeatMods.Count > 0 ||
-                Mod.Config.Combat.DamageModsBySkill?.StabilityMods.Count > 0 ||
+            static bool Prepare() => Mod.Config.Combat.DamageModsBySkill.DisplayFloatiesOnTrigger && (Mod.Config.Combat.DamageModsBySkill.HeatMods.Count > 0 ||
+                Mod.Config.Combat.DamageModsBySkill.StabilityMods.Count > 0 ||
                 Mod.Config.Combat.DamageModsBySkill.APDmgMods.Count > 0);
 
             static void Postfix(BattleTech.Building __instance, WeaponHitInfo hitInfo, int hitLocation, Weapon weapon, float damageAmount, float directStructureDamage, int hitIndex, DamageType damageType)
@@ -516,9 +516,9 @@ namespace IRTweaks.Modules.Combat
         [HarmonyPatch(typeof(AbstractActor), "OnActivationEnd")]
         public static class AbstractActor_OnActivationEnd
         {
-            static bool Prepare() => Mod.Config.Combat.OnWeaponFireOpts.SelfInstabilityBracedFactor > 0f || Mod.Config.Combat.OnWeaponFireOpts.SelfKnockdownBracedFactor > 0f || Mod.Config.Combat.DamageModsBySkill.DisplayFloatiesOnTrigger && (Mod.Config.Combat.DamageModsBySkill?.HeatMods.Count > 0 ||
-                Mod.Config.Combat.DamageModsBySkill?.StabilityMods.Count > 0 ||
-                Mod.Config.Combat.DamageModsBySkill?.APDmgMods.Count > 0);
+            static bool Prepare() => Mod.Config.Combat.OnWeaponFireOpts.SelfInstabilityBracedFactor > 0f || Mod.Config.Combat.OnWeaponFireOpts.SelfKnockdownBracedFactor > 0f || Mod.Config.Combat.DamageModsBySkill.DisplayFloatiesOnTrigger && (Mod.Config.Combat.DamageModsBySkill.HeatMods.Count > 0 ||
+                Mod.Config.Combat.DamageModsBySkill.StabilityMods.Count > 0 ||
+                Mod.Config.Combat.DamageModsBySkill.APDmgMods.Count > 0);
 
             static void Prefix(AbstractActor __instance, string sourceID, int stackItemID)
             {
@@ -619,18 +619,18 @@ namespace IRTweaks.Modules.Combat
                     }
                 }
 
-                if (Mod.Config.Combat.DamageModsBySkill?.HeatMods.Count > 0)
+                if (Mod.Config.Combat.DamageModsBySkill.HeatMods.Count > 0)
                 {
-                    foreach (var heatMod in Mod.Config.Combat.DamageModsBySkill?.HeatMods)
+                    foreach (var heatMod in Mod.Config.Combat.DamageModsBySkill.HeatMods)
                     {
                         __instance.StatCollection.AddStatistic<bool>(heatMod.StatName, false);
                         Mod.Log.Trace?.Write($"Added heatMod stat {heatMod.StatName}.");
                     }
                 }
 
-                if (Mod.Config.Combat.DamageModsBySkill?.StabilityMods.Count > 0)
+                if (Mod.Config.Combat.DamageModsBySkill.StabilityMods.Count > 0)
                 {
-                    foreach (var stabMod in Mod.Config.Combat.DamageModsBySkill?.StabilityMods)
+                    foreach (var stabMod in Mod.Config.Combat.DamageModsBySkill.StabilityMods)
                     {
                         __instance.StatCollection.AddStatistic<bool>(stabMod.StatName, false);
                         Mod.Log.Trace?.Write($"Added stabMod stat {stabMod.StatName}.");
@@ -662,12 +662,16 @@ namespace IRTweaks.Modules.Combat
             {
                 ToHitModifiersHelper.registerModifier("IRTweaks_ToHitMod", "CAC Accuracy Modifier", true, false, IRT_CAC_ToHitMod, IRT_CAC_ToHitModName);
             }
-
-            if (Mod.Config.Combat.DamageModsBySkill?.StabilityMods.Count > 0)
+            if (Mod.Config.Combat.ToHitProneMods.ProneToHitBrackets.Count > 0 &&
+                Mod.Config.Combat.ToHitProneMods.ProneToHitMods.Count > 0)
+            {
+                ToHitModifiersHelper.registerModifier("IRTweaks_ToHitProneMod", "CAC Prone Accuracy Modifier", true, false, IRT_CAC_ToHitProneMod, IRT_CAC_ToHitProneModName);
+            }
+            if (Mod.Config.Combat.DamageModsBySkill.StabilityMods.Count > 0)
             {
                 DamageModifiersCache.RegisterDamageModifier("IRTweaks_SkillDamage_StabMod", "IRT_CAC_SkillDamage_StabMod", false, false, false, false, true, IRT_CAC_SkillStabDmgMod, IRT_CAC_SkillStabDmgModName);
             }
-            if (Mod.Config.Combat.DamageModsBySkill?.HeatMods.Count > 0)
+            if (Mod.Config.Combat.DamageModsBySkill.HeatMods.Count > 0)
             {
                 DamageModifiersCache.RegisterDamageModifier("IRTweaks_SkillDamage_HeatMod", "IRT_CAC_SkillDamage_HeatMod", false, false, false, true, false, IRT_CAC_SkillHeatDmgMod, IRT_CAC_SkillHeatDmgModName);
             }
@@ -681,10 +685,49 @@ namespace IRTweaks.Modules.Combat
             }
         }
 
+        public static float IRT_CAC_ToHitProneMod(ToHit toHit, AbstractActor attacker, Weapon weapon, ICombatant target,
+            Vector3 attackPos, Vector3 targetPos, LineOfFireLevel lof, MeleeAttackType meleType, bool isCalled)
+        {
+            var mod = 0f;
+            if (target is Mech mech && mech.IsProne)
+            {
+                var targetDist = Vector3.Distance(attackPos, targetPos);
+                for (int i = Mod.Config.Combat.ToHitProneMods.ProneToHitBrackets.Count - 1; i >= 0; i--)
+                {
+                    if (targetDist > Mod.Config.Combat.ToHitProneMods.ProneToHitBrackets[i])
+                    {
+                        mod = Mod.Config.Combat.ToHitProneMods.ProneToHitMods[i];
+                        break;
+                    }
+                }
+            }
+            Mod.Log.Trace?.Write($"[IRT_CAC_ToHitProneMod] Final prone ToHit mod: {mod}");
+            return mod;
+        }
+        public static string IRT_CAC_ToHitProneModName(ToHit toHit, AbstractActor attacker, Weapon weapon, ICombatant target,
+            Vector3 attackPos, Vector3 targetPos, LineOfFireLevel lof, MeleeAttackType meleType, bool isCalled)
+        {
+            var name = "";
+            var mod = 0f;
+            if (target is Mech mech && mech.IsProne)
+            {
+                var targetDist = Vector3.Distance(attackPos, targetPos);
+                for (int i = Mod.Config.Combat.ToHitProneMods.ProneToHitBrackets.Count - 1; i >= 0; i--)
+                {
+                    if (targetDist > Mod.Config.Combat.ToHitProneMods.ProneToHitBrackets[i])
+                    {
+                        mod = Mod.Config.Combat.ToHitProneMods.ProneToHitMods[i];
+                        name += $"+ PRONE DISTANCE [{mod}] ";
+                        break;
+                    }
+                }
+            }
+            return name;
+        }
+
         public static float IRT_CAC_ToHitMod(ToHit toHit, AbstractActor attacker, Weapon weapon, ICombatant target, Vector3 attackPos, Vector3 targetPos, LineOfFireLevel lof, MeleeAttackType meleType, bool isCalled)
         {
             var mod = 0f;
-
             var defenseModTotal = 0f;
             var evasiveModTotal = 0f;
             var currentDefense = toHit.GetEnemyEffectModifier(target, weapon);
@@ -698,7 +741,7 @@ namespace IRTweaks.Modules.Combat
                     Mod.Log.Trace?.Write($"Checking for target stat {weaponToHitMod.TargetStatName}; result: {weapon.StatCollection.ContainsStatistic(weaponToHitMod.TargetStatName)}.");
                     if (target.StatCollection.GetValue<bool>(weaponToHitMod.TargetStatName)) // like IsAerialUnit or whatever
                     {
-                        Mod.Log.Info?.Write($"found stat {weaponToHitMod.TargetStatName} on target, processing weapon statvalue {weaponStatVal}");
+                        Mod.Log.Trace?.Write($"[IRT_CAC_ToHitMod] found stat {weaponToHitMod.TargetStatName} on target, processing weapon statvalue {weaponStatVal}");
                         if (weaponToHitMod.Multi)
                         {
                             if (weaponToHitMod.Type == "ABSOLUTE")
@@ -931,7 +974,7 @@ namespace IRTweaks.Modules.Combat
         {
             var mult = 1f;
 
-            foreach (var statmod in Mod.Config.Combat.DamageModsBySkill?.StabilityMods)
+            foreach (var statmod in Mod.Config.Combat.DamageModsBySkill.StabilityMods)
             {
                 Mod.Log.Trace?.Write($"Checking for stat {statmod.StatName}; result: {weapon.parent.StatCollection.ContainsStatistic(statmod.StatName)}.");
                 if (weapon.parent.StatCollection.GetValue<bool>(statmod.StatName))
@@ -982,7 +1025,7 @@ namespace IRTweaks.Modules.Combat
         {
             var mult = 1f;
 
-            foreach (var statmod in Mod.Config.Combat.DamageModsBySkill?.HeatMods)
+            foreach (var statmod in Mod.Config.Combat.DamageModsBySkill.HeatMods)
             {
                 Mod.Log.Trace?.Write($"Checking for stat {statmod.StatName}; result: {weapon.parent.StatCollection.ContainsStatistic(statmod.StatName)} for weapon {weapon.Name}.");
                 if (weapon.parent.StatCollection.GetValue<bool>(statmod.StatName))

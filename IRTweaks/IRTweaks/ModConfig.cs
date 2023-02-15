@@ -52,7 +52,6 @@ namespace IRTweaks
         public CalledShotOpts CalledShot = new CalledShotOpts();
         public class CalledShotOpts
         {
-
             public bool DisableAllLocations = true;
             public bool DisableHeadshots = true;
             public bool EnableTacticsModifier = true;
@@ -61,8 +60,14 @@ namespace IRTweaks
             public Dictionary<string, int> PilotTags = new Dictionary<string, int>();
         }
 
-        public ToHitStatModOpts ToHitStatMods = new ToHitStatModOpts();
+        public TTProneToHitOpts ToHitProneMods = new TTProneToHitOpts();
+        public class TTProneToHitOpts
+        {
+            public List<float> ProneToHitBrackets = new List<float>();
+            public List<float> ProneToHitMods= new List<float>();
+        }
 
+        public ToHitStatModOpts ToHitStatMods = new ToHitStatModOpts();
         public class ToHitStatModOpts
         {
             public List<ToHitMod> WeaponToHitMods = new List<ToHitMod>();
@@ -78,11 +83,6 @@ namespace IRTweaks
             public List<HeatMod> HeatMods = new List<HeatMod>();
             public List<APDmgMod> APDmgMods = new List<APDmgMod>();
             public List<StdDmgMod> StdDmgMods = new List<StdDmgMod>();
-
-            //           public List<Tuple<string, float, float>> StabilityMod = new List<Tuple<string, float, float>>();
-            //           public List<Tuple<string, float, float>> HeatMod = new List<Tuple<string, float, float>>();
-            //           public List<Tuple<string, float, float>> APDmgMod = new List<Tuple<string, float, float>>();
-            //           public List<Tuple<string, float, float>> StdDmgMod = new List<Tuple<string, float, float>>();
         }
 
         public FlexibleSensorLockOptions FlexibleSensorLock = new FlexibleSensorLockOptions();
