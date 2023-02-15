@@ -170,6 +170,21 @@ This module allows the use of cheats such as CheatEngine or other memory address
 `CheatDetectionStat` - string, statname of bool statistic written to CompanyStats when a cheat has been detected.
 
 ## To Hit Mods
+
+### Prone ToHit Mod Range Brackets
+This Combat tweak allows you to define range-based modifiers for prone targets. For example, prone targets within a certain distance can be easier to hit, while significantly harder to hit further away.
+
+For example:
+
+```
+"ToHitProneMods":{
+				"ProneToHitBrackets": [0, 30, 60],
+				"ProneToHitMods": [-5, 0, 5]
+			},
+```
+Using the above settings, targets 60+ meters away get +5 ToHit, targets 30-60 get no modifier, and 0-30 get -5 ToHit.
+
+### ToHitStatMods
 This tweaks allows you to define modifiers on hitchance based on matching statistic values between attacker and target. These modifiers may be absolute (accuracy is always affected) or they may be relative, i.e a multiplier of target Defense and/or Evasion. Further, these matching statistic values can be applied to specific weapons, or to all weapons on the unit. All references to "ToHit" use the "lower values = better hit %" convention; a negative modifier improves chances to hit. EVASIVE and DEFENSE values refered to are the raw effect on ToHit; offsetting 1 EVASIVE is the same as giving -1 ToHit (or +1 Accuracy from the players point of view). These examples are all aimed toward _improving_ ToHit, but developers can certainly assign positive values to the statistics to creat accuracy penalties if desired. You can make AC2's offset some evasion on LAMs and make it functionally impossible to hit a Kirov with a Long Tom, etc.
 
 The following is an example settings block in mod.json for this tweak:
