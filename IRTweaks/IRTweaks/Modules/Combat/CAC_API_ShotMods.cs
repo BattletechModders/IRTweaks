@@ -714,7 +714,7 @@ namespace IRTweaks.Modules.Combat
                 var targetDist = Vector3.Distance(attackPos, targetPos);
                 for (int i = Mod.Config.Combat.ToHitProneMods.ProneToHitBrackets.Count - 1; i >= 0; i--)
                 {
-                    if (targetDist > Mod.Config.Combat.ToHitProneMods.ProneToHitBrackets[i])
+                    if (targetDist >= Mod.Config.Combat.ToHitProneMods.ProneToHitBrackets[i])
                     {
                         mod = Mod.Config.Combat.ToHitProneMods.ProneToHitMods[i];
                         name += $"+ PRONE DISTANCE [{mod}] ";
