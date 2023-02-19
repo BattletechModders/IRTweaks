@@ -80,5 +80,18 @@ namespace IRTweaks.Modules.UI
         }
     }
 
+    [HarmonyPatch(typeof(CombatGameState), "TriggerAutoSaving")]
+    static class CombatGameState_TriggerAutoSaving
+    {
+        static bool Prepare() => Mod.Config.Fixes.DisableCombatSaves;
 
+        static void Prefix(CombatGameState __instance)
+        {
+            if (__instance.NeedsStoryMissionStartSave)
+            {
+                __instance.NeedsStoryMissionStartSave = false;
+                Mod.Log.Info?.Write("[CombatGameState_TriggerAutoSaving] Skipping combat autosave.");
+            }
+        }
+    }
 }
