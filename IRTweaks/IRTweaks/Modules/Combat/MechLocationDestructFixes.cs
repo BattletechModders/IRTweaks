@@ -44,19 +44,21 @@ namespace IRTweaks.Modules.Combat
         }
 
         //can be disabled when ME fixes it
-        [HarmonyPatch(typeof(Turret), "FlagForDeath")]
+        [HarmonyPatch(typeof(AbstractActor), "FlagForDeath")]
         public static class Turret_FlagForDeath
         {
             static bool Prepare() => !string.IsNullOrEmpty(Mod.Config.Combat.TorsoMountStatName);
 
-            public static bool Prefix(Turret __instance, string reason, DeathMethod deathMethod, DamageType damageType, int location, int stackItemID, string attackerID, bool isSilent)
+            public static bool Prefix(AbstractActor __instance, string reason, DeathMethod deathMethod, DamageType damageType, int location, int stackItemID, string attackerID, bool isSilent)
             {
-                if (deathMethod == DeathMethod.HeadDestruction && __instance.StatCollection.ContainsStatistic(Mod.Config.Combat.TorsoMountStatName))
-                {
-                    if (__instance.StatCollection.GetValue<bool>(Mod.Config.Combat.TorsoMountStatName))
+                if(__instance is Turret turret) { 
+                    if (deathMethod == DeathMethod.HeadDestruction && turret.StatCollection.ContainsStatistic(Mod.Config.Combat.TorsoMountStatName))
                     {
-                        Mod.Log.Info?.Write($"Head destroyed, but unit is Torso Mount! Not flagging for death!");
-                        return false;
+                        if (turret.StatCollection.GetValue<bool>(Mod.Config.Combat.TorsoMountStatName))
+                        {
+                            Mod.Log.Info?.Write($"Head destroyed, but unit is Torso Mount! Not flagging for death!");
+                            return false;
+                        }
                     }
                 }
                 return true;
