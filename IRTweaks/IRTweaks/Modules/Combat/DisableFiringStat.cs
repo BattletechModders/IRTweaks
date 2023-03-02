@@ -20,6 +20,7 @@ namespace IRTweaks.Modules.Combat
     new Type[] { })]
     public static class Weapon_InitStats
     {
+        static bool Prepare() => Mod.Config.Fixes.DisableFiringStat;
         public static void Postfix(Weapon __instance)
         {
             __instance.StatCollection.AddStatistic<bool>("IsFiringDisabled", false);
@@ -29,7 +30,7 @@ namespace IRTweaks.Modules.Combat
     [HarmonyPatch(typeof(Weapon), "IsDisabled", MethodType.Getter)]
     public static class Weapon_IsDisabled
     {
-        //static bool Prepare() => !ModInit.modSettings.UsingMechAffinityForSwarmBreach;
+        static bool Prepare() => Mod.Config.Fixes.DisableFiringStat;
         public static void Postfix(Weapon __instance, ref bool __result)
         {
             if (!__result)

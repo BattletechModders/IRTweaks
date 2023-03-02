@@ -127,6 +127,7 @@
     <Compile Include="ModConstants.cs" />
     <Compile Include="ModInit.cs" />
     <Compile Include="Modules\Combat\BreachingShotIgnoreDR.cs" />
+    <Compile Include="Modules\Combat\DisableFiringStat.cs" />
     <Compile Include="Modules\Combat\ExplodingBuildingFix.cs" />
     <Compile Include="Modules\Combat\EffectsOnBrace.cs" />
     <Compile Include="Modules\Combat\OnWeaponFireFix_CAC.cs" />

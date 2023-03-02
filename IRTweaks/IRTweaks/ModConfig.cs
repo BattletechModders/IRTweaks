@@ -237,6 +237,7 @@ namespace IRTweaks
         public bool DisableDebug = true;
         public bool DisableLowFundsNotification = true;
         public bool DisableMPHashCalculation = true;
+        public bool DisableFiringStat = true;
         public bool EventRequirementsScopeFix = true;
         public bool FactionReputationFixes = true;
         public bool FactionValueFix = true;
@@ -305,6 +306,7 @@ namespace IRTweaks
             Mod.Log.Info?.Write($"  DisableCombatRestarts:              {this.Fixes.DisableCombatRestarts}");
             Mod.Log.Info?.Write($"  DisableCombatSaves:                 {this.Fixes.DisableCombatSaves}");
             Mod.Log.Info?.Write($"  DisableMPHashCalculation:           {this.Fixes.DisableMPHashCalculation}");
+            Mod.Log.Info?.Write($"  DisableFiringStat:                  {this.Fixes.DisableFiringStat}");
             Mod.Log.Info?.Write($"  DisableLowFundsNotification:        {this.Fixes.DisableLowFundsNotification}");
             Mod.Log.Info?.Write($"  ExplodingBuildingFix:               {this.Fixes.ExplodingBuildingFix}");
             Mod.Log.Info?.Write($"  EventRequirementsScopeFix:          {this.Fixes.EventRequirementsScopeFix}");
