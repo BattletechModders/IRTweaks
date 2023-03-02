@@ -18,6 +18,7 @@ This is a mod for the [HBS BattleTech](http://battletechgame.com/) game that inc
 * **DisableDebug**: Disables the "Debug career" buttons even when test tools enabled.
 * **DisableCombatRestarts**: Mission restarts lead to corruption at the salvage screen in vanilla, and especially in a modded game. This disables the UI selection that allows in-combat saves to be made.
 * **DisableCombatSaves**: Combat saves are prone to errors during vanilla gameplay, but especially so during modded gameplay. This disables the UI selection that allows in-combat saves to be made.
+* **DisableFiringStat**: Initializes a Weapon statistic `IsFiringDisabled`. While true, this weapon is forcibly disabled.
 * **DisableLowFundsNotification**: Disables the irritating "low funds" notification.
 * **DisableMPHashCalculation**: Disables a mod-hash calculated on startup that's only used to validate multiplayer games are compatible. Saves 2-3s of load time.
 * **ExplodingBuildingFix**: Use Vector3 distance calculation instead of Unity physics collider for transformer/cooling building explosions. Hopefully no more random damage to units halfway across the map.
