@@ -89,6 +89,7 @@ namespace IRTweaks.Modules.UI
     }
 
     [HarmonyPatch(typeof(MechLabPanel), "OnMaxArmor")]
+    [HarmonyPriority(Priority.First)]
     static class MechLabPanel_OnMaxArmor_Patch
     {
         static bool Prepare() => Mod.Config.Fixes.MaxArmorMaxesArmor;
