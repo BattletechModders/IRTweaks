@@ -126,7 +126,6 @@ namespace IRTweaks.Modules.Combat
                     if (Mod.Config.Fixes.UrbanExplosionsFix)
                         Mod.Log.Info?.Write("Activating Fix: UrbanExplosionsFix");
 
-
                 }
                 catch (Exception e)
                 {
@@ -136,7 +135,5 @@ namespace IRTweaks.Modules.Combat
             }
             Initialized = true;
         }
-
-
     }
 }
