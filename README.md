@@ -23,7 +23,7 @@ This is a mod for the [HBS BattleTech](http://battletechgame.com/) game that inc
 * **DisableMPHashCalculation**: Disables a mod-hash calculated on startup that's only used to validate multiplayer games are compatible. Saves 2-3s of load time.
 * **ExplodingBuildingFix**: Use Vector3 distance calculation instead of Unity physics collider for transformer/cooling building explosions. Hopefully no more random damage to units halfway across the map.
 * **EventRequirementsScopeFix**: Fixes SimGameEventOption requirements to check all appropriate scope objects (previously would ignore SecondaryMechWarrior, TertiaryMechWarrior, and SecondaryMech).
-* **ExtendedStats**: Allows pilots to be assigned Statistic values above the normal bounds of 1-10.
+* **ExtendedStats**: Allows pilots to be assigned Statistic values above the normal bounds of 1-10. Set max in `PilotAttributesMax` under Combat tweaks section.
 * **FactionReputationFixes**: Remove/prevent duplicate allied factions. Can now gain rep with former enemy factions without restart.
 * **FactionValueFix**: Fixes career FactionValues in saves when FactionValues are changed mid-career. Previously, if a FactionValue was set to "IsCareerIgnoredContractTarget": false,, that false value would persist in saves even when the actual FactionValue in Faction.json was changed, preventing that faction from appearing as a procedural contract target for that career.
 * **FlexibleSensorLock**: Using a Sensor Lock action does not count as movement or firing. This allows it to be combined with actions in a unit's activation.
