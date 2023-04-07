@@ -1,6 +1,25 @@
 # IRTweaks
 This is a mod for the [HBS BattleTech](http://battletechgame.com/) game that includes a variety of tweaks, changes, and modifications to the base game. A wide range of effects is covered, and all of the options can be selectively enabled. A short summary of the features is provided below. You can enable or disable each tweak in `mod.json` by setting the appropriate `Fixes` value to true or false.
 
+This mod replaces the following mods, which used to be stand-alone:
+
+* *BTRandomStartByDifficultyMenu*
+* *CombatSaveDisabler*
+* *IRUITweaks*
+* *SpawnProtection*
+* *Better-Juggernaut / Mighty-Juggernaut*
+
+## MOD DEPENDENCIES
+
+**Regular Build:**
+* [IRBTModUtils](https://github.com/iceraptor/IRBTModUtils/) - a collection of common utilities used in all my mods.
+* [Custom Ammo Categories](https://github.com/BattletechModders/CustomBundle/releases) - for enhanced weapon tooltips, ToHit mods, ObstructionTweaks, DamageModsBySkill, OnWeaponFireFix, OnWeaponHitOpts, and OnWeaponFireOpts 
+
+**NOCAC Builds:**
+* [IRBTModUtils](https://github.com/iceraptor/IRBTModUtils/) - a collection of common utilities used in all my mods.
+
+## Fixes flags
+
 * **AbilityResourceFix**: If an Ability has `"Resource" : "ConsumesActivation",` the actors activation will be consumed upon use. In addition, the ability will be <i>unable</i> to be used if the actor has done any other actions (shooting, moving, etc). If an Ability has `"Resource" : "ConsumesMovement",` the actors movement speed will be set to 0 temporarily (using IRBTModUtil). If an Ability has `"Resource" : "ConsumesFiring",` firing will be disabled after using the ability.
 * **AlternativeMechNamingStyle**: Used by RogueTech to set unique naming styles consistent with the **LowVisiblity** mod. No other systems should use this.
 * **BuildingDamageColorChange**: Changes the floating damage on buildings to be dark blue to distinguish this damage type. Thanks to **Gnivler** for this fix!
@@ -51,19 +70,6 @@ This is a mod for the [HBS BattleTech](http://battletechgame.com/) game that inc
 * **Weapon Tooltips**: Modifies the weapon tooltips to more accurately report damage when a weapon uses extensions provided by [CustomAmmoCategories](https://github.com/CMiSSioN/CustomAmmoCategories).
 * **DamageReductionInCombatHud**: If compiled with CAC support (and CustomAmmoCategories is active), displays each unit's damage reduction alongside its evasion pips, removing the default >>>> evasion display. While using this, strongly consider `"EvasiveNumberWidth": 90` in CustomAmmoCategories's settings - the default value of 25 will *not* look good. Also adjusts vanilla floaties to more accurately represent what's happening with damage reduction.
 * **DeathChanceStat**: Fixes post contract pilot death check, to include the company statistics `LethalDeathChance` and `IncapacitatedDeathChance`. In vanilla, they are set by the Hospital upgrade, but never used for anything. Not compatible with [TisButAScratch](https://github.com/ajkroeg/TisButAScratch).
-
-This mod replaces the following mods, which used to be stand-alone:
-
-* *BTRandomStartByDifficultyMenu*
-* *CombatSaveDisabler*
-* *IRUITweaks*
-* *SpawnProtection*
-* *Better-Juggernaut / Mighty-Juggernaut*
-
-This mod requires the latest releases of the following mods:
-
-* [IRBTModUtils](https://github.com/iceraptor/IRBTModUtils/) - a collection of common utilities used in all my mods.
-* [Custom Ammo Categories](https://github.com/BattletechModders/CustomBundle/releases) - for enhanced weapon tooltips
 
 ## Bulk Purchasing
 
@@ -411,7 +417,7 @@ This tweak allows units to use sensor lock without it consuming their action or 
 
 Under `OnWeaponFireOpts` in mod.json
 
-### self Knockdown config
+### Self Knockdown config
 Current configuration allows for forcing a save against self-knockdown when weapons with the appropriate OnWeaponFire effects block are fired. The actual roll for knockdown takes place after the attacksequence has completed, so knockdown chance from multiple weapons can stack and become progressively more difficult or impossible to beat.
 
 Example mod.json settings:
@@ -462,7 +468,7 @@ Example stat block on weapon; if two of these weapons would fire, the "base chan
 	],
 ```
 
-### self Instability config
+### Self Instability config
 
 ```
 	"SelfInstabilityStatName": "SelfInstability_OnFire",
