@@ -6,7 +6,7 @@ namespace IRTweaks.Modules.Misc
     {
         static bool Initialized = false;
 
-        public static void InitModule(HarmonyInstance harmony)
+        public static void InitModule()
         {
             if (!Initialized)
             {

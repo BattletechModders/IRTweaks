@@ -8,6 +8,7 @@ namespace IRTweaks.Modules.Misc
     [HarmonyPatch(typeof(Contract), "FinalizeKilledMechWarriors")]
     static class Contract_FinalizeKilledMechWarriors
     {
+        [HarmonyPrepare]
         public static bool Prepare() => Mod.Config.Fixes.DeathChanceStat;
 
         public static float CalcChance(float minchance, float basechance, float gutsReduction, float gutsAmount, SimGameState s, Pilot p)
@@ -26,6 +27,7 @@ namespace IRTweaks.Modules.Misc
         /// num = CalcChance(0f, num, sim.Constants.Pilot.GutsDeathReduction, (float)pilot.Guts, sim, pilot);
         /// float num2 = sim.NetworkRandom.Float(0f, 1f);</code>
         /// </summary>
+        [HarmonyTranspiler]
         public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> code)
         {
             LinkedList<CodeInstruction> prev = new LinkedList<CodeInstruction>();
