@@ -302,7 +302,7 @@ namespace IRTweaks.Modules.Misc
             var sim = UnityGameInstance.BattleTechGame.Simulation;
             if (sim == null) return;
 
-            var curPilot = __instance.mechWarriorDetails.curPilot;//Traverse.Create(___mechWarriorDetails).Field("curPilot").GetValue<Pilot>();
+            var curPilot = __instance.mechWarriorDetails.curPilot;
             if (String.IsNullOrEmpty(curPilot.GUID)) return;
             if (!ModState.PilotCurrentFreeXP.ContainsKey(curPilot.GUID))
             {

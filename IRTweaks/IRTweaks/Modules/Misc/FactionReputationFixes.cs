@@ -18,8 +18,6 @@ namespace IRTweaks.Modules.Misc
             var codes = new List<CodeInstruction>(instructions);
             FieldInfo currentAlliedFactionSaveFieldInfo = typeof(SimGameSave).GetField("AlliedFactions");
             FieldInfo careerEndAlliedFactionSaveFieldInfo = typeof(SimGameSave).GetField("CareerModeEndAlliedFactions");
-            //FieldInfo alliedFactionSaveFieldInfo = AccessTools.Field(typeof(SimGameSave), nameof(SimGameSave.AlliedFactions));
-            //MethodInfo nameGetMethod = AccessTools.Property(typeof(BaseDescriptionDef), nameof(BaseDescriptionDef.Name)).GetGetMethod();
             int ldFldCount = 0;
             for (int i = 0; i < codes.Count; i++)
             {

@@ -10,10 +10,6 @@ namespace IRTweaks.Modules.Combat
     static class CombatHUDStatusPanel_ShowMeleeDamageMultipliers
     {
         static bool Prepare() => Mod.Config.Fixes.WeakAgainstMeleeFix;
-        //private static MethodInfo _showDebuff = AccessTools.Method(typeof(CombatHUDStatusPanel), "ShowDebuff", new Type[]
-        //{
-        //    typeof(SVGAsset), typeof(Text), typeof(Text), typeof(Vector3), typeof(bool)
-        //});
 
         static bool Prefix(CombatHUDStatusPanel __instance, AbstractActor actor)
         {
