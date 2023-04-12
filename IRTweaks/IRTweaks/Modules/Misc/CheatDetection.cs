@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Remoting.Messaging;
-using System.Text;
-using System.Threading.Tasks;
-using BattleTech;
-using BattleTech.UI;
-using Harmony;
+﻿using BattleTech.UI;
 using HBS;
-using IRTweaks.Helper;
+using System;
+using System.Collections.Generic;
 
 namespace IRTweaks.Modules.Misc
 {
@@ -252,7 +245,7 @@ namespace IRTweaks.Modules.Misc
             if (sim == null) return;
             if (String.IsNullOrEmpty(__instance.GUID)) return;
 
-            ModState.PilotCurrentFreeXP[__instance.GUID] -= (int) value;
+            ModState.PilotCurrentFreeXP[__instance.GUID] -= (int)value;
             Mod.Log.Info?.Write(
                 $"CHEATDETECTION: {__instance.Description.Id}: {__instance.GUID} pilot UnspentXP was {__instance.UnspentXP} after subtracting {value} at SpendExperience, Post.");
             if (__instance.UnspentXP != ModState.PilotCurrentFreeXP[__instance.GUID])
@@ -441,7 +434,7 @@ namespace IRTweaks.Modules.Misc
     }
 
     [HarmonyPatch(typeof(SimGameState), "SetSimGameStat",
-        new Type[] {typeof(SimGameStat), typeof(StatCollection)})]
+        new Type[] { typeof(SimGameStat), typeof(StatCollection) })]
 
     public static class SGS_SetSimGameStat
     {

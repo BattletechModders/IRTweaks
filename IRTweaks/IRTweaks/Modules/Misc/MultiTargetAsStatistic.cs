@@ -1,6 +1,4 @@
-﻿using BattleTech;
-using Harmony;
-using IRBTModUtils;
+﻿using IRBTModUtils;
 using IRBTModUtils.Extension;
 
 namespace IRTweaks.Modules.Misc

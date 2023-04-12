@@ -1,9 +1,6 @@
-﻿using BattleTech;
-using Harmony;
-using IRBTModUtils;
+﻿using IRBTModUtils;
 using IRBTModUtils.Extension;
 using System.Collections.Generic;
-using System.Linq;
 using us.frostraptor.modUtils;
 
 namespace IRTweaks.Helper
@@ -43,7 +40,7 @@ namespace IRTweaks.Helper
             {
                 Mod.Log.Info?.Write($"Actor: {actor.DistinctId()} already protected, skipping.");
             }
-            
+
         }
 
         public static void ProtectActors(List<AbstractActor> actorsToProtect)

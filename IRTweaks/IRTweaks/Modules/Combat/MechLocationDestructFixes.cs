@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BattleTech;
-using Harmony;
+﻿using System.Linq;
 using UnityEngine;
 
 namespace IRTweaks.Modules.Combat
 {
-    
+
     class MechLocationDestructFixes
     {
         //can be disabled when ME fixes it
@@ -51,7 +45,8 @@ namespace IRTweaks.Modules.Combat
 
             public static bool Prefix(AbstractActor __instance, string reason, DeathMethod deathMethod, DamageType damageType, int location, int stackItemID, string attackerID, bool isSilent)
             {
-                if(__instance is Turret turret) { 
+                if (__instance is Turret turret)
+                {
                     if (deathMethod == DeathMethod.HeadDestruction && turret.StatCollection.ContainsStatistic(Mod.Config.Combat.TorsoMountStatName))
                     {
                         if (turret.StatCollection.GetValue<bool>(Mod.Config.Combat.TorsoMountStatName))
@@ -70,11 +65,11 @@ namespace IRTweaks.Modules.Combat
         public static class Mech_OnLocationDestroyed_Patch
         {
             static bool Prepare() => Mod.Config.Fixes.CTDestructInjuryFix;
-            [HarmonyBefore(new string[] {"io.mission.customunits"})]
+            [HarmonyBefore(new string[] { "io.mission.customunits" })]
 
             public static void Prefix(Mech __instance, ChassisLocations location, Vector3 attackDirection, WeaponHitInfo hitInfo, DamageType damageType)
             {
-                if (location==ChassisLocations.CenterTorso)
+                if (location == ChassisLocations.CenterTorso)
                 {
                     if (__instance.MechDef.MechTags.Any(x => Mod.Config.Combat.DisableCTMaxInjureTags.Contains(x)))
                         return;

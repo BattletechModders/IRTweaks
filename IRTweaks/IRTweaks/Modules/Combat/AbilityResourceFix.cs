@@ -1,14 +1,7 @@
-﻿using System;
+﻿using BattleTech.UI;
+using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BattleTech;
-using BattleTech.UI;
-using Harmony;
-using HBS;
-using SVGImporter;
 
 namespace IRTweaks.Modules.Combat
 {
@@ -39,7 +32,7 @@ namespace IRTweaks.Modules.Combat
                 }
             }
         }
-        public static EffectDurationData Duration => new EffectDurationData {duration = 1, stackLimit = 1};
+        public static EffectDurationData Duration => new EffectDurationData { duration = 1, stackLimit = 1 };
 
         public static EffectTargetingData TargetingData =>
             new EffectTargetingData
@@ -63,7 +56,7 @@ namespace IRTweaks.Modules.Combat
             {
                 effectType = EffectType.StatisticEffect,
                 targetingData = AbilityResourceEffects.TargetingData,
-                Description = new DescriptionDef("ConsumesMovementFix", "Ability Used Movement", "Ability Used Movement", "uixSvgIcon_action_multitarget",  0, 0f, false, null, null, null),
+                Description = new DescriptionDef("ConsumesMovementFix", "Ability Used Movement", "Ability Used Movement", "uixSvgIcon_action_multitarget", 0, 0f, false, null, null, null),
                 durationData = AbilityResourceEffects.Duration,
                 statisticData = new StatisticEffectData
                 {
@@ -73,7 +66,7 @@ namespace IRTweaks.Modules.Combat
                     modType = "System.Boolean"
                 }
             };
-        public static EffectData AbilityUsedFiringData=>
+        public static EffectData AbilityUsedFiringData =>
             new EffectData
             {
                 effectType = EffectType.StatisticEffect,
@@ -116,11 +109,11 @@ namespace IRTweaks.Modules.Combat
         }
     }
 
-    [HarmonyPatch(typeof(SelectionStateMove), "GetAllMeleeTargets", new Type[]{})]
+    [HarmonyPatch(typeof(SelectionStateMove), "GetAllMeleeTargets", new Type[] { })]
     public static class SelectionStateMove_GetAllMeleeTargets
     {
         static bool Prepare() => Mod.Config.Fixes.AbilityResourceFix;
-        
+
         public static void Postfix(SelectionStateMove __instance, List<ICombatant> __result)
         {
             if (__instance.SelectedActor.GetAbilityUsedFiring())
@@ -130,7 +123,7 @@ namespace IRTweaks.Modules.Combat
         }
     }
 
-    [HarmonyPatch(typeof(CombatHUDMechwarriorTray), "ResetAbilityButton", new Type[] {typeof(AbstractActor), typeof(CombatHUDActionButton), typeof(Ability), typeof(bool) })]
+    [HarmonyPatch(typeof(CombatHUDMechwarriorTray), "ResetAbilityButton", new Type[] { typeof(AbstractActor), typeof(CombatHUDActionButton), typeof(Ability), typeof(bool) })]
     public static class CombatHUDMechwarriorTray_ResetAbilityButton
     {
         static bool Prepare() => Mod.Config.Fixes.AbilityResourceFix;
@@ -170,7 +163,7 @@ namespace IRTweaks.Modules.Combat
         {
             if (actor != null && actor.GetAbilityUsedFiring())
             {
-                var HUD = __instance.HUD;//Traverse.Create(__instance).Property("HUD").GetValue<CombatHUD>();
+                var HUD = __instance.HUD;
                 HUD.MechWarriorTray.FireButton.DisableButton();
                 var selectionStack = HUD.SelectionHandler.SelectionStack;//Traverse.Create(HUD.SelectionHandler).Property("SelectionStack").GetValue<List<SelectionState>>();
                 if (!selectionStack.Any(x => x is SelectionStateDoneWithMech) && actor.HasMovedThisRound)
@@ -189,7 +182,7 @@ namespace IRTweaks.Modules.Combat
         }
     }
 
-    [HarmonyPatch(typeof(CombatSelectionHandler), "AddFireState", new Type[] {typeof(AbstractActor), typeof(ICombatant), typeof(CombatHUDAttackModeSelector.SelectedButton)})]
+    [HarmonyPatch(typeof(CombatSelectionHandler), "AddFireState", new Type[] { typeof(AbstractActor), typeof(ICombatant), typeof(CombatHUDAttackModeSelector.SelectedButton) })]
     public static class CombatSelectionHandler_AddFireState2
     {
         public static bool Prepare()
@@ -210,7 +203,7 @@ namespace IRTweaks.Modules.Combat
         }
     }
 
-    [HarmonyPatch(typeof(CombatHUDMechwarriorTray), "ResetMechwarriorButtons", new Type[] {typeof(AbstractActor)})]
+    [HarmonyPatch(typeof(CombatHUDMechwarriorTray), "ResetMechwarriorButtons", new Type[] { typeof(AbstractActor) })]
     public static class CombatHUDMechwarriorTray_ResetMechwarriorButtons
     {
         public static bool Prepare()
@@ -229,7 +222,7 @@ namespace IRTweaks.Modules.Combat
 
 
 
-    [HarmonyPatch(typeof(CombatHUDActionButton), "ActivateAbility", new Type[] {typeof(string), typeof(string)})]
+    [HarmonyPatch(typeof(CombatHUDActionButton), "ActivateAbility", new Type[] { typeof(string), typeof(string) })]
     public static class CombatHUDActionButton_ActivateAbility_Confirmed
     {
         public static bool Prepare()
@@ -267,24 +260,24 @@ namespace IRTweaks.Modules.Combat
                         selectionStack.Remove(selectionStateFire);
                     }
                     else switch (selectionStack[i])
-                    {
-                        case SelectionStateFireMulti selectionStateFireMulti:
-                            selectionStateFireMulti.OnInactivate();
-                            selectionStateFireMulti.OnRemoveFromStack();
-                            selectionStack.Remove(selectionStateFireMulti);
-                            break;
-                        case SelectionStateMoraleAttack selectionStateMoraleAttack:
-                            selectionStateMoraleAttack.OnInactivate();
-                            selectionStateMoraleAttack.OnRemoveFromStack();
-                            selectionStack.Remove(selectionStateMoraleAttack);
-                            break;
-                        case SelectionStateMove selectionStateMove:
-                            selectionStateMove.RefreshPossibleTargets();
-                            break;
-                        case SelectionStateJump selectionStateJump:
-                            selectionStateJump.RefreshPossibleTargets();
-                            break;
-                    }
+                        {
+                            case SelectionStateFireMulti selectionStateFireMulti:
+                                selectionStateFireMulti.OnInactivate();
+                                selectionStateFireMulti.OnRemoveFromStack();
+                                selectionStack.Remove(selectionStateFireMulti);
+                                break;
+                            case SelectionStateMoraleAttack selectionStateMoraleAttack:
+                                selectionStateMoraleAttack.OnInactivate();
+                                selectionStateMoraleAttack.OnRemoveFromStack();
+                                selectionStack.Remove(selectionStateMoraleAttack);
+                                break;
+                            case SelectionStateMove selectionStateMove:
+                                selectionStateMove.RefreshPossibleTargets();
+                                break;
+                            case SelectionStateJump selectionStateJump:
+                                selectionStateJump.RefreshPossibleTargets();
+                                break;
+                        }
                 }
                 HUD.MechWarriorTray.FireButton.DisableButton();
                 if (!selectionStack.Any(x => x is SelectionStateDoneWithMech) && selectedActor.HasMovedThisRound)
@@ -321,7 +314,7 @@ namespace IRTweaks.Modules.Combat
         }
     }
 
-    [HarmonyPatch(typeof(CombatHUDEquipmentSlot), "ActivateAbility", new Type[] {typeof(string), typeof(string)})]
+    [HarmonyPatch(typeof(CombatHUDEquipmentSlot), "ActivateAbility", new Type[] { typeof(string), typeof(string) })]
     public static class CombatHUDEquipmentSlot_ActivateAbility_Confirmed
     {
         public static bool Prepare()
@@ -403,7 +396,7 @@ namespace IRTweaks.Modules.Combat
             }
         }
     }
-    
+
     [HarmonyPatch(typeof(CombatHUDMechwarriorTray), "ResetAbilityButtons", new Type[] { typeof(AbstractActor) })]
     public static class CombatHUDMechwarriorTray_ResetAbilityButtons_Patch
     {

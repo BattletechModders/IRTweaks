@@ -1,17 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BattleTech;
-using BattleTech.UI;
-using CustomUnits;
-using Harmony;
+﻿using CustomUnits;
+using System;
 
 namespace IRTweaks.Modules.Combat
 {
 
-    [HarmonyPatch(typeof(Mech), "ApplyBraced", new Type[] {})]
+    [HarmonyPatch(typeof(Mech), "ApplyBraced", new Type[] { })]
     public static class Mech_ApplyBraced
     {
         public static bool Prepare()

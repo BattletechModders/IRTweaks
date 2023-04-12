@@ -1,7 +1,4 @@
-﻿using BattleTech;
-using BattleTech.UI;
-using BattleTech.UI.Tooltips;
-using Harmony;
+﻿using BattleTech.UI;
 using IRTweaks.Modules.UI;
 using System;
 using System.Reflection;

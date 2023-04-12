@@ -1,6 +1,4 @@
-﻿using BattleTech;
-using BattleTech.UI;
-using Harmony;
+﻿using BattleTech.UI;
 using HBS;
 using Localize;
 using System;
@@ -41,18 +39,18 @@ namespace IRTweaks.Modules.UI
         public static void ScrapChassis(List<ChassisCount> filteredChassis)
         {
             MechBayPanel mechBayPanel = LazySingletonBehavior<UIManager>.Instance.GetOrCreateUIModule<MechBayPanel>();
-            
+
             foreach (ChassisCount item in filteredChassis)
             {
 
                 Mod.Log.Debug?.Write($"Scrapping chassis: {item.ChassisDef.Description.Name}");
-                for (int i = 0; i < item.ChassisQty ; i++)
+                for (int i = 0; i < item.ChassisQty; i++)
                 {
                     mechBayPanel.Sim.ScrapInactiveMech(item.ChassisDef.Description.Id, pay: true);
                     Mod.Log.Debug?.Write($"  -- scrapped one full mech");
                 }
 
-                for (int i = 0; i < item.PartsCount ; i++)
+                for (int i = 0; i < item.PartsCount; i++)
                 {
                     Mod.Log.Debug?.Write($"  -- scrapped one mech part");
                     mechBayPanel.Sim.ScrapMechPart(item.ChassisDef.Description.Id, 1f, item.ChassisDef.MechPartMax, pay: true);
@@ -128,7 +126,7 @@ namespace IRTweaks.Modules.UI
             if (!__instance.gameObject.activeInHierarchy) return;
 
             Mod.Log.Info?.Write("MBMSW:F_WA FIRED");
-            if (___inventory != null && ___inventory.Count > 0 && 
+            if (___inventory != null && ___inventory.Count > 0 &&
                 Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt))
             {
                 string titleLT = new Text(Mod.LocalizedText.Dialog[ModText.DT_Title_ScrapAll]).ToString();
@@ -138,7 +136,7 @@ namespace IRTweaks.Modules.UI
                     .Select(x => ScrapHelper.MapChassisUnitElement(x, __instance.Sim))
                     .ToList();
 
-                ScrapHelper.BuildScrapAllDialog(chassisCounts, __instance.Sim.Constants.Finances.MechScrapModifier, titleLT, 
+                ScrapHelper.BuildScrapAllDialog(chassisCounts, __instance.Sim.Constants.Finances.MechScrapModifier, titleLT,
                     delegate { ScrapHelper.ScrapChassis(chassisCounts); });
             }
         }

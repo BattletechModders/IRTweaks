@@ -1,12 +1,8 @@
-﻿using BattleTech;
-using BattleTech.UI;
-using Harmony;
+﻿using BattleTech.UI;
+using HBS.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using BattleTech.UI.TMProWrapper;
-using HBS.Extensions;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -52,18 +48,18 @@ namespace IRTweaks.Modules.Misc
             {
                 var atlasSkull = GameObject.Find("atlasSkull-image");
                 var atlasImage = atlasSkull.gameObject.GetComponent<Image>();
-                var currentModifier = Mathf.Abs(Mathf.Max(0,num) - ModState.MaxDiffModifier);
+                var currentModifier = Mathf.Abs(Mathf.Max(0, num) - ModState.MaxDiffModifier);
                 var scaledModifier = Mathf.FloorToInt(currentModifier * 255 / ModState.MaxDiffModifier);
                 Mod.Log.Info?.Write($"COLOR SCORE MOD THING: real score {num} vs current {currentModifier} vs scaled {scaledModifier}");
                 Mod.Log.Info?.Write($"From UPDATEDIFFICULTYSCOREBAR: Atlas values: {atlasImage.color.r}, {atlasImage.color.g}, {atlasImage.color.b}, {atlasImage.color.a}");
-                atlasImage.color = new Color32(255, (byte)scaledModifier, (byte)scaledModifier, 255);;
+                atlasImage.color = new Color32(255, (byte)scaledModifier, (byte)scaledModifier, 255); ;
             }
-            
+
             return false;
         }
     }
 
-    [HarmonyPatch(typeof(PreGameCareerModeSettingsTotalScoreDescAndBar), "RefreshInfo", new Type[] {typeof(float)})]
+    [HarmonyPatch(typeof(PreGameCareerModeSettingsTotalScoreDescAndBar), "RefreshInfo", new Type[] { typeof(float) })]
     static class PreGameCareerModeSettingsTotalScoreDescAndBar_RefreshInfo_Patch
     {
         static bool Prepare() => Mod.Config.Fixes.RandomStartByDifficulty;
@@ -129,14 +125,14 @@ namespace IRTweaks.Modules.Misc
             {
                 var atlasSkull = GameObject.Find("atlasSkull-image");
                 var atlasImage = atlasSkull.gameObject.GetComponent<Image>();
-                var currentModifier = Mathf.Abs(Mathf.Max(0,__instance.CalculateRawScoreMod()) - ModState.MaxDiffModifier);
+                var currentModifier = Mathf.Abs(Mathf.Max(0, __instance.CalculateRawScoreMod()) - ModState.MaxDiffModifier);
                 var scaledModifier = Mathf.FloorToInt(currentModifier * 255 / ModState.MaxDiffModifier);
                 atlasImage.color = new Color32(255, (byte)scaledModifier, (byte)scaledModifier, 255);
                 Mod.Log.Info?.Write($"From INITSETTINGS: Atlas values: {atlasImage.color.r}, {atlasImage.color.g}, {atlasImage.color.b}, {atlasImage.color.a}");
             }
-            
+
             var settings = ___cachedDiff.GetSettings();
-            settings.Sort(delegate(SimGameDifficulty.DifficultySetting a, SimGameDifficulty.DifficultySetting b)
+            settings.Sort(delegate (SimGameDifficulty.DifficultySetting a, SimGameDifficulty.DifficultySetting b)
             {
                 if (a.UIOrder != b.UIOrder)
                 {
@@ -161,7 +157,7 @@ namespace IRTweaks.Modules.Misc
 
             //try to move bottons down?
 
-            if (startYAdjust > 0 )
+            if (startYAdjust > 0)
             {
                 if (__instance.CanModifyStartSettings)
                 {
@@ -185,7 +181,7 @@ namespace IRTweaks.Modules.Misc
                 startRect.position = currentStartPosition;
 
                 var currentStartSizeDelta = startRect.sizeDelta;
-            
+
                 currentStartSizeDelta.y += startYAdjust * Mod.Config.Misc.DifficultyUIScaling.StartOnlyScalar;
                 startRect.sizeDelta = currentStartSizeDelta;
 
@@ -228,7 +224,7 @@ namespace IRTweaks.Modules.Misc
 
             ___cachedDiff = UnityGameInstance.BattleTechGame.DifficultySettings;
             var settings = ___cachedDiff.GetSettings();
-            settings.Sort(delegate(SimGameDifficulty.DifficultySetting a, SimGameDifficulty.DifficultySetting b)
+            settings.Sort(delegate (SimGameDifficulty.DifficultySetting a, SimGameDifficulty.DifficultySetting b)
             {
                 if (a.UIOrder != b.UIOrder)
                 {
@@ -288,10 +284,10 @@ namespace IRTweaks.Modules.Misc
 
             var newDisabledOverlay =
                 UnityEngine.Object.Instantiate<GameObject>(___disabledOverlay, ___disabledOverlay.transform.parent);
-           ___disabledOverlay.SetActive(false);
-           newDisabledOverlay.SetActive(!__instance.CanModifyStartSettings);
-           __instance.UpdateDifficultyScoreBar();
-           ModState.HaveDiffSettingsInitiated = true;
+            ___disabledOverlay.SetActive(false);
+            newDisabledOverlay.SetActive(!__instance.CanModifyStartSettings);
+            __instance.UpdateDifficultyScoreBar();
+            ModState.HaveDiffSettingsInitiated = true;
         }
     }
 

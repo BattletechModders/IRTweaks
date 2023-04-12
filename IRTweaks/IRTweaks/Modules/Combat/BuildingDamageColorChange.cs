@@ -1,5 +1,4 @@
 using BattleTech.UI;
-using Harmony;
 using UnityEngine;
 
 namespace IRTweaks.Modules.Combat

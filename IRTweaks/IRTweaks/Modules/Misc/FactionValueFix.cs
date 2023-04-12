@@ -1,11 +1,5 @@
-﻿using System;
+﻿using BattleTech.Save;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BattleTech;
-using BattleTech.Save;
-using Harmony;
 
 namespace IRTweaks.Modules.Misc
 {

@@ -1,13 +1,17 @@
-﻿using Harmony;
-using System;
+﻿using System;
 
-namespace IRTweaks.Modules.Misc {
-    public static class MiscFixes {
+namespace IRTweaks.Modules.Misc
+{
+    public static class MiscFixes
+    {
         static bool Initialized = false;
 
-        public static void InitModule(HarmonyInstance harmony) {
-            if (!Initialized) {
-                try {
+        public static void InitModule(HarmonyInstance harmony)
+        {
+            if (!Initialized)
+            {
+                try
+                {
                     // Update the pilot stats to have a maximum greater than 10
                     if (Mod.Config.Fixes.RandomStartByDifficulty)
                         Mod.Log.Info?.Write("Activating Fix: RandomStartByDifficulty");
@@ -37,7 +41,9 @@ namespace IRTweaks.Modules.Misc {
                         Mod.Log.Info?.Write("Activating fix: SkirmishReset.");
 
 
-                } catch (Exception e) {
+                }
+                catch (Exception e)
+                {
                     Mod.Log.Error?.Write($"Failed to load patches due to: {e.Message}");
                     Mod.Log.Error?.Write(e);
                 }

@@ -1,5 +1,4 @@
-﻿using BattleTech;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace IRTweaks
@@ -64,7 +63,7 @@ namespace IRTweaks
         public class TTProneToHitOpts
         {
             public List<float> ProneToHitBrackets = new List<float>();
-            public List<float> ProneToHitMods= new List<float>();
+            public List<float> ProneToHitMods = new List<float>();
         }
 
         public ToHitStatModOpts ToHitStatMods = new ToHitStatModOpts();
@@ -100,7 +99,7 @@ namespace IRTweaks
             public List<ArmorLocation> DRMechLocs = new List<ArmorLocation>();
             public List<VehicleChassisLocations> DRVehicleLocs = new List<VehicleChassisLocations>();
             public List<string> QuadTags = new List<string>();
-            public Dictionary<string, float> ObstructionDRByTags = new Dictionary<string, float>(); 
+            public Dictionary<string, float> ObstructionDRByTags = new Dictionary<string, float>();
 
         }
 

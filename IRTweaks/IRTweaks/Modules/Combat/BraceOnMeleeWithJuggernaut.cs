@@ -1,6 +1,4 @@
-﻿using BattleTech;
-using Harmony;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace IRTweaks.Modules.Combat
@@ -15,7 +13,7 @@ namespace IRTweaks.Modules.Combat
 
         static void Prefix(MechMeleeSequence __instance)
         {
-            if (__instance == null || __instance.OwningMech == null || __instance.OwningMech.GetPilot() == null) 
+            if (__instance == null || __instance.OwningMech == null || __instance.OwningMech.GetPilot() == null)
                 return; // Nothing to do
 
             List<Ability> passives = __instance.OwningMech.GetPilot().PassiveAbilities;

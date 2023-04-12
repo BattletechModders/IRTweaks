@@ -1,43 +1,52 @@
-﻿using BattleTech;
-using BattleTech.UI;
+﻿using BattleTech.UI;
 using BattleTech.UI.TMProWrapper;
-using Harmony;
 using HBS;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-namespace IRTweaks.Modules.UI {
-    public static class StreamlinedMainMenu {
+namespace IRTweaks.Modules.UI
+{
+    public static class StreamlinedMainMenu
+    {
 
         [HarmonyPatch(typeof(SGContractsWidget), "Init")]
         [HarmonyPatch(new Type[] { typeof(SimGameState), typeof(Action<bool>) })]
-        public static class SGContractsWidget_Init {
+        public static class SGContractsWidget_Init
+        {
             static bool Prepare() { return Mod.Config.Fixes.StreamlinedMainMenu; }
 
-            static void Postfix(SGContractsWidget __instance, GameObject ___ContractList) {
+            static void Postfix(SGContractsWidget __instance, GameObject ___ContractList)
+            {
                 Mod.Log.Trace?.Write($"SGCW:I - entered.");
 
                 RectTransform clRT = ___ContractList.GetComponent<RectTransform>();
-                if (clRT != null) {
+                if (clRT != null)
+                {
                     Vector3 ns = clRT.sizeDelta;
                     ns.y += 260;
                     clRT.sizeDelta = ns;
-                } else {
+                }
+                else
+                {
                     Mod.Log.Info?.Write("ContractList rectTransform is null!");
                 }
             }
         }
 
         [HarmonyPatch(typeof(SGNavigationButton), "ResetFlyoutsToPrefab")]
-        public static class SGNavigationButton_ResetFlyoutsToPrefab {
+        public static class SGNavigationButton_ResetFlyoutsToPrefab
+        {
             static bool Prepare() { return Mod.Config.Fixes.StreamlinedMainMenu; }
 
-            static void Postfix(SGNavigationButton __instance, LocalizableText ___text, List<SGNavFlyoutButton> ___FlyoutButtonList, int ___flyoutButtonCount) {
+            static void Postfix(SGNavigationButton __instance, LocalizableText ___text, List<SGNavFlyoutButton> ___FlyoutButtonList, int ___flyoutButtonCount)
+            {
                 Mod.Log.Trace?.Write($"SGNB:RFTP - entered button {___text.GetParsedText()} with {___flyoutButtonCount} flyout buttons for ID: {__instance.ID}");
-                if (__instance.ID != DropshipLocation.CPT_QUARTER && !___text.text.Contains("CMD Staff")) {
-                    foreach (SGNavFlyoutButton flyoutButton in ___FlyoutButtonList) {
+                if (__instance.ID != DropshipLocation.CPT_QUARTER && !___text.text.Contains("CMD Staff"))
+                {
+                    foreach (SGNavFlyoutButton flyoutButton in ___FlyoutButtonList)
+                    {
                         flyoutButton.gameObject.SetActive(false);
                     }
                 }
@@ -45,13 +54,17 @@ namespace IRTweaks.Modules.UI {
         }
 
         [HarmonyPatch(typeof(SGNavigationButton), "SetStateAccordingToSimDropship")]
-        public static class SGNavigationButton_SetStateAccordingToSimDropship {
+        public static class SGNavigationButton_SetStateAccordingToSimDropship
+        {
             static bool Prepare() { return Mod.Config.Fixes.StreamlinedMainMenu; }
 
-            static void Postfix(SGNavigationButton __instance, DropshipType shipType, List<SGNavFlyoutButton> ___FlyoutButtonList, LocalizableText ___text) {
+            static void Postfix(SGNavigationButton __instance, DropshipType shipType, List<SGNavFlyoutButton> ___FlyoutButtonList, LocalizableText ___text)
+            {
                 Mod.Log.Trace?.Write($"SGNB:SSATSD - entered shipType:{shipType} for ID: {__instance.ID}");
-                if (__instance.ID != DropshipLocation.CPT_QUARTER && !___text.text.Contains("CMD Staff")) {
-                    foreach (SGNavFlyoutButton flyoutButton in ___FlyoutButtonList) {
+                if (__instance.ID != DropshipLocation.CPT_QUARTER && !___text.text.Contains("CMD Staff"))
+                {
+                    foreach (SGNavFlyoutButton flyoutButton in ___FlyoutButtonList)
+                    {
                         flyoutButton.gameObject.SetActive(false);
                     }
                 }
@@ -59,13 +72,17 @@ namespace IRTweaks.Modules.UI {
         }
 
         [HarmonyPatch(typeof(SGNavigationButton), "OnPointerEnter")]
-        public static class SGNavigationButton_OnPointerEnter {
+        public static class SGNavigationButton_OnPointerEnter
+        {
             static bool Prepare() { return Mod.Config.Fixes.StreamlinedMainMenu; }
 
-            static void Postfix(SGNavigationButton __instance, PointerEventData eventData, List<SGNavFlyoutButton> ___FlyoutButtonList, LocalizableText ___text) {
+            static void Postfix(SGNavigationButton __instance, PointerEventData eventData, List<SGNavFlyoutButton> ___FlyoutButtonList, LocalizableText ___text)
+            {
                 Mod.Log.Trace?.Write($"SGNB:OPE - entered.");
-                if (__instance.ID != DropshipLocation.CPT_QUARTER && !___text.text.Contains("CMD Staff")) {
-                    foreach (SGNavFlyoutButton flyoutButton in ___FlyoutButtonList) {
+                if (__instance.ID != DropshipLocation.CPT_QUARTER && !___text.text.Contains("CMD Staff"))
+                {
+                    foreach (SGNavFlyoutButton flyoutButton in ___FlyoutButtonList)
+                    {
                         flyoutButton.gameObject.SetActive(false);
                     }
                 }
@@ -73,19 +90,25 @@ namespace IRTweaks.Modules.UI {
         }
 
         [HarmonyPatch(typeof(SGNavigationButton), "OnClick")]
-        public static class SGNavigationButton_OnClick {
+        public static class SGNavigationButton_OnClick
+        {
             static bool Prepare() { return Mod.Config.Fixes.StreamlinedMainMenu; }
 
-            static void Postfix(SGNavigationButton __instance, SGNavigationList ___buttonParent, LocalizableText ___text) {
+            static void Postfix(SGNavigationButton __instance, SGNavigationList ___buttonParent, LocalizableText ___text)
+            {
                 Mod.Log.Debug?.Write($"SGNB:OC - button clicked for ID: {__instance.ID}");
                 SimGameState simulation = UnityGameInstance.BattleTechGame.Simulation;
 
-                switch (__instance.ID) {
+                switch (__instance.ID)
+                {
                     case DropshipLocation.CMD_CENTER:
                         QueueOrForceActivation(DropshipMenuType.Contract, __instance.ID, ___buttonParent.navParent, simulation);
-                        if (SGNavigationButton_FlyoutClicked.ClickedID != DropshipMenuType.INVALID_UNSET) {
-                            if (___text.text.Contains("CMD Staff")) {
-                                switch (SGNavigationButton_FlyoutClicked.ClickedID) {
+                        if (SGNavigationButton_FlyoutClicked.ClickedID != DropshipMenuType.INVALID_UNSET)
+                        {
+                            if (___text.text.Contains("CMD Staff"))
+                            {
+                                switch (SGNavigationButton_FlyoutClicked.ClickedID)
+                                {
                                     case DropshipMenuType.Darius:
                                     case DropshipMenuType.Alexander:
                                         QueueOrForceActivation(SGNavigationButton_FlyoutClicked.ClickedID, DropshipLocation.CMD_CENTER, ___buttonParent.navParent, simulation);
@@ -102,7 +125,9 @@ namespace IRTweaks.Modules.UI {
                                     default:
                                         break;
                                 }
-                            } else if (___text.text.Contains("Memorial")) {
+                            }
+                            else if (___text.text.Contains("Memorial"))
+                            {
                                 QueueOrForceActivation(SGNavigationButton_FlyoutClicked.ClickedID, DropshipLocation.BARRACKS, ___buttonParent.navParent, simulation);
                             }
                             SGNavigationButton_FlyoutClicked.ClickedID = DropshipMenuType.INVALID_UNSET;
@@ -124,26 +149,35 @@ namespace IRTweaks.Modules.UI {
                         break;
                 }
 
-                if (___text.text.Contains("Store")) {
-                    if (simulation.CurRoomState != DropshipLocation.SHOP) {
+                if (___text.text.Contains("Store"))
+                {
+                    if (simulation.CurRoomState != DropshipLocation.SHOP)
+                    {
                         ___buttonParent.ArgoButtonFlyoutChangeRoom(DropshipLocation.SHOP);
                     }
                     QueueOrForceActivation(DropshipMenuType.Shop, DropshipLocation.SHOP, ___buttonParent.navParent, simulation);
-                } else if (___text.text.Contains("Memorial")) {
-                    if (simulation.CurRoomState != DropshipLocation.BARRACKS) {
+                }
+                else if (___text.text.Contains("Memorial"))
+                {
+                    if (simulation.CurRoomState != DropshipLocation.BARRACKS)
+                    {
                         ___buttonParent.ArgoButtonFlyoutChangeRoom(DropshipLocation.BARRACKS);
                     }
                     QueueOrForceActivation(DropshipMenuType.MemorialWall, DropshipLocation.BARRACKS, ___buttonParent.navParent, simulation);
                 }
             }
 
-            private static void QueueOrForceActivation(DropshipMenuType menuType, DropshipLocation location, SGNavigationWidgetLeft sgnwl, SimGameState sgs) {
-                if (sgs.CameraController.betweenRoomTransitionTime == 0f && sgs.CameraController.inRoomTransitionTime == 0f) {
+            private static void QueueOrForceActivation(DropshipMenuType menuType, DropshipLocation location, SGNavigationWidgetLeft sgnwl, SimGameState sgs)
+            {
+                if (sgs.CameraController.betweenRoomTransitionTime == 0f && sgs.CameraController.inRoomTransitionTime == 0f)
+                {
                     // Check for a 0 animation time on SGRoomManager; if set, BTPerfFix is active and we need to force a transition
                     Mod.Log.Info?.Write($"DEBUG - calling SetSubroom for location:{location} and menuType:{menuType}!");
                     sgs.RoomManager.ChangeRoom(location);
                     sgs.RoomManager.SetSubRoom(location, menuType);
-                } else {
+                }
+                else
+                {
                     // Let the animation happen via the queued activation
                     Mod.Log.Info?.Write("DEBUG - calling SetQueuedUIActivationID!");
                     sgnwl.SetQueuedUIActivationID(menuType, location);
@@ -153,10 +187,12 @@ namespace IRTweaks.Modules.UI {
 
         [HarmonyPatch(typeof(SGNavigationWidgetLeft), "Init")]
         [HarmonyPatch(new Type[] { typeof(SimGameState), typeof(SGRoomManager) })]
-        public static class SGNavigationWidgetLeft_Init {
+        public static class SGNavigationWidgetLeft_Init
+        {
             static bool Prepare() { return Mod.Config.Fixes.StreamlinedMainMenu; }
 
-            static void Postfix(SGNavigationWidgetLeft __instance, SGShipMap ___shipMap, SGNavigationList ___locationList) {
+            static void Postfix(SGNavigationWidgetLeft __instance, SGShipMap ___shipMap, SGNavigationList ___locationList)
+            {
                 Mod.Log.Info?.Write($"SGNWL:I - entered with instanceType: {__instance.GetType()}.");
 
                 ___shipMap.gameObject.SetActive(false);
@@ -167,13 +203,15 @@ namespace IRTweaks.Modules.UI {
             }
         }
 
-        [HarmonyPatch(typeof(SGNavigationButton), "FlyoutClicked")] 
-        public static class SGNavigationButton_FlyoutClicked {
+        [HarmonyPatch(typeof(SGNavigationButton), "FlyoutClicked")]
+        public static class SGNavigationButton_FlyoutClicked
+        {
             public static DropshipMenuType ClickedID = DropshipMenuType.INVALID_UNSET;
 
             static bool Prepare() { return Mod.Config.Fixes.StreamlinedMainMenu; }
 
-            static void Prefix(SGNavigationButton __instance, DropshipMenuType buttonID, LocalizableText ___text, SGNavigationList ___buttonParent) {
+            static void Prefix(SGNavigationButton __instance, DropshipMenuType buttonID, LocalizableText ___text, SGNavigationList ___buttonParent)
+            {
                 Mod.Log.Debug?.Write($"SGNB:FC - button clicked for ID: {__instance.ID} for menuType:{buttonID} with transition:{SimGameCameraController.TransitionInProgress}");
                 // Skip if there's already a transition in progress
                 if (SimGameCameraController.TransitionInProgress) { return; }
@@ -196,7 +234,8 @@ namespace IRTweaks.Modules.UI {
         }
 
         [HarmonyPatch(typeof(SGNavigationList), "RefreshButtonStates")]
-        public static class SGNavigationList_RefreshButtonStates {
+        public static class SGNavigationList_RefreshButtonStates
+        {
 
             public static bool IsShopActive(SimGameState simState)
             {
@@ -207,10 +246,13 @@ namespace IRTweaks.Modules.UI {
 
             static bool Prepare() { return Mod.Config.Fixes.StreamlinedMainMenu; }
 
-            static void Postfix(SGNavigationList __instance, SimGameState simState) {
+            static void Postfix(SGNavigationList __instance, SimGameState simState)
+            {
 
-                if (SGNavigationList_Start.storeButton != null) {
-                    if (!IsShopActive(simState)) {
+                if (SGNavigationList_Start.storeButton != null)
+                {
+                    if (!IsShopActive(simState))
+                    {
                         Mod.Log.Info?.Write("Faction reputation too low, disabling store button.");
                         SGNavigationList_Start.storeButton.SetState(ButtonState.Disabled);
                     }
@@ -219,7 +261,8 @@ namespace IRTweaks.Modules.UI {
         }
 
         [HarmonyPatch(typeof(SGNavigationList), "Start")]
-        public static class SGNavigationList_Start {
+        public static class SGNavigationList_Start
+        {
 
             public static SGNavigationButton storeButton;
             public static SGNavigationButton staffButton;
@@ -227,12 +270,15 @@ namespace IRTweaks.Modules.UI {
 
             static bool Prepare() { return Mod.Config.Fixes.StreamlinedMainMenu; }
 
-            static void Postfix(SGNavigationList __instance, HBSRadioSet ___radioSet, SGNavigationButton ___argoButton) {
-                if (__instance.navParent != null) {
+            static void Postfix(SGNavigationList __instance, HBSRadioSet ___radioSet, SGNavigationButton ___argoButton)
+            {
+                if (__instance.navParent != null)
+                {
                     Mod.Log.Info?.Write($"SGNL:Start - adding new button.");
                     SimGameState simulation = UnityGameInstance.BattleTechGame.Simulation;
 
-                    try {
+                    try
+                    {
                         // Create the store button
                         Mod.Log.Info?.Write(" - Creating store button");
                         GameObject storeButtonGO = GameObject.Instantiate(___argoButton.gameObject);
@@ -269,7 +315,8 @@ namespace IRTweaks.Modules.UI {
                         staffButton.AddFlyoutButton("Yang", DropshipMenuType.Yang);
                         staffButton.AddFlyoutButton("Sumire", DropshipMenuType.Sumire);
                         staffButton.AddFlyoutButton("Farah", DropshipMenuType.Farah);
-                        if (simulation.GetCharacterStatus(SimGameState.SimGameCharacterType.ALEXANDER)) {
+                        if (simulation.GetCharacterStatus(SimGameState.SimGameCharacterType.ALEXANDER))
+                        {
                             staffButton.AddFlyoutButton("Alexander", DropshipMenuType.Alexander);
                         }
 
@@ -291,7 +338,9 @@ namespace IRTweaks.Modules.UI {
                             LazySingletonBehavior<UIManager>.Instance.UILookAndColorConstants.DropshipRoomBarracksIcon, simulation);
                         //memorialButton.AddFlyoutButton("Memorial Wall", DropshipMenuType.MemorialWall);
 
-                    } catch (Exception e) {
+                    }
+                    catch (Exception e)
+                    {
                         Mod.Log.Info?.Write("Error: " + e.Message);
                     }
 

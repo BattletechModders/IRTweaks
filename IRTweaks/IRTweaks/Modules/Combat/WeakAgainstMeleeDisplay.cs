@@ -1,16 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using BattleTech;
-using BattleTech.UI;
-using Harmony;
+﻿using BattleTech.UI;
 using HBS;
 using Localize;
-using SVGImporter;
-using UnityEngine;
+using System;
 
 namespace IRTweaks.Modules.Combat
 {
@@ -28,7 +19,7 @@ namespace IRTweaks.Modules.Combat
         {
             if (actor.UnitType == UnitType.Vehicle)
             {
-                var dmg = actor.Combat.Constants.ResolutionConstants.MeleeDamageMultiplierVehicle*100;
+                var dmg = actor.Combat.Constants.ResolutionConstants.MeleeDamageMultiplierVehicle * 100;
                 //_showDebuff.Invoke(__instance,
                 //    new object[]
                 //    {
@@ -47,7 +38,7 @@ namespace IRTweaks.Modules.Combat
 
             if (actor.UnitType == UnitType.Turret)
             {
-                var dmg = actor.Combat.Constants.ResolutionConstants.MeleeDamageMultiplierTurret*100;
+                var dmg = actor.Combat.Constants.ResolutionConstants.MeleeDamageMultiplierTurret * 100;
                 //_showDebuff.Invoke(__instance,
                 //    new object[]
                 //   {

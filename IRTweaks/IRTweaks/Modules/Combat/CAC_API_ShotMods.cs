@@ -1,29 +1,18 @@
 ﻿#if NO_CAC
 #else
 
-using BattleTech;
-using System;
+using CustAmmoCategories;
+using Localize;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using CustAmmoCategories;
-using Harmony;
-using Localize;
-using RootMotion.FinalIK;
-using static CustAmmoCategories.CustomAmmoCategories;
-
 using UnityEngine;
 
-namespace IRTweaks.Modules.Combat 
-{ 
+namespace IRTweaks.Modules.Combat
+{
     public class CAC_API_ShotMods
     {
-        [HarmonyPatch(typeof(Mech), "TakeWeaponDamage")] 
+        [HarmonyPatch(typeof(Mech), "TakeWeaponDamage")]
         public static class Mech_TakeWeaponDamage_DamageModsBySkill
         {
             static bool Prepare() => Mod.Config.Combat.DamageModsBySkill.DisplayFloatiesOnTrigger && (Mod.Config.Combat.DamageModsBySkill?.HeatMods.Count > 0 ||
@@ -39,11 +28,11 @@ namespace IRTweaks.Modules.Combat
                 {
                     Mod.Log.Trace?.Write($"[Mech.TakeWeaponDamage] containskey true. count: {ModState.StabDmgMods[hitInfo.attackerId].Count}, matching guid? {ModState.StabDmgMods[hitInfo.attackerId].Any(x => x?.WeaponGUID == weapon.uid)}.");
                 }
-                if (ModState.StabDmgMods.ContainsKey(hitInfo.attackerId) && ModState.StabDmgMods[hitInfo.attackerId].Count > 0 && ModState.StabDmgMods[hitInfo.attackerId].Any(x=>x?.WeaponGUID == weapon.uid))
+                if (ModState.StabDmgMods.ContainsKey(hitInfo.attackerId) && ModState.StabDmgMods[hitInfo.attackerId].Count > 0 && ModState.StabDmgMods[hitInfo.attackerId].Any(x => x?.WeaponGUID == weapon.uid))
                 {
                     var list = ModState.StabDmgMods[hitInfo.attackerId];
                     Mod.Log.Trace?.Write($"[Mech.TakeWeaponDamage] OUTPOT LIST #: {list.Count}");
-                    
+
                     var idx = 0;
                     for (int i = 0; i < ModState.StabDmgMods[hitInfo.attackerId].Count; i++)
                     {
@@ -573,7 +562,7 @@ namespace IRTweaks.Modules.Combat
                             x?.statisticData?.statName == weaponToHitMod.SourceStatName) is EffectData effect)
                     {
                         var parsed = float.Parse(effect.statisticData.modValue, CultureInfo.InvariantCulture);
-                        __instance.StatCollection.ModifyStat("IRT_THM", -1, weaponToHitMod.SourceStatName,StatCollection.StatOperation.Set, parsed);
+                        __instance.StatCollection.ModifyStat("IRT_THM", -1, weaponToHitMod.SourceStatName, StatCollection.StatOperation.Set, parsed);
                         Mod.Log.Trace?.Write($"weaponToHitMod stat {weaponToHitMod.SourceStatName} parsed and changed to {parsed}.");
                     }
                 }
@@ -583,7 +572,7 @@ namespace IRTweaks.Modules.Combat
         [HarmonyPatch(typeof(AbstractActor), "InitEffectStats")]
         public static class AbstractActor_InitEffectStats_DamageModsBySkill
         {
-            static bool Prepare() => Mod.Config.Combat.ToHitStatMods.ActorToHitMods.Count > 0 || Mod.Config.Combat.DamageModsBySkill.HeatMods.Count > 0 || Mod.Config.Combat.DamageModsBySkill.StabilityMods.Count > 0 ||Mod.Config.Combat.DamageModsBySkill.APDmgMods.Count > 0 || Mod.Config.Combat.DamageModsBySkill.StdDmgMods.Count > 0 || !string.IsNullOrEmpty(Mod.Config.Combat.OnWeaponFireOpts.SelfKnockdownCheckStatName) || !string.IsNullOrEmpty(Mod.Config.Combat.OnWeaponFireOpts.SelfInstabilityStatName) || !string.IsNullOrEmpty(Mod.Config.Combat.OnWeaponHitOpts.ForceShutdownOnHitStat);
+            static bool Prepare() => Mod.Config.Combat.ToHitStatMods.ActorToHitMods.Count > 0 || Mod.Config.Combat.DamageModsBySkill.HeatMods.Count > 0 || Mod.Config.Combat.DamageModsBySkill.StabilityMods.Count > 0 || Mod.Config.Combat.DamageModsBySkill.APDmgMods.Count > 0 || Mod.Config.Combat.DamageModsBySkill.StdDmgMods.Count > 0 || !string.IsNullOrEmpty(Mod.Config.Combat.OnWeaponFireOpts.SelfKnockdownCheckStatName) || !string.IsNullOrEmpty(Mod.Config.Combat.OnWeaponFireOpts.SelfInstabilityStatName) || !string.IsNullOrEmpty(Mod.Config.Combat.OnWeaponHitOpts.ForceShutdownOnHitStat);
 
             static void Postfix(AbstractActor __instance)
             {
@@ -656,7 +645,7 @@ namespace IRTweaks.Modules.Combat
                 }
             }
         }
-        public static void FinishedLoading(List<string> loadOrder) 
+        public static void FinishedLoading(List<string> loadOrder)
         {
             if (Mod.Config.Combat.ToHitStatMods.ActorToHitMods.Count > 0)
             {
@@ -757,7 +746,7 @@ namespace IRTweaks.Modules.Combat
                             }
                             else if (weaponToHitMod.Type == "EVASIVE" && evasiveModTotal > 0f)
                             {
-                                
+
                                 var evasiveMod = currentEvasive * weaponStatVal;
                                 evasiveModTotal += evasiveMod;
                                 mod += evasiveMod;
@@ -870,7 +859,7 @@ namespace IRTweaks.Modules.Combat
                 Mod.Log.Trace?.Write($"[IRT_CAC_ToHitMod] evasiveNetFinal was negative, need to offset? Subtracting evasiveNetFinal {evasiveNetFinal} from mod. new mod: {mod}");
             }
             Mod.Log.Trace?.Write($"[IRT_CAC_ToHitMod] Final mod: {mod}");
-            
+
             return mod;
         }
 
@@ -1009,7 +998,7 @@ namespace IRTweaks.Modules.Combat
 
                 //take below and propagate down to rest of dmgMods
                 //var msg = new ShowActorInfoSequence(weapon.parent, txt, FloatieMessage.MessageNature.Buff, false);
-                
+
                 var activeDmgMod = new ActiveDmgMod(weapon.uid, DmgModType.Stability, mult, txt);
                 Mod.Log.Trace?.Write($"Created msg for floatie, but hsouldnt be firing it yet. actorKey: {weapon.parent.GUID} Type Weapon {weapon.Name} GUID:{activeDmgMod?.WeaponGUID}, type: {activeDmgMod.Type}");
                 if (!ModState.StabDmgMods.ContainsKey(weapon.parent.GUID))
@@ -1060,7 +1049,7 @@ namespace IRTweaks.Modules.Combat
 
                 //take below and propagate down to rest of dmgMods
                 //var msg = new ShowActorInfoSequence(weapon.parent, txt, FloatieMessage.MessageNature.Buff, false);
-               
+
                 var activeDmgMod = new ActiveDmgMod(weapon.uid, DmgModType.Heat, mult, txt);
                 Mod.Log.Trace?.Write($"Created msg for floatie, but hsouldnt be firing it yet. actorKey: {weapon.parent.GUID} Type Weapon {weapon.Name} GUID:{activeDmgMod?.WeaponGUID}, type: {activeDmgMod.Type}");
                 if (!ModState.HeatDmgMods.ContainsKey(weapon.parent.GUID))
@@ -1111,7 +1100,7 @@ namespace IRTweaks.Modules.Combat
 
                 //take below and propagate down to rest of dmgMods
                 //var msg = new ShowActorInfoSequence(weapon.parent, txt, FloatieMessage.MessageNature.Buff, false);
-                
+
                 var activeDmgMod = new ActiveDmgMod(weapon.uid, DmgModType.AP, mult, txt);
                 Mod.Log.Trace?.Write($"Created msg for floatie, but hsouldnt be firing it yet. actorKey: {weapon.parent.GUID} Type Weapon {weapon.Name} GUID:{activeDmgMod?.WeaponGUID}, type: {activeDmgMod.Type}");
                 if (!ModState.APDmgMods.ContainsKey(weapon.parent.GUID))
@@ -1162,7 +1151,7 @@ namespace IRTweaks.Modules.Combat
 
                 //take below and propagate down to rest of dmgMods
                 //var msg = new ShowActorInfoSequence(weapon.parent, txt, FloatieMessage.MessageNature.Buff, false);
-                
+
                 var activeDmgMod = new ActiveDmgMod(weapon.uid, DmgModType.Standard, mult, txt);
                 Mod.Log.Trace?.Write($"Created msg for floatie, but hsouldnt be firing it yet. actorKey: {weapon.parent.GUID} Type Weapon {weapon.Name} GUID:{activeDmgMod?.WeaponGUID}, type: {activeDmgMod.Type}");
                 if (!ModState.StdDmgMods.ContainsKey(weapon.parent.GUID))

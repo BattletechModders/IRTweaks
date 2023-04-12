@@ -1,6 +1,4 @@
-﻿using BattleTech;
-using Harmony;
-using IRBTModUtils.Extension;
+﻿using IRBTModUtils.Extension;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -42,7 +40,7 @@ namespace IRTweaks.Modules.Combat
                     {
                         ModState.ExplosionBuildingTargets.Add(building);
                     }
-                    else if (target is AbstractActor actor) 
+                    else if (target is AbstractActor actor)
                     {
                         // TODO: Check if the actor is already dead, and don't attack them. If they can be attacked, salvage can be impacted.
                         //   But is that desirable?
@@ -80,7 +78,7 @@ namespace IRTweaks.Modules.Combat
                     {
                         Mod.Log.Info?.Write($" -- applying {__instance.damageEachLocation} damage to all locations.");
                         DamageOrderUtility.ApplyDamageToAllLocations("ArtillerySequence", __instance.SequenceGUID, __instance.RootSequenceGUID,
-                            building, (int)__instance.damageEachLocation, (int)__instance.damageEachLocation, 
+                            building, (int)__instance.damageEachLocation, (int)__instance.damageEachLocation,
                             AttackDirection.FromArtillery, DamageType.Artillery);
                     }
 
@@ -103,7 +101,7 @@ namespace IRTweaks.Modules.Combat
 
             // One minor problem this can cause is that AttackNextTarget may have nothing to attack - which should work in theory, 
             //   but it's difficult to test.
-            
+
         }
     }
 }

@@ -1,6 +1,4 @@
-﻿using BattleTech;
-using Harmony;
-using IRBTModUtils;
+﻿using IRBTModUtils;
 using IRBTModUtils.Extension;
 using IRTweaks.Helper;
 using Localize;
@@ -92,7 +90,7 @@ namespace IRTweaks.Modules.Combat
 
         static bool Prepare() => Mod.Config.Fixes.PainTolerance;
 
-        static bool Prefix(Pilot __instance, DamageType damageType, ref bool ___needsInjury, ref InjuryReason ___injuryReason )
+        static bool Prefix(Pilot __instance, DamageType damageType, ref bool ___needsInjury, ref InjuryReason ___injuryReason)
         {
             Mod.Log.Trace?.Write("P:SNI - entered");
 
@@ -104,8 +102,8 @@ namespace IRTweaks.Modules.Combat
                 System.Diagnostics.StackTrace t = new System.Diagnostics.StackTrace();
                 Mod.Log.Info?.Write($" -- PainTolerance:InjurePilot intercepted call stack:");
                 Mod.Log.Info?.Write($" --\n\n{t}");
-//                Mod.Log.Info?.Write($" -- Skipping pain tolerance check!");
-//                return true;
+                //                Mod.Log.Info?.Write($" -- Skipping pain tolerance check!");
+                //                return true;
             }
 
             if (__instance.ParentActor == null) return true;
@@ -139,7 +137,7 @@ namespace IRTweaks.Modules.Combat
                 ModState.WasCTDestroyed = false;
             }
 
-            else if (damageType == DamageType.Overheat || damageType == DamageType.OverheatSelf || (int)___injuryReason == 101 || (int) ___injuryReason == 666
+            else if (damageType == DamageType.Overheat || damageType == DamageType.OverheatSelf || (int)___injuryReason == 101 || (int)___injuryReason == 666
                                                        || "OVERHEATED".Equals(__instance.InjuryReasonDescription, StringComparison.InvariantCultureIgnoreCase))
             {
                 // comparison string must match label in https://github.com/BattletechModders/MechEngineer/blob/master/source/Features/ShutdownInjuryProtection/Patches/Pilot_InjuryReasonDescription_Patch.cs
@@ -148,7 +146,7 @@ namespace IRTweaks.Modules.Combat
                 int overheatPenalty = (int)Math.Floor(overheatRatio * Mod.Config.Combat.PainTolerance.OverheatResistPenaltyPerHeatPercentile);
                 Mod.Log.Debug?.Write($"  overheatPenalty:{overheatPenalty} = " +
                     $"Floor( overheatRatio:{overheatRatio} * penaltyPerOverheatDamage{Mod.Config.Combat.PainTolerance.OverheatResistPenaltyPerHeatPercentile} )");
-                
+
                 ModState.InjuryResistPenalty = overheatPenalty;
                 Mod.Log.Info?.Write($"  Actor overheated, setting injury resist to: {ModState.InjuryResistPenalty}");
             }
@@ -220,7 +218,7 @@ namespace IRTweaks.Modules.Combat
             MethodInfo clearNeedsInjuryMI = AccessTools.DeclaredMethod(typeof(Pilot), "ClearNeedsInjury");
 
             int injuryStrIdx = 0, clearInjuryIdx = 0;
-            for (int i = 0; i < codes.Count; i++) 
+            for (int i = 0; i < codes.Count; i++)
             {
                 CodeInstruction instruction = codes[i];
                 if (instruction.opcode == OpCodes.Ldstr && "{0}: INJURY IGNORED".Equals((string)instruction.operand, StringComparison.InvariantCultureIgnoreCase))

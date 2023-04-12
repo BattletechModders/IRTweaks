@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BattleTech;
 
 namespace IRTweaks.Helper
 {
@@ -15,7 +11,7 @@ namespace IRTweaks.Helper
 
             foreach (var setting in diffSettings)
             {
-                var ordered = setting.Options.OrderBy(x=>x.CareerScoreModifier).ToList();
+                var ordered = setting.Options.OrderBy(x => x.CareerScoreModifier).ToList();
                 //Mod.Log.Info?.Write($"Sorted options: {setting.Options.First().Name} is first with {setting.Options.First().CareerScoreModifier}, {setting.Options.Last().Name} is last with {setting.Options.Last().CareerScoreModifier}");
                 ModState.MinDiffModifier += ordered.First().CareerScoreModifier;
                 ModState.MaxDiffModifier += ordered.Last().CareerScoreModifier;

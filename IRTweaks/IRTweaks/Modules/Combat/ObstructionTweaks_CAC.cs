@@ -1,27 +1,19 @@
 ﻿#if NO_CAC
 #else
 
-using BattleTech;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using CustAmmoCategories;
 using CustomUnits;
-using static CustAmmoCategories.CustomAmmoCategories;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
-namespace IRTweaks.Modules.Combat 
-{ 
+namespace IRTweaks.Modules.Combat
+{
     public class IRT_CAC_Obstruct
-    { 
-        
+    {
 
-        public static void FinishedLoading(List<string> loadOrder) 
+
+        public static void FinishedLoading(List<string> loadOrder)
         {
             if (Mod.Config.Combat.ObstructionTweaks.ObstructionDRByTags.Count > 0)
             {
@@ -29,7 +21,7 @@ namespace IRTweaks.Modules.Combat
             }
         }
 
-        
+
 
         public static float IRT_CAC_ObstructDmgMod(Weapon weapon, Vector3 attackPosition, ICombatant target, bool IsBreachingShot,
             int location, float dmg, float ap, float heat, float stab)
@@ -54,7 +46,7 @@ namespace IRTweaks.Modules.Combat
                         validLocs.Add(ArmorLocation.RightArm);
                         Mod.Log.Debug?.Write($"Valid hit locations for damage reduction: {validLocs.ToList()}.");
                     }
-                    
+
                     if (validLocs.Contains((ArmorLocation)location))
                     {
                         Mod.Log.Debug?.Write($"{(ArmorLocation)location} is valid hit location for damage reduction.");
@@ -94,7 +86,7 @@ namespace IRTweaks.Modules.Combat
             }
             else if (target is Mech vmech && vmech.GetCustomInfo().FakeVehicle)
             {
-                var loc = (ChassisLocations) location;
+                var loc = (ChassisLocations)location;
                 if (Mod.Config.Combat.ObstructionTweaks.DRVehicleLocs.Contains(loc.toFakeVehicleChassis()))
                 {
                     Mod.Log.Debug?.Write($"Location is int value {location}: {(VehicleChassisLocations)location} as VehicleChassisLocation; {loc.toFakeVehicleChassis()} after processing; is valid hit location for damage reduction.");

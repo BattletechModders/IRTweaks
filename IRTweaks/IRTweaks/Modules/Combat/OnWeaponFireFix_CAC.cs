@@ -1,17 +1,11 @@
 ﻿#if NO_CAC
 #else
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using BattleTech;
-using BattleTech.UI;
 using CustAmmoCategories;
 using CustomAmmoCategoriesPatches;
 using CustomUnits;
-using Harmony;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace IRTweaks.Modules.Combat
 {
@@ -64,7 +58,7 @@ namespace IRTweaks.Modules.Combat
         public static void Postfix(Weapon __instance, CombatGameState ___combat)
         {
             var effectsFromAmmoAndMode = new List<EffectData>();
-            effectsFromAmmoAndMode.AddRange(__instance.ammo().statusEffects.Where(x=>x.effectType == EffectType.StatisticEffect && x.targetingData.effectTriggerType == EffectTriggerType.OnWeaponFire));
+            effectsFromAmmoAndMode.AddRange(__instance.ammo().statusEffects.Where(x => x.effectType == EffectType.StatisticEffect && x.targetingData.effectTriggerType == EffectTriggerType.OnWeaponFire));
             effectsFromAmmoAndMode.AddRange(__instance.mode().statusEffects.Where(x => x.effectType == EffectType.StatisticEffect && x.targetingData.effectTriggerType == EffectTriggerType.OnWeaponFire));
 
             foreach (var effect in effectsFromAmmoAndMode)
@@ -132,11 +126,11 @@ namespace IRTweaks.Modules.Combat
                     }
                 }
             }
-                
+
         }
     }
 
-   [HarmonyPatch(typeof(AttackDirector.AttackSequence), "OnAttackSequenceResolveDamage", new Type[] { typeof(MessageCenterMessage) })]
+    [HarmonyPatch(typeof(AttackDirector.AttackSequence), "OnAttackSequenceResolveDamage", new Type[] { typeof(MessageCenterMessage) })]
     public static class AttackDirectorAttackSequence_OnAttackSequenceResolveDamage
     {
         public static bool Prepare()
@@ -235,7 +229,7 @@ namespace IRTweaks.Modules.Combat
                         var fromPiloting = attacker.GetPilot().Piloting *
                                            Mod.Config.Combat.OnWeaponFireOpts.SelfInstabilityPilotingFactor;
                         var fromTonnage = 0f;
-                        
+
                         if (mech.tonnage < Mod.Config.Combat.OnWeaponFireOpts
                                 .SelfInstabilityTonnageFactor)
                         {
@@ -248,8 +242,8 @@ namespace IRTweaks.Modules.Combat
                                 .SelfInstabilityTonnageBonusThreshold;
                             fromTonnage = baseTonnageFactor + (bonusTonnage * Mod.Config.Combat.OnWeaponFireOpts.SelfInstabilityTonnageBonusFactor);
                         }
-                        
-                        var finalInstability= selfInstability - (fromBraced + fromPiloting + fromTonnage);
+
+                        var finalInstability = selfInstability - (fromBraced + fromPiloting + fromTonnage);
 
                         if (finalInstability > 0)
                         {

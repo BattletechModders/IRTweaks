@@ -1,10 +1,11 @@
-﻿using BattleTech;
-using IRBTModUtils.Extension;
+﻿using IRBTModUtils.Extension;
 using us.frostraptor.modUtils;
 
-namespace IRTweaks.Helper {
+namespace IRTweaks.Helper
+{
 
-    public static class ActorHelper {
+    public static class ActorHelper
+    {
         public static bool CanAlwaysUseCalledShot(this AbstractActor actor)
         {
             Statistic stat = actor.StatCollection.GetStatistic(ModStats.CalledShot_AlwaysAllow);

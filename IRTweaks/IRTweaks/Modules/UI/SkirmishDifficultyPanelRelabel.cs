@@ -1,6 +1,5 @@
 ﻿using BattleTech.UI;
 using BattleTech.UI.TMProWrapper;
-using Harmony;
 using HBS.Extensions;
 using Localize;
 using UnityEngine;

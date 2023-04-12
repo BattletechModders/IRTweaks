@@ -1,14 +1,10 @@
 #if NO_CAC
 #else
 
-using System;
-using BattleTech;
 using BattleTech.UI;
 using CustAmmoCategories;
-using Harmony;
-using TMPro;
+using System;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace IRTweaks.Modules.UI
 {
@@ -17,24 +13,31 @@ namespace IRTweaks.Modules.UI
         public static void RefreshPips(CombatHUDEvasiveBarPips pips)
         {
             AbstractActor actor = null;
-            if (ModState.DamageReductionInCombatHud.ContainsKey(pips)) {
+            if (ModState.DamageReductionInCombatHud.ContainsKey(pips))
+            {
                 actor = ModState.DamageReductionInCombatHud[pips];
             }
 
-            if (actor == null) {
+            if (actor == null)
+            {
                 CombatHUDActorInfo actorInfo = pips.gameObject.transform.parent.gameObject.GetComponent<CombatHUDActorInfo>();
                 Mod.Log.Debug?.Write($"DRInCH: Locating actor for {pips} from parent actorInfo: {actorInfo}");
-                if (actorInfo != null) {
+                if (actorInfo != null)
+                {
                     actor = actorInfo.DisplayedCombatant as AbstractActor;
-                    if (actor != null) {
+                    if (actor != null)
+                    {
                         ModState.DamageReductionInCombatHud[pips] = actor;
                     }
                 }
             }
 
-            if (actor != null) {
+            if (actor != null)
+            {
                 RefreshText(pips, actor);
-            } else {
+            }
+            else
+            {
                 Mod.Log.Debug?.Write($"DRInCH: No actor for {pips}.");
             }
         }
@@ -42,17 +45,20 @@ namespace IRTweaks.Modules.UI
         public static void RefreshActor(AbstractActor actor)
         {
             CombatHUDEvasiveBarPips pips = null;
-            if (ModState.DamageReductionInCombatHudActors.ContainsKey(actor)) {
+            if (ModState.DamageReductionInCombatHudActors.ContainsKey(actor))
+            {
                 pips = ModState.DamageReductionInCombatHudActors[actor];
             }
 
-            if (pips == null) {
+            if (pips == null)
+            {
                 Mod.Log.Trace?.Write($"DRInCH: Looking for actor for {actor} based on unity tree.");
                 foreach (CombatHUDActorInfo actorInfo in Resources.FindObjectsOfTypeAll(typeof(CombatHUDActorInfo)) as CombatHUDActorInfo[])
                 {
                     AbstractActor thisActor = actorInfo.DisplayedCombatant as AbstractActor;
                     Mod.Log.Trace?.Write($"DRInCH: Checking thisActor {thisActor} == actor {actor}");
-                    if (thisActor == actor) {
+                    if (thisActor == actor)
+                    {
                         pips = actorInfo.EvasiveDisplay;
                         ModState.DamageReductionInCombatHudActors[actor] = pips;
                         break;
@@ -60,16 +66,21 @@ namespace IRTweaks.Modules.UI
                 }
             }
 
-            if (pips != null) {
+            if (pips != null)
+            {
                 RefreshText(pips, actor);
-            } else {
+            }
+            else
+            {
                 Mod.Log.Trace?.Write($"DRInCH: No pips for actor {actor} {actor.UnitName}");
             }
         }
 
-        public static void RefreshText(CombatHUDEvasiveBarPips pips, AbstractActor actor) {
+        public static void RefreshText(CombatHUDEvasiveBarPips pips, AbstractActor actor)
+        {
             CombatHUDEvasivePipsText pipsText = pips.gameObject.GetComponent<CombatHUDEvasivePipsText>();
-            if (pipsText == null) {
+            if (pipsText == null)
+            {
                 Mod.Log.Debug?.Write($"DRInCH: No pipsText for pips {pips}, actor {actor} {actor.UnitName}");
                 return;
             }
@@ -77,10 +88,12 @@ namespace IRTweaks.Modules.UI
             float damageReduction = 1 - actor.StatCollection.GetStatistic("DamageReductionMultiplierAll").Value<float>();
 
             string text = "";
-            if (damageReduction != 0) {
+            if (damageReduction != 0)
+            {
                 text += $"{Math.Round(damageReduction * 100)}% DR\n";
             }
-            if (pips.Current > 0) {
+            if (pips.Current > 0)
+            {
                 text += Math.Round(pips.Current) + " EVA";
             }
 
@@ -155,11 +168,13 @@ namespace IRTweaks.Modules.UI
     {
         static bool Prepare() => Mod.Config.Fixes.DamageReductionInCombatHud;
 
-        static void Postfix(ICombatant target) {
+        static void Postfix(ICombatant target)
+        {
             AbstractActor actor = target as AbstractActor;
 
             // This might be a building, in which case casting as an AbstractActor will return null.
-            if (actor != null) {
+            if (actor != null)
+            {
                 DamageReductionInCombatHud.RefreshActor(actor);
             }
         }
@@ -170,11 +185,13 @@ namespace IRTweaks.Modules.UI
     {
         static bool Prepare() => Mod.Config.Fixes.DamageReductionInCombatHud;
 
-        static void Postfix(Effect e) {
+        static void Postfix(Effect e)
+        {
             AbstractActor actor = e.Target as AbstractActor;
 
             // This might be a building, in which case casting as an AbstractActor will return null.
-            if (actor != null) {
+            if (actor != null)
+            {
                 DamageReductionInCombatHud.RefreshActor(actor);
             }
         }
@@ -186,7 +203,8 @@ namespace IRTweaks.Modules.UI
     {
         static bool Prepare() => Mod.Config.Fixes.DamageReductionInCombatHud;
 
-        static bool Prefix() {
+        static bool Prefix()
+        {
             return false;
         }
     }
@@ -198,7 +216,8 @@ namespace IRTweaks.Modules.UI
     {
         static bool Prepare() => Mod.Config.Fixes.DamageReductionInCombatHud;
 
-        static bool Prefix(AttackStackSequence __instance, AttackDirector.AttackSequence sequence) {
+        static bool Prefix(AttackStackSequence __instance, AttackDirector.AttackSequence sequence)
+        {
             //CombatGameState combat = Traverse.Create(__instance).Property("Combat").GetValue<CombatGameState>();
             EffectData effect = __instance.Combat.Constants.Visibility.FiredWeaponsEffect;
             __instance.owningActor.CreateEffect(effect, null, sequence.id.ToString(), sequence.stackItemUID, __instance.owningActor);
@@ -208,19 +227,28 @@ namespace IRTweaks.Modules.UI
 
             AbstractActor abstractActor = sequence.chosenTarget as AbstractActor;
 
-            if (abstractActor != null) {
+            if (abstractActor != null)
+            {
                 string floatie = "";
-                if (sequence.meleeAttackType == MeleeAttackType.DFA) {
+                if (sequence.meleeAttackType == MeleeAttackType.DFA)
+                {
                     floatie = "DFA - Ignores DR";
-                } else if (sequence.isMelee) {
+                }
+                else if (sequence.isMelee)
+                {
                     floatie = "Melee - Ignores DR";
-                } else if (sequence.IsBreachingShot) {
+                }
+                else if (sequence.IsBreachingShot)
+                {
                     floatie = "Breaching Shot - Ignores DR";
-                } else if (__instance.Combat.HitLocation.GetAttackDirection(__instance.owningActor, abstractActor) == AttackDirection.FromBack) {
+                }
+                else if (__instance.Combat.HitLocation.GetAttackDirection(__instance.owningActor, abstractActor) == AttackDirection.FromBack)
+                {
                     floatie = "Rear Attack - Ignores DR";
                 }
 
-                if (floatie != "") {
+                if (floatie != "")
+                {
                     __instance.Combat.MessageCenter.PublishMessage(new AddSequenceToStackMessage(new ShowActorInfoSequence(abstractActor, floatie, FloatieMessage.MessageNature.Debuff, useCamera: false)));
                 }
             }

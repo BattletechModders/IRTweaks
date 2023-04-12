@@ -1,13 +1,9 @@
-﻿using BattleTech;
-using BattleTech.Data;
-using BattleTech.UI;
+﻿using BattleTech.UI;
 using BattleTech.UI.TMProWrapper;
-using Harmony;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using HBS;
 using Localize;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
@@ -63,7 +59,7 @@ namespace IRTweaks.Modules.UI
 
                 Transform cancelConfirmT = __instance.gameObject.transform.Find("Representation/OBJ_cancelconfirm");
                 if (cancelConfirmT == null) Mod.Log.Error?.Write("Failed to find OBJ_cancelconfirm!");
-                
+
                 Transform readyTextT = cancelConfirmT.Find("uixPrfBttn_BASE_button2-MANAGED-confirm/bttn2_contentLayout/ready_Text-optional");
                 if (readyTextT == null) Mod.Log.Error?.Write("Failed to find ready_Text-optional!");
 
@@ -117,7 +113,7 @@ namespace IRTweaks.Modules.UI
             }
 
             __instance.headWidget.ModifyArmor(false, __instance.headWidget.maxArmor, true);
-			__instance.centerTorsoWidget.ModifyArmor(false, __instance.centerTorsoWidget.maxArmor, true);
+            __instance.centerTorsoWidget.ModifyArmor(false, __instance.centerTorsoWidget.maxArmor, true);
             __instance.centerTorsoWidget.ModifyArmor(true, __instance.centerTorsoWidget.maxRearArmor, true);
             __instance.leftTorsoWidget.ModifyArmor(false, __instance.leftTorsoWidget.maxArmor, true);
             __instance.leftTorsoWidget.ModifyArmor(true, __instance.leftTorsoWidget.maxRearArmor, true);
@@ -190,7 +186,7 @@ namespace IRTweaks.Modules.UI
     }
 
     [HarmonyPatch(typeof(MechLabLocationWidget), "ValidateAdd",
-        new Type[] {typeof(MechComponentRef)})]
+        new Type[] { typeof(MechComponentRef) })]
     static class MechLabLocationWidget_ValidateAdd
     {
         static bool Prepare() => Mod.Config.Misc.MechLabRefitReqs.MechLabRefitReqs.Count > 0;
@@ -228,7 +224,7 @@ namespace IRTweaks.Modules.UI
     }
 
     [HarmonyPatch(typeof(MechLabLocationWidget), "OnMechLabDrop",
-        new Type[] {typeof(PointerEventData), typeof(MechLabDropTargetType)})]
+        new Type[] { typeof(PointerEventData), typeof(MechLabDropTargetType) })]
     static class MechLabLocationWidget_OnMechLabDrop
     {
         static bool Prepare() => Mod.Config.Misc.MechLabRefitReqs.MechLabRefitReqs.Count > 0;

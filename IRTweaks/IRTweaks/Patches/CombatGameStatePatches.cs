@@ -1,7 +1,4 @@
-﻿using BattleTech;
-using Harmony;
-
-namespace IRTweaks.Patches
+﻿namespace IRTweaks.Patches
 {
     // Cleanup known combat state
     [HarmonyPatch(typeof(CombatGameState), "OnCombatGameDestroyed")]

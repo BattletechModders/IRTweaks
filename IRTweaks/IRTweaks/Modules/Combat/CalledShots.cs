@@ -1,11 +1,8 @@
-﻿using BattleTech;
-using BattleTech.UI;
-using Harmony;
+﻿using BattleTech.UI;
 using IRBTModUtils.Extension;
 using IRTweaks.Helper;
 using Localize;
 using System;
-using System.Runtime.CompilerServices;
 
 namespace IRTweaks.Modules.Combat
 {
@@ -84,8 +81,8 @@ namespace IRTweaks.Modules.Combat
                 else if (Mod.Config.Combat.CalledShot.DisableHeadshots && location == ArmorLocation.Head)
                 {
                     Mod.Log.Info?.Write($"  Disabling headshot from attacker: {__instance.SelectedActor.DistinctId()} against target mech: {__instance.TargetedCombatant.DistinctId()}");
-                   //Traverse.Create(__instance).Method("ClearCalledShot").GetValue();
-                   __instance.ClearCalledShot();
+                    //Traverse.Create(__instance).Method("ClearCalledShot").GetValue();
+                    __instance.ClearCalledShot();
                 }
             }
         }

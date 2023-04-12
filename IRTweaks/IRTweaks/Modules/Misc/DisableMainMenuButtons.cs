@@ -1,17 +1,18 @@
 ﻿using BattleTech.UI;
-using Harmony;
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 
-namespace IRTweaks.Modules.Misc {
+namespace IRTweaks.Modules.Misc
+{
 
     [HarmonyPatch(typeof(MainMenu), "Init")]
-    public static class MainMenu_Init {
+    public static class MainMenu_Init
+    {
 
         static bool Prepare() => Mod.Config.Fixes.DisableCampaign || Mod.Config.Fixes.DisableDebug;
 
-        public static void Prefix(MainMenu __instance) {
+        public static void Prefix(MainMenu __instance)
+        {
             if (Mod.Config.Fixes.DisableCampaign)
             {
                 Mod.Log.Info?.Write($"Disabling the campaign button on the main menu.");

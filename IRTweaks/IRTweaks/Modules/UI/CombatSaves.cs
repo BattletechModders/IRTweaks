@@ -1,7 +1,5 @@
-﻿using BattleTech;
-using BattleTech.UI;
+﻿using BattleTech.UI;
 using BattleTech.UI.Tooltips;
-using Harmony;
 using IRBTModUtils;
 using Localize;
 using System;
@@ -65,7 +63,7 @@ namespace IRTweaks.Modules.UI
                 string title = Strings.T("Are you sure you want to quit?");
                 string title2 = text;
                 string body2 = Strings.T("You will forfeit the match if you quit");
-                
+
                 GameInstance battleTechGame = UnityGameInstance.BattleTechGame;
                 GenericPopupBuilder genericPopupBuilder = GenericPopupBuilder.Create(text, body);
                 genericPopupBuilder.AddButton("Cancel", null, true, null)

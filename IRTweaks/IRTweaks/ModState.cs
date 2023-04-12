@@ -1,10 +1,10 @@
 ﻿
 using BattleTech.UI;
-using System.Collections.Generic;
-using BattleTech;
 using IRTweaks.Modules.UI;
+using System.Collections.Generic;
 
-namespace IRTweaks {
+namespace IRTweaks
+{
 
     public static class ModState
     {
@@ -15,7 +15,7 @@ namespace IRTweaks {
 
         public static List<SGDSToggle> InstantiatedToggles = new List<SGDSToggle>();
         public static List<SGDSDropdown> InstantiatedDropdowns = new List<SGDSDropdown>();
-        
+
 
         public static float MinDiffModifier = 0f;
         public static float MaxDiffModifier = 0f;
@@ -84,7 +84,8 @@ namespace IRTweaks {
             }
         }
 
-        public static void Reset() {
+        public static void Reset()
+        {
             // Reinitialize state
             PilotCalledShotModifiers.Clear();
             InjuryResistPenalty = -1f;

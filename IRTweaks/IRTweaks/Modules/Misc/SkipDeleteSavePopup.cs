@@ -1,5 +1,4 @@
 using BattleTech.UI;
-using Harmony;
 
 // ReSharper disable InconsistentNaming
 

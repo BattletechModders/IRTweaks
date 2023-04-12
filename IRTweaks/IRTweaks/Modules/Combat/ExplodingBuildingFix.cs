@@ -1,19 +1,12 @@
-﻿using System;
+﻿using BattleTech.Rendering;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BattleTech;
-using BattleTech.Rendering;
-using BattleTech.UI;
-using CustomUnits;
-using Harmony;
 using UnityEngine;
 
 namespace IRTweaks.Modules.Combat
 {
-    
-    [HarmonyPatch(typeof(ObstructionGameLogic), "ExplodeBuildingIfNeeded", new Type[] {})]
+
+    [HarmonyPatch(typeof(ObstructionGameLogic), "ExplodeBuildingIfNeeded", new Type[] { })]
     public static class ObstructionGameLogic_ExplodeBuildingIfNeeded
     {
         public static bool Prepare()

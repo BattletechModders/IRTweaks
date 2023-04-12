@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BattleTech;
-using BattleTech.UI;
+﻿using BattleTech.UI;
 using CustAmmoCategories;
-using Harmony;
 using UnityEngine;
 
 namespace IRTweaks.Modules.UI
@@ -41,7 +34,7 @@ namespace IRTweaks.Modules.UI
                         Mathf.RoundToInt(vehicle.tonnage)
                     });
                 }
-			}
+            }
         }
     }
 }

@@ -1,17 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BattleTech;
-using Harmony;
-
-namespace IRTweaks.Modules.Combat
+﻿namespace IRTweaks.Modules.Combat
 {
 
     [HarmonyPatch(typeof(Turret))]
     [HarmonyPatch("ArmorMultiplier", MethodType.Getter)]
-    
+
     public static class Turret_ArmorMultiplier_Patch
     {
         static bool Prepare() => Mod.Config.Combat.TurretArmorAndStructure.ArmorMultiplierTurret > 0f;
@@ -26,7 +18,7 @@ namespace IRTweaks.Modules.Combat
 
     [HarmonyPatch(typeof(Turret))]
     [HarmonyPatch("StructureMultiplier", MethodType.Getter)]
-    
+
     public static class Turret_StructureMultiplier_Patch
     {
         static bool Prepare() => Mod.Config.Combat.TurretArmorAndStructure.StructureMultiplierTurret > 0f;

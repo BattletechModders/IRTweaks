@@ -1,10 +1,13 @@
 ﻿using System.Linq;
 using System.Reflection;
 
-namespace IRTweaks.Helper {
+namespace IRTweaks.Helper
+{
 
-    public static class DiagnosticLogger {
-        public static void PatchAllMethods() {
+    public static class DiagnosticLogger
+    {
+        public static void PatchAllMethods()
+        {
             Mod.Log.Debug?.Write("=== Initializing Diagnostics Logger ====");
             var assembly = Assembly.GetAssembly(typeof(AIUtil));
             var names = (from type in assembly.GetTypes()
@@ -13,7 +16,8 @@ namespace IRTweaks.Helper {
                            BindingFlags.Instance | BindingFlags.Static)
                          select type.FullName + ":" + method.Name).Distinct().ToList();
 
-            foreach (string fqn in names) {
+            foreach (string fqn in names)
+            {
                 Mod.Log.Debug?.Write($"Found fqn:{fqn}");
             }
 

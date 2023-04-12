@@ -1,6 +1,4 @@
-﻿using BattleTech;
-using BattleTech.Framework;
-using Harmony;
+﻿using BattleTech.Framework;
 using IRBTModUtils;
 using IRBTModUtils.Extension;
 using System;
@@ -26,7 +24,7 @@ namespace IRTweaks.Modules.Combat
                 return;
             }
             Mod.Log.Info?.Write("Checking contract for contract-specific building scaling:");
-            
+
             //Next check if contract is story contract
             if (Mod.Config.Combat.ScaledStructure.UseStoryScale && (SharedState.Combat.ActiveContract.IsStoryContract || SharedState.Combat.ActiveContract.IsRestorationContract))
             {

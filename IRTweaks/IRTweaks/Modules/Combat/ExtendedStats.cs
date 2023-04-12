@@ -1,6 +1,4 @@
-﻿using BattleTech;
-using Harmony;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace IRTweaks.Modules.Combat
 {

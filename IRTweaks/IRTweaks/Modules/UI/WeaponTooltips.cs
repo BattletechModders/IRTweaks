@@ -1,10 +1,8 @@
 ﻿#if NO_CAC
 #else
 
-using BattleTech;
 using BattleTech.UI.Tooltips;
 using CustAmmoCategories;
-using Harmony;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -113,7 +111,7 @@ namespace IRTweaks.Modules.UI
                                 totalDamage = weaponDef.Damage * weaponDef.ProjectilesPerShot * weaponDef.ShotsWhenFired;
                                 string localText = $"{weaponDef.Damage} x {weaponDef.ProjectilesPerShot}= {totalDamage}";
                                 Mod.Log.Debug?.Write(
-                                    $"ImprovedBallistic + BallisticDamagePerPallet + DamageNotDivided weapon damage set to: {localText}; ProjectilesPerShot != 1 BUT ShotsWhenFired == 1"); 
+                                    $"ImprovedBallistic + BallisticDamagePerPallet + DamageNotDivided weapon damage set to: {localText}; ProjectilesPerShot != 1 BUT ShotsWhenFired == 1");
                                 ___damage.SetText(localText);
                             }
                             else if (weaponDef.ShotsWhenFired != 1 && weaponDef.ProjectilesPerShot == 1)

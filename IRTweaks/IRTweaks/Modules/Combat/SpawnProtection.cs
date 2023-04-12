@@ -1,6 +1,4 @@
-﻿using BattleTech;
-using Harmony;
-using IRBTModUtils.Extension;
+﻿using IRBTModUtils.Extension;
 using IRTweaks.Helper;
 using System.Collections.Generic;
 using System.Linq;

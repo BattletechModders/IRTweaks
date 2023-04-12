@@ -1,16 +1,9 @@
-﻿using System;
+﻿using BattleTech.Save;
+using BattleTech.Save.Test;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection.Emit;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using BattleTech;
-using BattleTech.Save;
-using BattleTech.UI;
-using Harmony;
-using static System.Collections.Specialized.BitVector32;
-using BattleTech.Save.Test;
+using System.Reflection.Emit;
 
 namespace IRTweaks.Modules.Misc
 {
@@ -110,7 +103,7 @@ namespace IRTweaks.Modules.Misc
 
 
     //remove duplicates
-            [HarmonyPatch(typeof(SimGameState), "AddAllyFaction")]
+    [HarmonyPatch(typeof(SimGameState), "AddAllyFaction")]
     public static class SimGameState_AddAllyFaction
     {
         static bool Prepare() => Mod.Config.Fixes.FactionReputationFixes;

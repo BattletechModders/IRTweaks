@@ -1,17 +1,12 @@
-﻿using System;
+﻿using BattleTech.UI;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BattleTech;
-using BattleTech.UI;
-using Harmony;
 
 namespace IRTweaks.Modules.Misc
 {
     [HarmonyPatch(typeof(SimGameState))]
     [HarmonyPatch("ApplySimGameEventResult",
-        new Type[] {typeof(SimGameEventResult), typeof(List<object>), typeof(SimGameEventTracker)})]
+        new Type[] { typeof(SimGameEventResult), typeof(List<object>), typeof(SimGameEventTracker) })]
     public static class SimGameState_ApplySimGameEventResult
     {
         static bool Prepare() => Mod.Config.Fixes.DifficultyModsFromStats;
@@ -71,7 +66,7 @@ namespace IRTweaks.Modules.Misc
             var sim = UnityGameInstance.BattleTechGame.Simulation;
             if (sim == null) return false;
             if (!sim.CompanyStats.ContainsStatistic("IRTweaks_DiffMod")) return false;
-            
+
             var curMod = __instance.GetRawCareerModifier();
             var irMod = sim.CompanyStats.GetValue<float>("IRTweaks_DiffMod");
 

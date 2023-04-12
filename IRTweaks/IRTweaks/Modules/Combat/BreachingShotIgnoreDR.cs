@@ -1,9 +1,6 @@
-﻿using BattleTech;
-using CustAmmoCategories;
-using Harmony;
+﻿using CustAmmoCategories;
 using Sheepy.BattleTechMod.AttackImprovementMod;
 using System;
-using System.Linq;
 using UnityEngine;
 
 namespace IRTweaks.Modules.Combat
@@ -11,7 +8,7 @@ namespace IRTweaks.Modules.Combat
 #if NO_CAC
 #else
 
-    [HarmonyPatch(typeof(DamageModifiers), "DamageReductionMultiplierAll", new Type[] {typeof(Weapon), typeof(Vector3), typeof(ICombatant), typeof(bool), typeof(int), typeof(float), typeof(float), typeof(float), typeof(float)})]
+    [HarmonyPatch(typeof(DamageModifiers), "DamageReductionMultiplierAll", new Type[] { typeof(Weapon), typeof(Vector3), typeof(ICombatant), typeof(bool), typeof(int), typeof(float), typeof(float), typeof(float), typeof(float) })]
     static class DamageModifiers_DamageReductionMultiplierAll
     {
         static bool Prepare() => Mod.Config.Fixes.BreachingShotIgnoresAllDR;
@@ -29,7 +26,7 @@ namespace IRTweaks.Modules.Combat
     [HarmonyPatch(typeof(Criticals), "GetWeaponDamage",
         new Type[]
         {
-            typeof(AbstractActor), typeof(WeaponHitInfo), typeof(Weapon) 
+            typeof(AbstractActor), typeof(WeaponHitInfo), typeof(Weapon)
         })]
     static class AIM_Criticals_GetWeaponDamage
     {
@@ -71,7 +68,7 @@ namespace IRTweaks.Modules.Combat
             {
                 num = dmgReductionCurrent;
             }
-            
+
             if (doLogging && AbstractActor.damageLogger.IsLogEnabled)
             {
                 string message1 = __instance.BuildLogMessage(string.Format("!!! Found IgnoreDR flag from breaching shot! Ignoring value of DamageReductionMultiplierAll!"));

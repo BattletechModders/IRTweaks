@@ -1,17 +1,18 @@
-﻿using Harmony;
+﻿using IRBTModUtils.Logging;
+using IRTweaks.Modules.Combat;
+using IRTweaks.Modules.Misc;
+using IRTweaks.Modules.Tooltip;
 using Newtonsoft.Json;
 using System;
 using System.Diagnostics;
-using System.Reflection;
-using IRTweaks.Modules.Combat;
-using IRTweaks.Modules.Tooltip;
-using IRTweaks.Modules.Misc;
-using IRBTModUtils.Logging;
 using System.IO;
+using System.Reflection;
 
-namespace IRTweaks {
+namespace IRTweaks
+{
 
-    public static class Mod {
+    public static class Mod
+    {
 
         public const string HarmonyPackage = "us.frostraptor.IRTweaks";
         public const string LogName = "ir_tweaks";
@@ -23,13 +24,17 @@ namespace IRTweaks {
 
         public static readonly Random Random = new Random();
 
-        public static void Init(string modDirectory, string settingsJSON) {
+        public static void Init(string modDirectory, string settingsJSON)
+        {
             ModDir = modDirectory;
 
             Exception settingsE = null;
-            try {
+            try
+            {
                 Mod.Config = JsonConvert.DeserializeObject<ModConfig>(settingsJSON);
-            } catch (Exception e) {
+            }
+            catch (Exception e)
+            {
                 settingsE = e;
                 Mod.Config = new ModConfig();
             }
@@ -47,9 +52,12 @@ namespace IRTweaks {
             Mod.Config.Init();
             Mod.Config.LogConfig();
 
-            if (settingsE != null) {
+            if (settingsE != null)
+            {
                 Log.Info?.Write($"ERROR reading settings file! Error was: {settingsE}");
-            } else {
+            }
+            else
+            {
                 Log.Info?.Write($"INFO: No errors reading settings file.");
             }
 
@@ -66,19 +74,14 @@ namespace IRTweaks {
                 Log.Error?.Write(e, $"Failed to read localizations from: {localizationPath} due to error!");
             }
 
-            var harmony = HarmonyInstance.Create(HarmonyPackage);
+            Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), HarmonyPackage);
 
             // Initialize modules
-            CombatFixes.InitModule(harmony);
-            MiscFixes.InitModule(harmony);
-            UIFixes.InitModule(harmony);
+            CombatFixes.InitModule();
+            MiscFixes.InitModule();
+            UIFixes.InitModule();
 
-            // Enable DEBUG below to print a log of emitted IL to the desktop. Useful for debugging transpilers
-            //HarmonyInstance.DEBUG = true;
-            harmony.PatchAll(Assembly.GetExecutingAssembly());
             ModState.InitializeEffects();
-            // Setup the diag for me 
-            //Helper.DiagnosticLogger.PatchAllMethods();
         }
     }
 }

@@ -1,12 +1,14 @@
-﻿using BattleTech;
-using System;
+﻿using System;
 using us.frostraptor.modUtils;
 
-namespace IRTweaks {
+namespace IRTweaks
+{
 
-    public static class PainHelper {
+    public static class PainHelper
+    {
 
-        public static float CalculateOverheatRatio(Mech mech) {
+        public static float CalculateOverheatRatio(Mech mech)
+        {
             int overheatLevel = mech.OverheatLevel;
             int maxHeat = mech.MaxHeat;
             int overheatRange = maxHeat - overheatLevel;
@@ -20,7 +22,8 @@ namespace IRTweaks {
             return overheatRatio * 100f;
         }
 
-        public static bool MakeResistCheck(Pilot pilot) {
+        public static bool MakeResistCheck(Pilot pilot)
+        {
             int normalizedGuts = SkillUtils.GetGutsModifier(pilot);
             float baseResist = normalizedGuts * Mod.Config.Combat.PainTolerance.ResistPerGuts;
             float resistPenalty = ModState.InjuryResistPenalty;
@@ -29,9 +32,12 @@ namespace IRTweaks {
 
             int check = Mod.Random.Next(0, 100);
             bool success = resistChance >= check;
-            if (success) {
+            if (success)
+            {
                 Mod.Log.Info?.Write($"Pilot:{pilot?.Name} resisted injury with check:{check} <= resistChance:{resistChance}");
-            } else {
+            }
+            else
+            {
                 Mod.Log.Info?.Write($"Pilot failed to resist injury with check:{check} > resistChance:{resistChance}");
             }
 
