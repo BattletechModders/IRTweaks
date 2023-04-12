@@ -14,8 +14,6 @@ namespace IRTweaks.Modules.UI
         {
             Mod.Log.Trace?.Write("SS_B:OLC - ENTERED!");
 
-            //Traverse initLanceModuleT = Traverse.Create(__instance).Method("InitializeLanceModules", new object[] { 3 });
-            //initLanceModuleT.GetValue();
             __instance.InitializeLanceModules(3);
             Mod.Log.Info?.Write("Set battlevalue to 3");
         }

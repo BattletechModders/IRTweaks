@@ -75,13 +75,11 @@ namespace IRTweaks.Modules.Combat
                 if (Mod.Config.Combat.CalledShot.DisableAllLocations)
                 {
                     Mod.Log.Info?.Write($"  Disabling called shot from attacker: {__instance.SelectedActor.DistinctId()} against target: {__instance.TargetedCombatant.DistinctId()}");
-                    //Traverse.Create(__instance).Method("ClearCalledShot").GetValue();
                     __instance.ClearCalledShot();
                 }
                 else if (Mod.Config.Combat.CalledShot.DisableHeadshots && location == ArmorLocation.Head)
                 {
                     Mod.Log.Info?.Write($"  Disabling headshot from attacker: {__instance.SelectedActor.DistinctId()} against target mech: {__instance.TargetedCombatant.DistinctId()}");
-                    //Traverse.Create(__instance).Method("ClearCalledShot").GetValue();
                     __instance.ClearCalledShot();
                 }
             }
@@ -103,7 +101,6 @@ namespace IRTweaks.Modules.Combat
             if (!targetCanBeCalledShot && Mod.Config.Combat.CalledShot.DisableAllLocations)
             {
                 Mod.Log.Info?.Write($"  Disabling called shot from attacker: {__instance.SelectedActor.DistinctId()} against target vehicle: {__instance.TargetedCombatant.DistinctId()}");
-                //Traverse.Create(__instance).Method("ClearCalledShot").GetValue();
                 __instance.ClearCalledShot();
             }
         }
@@ -202,11 +199,7 @@ namespace IRTweaks.Modules.Combat
                 int calledShotMod = ActorHelper.CalledShotModifier(___HUD.SelectedActor);
                 if (calledShotMod != 0)
                 {
-
-                    //Traverse addToolTipDetailT = Traverse.Create(__instance).Method("AddToolTipDetail", new Type[] { typeof(string), typeof(int) });
-
                     string localText = new Text(Mod.LocalizedText.Modifiers[ModText.Mod_CalledShot]).ToString();
-                    //addToolTipDetailT.GetValue(new object[] { localText, calledShotMod });
                     __instance.AddToolTipDetail(localText, calledShotMod);
                     Mod.Log.Debug?.Write($"Adding calledShot tooltip with text: {localText} and mod: {calledShotMod}");
                 }

@@ -91,17 +91,15 @@ namespace IRTweaks.Modules.Combat
                 {
                     if (allEffectsTargeting[i] is StatisticEffect effect)
                     {
-                        var effectData = allEffectsTargeting[i].effectData;//Traverse.Create(allEffectsTargeting[i]).Field("effectData").GetValue<EffectData>();
+                        var effectData = allEffectsTargeting[i].effectData;
 
                         if (effectData.targetingData.triggerLimit <= 0 || effect.triggerCount <
                             effectData.targetingData.triggerLimit)
                         {
                             int triggerCount = effect.triggerCount + 1;
-                            effect.triggerCount = triggerCount;//Traverse.Create(effect).Property("triggerCount").SetValue(triggerCount);
+                            effect.triggerCount = triggerCount;
 
-                            //var timer = Traverse.Create(effect).Field("eTimer").GetValue<ETimer>();
                             effect.eTimer.IncrementActivations(effectData.targetingData.extendDurationOnTrigger);
-                            //effect.eTimer.IncrementActivations(effectData.targetingData.extendDurationOnTrigger);
                         }
                     }
                 }

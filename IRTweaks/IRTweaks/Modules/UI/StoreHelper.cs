@@ -17,21 +17,13 @@ namespace IRTweaks.Modules.StoreUI
             this.simGameState = simGameState;
             shopIDO = selectedController;
 
-            //Traverse traverse = Traverse.Create(shopScreen).Field("inventoryWidget");
-            inventoryWidget = shopScreen.inventoryWidget; //(MechLabInventoryWidget_ListView)traverse.GetValue();
+            inventoryWidget = shopScreen.inventoryWidget;
         }
 
         // Clone of SoldMultipleItems
         public void BuyMultipleItems(int quantityBought)
         {
             Mod.Log.Debug?.Write("BH:BMI entered.");
-
-            //bool isNotStoreOrSalvage = shopIDO.GetItemType() != MechLabDraggableItemType.StorePart && 
-            //    shopIDO.GetItemType() != MechLabDraggableItemType.SalvagePart;
-            //if (simGameState.InMechLabStore() || !isNotStoreOrSalvage) {
-            //    Mod.Logger.Info($"BH:BMI - in the mech lab store, or the part isn't a store part or salvage (is {shopIDO.GetItemType()}). Aborting!");
-            //    return;
-            //}
 
             ShopDefItem toBuySDI = shopIDO.shopDefItem;
 
@@ -114,8 +106,6 @@ namespace IRTweaks.Modules.StoreUI
             }
 
             Mod.Log.Debug?.Write("BH:BMI - triggering iron man save");
-            //Traverse ironManT = Traverse.Create(shopScreen).Field("triggerIronManAutoSave");
-            //ironManT.SetValue(true);
             shopScreen.triggerIronManAutoSave = true;
         }
     }

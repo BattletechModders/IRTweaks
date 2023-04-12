@@ -27,8 +27,6 @@ namespace IRTweaks.Modules.Combat
                     Mod.Log.Info?.Write($"  -- target position: {targetPos}");
                 }
 
-                //Traverse allTargetsT = Traverse.Create(__instance).Property("AllTargets");
-                //List<ICombatant> allTargets = allTargetsT.GetValue<List<ICombatant>>();
                 var allTargets = __instance.AllTargets;
                 // Find all buildings that were included as targets. HBS code can't handle these, so cut them out 
                 //  of AllTargets and we'll destroy them independently in AttackNextTarget.

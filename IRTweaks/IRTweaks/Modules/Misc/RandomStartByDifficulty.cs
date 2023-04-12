@@ -249,11 +249,11 @@ namespace IRTweaks.Modules.Misc
 
                             SGDSDropdown newDropDown = newDropDownObject.GetOrAddComponent<SGDSDropdown>();
 
-                            var dropdown = newDropDown.dropdown;//Traverse.Create(newDropDown).Field("dropdown").GetValue<HBS_Dropdown>();
+                            var dropdown = newDropDown.dropdown;
                             var dropdownrect = dropdown.gameObject.GetComponent<RectTransform>();
                             dropdownrect.sizeDelta = new Vector2(170, 40);
 
-                            var dropdownLabel = dropdown.m_CaptionText;//Traverse.Create(dropdown).Field("m_CaptionText").GetValue<LocalizableText>();
+                            var dropdownLabel = dropdown.m_CaptionText;
                             dropdownLabel.enableWordWrapping = false;
 
                             if (!ModState.InstantiatedDropdowns.Contains(newDropDown))
@@ -360,8 +360,6 @@ namespace IRTweaks.Modules.Misc
                 ToHitConstantsDef thcd = __instance.simState.CombatConstants.ToHit;
                 thcd.StrayShotsEnabled = value;
 
-                //Traverse traverse = Traverse.Create(___simState.CombatConstants).Property("ToHit");
-                //traverse.SetValue(thcd);
                 __instance.simState.CombatConstants.ToHit = thcd;
                 Mod.Log.Debug?.Write($" Replaced ToHit");
             }
@@ -373,8 +371,6 @@ namespace IRTweaks.Modules.Misc
                 ToHitConstantsDef thcd = __instance.simState.CombatConstants.ToHit;
                 thcd.StrayShotsHitUnits = value;
 
-                //Traverse traverse = Traverse.Create(___simState.CombatConstants).Property("ToHit");
-                //traverse.SetValue(thcd);
                 __instance.simState.CombatConstants.ToHit = thcd;
                 Mod.Log.Debug?.Write($" Replaced ToHit");
             }
@@ -386,8 +382,6 @@ namespace IRTweaks.Modules.Misc
                 ToHitConstantsDef thcd = __instance.simState.CombatConstants.ToHit;
                 thcd.StrayShotValidTargets = (StrayShotValidTargets)Enum.Parse(typeof(StrayShotValidTargets), value);
 
-                //Traverse traverse = Traverse.Create(___simState.CombatConstants).Property("ToHit");
-                //traverse.SetValue(thcd);
                 __instance.simState.CombatConstants.ToHit = thcd;
                 Mod.Log.Debug?.Write($" Replaced ToHit");
             }

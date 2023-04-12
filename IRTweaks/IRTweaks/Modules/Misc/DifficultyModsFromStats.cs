@@ -71,7 +71,6 @@ namespace IRTweaks.Modules.Misc
             var irMod = sim.CompanyStats.GetValue<float>("IRTweaks_DiffMod");
 
             ___curCareerModifier += irMod;
-            //Traverse.Create(__instance).Field("curCareerModifier").SetValue(newMod);
             Mod.Log.Info?.Write(
                 $"DiffMods: Adding IRMod {irMod} to current career mod {curMod} for final career difficulty modifier {___curCareerModifier}.");
             return false;

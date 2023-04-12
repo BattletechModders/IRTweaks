@@ -171,7 +171,7 @@ namespace IRTweaks.Modules.UI
                 return;
             }
 
-            var loclInv = widget.localInventory;//Traverse.Create(widget).Field("localInventory").GetValue<List<MechLabItemSlotElement>>();
+            var loclInv = widget.localInventory;
 
             for (int i = loclInv.Count - 1; i >= 0; i--)
             {
@@ -210,9 +210,6 @@ namespace IRTweaks.Modules.UI
                         sim.DataManager.ShipUpgradeDefs.TryGet(
                             Mod.Config.Misc.MechLabRefitReqs.MechLabRefitReqs[tag], out ShipModuleUpgrade upgrade);
 
-                        //var SetErrorMsg = Traverse.Create(__instance).Method("SetDropErrorMessage", new Type[] {typeof(string), typeof(object[])});
-
-                        //SetErrorMsg.GetValue($"Cannot fit {newComponent.Def.Description.Name} to unit, requires Argo upgrade {upgrade.Description.Name}.", new object[]{});
                         __instance.SetDropErrorMessage($"Cannot fit {newComponent.Def.Description.Name} to unit, requires Argo upgrade {upgrade.Description.Name}.", new object[] { });
                         ModState.IsComponentValidForRefit = false;
                         return;
@@ -244,29 +241,5 @@ namespace IRTweaks.Modules.UI
             return true;
         }
     }
-
-
-
-    //[HarmonyPatch(typeof(MechLabPanel), "SetData")]
-    //[HarmonyPatch(new Type[] { typeof(MechDef), typeof(DataManager), typeof(UnityAction), typeof(UnityAction), typeof(bool)})]
-    //static class MechLabPanel_SetData_2
-    //{
-    //    static bool Prepare() => Mod.Config.Fixes.MechbayLayout;
-
-    //    static void Postfix(MechLabPanel __instance)
-    //    {
-    //        try
-    //        {
-    //            Transform cancelConfirmT = __instance.gameObject.transform.Find("uixPrfBttn_BASE_button2-MANAGED-confirm");
-    //            Transform readyTextT = cancelConfirmT.Find("ready_Text-optional");
-    //            LocalizableText buttonText = readyTextT.gameObject.GetComponent<LocalizableText>();
-    //            buttonText.SetText("VALIDATE");
-    //        }
-    //        catch (Exception e)
-    //        {
-    //            Mod.Log.Warn?.Write(e, $"Failed to set MechLab confirm button to new text");
-    //        }
-    //    }
-    //}
 
 }
