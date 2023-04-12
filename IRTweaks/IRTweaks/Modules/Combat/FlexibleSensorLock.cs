@@ -1,18 +1,76 @@
-﻿using BattleTech.UI;
+﻿using System.Linq;
+using UnityEngine;
 
 namespace IRTweaks.Modules.Combat
 {
-    using System.Linq;
-    using UnityEngine;
-
-    public static class FlexibleSensorLock
+    // Classes related to Flexible Sensor Locks
+    static class FlexibleSensorLockHelper
     {
+        public static bool ActorHasFreeSensorLock(AbstractActor actor)
+        {
+            if (actor == null)
+                return false;
 
-        public static void SelectionStateSensorLock_CanActorUseThisState_Postfix(SelectionStateSensorLock __instance, AbstractActor actor, ref bool __result)
+            if (!Mod.Config.Combat.FlexibleSensorLock.FreeActionWithStat && 
+                !Mod.Config.Combat.FlexibleSensorLock.FreeActionWithAbility)
+                return true;
+
+            if (Mod.Config.Combat.FlexibleSensorLock.FreeActionWithStat && actor
+                .StatCollection.GetValue<bool>(Mod.Config.Combat.FlexibleSensorLock.FreeActionStatName))
+                return true;
+
+            Pilot pilot = actor.GetPilot();
+            Mod.Log.Debug?.Write($"pilot = [{pilot}]\r\n"
+                          + $"abilities = [{string.Join(",", pilot?.Abilities.Select(ability => ability.Def.Id))}]");
+            if (Mod.Config.Combat.FlexibleSensorLock.FreeActionWithAbility && 
+                (pilot?.Abilities?.Exists(ability => ability.Def.Id == Mod.Config.Abilities.FlexibleSensorLockId) ?? false))
+                return true;
+
+            return false;
+        }
+    }
+
+    // --- SelectionStateSensorLock classes ---
+    [HarmonyPatch(typeof(SelectionStateSensorLock), "ConsumesFiring", MethodType.Getter)]
+    static class SelectionStateSensorLock_ConsumesFiring
+    {
+        [HarmonyPrepare]
+        static bool Prepare() => Mod.Config.Fixes.FlexibleSensorLock;
+
+        [HarmonyPostfix]
+        static void Postfix(ref bool __result)
+        {
+            __result = false;
+        }
+
+    }
+
+    [HarmonyPatch(typeof(SelectionStateSensorLock), "ConsumesMovement", MethodType.Getter)]
+    static class SelectionStateSensorLock_ConsumesMovement
+    {
+        [HarmonyPrepare]
+        static bool Prepare() => Mod.Config.Fixes.FlexibleSensorLock;
+
+        [HarmonyPostfix]
+        static void Postfix(ref bool __result)
+        {
+            __result = false;
+        }
+
+    }
+
+    [HarmonyPatch(typeof(SelectionStateSensorLock), "CanActorUseThisState")]
+    static class SelectionStateSensorLock_CanActorUseThisState
+    {
+        [HarmonyPrepare]
+        static bool Prepare() => Mod.Config.Fixes.FlexibleSensorLock;
+
+        [HarmonyPostfix]
+        static void Postfix(SelectionStateSensorLock __instance, AbstractActor actor, ref bool __result)
         {
             Mod.Log.Trace?.Write("SSSL:CAUTS entered");
 
-            if (ActorHasFreeSensorLock(actor))
+            if (FlexibleSensorLockHelper.ActorHasFreeSensorLock(actor))
             {
                 Pilot pilot = actor?.GetPilot();
                 Ability activeAbility = pilot.GetActiveAbility(ActiveAbilityID.SensorLock);
@@ -22,7 +80,16 @@ namespace IRTweaks.Modules.Combat
             }
         }
 
-        public static void SelectionStateSensorLock_CreateFiringOrders_Postfix(SelectionStateSensorLock __instance, string button)
+    }
+
+    [HarmonyPatch(typeof(SelectionStateSensorLock), "CreateFiringOrders")]
+    static class SelectionStateSensorLock_CreateFiringOrder
+    {
+        [HarmonyPrepare]
+        static bool Prepare() => Mod.Config.Fixes.FlexibleSensorLock;
+
+        [HarmonyPostfix]
+        static void Postfix(SelectionStateSensorLock __instance, string button)
         {
             Mod.Log.Trace?.Write("SSSL:CFO entered");
 
@@ -32,13 +99,52 @@ namespace IRTweaks.Modules.Combat
             }
         }
 
-        public static bool SensorLockSequence_CompleteOrders_Prefix(SensorLockSequence __instance, AbstractActor ___owningActor)
+    }
+
+    // --- SensorLockSequence classes ---
+    [HarmonyPatch(typeof(SensorLockSequence), "ConsumesFiring", MethodType.Getter)]
+    static class SensorLockSequence_ConsumesFiring
+    {
+        [HarmonyPrepare]
+        static bool Prepare() => Mod.Config.Fixes.FlexibleSensorLock;
+
+        [HarmonyPostfix]
+        static void Postfix(ref bool __result)
         {
+            __result = false;
+        }
+
+    }
+
+    [HarmonyPatch(typeof(SensorLockSequence), "ConsumesMovement", MethodType.Getter)]
+    static class SensorLockSequence_ConsumesMovement
+    {
+        [HarmonyPrepare]
+        static bool Prepare() => Mod.Config.Fixes.FlexibleSensorLock;
+
+        [HarmonyPostfix]
+        static void Postfix(ref bool __result)
+        {
+            __result = false;
+        }
+
+    }
+
+    [HarmonyPatch(typeof(SensorLockSequence), "CompleteOrders")]
+    static class SensorLockSequence_CompleteOrders
+    {
+        [HarmonyPrepare]
+        static bool Prepare() => Mod.Config.Fixes.FlexibleSensorLock;
+
+        [HarmonyPrefix]
+        static void Prefix(AbstractActor ___owningActor, ref bool __runOriginal)
+        {
+            if (!__runOriginal) return;
+
             Mod.Log.Trace?.Write("SLS:CO entered, aborting invocation");
-            //Mod.Log.Trace?.Write($"  oa:{___owningActor.DisplayName}_{___owningActor.GetPilot().Name} hasFired:{___owningActor.HasFiredThisRound} hasMoved:{___owningActor.HasMovedThisRound} hasActivated:{___owningActor.HasActivatedThisRound}");
 
             // Force the ability to be on cooldown
-            if (ActorHasFreeSensorLock(___owningActor))
+            if (FlexibleSensorLockHelper.ActorHasFreeSensorLock(___owningActor))
             {
                 Pilot pilot = ___owningActor.GetPilot();
                 Ability ability = pilot.GetActiveAbility(ActiveAbilityID.SensorLock);
@@ -53,22 +159,32 @@ namespace IRTweaks.Modules.Combat
                 if (ModState.SelectionStateSensorLock != null)
                 {
                     Mod.Log.Debug?.Write($"  Calling clearTargetedActor");
-                    //Traverse traverse = Traverse.Create(ModState.SelectionStateSensorLock).Method("ClearTargetedActor");
-                    //traverse.GetValue();
                     ModState.SelectionStateSensorLock.ClearTargetedActor();
                     //State.SelectionStateSensorLock.BackOut();
-
                     ModState.SelectionStateSensorLock = null;
                 }
             }
 
-            return false;
+            __runOriginal = false;
         }
 
-        public static bool OrderSequence_OnComplete_Prefix(OrderSequence __instance, AbstractActor ___owningActor)
+    }
+
+    // --- OrderSequence classes ---
+    [HarmonyPatch(typeof(OrderSequence), "OnComplete")]
+    static class OrderSequence_OnComplete
+    {
+        [HarmonyPrepare]
+        static bool Prepare() => Mod.Config.Fixes.FlexibleSensorLock;
+
+        [HarmonyPrefix]
+        static void Prefix(OrderSequence __instance, AbstractActor ___owningActor, ref bool __runOriginal)
         {
-            if ((__instance is SensorLockSequence || (__instance is ActiveProbeSequence && Mod.Config.Combat.FlexibleSensorLock.AlsoAppliesToActiveProbe))
-                && ActorHasFreeSensorLock(___owningActor))
+            if (!__runOriginal) return;
+
+            if ((__instance is SensorLockSequence || 
+                (__instance is ActiveProbeSequence && Mod.Config.Combat.FlexibleSensorLock.AlsoAppliesToActiveProbe))
+                && FlexibleSensorLockHelper.ActorHasFreeSensorLock(___owningActor))
             {
                 Mod.Log.Trace?.Write($"OS:OC entered, cm:{__instance.ConsumesMovement} cf:{__instance.ConsumesFiring}");
                 Mod.Log.Trace?.Write($"    oa:{___owningActor.DisplayName}_{___owningActor.GetPilot().Name} hasFired:{___owningActor.HasFiredThisRound} " +
@@ -77,9 +193,6 @@ namespace IRTweaks.Modules.Combat
 
                 Mod.Log.Trace?.Write(" SensorLockSequence, skipping.");
 
-                //Traverse.Create(__instance).Method("ClearShownList").GetValue();
-                //Traverse.Create(__instance).Method("ClearCamera").GetValue();
-                //Traverse.Create(__instance).Method("ClearFocalPoint").GetValue();
                 __instance.ClearShownList();
                 __instance.ClearCamera();
                 __instance.ClearFocalPoint();
@@ -87,24 +200,26 @@ namespace IRTweaks.Modules.Combat
                 {
                     Mod.Log.Trace?.Write(" Getting SequenceFinished");
                     __instance.CompletedCallback.Invoke();
-                    //Traverse.Create(__instance).Property("CompletedCallback").GetValue<SequenceFinished>();
                 }
-
-                return true;
             }
-            else
-            {
-                //Mod.Log.Trace?.Write(" Not SensorLockSequence, continuing.");
-                return true;
-            }
+            __runOriginal = true;
         }
 
-        public static void OrderSequence_ConsumesActivation_Postfix(OrderSequence __instance, ref bool __result, AbstractActor ___owningActor)
+    }
+
+    [HarmonyPatch(typeof(OrderSequence), "ConsumesActivation", MethodType.Getter)]
+    static class OrderSequence_ConsumesActivation
+    {
+        [HarmonyPrepare]
+        static bool Prepare() => Mod.Config.Fixes.FlexibleSensorLock;
+
+        [HarmonyPostfix]
+        static void Postfix(OrderSequence __instance, ref bool __result, AbstractActor ___owningActor)
         {
             if (__instance is SensorLockSequence || (__instance is ActiveProbeSequence && Mod.Config.Combat.FlexibleSensorLock.AlsoAppliesToActiveProbe))
             {
                 __result = true;
-                if (ActorHasFreeSensorLock(___owningActor))
+                if (FlexibleSensorLockHelper.ActorHasFreeSensorLock(___owningActor))
                 {
                     __result = false;
                 }
@@ -112,58 +227,99 @@ namespace IRTweaks.Modules.Combat
             }
         }
 
-        private static bool ActorHasFreeSensorLock(AbstractActor actor)
+    }
+
+    // --- AIUtil classes ---
+    [HarmonyPatch(typeof(AIUtil), "EvaluateSensorLockQuality")]
+    static class AIUtil_EvaluateSensorLockQuality
+    {
+        [HarmonyPrepare]
+        static bool Prepare() => Mod.Config.Fixes.FlexibleSensorLock;
+
+        [HarmonyPrefix]
+        static void Prefix(ref bool __result, AbstractActor movingUnit, ICombatant target, out float quality, ref bool __runOriginal)
         {
-            if (actor == null)
-                return false;
+            if (!__runOriginal)
+            {
+                quality = float.MinValue;
+                return;
+            }
 
-            if (!Mod.Config.Combat.FlexibleSensorLock.FreeActionWithStat && !Mod.Config.Combat.FlexibleSensorLock.FreeActionWithAbility)
-                return true;
-
-            if (Mod.Config.Combat.FlexibleSensorLock.FreeActionWithStat && actor.StatCollection.GetValue<bool>(Mod.Config.Combat.FlexibleSensorLock.FreeActionStatName))
-                return true;
-
-            Pilot pilot = actor.GetPilot();
-            Mod.Log.Debug?.Write($"pilot = [{pilot}]\r\n"
-                          + $"abilities = [{string.Join(",", pilot?.Abilities.Select(ability => ability.Def.Id))}]");
-            if (Mod.Config.Combat.FlexibleSensorLock.FreeActionWithAbility && (pilot?.Abilities?.Exists(ability => ability.Def.Id == Mod.Config.Abilities.FlexibleSensorLockId) ?? false))
-                return true;
-
-            return false;
-        }
-
-
-        public static bool AIUtil_EvaluateSensorLockQuality_Prefix(ref bool __result, AbstractActor movingUnit, ICombatant target, out float quality)
-        {
             AbstractActor abstractActor = target as AbstractActor;
             if (abstractActor == null || movingUnit.DynamicUnitRole == UnitRole.LastManStanding || !abstractActor.HasActivatedThisRound || abstractActor.IsDead || abstractActor.EvasivePipsTotal == 0)
             {
-                quality = float.MinValue;
                 __result = false;
-                return false;
+                __runOriginal = false;
+            }
+            else
+            {
+                __runOriginal = true;
             }
             quality = float.MinValue;
-            return true;
         }
 
-        public static void Returns_False_Postfix(ref bool __result)
-        {
-            __result = false;
-        }
+    }
 
-        public static void Mech_InitStats_Prefix(AbstractActor __instance)
+    // --- AIUtil classes ---
+    [HarmonyPatch(typeof(Mech), "InitStats")]
+    static class Mech_InitStats
+    {
+        [HarmonyPrepare]
+        static bool Prepare() => Mod.Config.Fixes.FlexibleSensorLock;
+
+        [HarmonyPrefix]
+        static void Prefix(AbstractActor __instance, ref bool __runOriginal)
         {
+            if (!__runOriginal) return;
+
             if (!__instance.Combat.IsLoadingFromSave && Mod.Config.Combat.FlexibleSensorLock.FreeActionWithStat)
             {
                 __instance.StatCollection.AddStatistic(Mod.Config.Combat.FlexibleSensorLock.FreeActionStatName, false);
             }
         }
+    }
 
-        public static void SelectionStateActiveProbe_CanActorUseThisState_Postfix(SelectionStateActiveProbe __instance, AbstractActor actor, ref bool __result)
+    // --- SelectionStateActiveProbe classes ---
+    [HarmonyPatch(typeof(SelectionStateActiveProbe), "ConsumesFiring", MethodType.Getter)]
+    static class SelectionStateActiveProbe_ConsumesFiring
+    {
+        [HarmonyPrepare]
+        static bool Prepare() => Mod.Config.Fixes.FlexibleSensorLock && Mod.Config.Combat.FlexibleSensorLock.AlsoAppliesToActiveProbe;
+
+        [HarmonyPostfix]
+        static void Postfix(ref bool __result)
+        {
+            __result = false;
+        }
+
+    }
+
+    [HarmonyPatch(typeof(SelectionStateActiveProbe), "ConsumesMovement", MethodType.Getter)]
+    static class SelectionStateActiveProbe_ConsumesMovement
+    {
+        [HarmonyPrepare]
+        static bool Prepare() => Mod.Config.Fixes.FlexibleSensorLock && Mod.Config.Combat.FlexibleSensorLock.AlsoAppliesToActiveProbe;
+
+        [HarmonyPostfix]
+        static void Postfix(ref bool __result)
+        {
+            __result = false;
+        }
+
+    }
+
+    [HarmonyPatch(typeof(SelectionStateActiveProbe), "CanActorUseThisState")]
+    static class SelectionStateActiveProbe_CanActorUseThisState
+    {
+        [HarmonyPrepare]
+        static bool Prepare() => Mod.Config.Fixes.FlexibleSensorLock && Mod.Config.Combat.FlexibleSensorLock.AlsoAppliesToActiveProbe;
+
+        [HarmonyPostfix]
+        static void Postfix(SelectionStateActiveProbe __instance, AbstractActor actor, ref bool __result)
         {
             Mod.Log.Trace?.Write("SSAP:CAUTS entered");
 
-            if (ActorHasFreeSensorLock(actor))
+            if (FlexibleSensorLockHelper.ActorHasFreeSensorLock(actor))
             {
                 Ability activeAbility = actor.ComponentAbilities.Find((Ability x) => x.Def.Targeting == AbilityDef.TargetingType.ActiveProbe);
                 bool flag = (activeAbility != null && activeAbility.IsAvailable);
@@ -172,7 +328,17 @@ namespace IRTweaks.Modules.Combat
             }
         }
 
-        public static void SelectionStateActiveProbe_CreateFiringOrders_Postfix(SelectionStateActiveProbe __instance, string button)
+    }
+
+    [HarmonyPatch(typeof(SelectionStateActiveProbe), "CreateFiringOrders")]
+    static class SelectionStateActiveProbe_CreateFiringOrder
+    {
+        [HarmonyPrepare]
+        static bool Prepare() => Mod.Config.Fixes.FlexibleSensorLock && Mod.Config.Combat.FlexibleSensorLock.AlsoAppliesToActiveProbe;
+
+
+        [HarmonyPostfix]
+        static void Postfix(SelectionStateActiveProbe __instance, string button)
         {
             Mod.Log.Trace?.Write("SSSL:CFO entered");
 
@@ -182,15 +348,56 @@ namespace IRTweaks.Modules.Combat
             }
         }
 
-        public static bool ActiveProbeSequence_CompleteOrders_Prefix(ActiveProbeSequence __instance, AbstractActor ___owningActor, ParticleSystem ___probeParticles)
+    }
+
+    // --- ActiveProbeSequence classes ---
+    [HarmonyPatch(typeof(ActiveProbeSequence), "ConsumesFiring", MethodType.Getter)]
+    static class ActiveProbeSequence_ConsumesFiring
+    {
+        [HarmonyPrepare]
+        static bool Prepare() => Mod.Config.Fixes.FlexibleSensorLock && Mod.Config.Combat.FlexibleSensorLock.AlsoAppliesToActiveProbe;
+
+
+        [HarmonyPostfix]
+        static void Postfix(ref bool __result)
         {
+            __result = false;
+        }
+
+    }
+
+    [HarmonyPatch(typeof(ActiveProbeSequence), "ConsumesMovement", MethodType.Getter)]
+    static class ActiveProbeSequence_ConsumesMovement
+    {
+        [HarmonyPrepare]
+        static bool Prepare() => Mod.Config.Fixes.FlexibleSensorLock && Mod.Config.Combat.FlexibleSensorLock.AlsoAppliesToActiveProbe;
+
+
+        [HarmonyPostfix]
+        static void Postfix(ref bool __result)
+        {
+            __result = false;
+        }
+
+    }
+
+    [HarmonyPatch(typeof(ActiveProbeSequence), "CompleteOrders")]
+    static class ActiveProbeSequence_CompleteOrders
+    {
+        [HarmonyPrepare]
+        static bool Prepare() => Mod.Config.Fixes.FlexibleSensorLock && Mod.Config.Combat.FlexibleSensorLock.AlsoAppliesToActiveProbe;
+
+
+        [HarmonyPrefix]
+        static void Prefix(ActiveProbeSequence __instance, AbstractActor ___owningActor, ParticleSystem ___probeParticles, ref bool __runOriginal)
+        {
+            if (!__runOriginal) return;
+
             Mod.Log.Trace?.Write("SLS:CO entered, aborting invocation");
-            //Mod.Log.Trace?.Write($"  oa:{___owningActor.DisplayName}_{___owningActor.GetPilot().Name} hasFired:{___owningActor.HasFiredThisRound} hasMoved:{___owningActor.HasMovedThisRound} hasActivated:{___owningActor.HasActivatedThisRound}");
 
             // Force the ability to be on cooldown
-            if (ActorHasFreeSensorLock(___owningActor))
+            if (FlexibleSensorLockHelper.ActorHasFreeSensorLock(___owningActor))
             {
-                //CombatGameState ___Combat = Traverse.Create(__instance).Property("Combat").GetValue<CombatGameState>();
                 if (___probeParticles != null)
                 {
                     ___probeParticles.Stop(true);
@@ -203,17 +410,15 @@ namespace IRTweaks.Modules.Combat
                 if (ModState.SelectionStateActiveProbe != null)
                 {
                     Mod.Log.Debug?.Write($"  Calling clearTargetedActor");
-                    //Traverse traverse = Traverse.Create(ModState.SelectionStateActiveProbe).Method("RefreshPossibleTargets");
-                    //traverse.GetValue();
                     ModState.SelectionStateActiveProbe.RefreshPossibleTargets();
-                    //State.SelectionStateSensorLock.BackOut();
 
                     ModState.SelectionStateActiveProbe = null;
                 }
-                return false;
-            }
 
-            return true;
+                __runOriginal = false;
+            }
         }
+
+
     }
 }
