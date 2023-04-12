@@ -25,7 +25,6 @@ This mod replaces the following mods, which used to be stand-alone:
 * **BuildingDamageColorChange**: Changes the floating damage on buildings to be dark blue to distinguish this damage type. Thanks to **Gnivler** for this fix!
 * **BraceOnMeleeWithJuggernaut**: If a pilot has the Guts 8 ability (typically Juggernaut), braces the unit after a melee or DFA attack. A direct copy of [RealityMachina's Better-Juggernaut](https://github.com/RealityMachina/Better-Juggernaut).
 * **BreachingShotIgnoresAllDR**: Makes breaching shot and rear-arc shots ignore damage resistance from `DamageReductionMultiplierAll` as well
-* **BulkPurchasing**: Provides buttons and keyboard shortcuts that allow bulk purchasing and selling of items in the store.
 * **BulkScrapping**: Allows players to scrap all chassis of a given weight from the storage screen at once. Hold Alt and click one of the weight filters at the top of the storage screen to scrap everything in that category.
 * **CalledShotTweaks**: The modifier for called shots (aka offensive push) is driven by the pilot's tactics skill, ability, and pilot tags. It can also be influenced by gear. Options allow disabling the ability to called shot 
 * **CombatLog**: Provides an in-game log that captures text from floaties and preserves them in a readable format.
@@ -931,6 +930,6 @@ the UI will now display something like
 3 pips >>>
 ```
 
-(but more nicely alligned).
+(but more nicely aligned).
 
 If you enable this, you will need to set `"EvasiveNumberWidth": 90` in your CustomAmmoCategoriesSettings.json. Failure to do this will result in weird UI interactions (ugly vertical text).

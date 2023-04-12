@@ -418,7 +418,5 @@ namespace IRTweaks.Modules.Combat
                 __runOriginal = false;
             }
         }
-
-
     }
 }
