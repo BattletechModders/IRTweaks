@@ -219,18 +219,6 @@ namespace IRTweaks.Modules.UI
                 ClickedID = buttonID;
             }
 
-            //private static void QueueOrForceActivation(DropshipMenuType menuType, DropshipLocation location, SGNavigationWidgetLeft sgnwl, SimGameState sgs) {
-            //    if (sgs.CameraController.betweenRoomTransitionTime == 0f && sgs.CameraController.inRoomTransitionTime == 0f) {
-            //        // Check for a 0 animation time on SGRoomManager; if set, BTPerfFix is active and we need to force a transition
-            //        Mod.Log.Info?.Write($"DEBUG - calling SetSubroom for location:{location} and menuType:{menuType}!");
-            //        sgs.RoomManager.ChangeRoom(location);
-            //        sgs.RoomManager.SetSubRoom(location, menuType);
-            //    } else {
-            //        // Let the animation happen via the queued activation
-            //        Mod.Log.Info?.Write("DEBUG - calling SetQueuedUIActivationID!");
-            //        sgnwl.SetQueuedUIActivationID(menuType, location);
-            //    }
-            //}
         }
 
         [HarmonyPatch(typeof(SGNavigationList), "RefreshButtonStates")]
