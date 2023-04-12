@@ -1,116 +1,116 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+
+  <Target Name="ValidateBattleTechGameDir" Condition="'$(BattleTechGameDir)' == '' Or !Exists('$(BattleTechGameDir)')">
+    <Error Text="BattleTechGameDir variable not set properly" />
+  </Target>
+
+  <PropertyGroup Condition="'$(DeployedModPath)' == '' And Exists('$(BattleTechGameDir)\Mods\Core\IRTweaks')">
+    <!-- Modpack -->
+    <DeployedModPath>$(BattleTechGameDir)\Mods\Core\IRTweaks</DeployedModPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(DeployedModPath)' == '' And Exists('$(BattleTechGameDir)\Mods\IRTweaks')">
+    <!-- flat dir -->
+    <DeployedModPath>$(BattleTechGameDir)\Mods\IRTweaks</DeployedModPath>
+  </PropertyGroup>
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{D9366D67-F53F-445B-B198-E39C1E2373CD}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>IRTweaks</RootNamespace>
-    <AssemblyName>IRTweaks</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <Deterministic>true</Deterministic>
-    <TargetFrameworkProfile />
+    <TargetFramework>net472</TargetFramework>
+    <AssemblySearchPaths>
+      $(ReferencePath);
+      {HintPathFromItem};
+      $(BattleTechGameDir)\BattleTech_Data\Managed
+    </AssemblySearchPaths>
+    <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
+    <DebugType>none</DebugType>
+    <AssemblyTitle>IRTweaks</AssemblyTitle>
+    <Product>IRTweaks</Product>
+    <Copyright>Copyright © 2023</Copyright>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <FileVersion>2.0.0.0</FileVersion>
+    <LangVersion>11</LangVersion>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release-NoCAC|AnyCPU'">
-    <OutputPath>bin\Release-NoCAC\</OutputPath>
-    <DefineConstants>NO_CAC</DefineConstants>
+
+  <Target Name="AfterBuildMigrated" AfterTargets="CopyFilesToOutputDirectory">
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(BattleTechGameDir)\Mods\Core\IRTweaks" Condition="'$(BattleTechGameDir)' != '' And Exists('$(BattleTechGameDir)\Mods\Core\IRTweaks')" />
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(BattleTechGameDir)\Mods_CBDE\Core\IRTweaks" Condition="'$(BattleTechGameDir)' != '' And Exists('$(BattleTechGameDir)\Mods_CBDE\Core\IRTweaks')" />
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(RogueTechRepo)\Core\IRTweaks" Condition="'$(RogueTechRepo)' != '' And Exists('$(RogueTechRepo)\Core\IRTweaks')" />
+  </Target>
+
+  <PropertyGroup>
+    <!-- avoids IgnoresAccessChecksToAttribute warnings -->
+    <PublicizerRuntimeStrategies>Unsafe</PublicizerRuntimeStrategies>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.3.0" />
+    <PackageReference Include="Krafs.Publicizer" Version="2.2.1" />
+    <Publicize Include="Assembly-CSharp;UnityEngine.UI" />
   </ItemGroup>
+
   <ItemGroup>
-    <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.3.0" />
-    <Reference Include="0Harmony, Version=1.2.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(BattleTechGameDir)\BattleTech_Data\Managed\0Harmony.dll</HintPath>
-    </Reference>
-    <Reference Include="Assembly-CSharp" Publicize="true">
-      <HintPath>$(BattleTechGameDir)\Mods\.modtek\AssembliesInjected\Assembly-CSharp.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(BattleTechGameDir)\BattleTech_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
-    </Reference>
+     <PackageReference Include="HarmonyX" Version="2.10.1">
+       <PrivateAssets>all</PrivateAssets>
+       <ExcludeAssets>runtime</ExcludeAssets>
+     </PackageReference>
+
+     <Reference Include="Assembly-CSharp" Publicize="true">
+       <Private>False</Private>
+     </Reference>
+     <Reference Include="Assembly-CSharp-firstpass">
+       <Private>False</Private>
+     </Reference>
+     
     <Reference Include="AttackImprovementMod">
       <HintPath>$(BattleTechGameDir)\Mods\CustomAmmoCategories\AttackImprovementMod.dll</HintPath>
     </Reference>
     <Reference Include="CustomAmmoCategories, Version=0.0.1.183, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
       <HintPath>$(BattleTechGameDir)\Mods\CustomAmmoCategories\CustomAmmoCategories.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="CustomUnits">
       <HintPath>$(BattleTechGameDir)\Mods\CustomUnits\CustomUnits.dll</HintPath>
     </Reference>
     <Reference Include="DOTweenPro, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
       <HintPath>$(BattleTechGameDir)\BattleTech_Data\Managed\DOTweenPro.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="InControl">
       <HintPath>$(BattleTechGameDir)\BattleTech_Data\Managed\InControl.dll</HintPath>
     </Reference>
     <Reference Include="IRBTModUtils, Version=1.6.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
       <HintPath>$(BattleTechGameDir)\Mods\IRBTModUtils\IRBTModUtils.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
       <HintPath>$(BattleTechGameDir)\BattleTech_Data\Managed\Newtonsoft.Json.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
     <Reference Include="Unity.TextMeshPro">
       <HintPath>$(BattleTechGameDir)\BattleTech_Data\Managed\Unity.TextMeshPro.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
       <HintPath>$(BattleTechGameDir)\BattleTech_Data\Managed\UnityEngine.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
       <HintPath>$(BattleTechGameDir)\BattleTech_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="UnityEngine.PhysicsModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
       <HintPath>$(BattleTechGameDir)\BattleTech_Data\Managed\UnityEngine.PhysicsModule.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="UnityEngine.TerrainModule">
       <HintPath>$(BattleTechGameDir)\BattleTech_Data\Managed\UnityEngine.TerrainModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.TextRenderingModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
       <HintPath>$(BattleTechGameDir)\BattleTech_Data\Managed\UnityEngine.TextRenderingModule.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="UnityEngine.UI, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
       <HintPath>$(BattleTechGameDir)\BattleTech_Data\Managed\UnityEngine.UI.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="UnityEngine.ParticleSystemModule">
       <HintPath>$(BattleTechGameDir)\BattleTech_Data\Managed\UnityEngine.ParticleSystemModule.dll</HintPath>
@@ -118,79 +118,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Helper\ActorHelper.cs" />
-    <Compile Include="Helper\DifficultyHelper.cs" />
-    <Compile Include="Helper\DiagnosticLogger.cs" />
-    <Compile Include="Helper\PainHelper.cs" />
-    <Compile Include="Helper\ProtectionHelper.cs" />
-    <Compile Include="ModText.cs" />
-    <Compile Include="ModConstants.cs" />
-    <Compile Include="ModInit.cs" />
-    <Compile Include="Modules\Combat\BreachingShotIgnoreDR.cs" />
-    <Compile Include="Modules\Combat\DisableFiringStat.cs" />
-    <Compile Include="Modules\Combat\ExplodingBuildingFix.cs" />
-    <Compile Include="Modules\Combat\EffectsOnBrace.cs" />
-    <Compile Include="Modules\Combat\OnWeaponFireFix_CAC.cs" />
-    <Compile Include="Modules\Combat\BuildingDamageColorChange.cs" />
-    <Compile Include="Modules\Combat\CalledShots.cs" />
-    <Compile Include="Modules\CombatModule.cs" />
-    <Compile Include="Modules\Combat\BraceOnMeleeWithJuggernaut.cs" />
-    <Compile Include="Modules\Combat\AbilityResourceFix.cs" />
-    <Compile Include="Modules\Combat\MechLocationDestructFixes.cs" />
-    <Compile Include="Modules\Combat\TurnDirectorOnFirstRoundFix.cs" />
-    <Compile Include="Modules\Combat\WeakAgainstMeleeDisplay.cs" />
-    <Compile Include="Modules\Combat\CAC_API_ShotMods.cs" />
-    <Compile Include="Modules\Combat\TurretArmorAndStructureMult.cs" />
-    <Compile Include="Modules\Combat\ObstructionTweaks_CAC.cs" />
-    <Compile Include="Modules\Combat\PainTolerance.cs" />
-    <Compile Include="Modules\Combat\PathfinderTeamFix.cs" />
-    <Compile Include="Modules\Combat\ExtendedStats.cs" />
-    <Compile Include="Modules\Combat\FlexibleSensorLock.cs" />
-    <Compile Include="Modules\Combat\ScaleObjectiveBuildingHealth.cs" />
-    <Compile Include="Modules\Combat\SpawnProtection.cs" />
-    <Compile Include="Modules\Combat\UrbanExplosionsFix.cs" />
-    <Compile Include="Modules\Misc\CheatDetection.cs" />
-    <Compile Include="Modules\Misc\FactionReputationFixes.cs" />
-    <Compile Include="Modules\Misc\EventRequirementsScopeFix.cs" />
-    <Compile Include="Modules\Misc\DeathChanceStatFix.cs" />
-    <Compile Include="Modules\Misc\RestoreMechTagsOnReady.cs" />
-    <Compile Include="Modules\Misc\DifficultyModsFromStats.cs" />
-    <Compile Include="Modules\Misc\FactionValueFix.cs" />
-    <Compile Include="Modules\Misc\DisableMPHash.cs" />
-    <Compile Include="Modules\Misc\MultiTargetAsStatistic.cs" />
-    <Compile Include="Modules\Misc\ShowAllArgoUpgrades.cs" />
-    <Compile Include="Modules\Misc\SkipDeleteSavePopup.cs" />
-    <Compile Include="Modules\Misc\DisableMainMenuButtons.cs" />
-    <Compile Include="Modules\Misc\DisableLowFundsNotification.cs" />
-    <Compile Include="Modules\MiscModule.cs" />
-    <Compile Include="Modules\Misc\RandomStartByDifficulty.cs" />
-    <Compile Include="Modules\Misc\ReduceSaveCompression.cs" />
-    <Compile Include="Modules\Misc\SkirmishReset.cs" />
-    <Compile Include="Modules\UI\AlternateMechNamingStyle.cs" />
-    <Compile Include="Modules\UI\BulkScrapping.cs" />
-    <Compile Include="Modules\UI\TgtComputerTonnage.cs" />
-    <Compile Include="Modules\UI\CombatLog.cs" />
-    <Compile Include="Modules\UI\CombatSaves.cs" />
-    <Compile Include="Modules\UI\MapBoundary.cs" />
-    <Compile Include="Modules\UI\MechBayChanges.cs" />
-    <Compile Include="Modules\UI\SkirmishDifficultyPanelRelabel.cs" />
-    <Compile Include="Modules\UI\SkirmishFilter.cs" />
-    <Compile Include="Modules\UI\StreamlinedMainMenu.cs" />
-    <Compile Include="Modules\UI\StoreHelper.cs" />
-    <Compile Include="Modules\UI\StoreQuantities.cs" />
-    <Compile Include="Modules\UI\DamageReductionInCombatHud.cs" />
-    <Compile Include="Modules\UIModule.cs" />
-    <Compile Include="Modules\UI\WeaponTooltips.cs" />
-    <Compile Include="Patches\CombatGameStatePatches.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ModConfig.cs" />
-    <Compile Include="ModState.cs" />
+    <Compile Remove="Modules\Misc\PilotDuplicationFix.cs" />
+    <Compile Remove="obj\Release-NoCAC\.NETFramework,Version=v4.7.2.AssemblyAttributes.cs" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Target Name="AfterBuild">
-    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(BattleTechGameDir)\Mods\IRTweaks" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="false" Condition="'$(BattleTechGameDir)' != '' And Exists('$(BattleTechGameDir)\Mods\IRTweaks')" />
-    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(BattleTechGameDir)\Mods\Core\IRTweaks" Condition="'$(BattleTechGameDir)' != '' And Exists('$(BattleTechGameDir)\Mods\Core\IRTweaks')" />
-    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(BattleTechGameDir)\Mods_CBDE\Core\IRTweaks" Condition="'$(BattleTechGameDir)' != '' And Exists('$(BattleTechGameDir)\Mods_CBDE\Core\IRTweaks')" />
-    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(RogueTechRepo)\Core\IRTweaks" Condition="'$(RogueTechRepo)' != '' And Exists('$(RogueTechRepo)\Core\IRTweaks')" />
-  </Target>
 </Project>
