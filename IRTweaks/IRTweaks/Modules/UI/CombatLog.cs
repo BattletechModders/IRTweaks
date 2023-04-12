@@ -59,91 +59,283 @@ namespace IRTweaks.Modules.UI
             if (Mod.Config.Fixes.CombatLogNameModifiers) ModState.ExtCombatLogPilotName.Add(pilotNameModifier);
         }
 
-        public static void CombatHUD_Init_Postfix(CombatHUD __instance, CombatGameState Combat)
+
+        [HarmonyPatch(typeof(CombatHUD), "Init", new Type[] { typeof(CombatGameState) })]
+        static class CombatHUD_Init
         {
-            Mod.Log.Trace?.Write("CHUD:I:post - entered.");
+            [HarmonyPrepare]
+            static bool Prepare() => Mod.Config.Fixes.CombatLog;
 
-            CombatLog.infoSidePanel = LazySingletonBehavior<UIManager>.Instance.GetOrCreateUIModule<CombatHUDInfoSidePanel>("", true);
-            infoSidePanel.Init();
-            infoSidePanel.Visible = false;
-
-            // Combat Chat module
-            CombatLog.combatChatModule = LazySingletonBehavior<UIManager>.Instance.GetOrCreateUIModule<CombatChatModule>("", true);
-            if (CombatLog.combatChatModule == null)
+            [HarmonyPostfix]
+            public static void Postfix(CombatHUD __instance, CombatGameState Combat)
             {
-                Mod.Log.Error?.Write("Error creating combat chat module");
-            }
-            else
-            {
-                CombatLog.combatChatModule.CombatInit();
-                CombatLog.infoSidePanel.BumpUp();
-                clog_count = 1;
-                _activeChatList = (ActiveChatListView)typeof(CombatChatModule).GetField("_activeChatList", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).GetValue(combatChatModule);
-                _views = (IViewDataSource<ChatListViewItem>)typeof(ActiveChatListView).BaseType.GetField("_views", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).GetValue(_activeChatList);
-            }
+                Mod.Log.Trace?.Write("CHUD:I:post - entered.");
 
-            Mod.Log.Info?.Write($"CombatChatModule pos: {CombatLog.combatChatModule.gameObject.transform.position}");
-            Mod.Log.Info?.Write($"RetreatEscMenu pos: {__instance.RetreatEscMenu.gameObject.transform.position}");
+                CombatLog.infoSidePanel = LazySingletonBehavior<UIManager>.Instance.GetOrCreateUIModule<CombatHUDInfoSidePanel>("", true);
+                infoSidePanel.Init();
+                infoSidePanel.Visible = false;
 
-            Vector3 newPos = CombatLog.combatChatModule.gameObject.transform.position;
-            newPos.x = __instance.RetreatEscMenu.gameObject.transform.position.x * 1.25f;
-            newPos.y = __instance.RetreatEscMenu.gameObject.transform.position.y - 120f;
-            //newPos.z = __instance.WeaponPanel.gameObject.transform.position.z;
-
-            CombatLog.combatChatModule.gameObject.transform.position = newPos;
-            Mod.Log.Info?.Write($"new CombatChatModule pos: {newPos}");
-
-            // Move the chat button into the menu
-            Transform chatBtnT = CombatLog.combatChatModule.gameObject.transform.Find("Representation/chat_panel/uixPrf_chatButton");
-            Mod.Log.Info?.Write($"ChatButton base  pos: {newPos}");
-            if (chatBtnT != null)
-            {
-                if (__instance.Combat.BattleTechGame.Simulation == null)
+                // Combat Chat module
+                CombatLog.combatChatModule = LazySingletonBehavior<UIManager>.Instance.GetOrCreateUIModule<CombatChatModule>("", true);
+                if (CombatLog.combatChatModule == null)
                 {
-                    newPos.x -= 620f; // skirmish, no withdraw button
+                    Mod.Log.Error?.Write("Error creating combat chat module");
                 }
                 else
                 {
-                    newPos.x -= 740f; // simgame, has withdraw button
+                    CombatLog.combatChatModule.CombatInit();
+                    CombatLog.infoSidePanel.BumpUp();
+                    clog_count = 1;
+                    _activeChatList = (ActiveChatListView)typeof(CombatChatModule).GetField("_activeChatList", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).GetValue(combatChatModule);
+                    _views = (IViewDataSource<ChatListViewItem>)typeof(ActiveChatListView).BaseType.GetField("_views", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).GetValue(_activeChatList);
                 }
-                newPos.y += 80f;
-                chatBtnT.position = newPos;
-                Mod.Log.Info?.Write($"ChatButton new  pos: {newPos}");
+
+                Mod.Log.Info?.Write($"CombatChatModule pos: {CombatLog.combatChatModule.gameObject.transform.position}");
+                Mod.Log.Info?.Write($"RetreatEscMenu pos: {__instance.RetreatEscMenu.gameObject.transform.position}");
+
+                Vector3 newPos = CombatLog.combatChatModule.gameObject.transform.position;
+                newPos.x = __instance.RetreatEscMenu.gameObject.transform.position.x * 1.25f;
+                newPos.y = __instance.RetreatEscMenu.gameObject.transform.position.y - 120f;
+                //newPos.z = __instance.WeaponPanel.gameObject.transform.position.z;
+
+                CombatLog.combatChatModule.gameObject.transform.position = newPos;
+                Mod.Log.Info?.Write($"new CombatChatModule pos: {newPos}");
+
+                // Move the chat button into the menu
+                Transform chatBtnT = CombatLog.combatChatModule.gameObject.transform.Find("Representation/chat_panel/uixPrf_chatButton");
+                Mod.Log.Info?.Write($"ChatButton base  pos: {newPos}");
+                if (chatBtnT != null)
+                {
+                    if (__instance.Combat.BattleTechGame.Simulation == null)
+                    {
+                        newPos.x -= 620f; // skirmish, no withdraw button
+                    }
+                    else
+                    {
+                        newPos.x -= 740f; // simgame, has withdraw button
+                    }
+                    newPos.y += 80f;
+                    chatBtnT.position = newPos;
+                    Mod.Log.Info?.Write($"ChatButton new  pos: {newPos}");
+                }
+                else
+                {
+                    Mod.Log.Info?.Write("Could not find chatButton to change position!");
+                }
+
+                combat = Combat;
             }
-            else
+        }
+
+        [HarmonyPatch(typeof(CombatHUD), "OnCombatGameDestroyed")]
+        static class CombatHUD_OnCombatGameDestroyed
+        {
+            [HarmonyPrepare]
+            static bool Prepare() => Mod.Config.Fixes.CombatLog;
+
+            [HarmonyPostfix]
+            public static void Postfix()
             {
-                Mod.Log.Info?.Write("Could not find chatButton to change position!");
+                Mod.Log.Info?.Write("Combat game destroyed, cleaning up");
+                combat = null;
+                messageCenter = null;
+                _activeChatList = null;
+                _views = null;
             }
-
-            combat = Combat;
         }
 
-        public static void CombatHUD_OnCombatGameDestroyed_Postfix()
+        [HarmonyPatch(typeof(CombatChatModule), "Init")]
+        static class CombatChatModule_Init
         {
-            Mod.Log.Info?.Write("Combat game destroyed, cleaning up");
-            combat = null;
-            messageCenter = null;
-            _activeChatList = null;
-            _views = null;
+            [HarmonyPrepare]
+            static bool Prepare() => Mod.Config.Fixes.CombatLog;
+
+            [HarmonyPostfix]
+            public static void Postfix(MessageCenter ____messageCenter, HBSDOTweenButton ____chatBtn, HBSDOTweenButton ____muteBtn)
+            {
+                ____chatBtn.enabled = false;
+                ____chatBtn.gameObject.SetActive(false);
+                ____muteBtn.enabled = false;
+                ____muteBtn.gameObject.SetActive(false);
+
+                ____messageCenter.AddSubscriber(MessageCenterMessageType.FloatieMessage, OnFloatie);
+                messageCenter = ____messageCenter;
+            }
         }
 
-        public static void CombatChatModule_Init_Postfix(CombatChatModule __instance, MessageCenter ____messageCenter,
-            HBSDOTweenButton ____chatBtn, HBSDOTweenButton ____muteBtn, ActiveChatListView ____activeChatList)
+        [HarmonyPatch(typeof(CombatChatModule), "CombatInit")]
+        static class CombatChatModule_CombatInit
         {
-            ____chatBtn.enabled = false;
-            ____chatBtn.gameObject.SetActive(false);
-            ____muteBtn.enabled = false;
-            ____muteBtn.gameObject.SetActive(false);
+            [HarmonyPrepare]
+            static bool Prepare() => Mod.Config.Fixes.CombatLog;
 
-            ____messageCenter.AddSubscriber(MessageCenterMessageType.FloatieMessage, OnFloatie);
-            messageCenter = ____messageCenter;
+            [HarmonyPostfix]
+            public static void Postfix(HBSDOTweenButton ____chatBtn, HBSDOTweenButton ____muteBtn, 
+                HBS_InputField ____inputField, GameObject ____activeChatWindow)
+            {
+
+                ____chatBtn.enabled = true;
+                ____chatBtn.gameObject.SetActive(true);
+                ____muteBtn.enabled = false;
+                ____muteBtn.gameObject.SetActive(false);
+                ____inputField.enabled = false;
+                ____inputField.gameObject.SetActive(false);
+                ____inputField.readOnly = true;
+
+                // Hide the send button
+                Transform sendButtonT = ____activeChatWindow.gameObject.transform.Find("uixPrf_genericButton");
+                if (sendButtonT != null)
+                {
+                    sendButtonT.gameObject.SetActive(false);
+                }
+                else
+                {
+                    Mod.Log.Info?.Write("Could not find send button to disable!");
+                }
+
+                // Set the scroll spacing to 0
+                Transform scrollListT = ____activeChatWindow.gameObject.transform.Find("panel_history/uixPrfPanl_listView/ScrollRect/Viewport/List");
+                if (scrollListT != null)
+                {
+                    VerticalLayoutGroup scrollListVLG = scrollListT.gameObject.GetComponent<VerticalLayoutGroup>();
+                    scrollListVLG.spacing = 0;
+                }
+                else
+                {
+                    Mod.Log.Info?.Write("Could not find scrollList to change spacing!");
+                }
+
+                // Resize the image background
+                Transform imageBackgroundT = ____activeChatWindow.gameObject.transform.Find("image_background");
+                if (imageBackgroundT != null)
+                {
+                    RectTransform imageBackgroundRT = imageBackgroundT.gameObject.GetComponent<RectTransform>();
+                    Rect ibRect = imageBackgroundRT.rect;
+                    Mod.Log.Info?.Write($"Background image size: {ibRect.height}h x {ibRect.width}");
+                    Vector3 newPos = imageBackgroundRT.position;
+                    newPos.y += 20f;
+                    imageBackgroundRT.position = newPos;
+                    imageBackgroundRT.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, ibRect.height - 20);
+                    imageBackgroundRT.ForceUpdateRectTransforms();
+                }
+                else
+                {
+                    Mod.Log.Info?.Write("Could not find imageBackground to change size!");
+                }
+            }
         }
 
-        public static void CombatChatModule_OnPooled_Postfix(MessageCenter ____messageCenter)
+        [HarmonyPatch(typeof(CombatChatModule), "Active_OnEnter", new Type[] { })]
+        static class CombatChatModule_Active_OnEnter
         {
-            ____messageCenter.RemoveSubscriber(MessageCenterMessageType.FloatieMessage, OnFloatie);
-            messageCenter = null;
+            [HarmonyPrepare]
+            static bool Prepare() => Mod.Config.Fixes.CombatLog;
+
+            // Re-enable keyboard input (don't block out wasd)
+            [HarmonyPostfix]
+            public static void Postfix(HBS_InputField ____inputField)
+            {
+                ____inputField.DeactivateInputField();
+                BTInput.Instance.DynamicActions.Enabled = true;
+            }
         }
+
+        [HarmonyPatch(typeof(CombatChatModule), "Update")]
+        public static class CombatChatModule_Update
+        {
+            [HarmonyPrepare]
+            static bool Prepare() => Mod.Config.Fixes.CombatLog;
+
+            [HarmonyPrefix]
+            static bool Prefix(CombatChatModule __instance, ActiveChatListView ____activeChatList)
+            {
+                //Mod.Log.Info?.Write(" -- CCM:Update:pre invoked");
+                // Invoke base.Update()
+                CombatChatModule_UIModule_Update.Invoke(__instance);
+
+                // Remove the [T] from the chat button
+                Transform chatBtnT = __instance.gameObject.transform.Find("Representation/chat_panel/uixPrf_chatButton");
+                if (chatBtnT != null)
+                {
+                    LocalizableText chatBtnLT = chatBtnT.GetComponentInChildren<LocalizableText>();
+                    chatBtnLT.SetText(" ");
+                }
+                else
+                {
+                    Mod.Log.Info?.Write("Could not find chat button");
+                }
+
+                return false;
+            }
+        }
+
+        [HarmonyPatch(typeof(CombatHUDInWorldElementMgr), "AddFloatieMessage")]
+        static class CombatHUDInWorldElementMgr_AddFloatieMessage
+        {
+            [HarmonyPrepare]
+            static bool Prepare() => Mod.Config.Fixes.CombatLog;
+
+            [HarmonyPrefix]
+            static void Prefix(CombatHUDInWorldElementMgr __instance, MessageCenterMessage message, ref bool __runOriginal)
+            {
+                if (!__runOriginal) return;
+
+                FloatieMessage floatieMessage = message as FloatieMessage;
+                switch (floatieMessage.nature)
+                {
+                    case MessageNature.ArmorDamage:
+                    case MessageNature.StructureDamage:
+                    case MessageNature.Buff:
+                    case MessageNature.Debuff:
+                        __instance.ShowFloatie(floatieMessage);
+                        break;
+                    case MessageNature.Miss:
+                    case MessageNature.MeleeMiss:
+                    case MessageNature.Dodge:
+                        break;
+                    default:
+                        break;
+                }
+
+                __runOriginal = false;
+            }
+        }
+
+        [HarmonyPatch(typeof(MessageCenter), "RemoveSubscriber")]
+        static class MessageCenter_RemoveSubscriber
+        {
+            [HarmonyPrepare]
+            static bool Prepare() => Mod.Config.Fixes.CombatLog;
+
+            [HarmonyPrefix]
+            static void Prefix(MessageCenterMessageType GUID, 
+                Dictionary<MessageCenterMessageType, List<MessageSubscription>> ___messageTable, ref bool __runOriginal)
+            {
+                if (!__runOriginal) return;
+
+                if (GUID == MessageCenterMessageType.FloatieMessage)
+                {
+                    List<MessageSubscription> list = ___messageTable[GUID];
+                    Mod.Log.Info?.Write($"MCMT subscription list is size: {list.Count}");
+                }
+            }
+        }
+
+        [HarmonyPatch(typeof(CombatChatModule), "OnPooled")]
+        static class CombatChatModule_OnPooled
+        {
+            [HarmonyPrepare]
+            static bool Prepare() => Mod.Config.Fixes.CombatLog;
+
+            [HarmonyPostfix]
+            static void Postfix(MessageCenter ____messageCenter)
+            {
+                ____messageCenter.RemoveSubscriber(MessageCenterMessageType.FloatieMessage, OnFloatie);
+                messageCenter = null;
+            }
+        }
+
+
 
         private static string GetUnitLogName(AbstractActor actor)
         {
@@ -248,95 +440,6 @@ namespace IRTweaks.Modules.UI
             }
         }
 
-        public static void CombatChatModule_CombatInit_Postfix(CombatChatModule __instance, MessageCenter ____messageCenter,
-            HBSDOTweenButton ____chatBtn, HBSDOTweenButton ____muteBtn, HBS_InputField ____inputField,
-            GameObject ____activeChatWindow, ActiveChatListView ____activeChatList, PassiveChatListView ____passiveChatList)
-        {
-
-            ____chatBtn.enabled = true;
-            ____chatBtn.gameObject.SetActive(true);
-            ____muteBtn.enabled = false;
-            ____muteBtn.gameObject.SetActive(false);
-            ____inputField.enabled = false;
-            ____inputField.gameObject.SetActive(false);
-            ____inputField.readOnly = true;
-
-            // Hide the send button
-            Transform sendButtonT = ____activeChatWindow.gameObject.transform.Find("uixPrf_genericButton");
-            if (sendButtonT != null)
-            {
-                sendButtonT.gameObject.SetActive(false);
-            }
-            else
-            {
-                Mod.Log.Info?.Write("Could not find send button to disable!");
-            }
-
-            // Set the scroll spacing to 0
-            Transform scrollListT = ____activeChatWindow.gameObject.transform.Find("panel_history/uixPrfPanl_listView/ScrollRect/Viewport/List");
-            if (scrollListT != null)
-            {
-                VerticalLayoutGroup scrollListVLG = scrollListT.gameObject.GetComponent<VerticalLayoutGroup>();
-                scrollListVLG.spacing = 0;
-            }
-            else
-            {
-                Mod.Log.Info?.Write("Could not find scrollList to change spacing!");
-            }
-
-            // Resize the image background
-            Transform imageBackgroundT = ____activeChatWindow.gameObject.transform.Find("image_background");
-            if (imageBackgroundT != null)
-            {
-                RectTransform imageBackgroundRT = imageBackgroundT.gameObject.GetComponent<RectTransform>();
-                Rect ibRect = imageBackgroundRT.rect;
-                Mod.Log.Info?.Write($"Background image size: {ibRect.height}h x {ibRect.width}");
-                Vector3 newPos = imageBackgroundRT.position;
-                newPos.y += 20f;
-                imageBackgroundRT.position = newPos;
-                imageBackgroundRT.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, ibRect.height - 20);
-                imageBackgroundRT.ForceUpdateRectTransforms();
-            }
-            else
-            {
-                Mod.Log.Info?.Write("Could not find imageBackground to change size!");
-            }
-        }
-
-        // Re-enable keyboard input (don't block out wasd)
-        public static void CombatChatModule_Active_OnEnter_Postfix(CombatChatModule __instance, HBS_InputField ____inputField)
-        {
-            ____inputField.DeactivateInputField();
-            BTInput.Instance.DynamicActions.Enabled = true;
-        }
-
-        [HarmonyPatch(typeof(CombatChatModule), "Update")]
-        public static class CombatChatModule_Update
-        {
-            static bool Prepare() { return Mod.Config.Fixes.CombatLog; }
-
-            static bool Prefix(CombatChatModule __instance, ActiveChatListView ____activeChatList)
-            {
-                //Mod.Log.Info?.Write(" -- CCM:Update:pre invoked");
-                // Invoke base.Update()
-                CombatChatModule_UIModule_Update.Invoke(__instance);
-
-                // Remove the [T] from the chat button
-                Transform chatBtnT = __instance.gameObject.transform.Find("Representation/chat_panel/uixPrf_chatButton");
-                if (chatBtnT != null)
-                {
-                    LocalizableText chatBtnLT = chatBtnT.GetComponentInChildren<LocalizableText>();
-                    chatBtnLT.SetText(" ");
-                }
-                else
-                {
-                    Mod.Log.Info?.Write("Could not find chat button");
-                }
-
-                return false;
-            }
-        }
-
         private static void ChatListViewItem_SetData(ChatListViewItem __instance, ChatMessage message,
             LocalizableText ____chatMessage)
         {
@@ -364,47 +467,6 @@ namespace IRTweaks.Modules.UI
             Delegate onFloatieDelegate = onFloatieMI.CreateDelegate(typeof(ReceiveMessageCenterMessage), __instance);
             Mod.Log.Info?.Write("Unsubscribing from CombatHUDActorInfo:OnFloatie messages.");
             __instance.Combat.MessageCenter.RemoveSubscriber(MessageCenterMessageType.FloatieMessage, (ReceiveMessageCenterMessage)onFloatieDelegate);
-        }
-
-        public static void MessageCenter_RemoveSubscriber_Prefix(MessageCenter __instance, MessageCenterMessageType GUID, ReceiveMessageCenterMessage subscriber,
-            Dictionary<MessageCenterMessageType, List<MessageSubscription>> ___messageTable)
-        {
-
-            if (GUID == MessageCenterMessageType.FloatieMessage)
-            {
-                List<MessageSubscription> list = ___messageTable[GUID];
-                Mod.Log.Info?.Write($"MCMT subscription list is size: {list.Count}");
-            }
-            //} else {
-            //    Mod.Log.Info?.Write("MCMT not floatie, skipping.");
-            //}
-        }
-
-        public static bool CombatHUDInWorldElementMgr_AddFloatieMessage_Prefix(CombatHUDInWorldElementMgr __instance, MessageCenterMessage message, CombatGameState ___combat)
-        {
-
-            //Traverse showFloatieT = Traverse.Create(__instance).Method("ShowFloatie", new Type[] { typeof(FloatieMessage) });
-            FloatieMessage floatieMessage = message as FloatieMessage;
-            switch (floatieMessage.nature)
-            {
-                case MessageNature.ArmorDamage:
-                case MessageNature.StructureDamage:
-                case MessageNature.Buff:
-                case MessageNature.Debuff:
-                    //showFloatieT.GetValue(new object[] { floatieMessage });
-                    __instance.ShowFloatie(floatieMessage);
-                    break;
-                case MessageNature.Miss:
-                case MessageNature.MeleeMiss:
-                case MessageNature.Dodge:
-                    //__instance.ShowFloatie(floatieMessage);
-                    break;
-                default:
-                    //__instance.ShowStackedFloatie(floatieMessage);
-                    break;
-            }
-
-            return false;
         }
 
     }

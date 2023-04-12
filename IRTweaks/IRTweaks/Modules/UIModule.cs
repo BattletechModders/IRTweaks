@@ -20,33 +20,6 @@ namespace IRTweaks.Modules.Tooltip
                     if (Mod.Config.Fixes.CombatLog)
                     {
                         Mod.Log.Info?.Write("Activating Fix: CombatLog");
-                        MethodInfo combatHUD_Init_MI = AccessTools.Method(typeof(CombatHUD), "Init", new Type[] { typeof(CombatGameState) });
-                        HarmonyMethod cl_chud_i_post = new HarmonyMethod(typeof(CombatLog), "CombatHUD_Init_Postfix");
-                        harmony.Patch(combatHUD_Init_MI, null, cl_chud_i_post, null);
-
-                        MethodInfo chud_ocgd_mi = AccessTools.Method(typeof(CombatHUD), "OnCombatGameDestroyed");
-                        HarmonyMethod cl_chud_ocgd_post = new HarmonyMethod(typeof(CombatLog), "CombatHUD_OnCombatGameDestroyed_Postfix");
-                        harmony.Patch(chud_ocgd_mi, null, cl_chud_ocgd_post, null);
-
-                        MethodInfo ccm_i_mi = AccessTools.Method(typeof(CombatChatModule), "Init");
-                        HarmonyMethod cl_i_post = new HarmonyMethod(typeof(CombatLog), "CombatChatModule_Init_Postfix");
-                        harmony.Patch(ccm_i_mi, null, cl_i_post, null);
-
-                        MethodInfo ccm_ci_mi = AccessTools.Method(typeof(CombatChatModule), "CombatInit");
-                        HarmonyMethod cl_ci_post = new HarmonyMethod(typeof(CombatLog), "CombatChatModule_CombatInit_Postfix");
-                        harmony.Patch(ccm_ci_mi, null, cl_ci_post, null);
-
-                        MethodInfo ccm_a_oe = AccessTools.Method(typeof(CombatChatModule), "Active_OnEnter", new Type[] { });
-                        HarmonyMethod cl_ccm_a_oe_post = new HarmonyMethod(typeof(CombatLog), "CombatChatModule_Active_OnEnter_Postfix");
-                        harmony.Patch(ccm_a_oe, null, cl_ccm_a_oe_post, null);
-
-                        MethodInfo chudiwem_afm_mi = AccessTools.Method(typeof(CombatHUDInWorldElementMgr), "AddFloatieMessage");
-                        HarmonyMethod chudiwem_afm_pre = new HarmonyMethod(typeof(CombatLog), "CombatHUDInWorldElementMgr_AddFloatieMessage_Prefix");
-                        harmony.Patch(chudiwem_afm_mi, chudiwem_afm_pre, null, null);
-
-                        MethodInfo mc_rs_mi = AccessTools.Method(typeof(MessageCenter), "RemoveSubscriber");
-                        HarmonyMethod cl_mc_rs_pre = new HarmonyMethod(typeof(CombatLog), "MessageCenter_RemoveSubscriber_Prefix");
-                        harmony.Patch(mc_rs_mi, cl_mc_rs_pre, null, null);
 
                         // Initialize the helpers
                         CombatLog.InitModule();
