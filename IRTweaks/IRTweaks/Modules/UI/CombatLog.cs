@@ -335,6 +335,23 @@ namespace IRTweaks.Modules.UI
             }
         }
 
+        [HarmonyPatch(typeof(CombatHUDActorInfo), "SubscribeToMessages")]
+        static class CombatHUDActorInfo_SubscribeToMessages
+        {
+            [HarmonyPrepare]
+            static bool Prepare() => Mod.Config.Fixes.CombatLog;
+
+            [HarmonyPostfix]
+            static void Postfix(CombatHUDActorInfo __instance)
+            {
+                // Unsubscribe immediately so we don't process messages
+                MethodInfo onFloatieMI = AccessTools.Method(typeof(CombatHUDActorInfo), "OnFloatie", new Type[] { typeof(MessageCenterMessage) }, null);
+                Delegate onFloatieDelegate = onFloatieMI.CreateDelegate(typeof(ReceiveMessageCenterMessage), __instance);
+
+                Mod.Log.Info?.Write("Unsubscribing from CombatHUDActorInfo:OnFloatie messages.");
+                __instance.Combat.MessageCenter.RemoveSubscriber(MessageCenterMessageType.FloatieMessage, (ReceiveMessageCenterMessage)onFloatieDelegate);
+            }
+        }
 
 
         private static string GetUnitLogName(AbstractActor actor)
@@ -460,14 +477,7 @@ namespace IRTweaks.Modules.UI
 
         }
 
-        public static void CombatHUDActorInfo_SubscribeToMessages_Postfix(CombatHUDActorInfo __instance)
-        {
-            // Unsubscribe immediately so we don't process messages
-            MethodInfo onFloatieMI = AccessTools.Method(typeof(CombatHUDActorInfo), "OnFloatie", new Type[] { typeof(MessageCenterMessage) }, null);
-            Delegate onFloatieDelegate = onFloatieMI.CreateDelegate(typeof(ReceiveMessageCenterMessage), __instance);
-            Mod.Log.Info?.Write("Unsubscribing from CombatHUDActorInfo:OnFloatie messages.");
-            __instance.Combat.MessageCenter.RemoveSubscriber(MessageCenterMessageType.FloatieMessage, (ReceiveMessageCenterMessage)onFloatieDelegate);
-        }
+
 
     }
 
