@@ -15,22 +15,6 @@ namespace IRTweaks.Modules.Tooltip
             {
                 try
                 {
-                    // Updates the purchase and selling dialogs to allow multiple items to be purchased and sold at once
-                    if (Mod.Config.Fixes.BulkPurchasing)
-                    {
-                        Mod.Log.Info?.Write("Activating Fix: BulkPurchasing");
-                        MethodInfo refreshMI = AccessTools.Method(typeof(SG_Stores_MultiPurchasePopup), "Refresh");
-                        HarmonyMethod mpp_R_Post = new HarmonyMethod(typeof(StoreQuantities), "MultiPurchasePopup_Refresh_Postfix");
-                        harmony.Patch(refreshMI, null, mpp_R_Post, null);
-
-                        MethodInfo mpp_ReceiveButtonPress = AccessTools.Method(typeof(SG_Stores_MultiPurchasePopup), "ReceiveButtonPress");
-                        HarmonyMethod mpp_RBP_Pre = new HarmonyMethod(typeof(StoreQuantities), "MultiPurchasePopup_ReceiveButtonPress_Prefix");
-                        harmony.Patch(mpp_ReceiveButtonPress, mpp_RBP_Pre, null, null);
-
-                        MethodInfo ss_ReceiveButtonPress = AccessTools.Method(typeof(SG_Shop_Screen), "ReceiveButtonPress");
-                        HarmonyMethod ss_RBP_Pre = new HarmonyMethod(typeof(StoreQuantities), "Shop_Screen_ReceiveButtonPress_Prefix");
-                        harmony.Patch(ss_ReceiveButtonPress, ss_RBP_Pre, null, null);
-                    }
 
                     // Enable the CombatLog
                     if (Mod.Config.Fixes.CombatLog)
