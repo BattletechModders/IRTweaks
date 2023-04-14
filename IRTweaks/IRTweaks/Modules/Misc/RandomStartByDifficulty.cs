@@ -1,5 +1,4 @@
-﻿using BattleTech.UI;
-using HBS.Extensions;
+﻿using HBS.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;

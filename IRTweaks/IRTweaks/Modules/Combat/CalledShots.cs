@@ -1,5 +1,4 @@
-﻿using BattleTech.UI;
-using IRBTModUtils.Extension;
+﻿using IRBTModUtils.Extension;
 using IRTweaks.Helper;
 using Localize;
 using System;

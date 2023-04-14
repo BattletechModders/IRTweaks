@@ -1,6 +1,4 @@
-﻿
-using BattleTech.UI;
-using IRTweaks.Modules.UI;
+﻿using IRTweaks.Modules.UI;
 using System.Collections.Generic;
 
 namespace IRTweaks

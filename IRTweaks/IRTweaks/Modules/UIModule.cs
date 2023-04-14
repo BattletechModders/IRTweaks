@@ -1,7 +1,4 @@
-﻿using BattleTech.UI;
-using IRTweaks.Modules.UI;
-using System;
-using System.Reflection;
+﻿using IRTweaks.Modules.UI;
 
 namespace IRTweaks.Modules.Tooltip
 {
@@ -13,6 +10,8 @@ namespace IRTweaks.Modules.Tooltip
         {
             if (!Initialized)
             {
+                Mod.Log.Info?.Write("-- Initializing UI Fixes --");
+
                 // Enable the CombatLog
                 if (Mod.Config.Fixes.CombatLog)
                 {

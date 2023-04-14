@@ -1,5 +1,4 @@
-﻿using BattleTech.UI;
-using HBS;
+﻿using HBS;
 using Localize;
 using System;
 using System.Collections.Generic;

@@ -1,5 +1,4 @@
-﻿using BattleTech.UI;
-using System;
+﻿using System;
 using UnityEngine;
 
 namespace IRTweaks.Modules.Misc

@@ -1,4 +1,3 @@
-using BattleTech.UI;
 using UnityEngine;
 
 namespace IRTweaks.Modules.Combat

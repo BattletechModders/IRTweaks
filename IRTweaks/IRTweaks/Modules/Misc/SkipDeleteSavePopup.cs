@@ -1,5 +1,3 @@
-using BattleTech.UI;
-
 // ReSharper disable InconsistentNaming
 
 namespace IRTweaks.Modules.Misc

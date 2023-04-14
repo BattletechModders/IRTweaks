@@ -1,5 +1,4 @@
-﻿using BattleTech.UI;
-using BattleTech.UI.TMProWrapper;
+﻿using BattleTech.UI.TMProWrapper;
 
 namespace IRTweaks.Modules.UI
 {

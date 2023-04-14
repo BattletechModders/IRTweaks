@@ -1,8 +1,4 @@
-﻿using BattleTech.UI;
-using System;
-using System.Reflection;
-
-namespace IRTweaks.Modules.Combat
+﻿namespace IRTweaks.Modules.Combat
 {
 
     public static class CombatFixes
@@ -19,6 +15,8 @@ namespace IRTweaks.Modules.Combat
         {
             if (!Initialized)
             {
+                Mod.Log.Info?.Write("-- Initializing Combat Fixes --");
+
                 if (Mod.Config.Fixes.BraceOnMeleeWithJuggernaut)
                     Mod.Log.Info?.Write("Activating Fix: BraceOnMeleeWithJuggernaut");
 

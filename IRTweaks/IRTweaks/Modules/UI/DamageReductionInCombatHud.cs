@@ -1,7 +1,3 @@
-#if NO_CAC
-#else
-
-using BattleTech.UI;
 using CustAmmoCategories;
 using System;
 using UnityEngine;
@@ -124,8 +120,8 @@ namespace IRTweaks.Modules.UI
 
     }
 
-    [HarmonyPatch(typeof(CombatHUDEvasiveBarPips), "CalcPipsAndActivate")]
-    static class CombatHUDEvasiveBarPips_CalcPipsAndActivate
+    [HarmonyPatch(typeof(CombatHUDEvasiveBarPips), "CalcAndActivatePips2")]
+    static class CombatHUDEvasiveBarPips_CalcAndActivatePips
     {
         static bool Prepare() => Mod.Config.Fixes.DamageReductionInCombatHud;
 
@@ -255,5 +251,3 @@ namespace IRTweaks.Modules.UI
         }
     }
 }
-
-#endif

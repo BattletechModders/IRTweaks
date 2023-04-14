@@ -43,7 +43,7 @@ namespace IRTweaks
 
             Assembly asm = Assembly.GetExecutingAssembly();
             FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(asm.Location);
-            Log.Info?.Write($"Assembly version: {fvi.ProductVersion}");
+            Log.Info?.Write($"Assembly version: {fvi.FileVersion}");
 
             Log.Debug?.Write($"ModDir is:{modDirectory}");
             Log.Debug?.Write($"mod.json settings are:({settingsJSON})");

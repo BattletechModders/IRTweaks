@@ -1,5 +1,4 @@
-﻿using BattleTech.UI;
-using CustAmmoCategories;
+﻿using CustAmmoCategories;
 using UnityEngine;
 
 namespace IRTweaks.Modules.UI

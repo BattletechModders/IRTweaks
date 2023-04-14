@@ -11,7 +11,7 @@ namespace IRTweaks.Modules.Combat
             if (actor == null)
                 return false;
 
-            if (!Mod.Config.Combat.FlexibleSensorLock.FreeActionWithStat && 
+            if (!Mod.Config.Combat.FlexibleSensorLock.FreeActionWithStat &&
                 !Mod.Config.Combat.FlexibleSensorLock.FreeActionWithAbility)
                 return true;
 
@@ -22,7 +22,7 @@ namespace IRTweaks.Modules.Combat
             Pilot pilot = actor.GetPilot();
             Mod.Log.Debug?.Write($"pilot = [{pilot}]\r\n"
                           + $"abilities = [{string.Join(",", pilot?.Abilities.Select(ability => ability.Def.Id))}]");
-            if (Mod.Config.Combat.FlexibleSensorLock.FreeActionWithAbility && 
+            if (Mod.Config.Combat.FlexibleSensorLock.FreeActionWithAbility &&
                 (pilot?.Abilities?.Exists(ability => ability.Def.Id == Mod.Config.Abilities.FlexibleSensorLockId) ?? false))
                 return true;
 
@@ -182,7 +182,7 @@ namespace IRTweaks.Modules.Combat
         {
             if (!__runOriginal) return;
 
-            if ((__instance is SensorLockSequence || 
+            if ((__instance is SensorLockSequence ||
                 (__instance is ActiveProbeSequence && Mod.Config.Combat.FlexibleSensorLock.AlsoAppliesToActiveProbe))
                 && FlexibleSensorLockHelper.ActorHasFreeSensorLock(___owningActor))
             {

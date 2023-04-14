@@ -1,5 +1,4 @@
-﻿using BattleTech.UI;
-using BattleTech.UI.ObjectModel;
+﻿using BattleTech.UI.ObjectModel;
 using BattleTech.UI.TMProWrapper;
 using HBS;
 using System;
@@ -170,7 +169,7 @@ namespace IRTweaks.Modules.UI
             static bool Prepare() => Mod.Config.Fixes.CombatLog;
 
             [HarmonyPostfix]
-            public static void Postfix(HBSDOTweenButton ____chatBtn, HBSDOTweenButton ____muteBtn, 
+            public static void Postfix(HBSDOTweenButton ____chatBtn, HBSDOTweenButton ____muteBtn,
                 HBS_InputField ____inputField, GameObject ____activeChatWindow)
             {
 
@@ -308,7 +307,7 @@ namespace IRTweaks.Modules.UI
             static bool Prepare() => Mod.Config.Fixes.CombatLog;
 
             [HarmonyPrefix]
-            static void Prefix(MessageCenterMessageType GUID, 
+            static void Prefix(MessageCenterMessageType GUID,
                 Dictionary<MessageCenterMessageType, List<MessageSubscription>> ___messageTable, ref bool __runOriginal)
             {
                 if (!__runOriginal) return;

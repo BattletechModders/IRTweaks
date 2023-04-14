@@ -1,5 +1,4 @@
-﻿using BattleTech.UI;
-using BattleTech.UI.Tooltips;
+﻿using BattleTech.UI.Tooltips;
 using IRBTModUtils;
 using Localize;
 using System;

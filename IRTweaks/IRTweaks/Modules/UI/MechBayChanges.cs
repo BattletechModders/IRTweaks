@@ -1,5 +1,4 @@
-﻿using BattleTech.UI;
-using BattleTech.UI.TMProWrapper;
+﻿using BattleTech.UI.TMProWrapper;
 using HBS;
 using Localize;
 using System;
