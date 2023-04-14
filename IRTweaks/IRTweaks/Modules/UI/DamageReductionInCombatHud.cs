@@ -120,8 +120,8 @@ namespace IRTweaks.Modules.UI
 
     }
 
-    [HarmonyPatch(typeof(CombatHUDEvasiveBarPips), "CalcPipsAndActivate")]
-    static class CombatHUDEvasiveBarPips_CalcPipsAndActivate
+    [HarmonyPatch(typeof(CombatHUDEvasiveBarPips), "CalcAndActivatePips")]
+    static class CombatHUDEvasiveBarPips_CalcAndActivatePips
     {
         static bool Prepare() => Mod.Config.Fixes.DamageReductionInCombatHud;
 
