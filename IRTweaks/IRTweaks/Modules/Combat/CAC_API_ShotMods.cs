@@ -503,14 +503,20 @@ namespace IRTweaks.Modules.Combat
         }
 
         [HarmonyPatch(typeof(AbstractActor), "OnActivationEnd")]
-        public static class AbstractActor_OnActivationEnd
+        static class AbstractActor_OnActivationEnd
         {
-            static bool Prepare() => Mod.Config.Combat.OnWeaponFireOpts.SelfInstabilityBracedFactor > 0f || Mod.Config.Combat.OnWeaponFireOpts.SelfKnockdownBracedFactor > 0f || Mod.Config.Combat.DamageModsBySkill.DisplayFloatiesOnTrigger && (Mod.Config.Combat.DamageModsBySkill.HeatMods.Count > 0 ||
+            [HarmonyPrepare]
+            static bool Prepare() => Mod.Config.Combat.OnWeaponFireOpts.SelfInstabilityBracedFactor > 0f || 
+                Mod.Config.Combat.OnWeaponFireOpts.SelfKnockdownBracedFactor > 0f || 
+                Mod.Config.Combat.DamageModsBySkill.DisplayFloatiesOnTrigger && (Mod.Config.Combat.DamageModsBySkill.HeatMods.Count > 0 ||
                 Mod.Config.Combat.DamageModsBySkill.StabilityMods.Count > 0 ||
                 Mod.Config.Combat.DamageModsBySkill.APDmgMods.Count > 0);
 
-            static void Prefix(AbstractActor __instance, string sourceID, int stackItemID)
+            [HarmonyPrefix]
+            static void Prefix(ref bool __runOriginal, AbstractActor __instance, string sourceID, int stackItemID)
             {
+                if (!__runOriginal) return;
+
                 if (Mod.Config.Combat.OnWeaponFireOpts.SelfKnockdownBracedFactor > 0f || Mod.Config.Combat.OnWeaponFireOpts.SelfInstabilityBracedFactor > 0f)
                 {
                     if (!__instance.BracedLastRound)

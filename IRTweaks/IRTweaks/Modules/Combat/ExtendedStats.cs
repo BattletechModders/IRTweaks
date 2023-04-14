@@ -5,10 +5,14 @@ namespace IRTweaks.Modules.Combat
     [HarmonyPatch(typeof(Pilot), "InitStatValidators")]
     static class ExtendedStats_Pilot_InitStatValidators
     {
+        [HarmonyPrepare]
         static bool Prepare() => Mod.Config.Fixes.ExtendedStats;
 
-        static bool Prefix(Pilot __instance, StatCollection ___statCollection)
+        [HarmonyPrefix]
+        static void Prefix(ref bool __runOriginal, Pilot __instance, StatCollection ___statCollection)
         {
+            if (!__runOriginal) return;
+
             Mod.Log.Trace?.Write("P:ISV entered.");
 
             ___statCollection.SetValidator<int>("Piloting", new Statistic.Validator<int>(CustomPilotAttributeValidator<int>));
@@ -18,7 +22,7 @@ namespace IRTweaks.Modules.Combat
 
             ___statCollection.SetValidator<int>("Injuries", new Statistic.Validator<int>(__instance.PilotInjuryValidator<int>));
 
-            return false;
+            __runOriginal = false;
         }
 
         static bool CustomPilotAttributeValidator<T>(ref int newValue)

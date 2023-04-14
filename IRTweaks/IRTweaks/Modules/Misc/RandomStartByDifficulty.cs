@@ -35,9 +35,11 @@ namespace IRTweaks.Modules.Misc
     static class SimGameDifficultySettingsModule_UpdateDifficultyScoreBar_Patch
     {
 
-        static bool Prefix(SimGameDifficultySettingsModule __instance, SimGameDifficulty ___cachedDiff,
+        static void Prefix(ref bool __runOriginal, SimGameDifficultySettingsModule __instance, SimGameDifficulty ___cachedDiff,
             PreGameCareerModeSettingsTotalScoreDescAndBar ___difficultyBarAndMod)
         {
+            if (!__runOriginal) return;
+
             float num = __instance.CalculateRawScoreMod();
             bool active = __instance.ShouldShowDifficultyData();
             ___difficultyBarAndMod.gameObject.SetActive(active);
@@ -54,7 +56,7 @@ namespace IRTweaks.Modules.Misc
                 atlasImage.color = new Color32(255, (byte)scaledModifier, (byte)scaledModifier, 255); ;
             }
 
-            return false;
+            __runOriginal = false;
         }
     }
 
@@ -62,8 +64,11 @@ namespace IRTweaks.Modules.Misc
     static class PreGameCareerModeSettingsTotalScoreDescAndBar_RefreshInfo_Patch
     {
         static bool Prepare() => Mod.Config.Fixes.RandomStartByDifficulty;
-        static bool Prefix(PreGameCareerModeSettingsTotalScoreDescAndBar __instance, float newMod)
+
+        static void Prefix(ref bool __runOriginal, PreGameCareerModeSettingsTotalScoreDescAndBar __instance, float newMod)
         {
+            if (!__runOriginal) return;
+
             bool flag = false;
             SimGameState simulation = UnityGameInstance.BattleTechGame.Simulation;
             if (simulation != null && simulation.DifficultySettings.GetRawCareerModifier() < newMod)
@@ -83,7 +88,7 @@ namespace IRTweaks.Modules.Misc
             {
                 newMod
             });
-            return false;
+            __runOriginal = false;
         }
     }
 
@@ -108,8 +113,9 @@ namespace IRTweaks.Modules.Misc
     [HarmonyPatch(typeof(SimGameDifficultySettingsModule), "InitSettings")]
     static class SimGameDifficultySettingsModule_InitSettings_Patch
     {
-        static void Prefix(SimGameDifficultySettingsModule __instance, SimGameDifficulty ___cachedDiff, PreGameCareerModeSettingsTotalScoreDescAndBar ___difficultyBarAndMod)
+        static void Prefix(ref bool __runOriginal, SimGameDifficultySettingsModule __instance, SimGameDifficulty ___cachedDiff, PreGameCareerModeSettingsTotalScoreDescAndBar ___difficultyBarAndMod)
         {
+            if (!__runOriginal) return;
 
             if (ModState.HaveDiffSettingsInitiated) return;
 
@@ -295,8 +301,10 @@ namespace IRTweaks.Modules.Misc
     {
         static bool Prepare() => Mod.Config.Fixes.RandomStartByDifficulty;
 
-        static void Prefix(SimGameState __instance)
+        static void Prefix(ref bool __runOriginal, SimGameState __instance)
         {
+            if (!__runOriginal) return;
+
             Mod.Log.Trace?.Write("SGS:ARSM entered.");
             SimGameConstantOverride sgco = __instance.ConstantOverrides;
 
@@ -392,8 +400,10 @@ namespace IRTweaks.Modules.Misc
     {
         static bool Prepare() => Mod.Config.Fixes.RandomStartByDifficulty;
 
-        static bool Prefix(SGDifficultySettingObject __instance, ref float __result, int ___curIdx)
+        static void Prefix(ref bool __runOriginal, SGDifficultySettingObject __instance, ref float __result, int ___curIdx)
         {
+            if (!__runOriginal) return;
+
             Mod.Log.Trace?.Write("SGDSO:CCM entered.");
 
             float careerScoreModifier = 0f;
@@ -405,7 +415,7 @@ namespace IRTweaks.Modules.Misc
             __result = careerScoreModifier;
             //__result = (careerScoreModifier <= -1f) ? 0f : careerScoreModifier;
 
-            return false;
+            __runOriginal = false;
         }
 
     }

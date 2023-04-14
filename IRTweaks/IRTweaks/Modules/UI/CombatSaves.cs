@@ -50,8 +50,10 @@ namespace IRTweaks.Modules.UI
     {
         static bool Prepare() => Mod.Config.Fixes.DisableCombatSaves;
 
-        static bool Prefix(SimGameOptionsMenu __instance, Action quitAction)
+        static void Prefix(ref bool __runOriginal, SimGameOptionsMenu __instance, Action quitAction)
         {
+            if (!__runOriginal) return;
+
             CombatGameState combatGameState = SharedState.Combat;
             if (combatGameState != null && !combatGameState.TurnDirector.IsMissionOver && combatGameState.TurnDirector.GameHasBegun)
             {
@@ -70,10 +72,10 @@ namespace IRTweaks.Modules.UI
                     .CancelOnEscape();
                 genericPopupBuilder.IsNestedPopupWithBuiltInFader().Render();
 
-                return false;
+                __runOriginal = false;
+                return;
             }
 
-            return true;
         }
     }
 
@@ -82,8 +84,10 @@ namespace IRTweaks.Modules.UI
     {
         static bool Prepare() => Mod.Config.Fixes.DisableCombatSaves;
 
-        static void Prefix(CombatGameState __instance)
+        static void Prefix(ref bool __runOriginal, CombatGameState __instance)
         {
+            if (!__runOriginal) return;
+
             if (__instance.NeedsStoryMissionStartSave)
             {
                 __instance.NeedsStoryMissionStartSave = false;

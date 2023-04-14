@@ -23,17 +23,17 @@ namespace IRTweaks.Modules.Combat
         }
     }
 
-    [HarmonyPatch(typeof(Criticals), "GetWeaponDamage",
-        new Type[]
-        {
-            typeof(AbstractActor), typeof(WeaponHitInfo), typeof(Weapon)
-        })]
+    [HarmonyPatch(typeof(Criticals), "GetWeaponDamage", new Type[] {typeof(AbstractActor), typeof(WeaponHitInfo), typeof(Weapon)})]
     static class AIM_Criticals_GetWeaponDamage
     {
+        [HarmonyPrepare]
         static bool Prepare() => Mod.Config.Fixes.BreachingShotIgnoresAllDR;
 
-        static void Prefix(AbstractActor target, WeaponHitInfo hitInfo, Weapon weapon)
+        [HarmonyPrefix]
+        static void Prefix(ref bool __runOriginal, AbstractActor target, WeaponHitInfo hitInfo, Weapon weapon)
         {
+            if (!__runOriginal) return;
+
             var combat = UnityGameInstance.BattleTechGame.Combat;
             var attackSequence = combat.AttackDirector.GetAttackSequence(hitInfo.attackSequenceId);
             if (attackSequence.IsBreachingShot || combat.HitLocation.GetAttackDirection(attackSequence.attackPosition, attackSequence.chosenTarget) == AttackDirection.FromBack || attackSequence.meleeAttackType != MeleeAttackType.NotSet)
@@ -42,6 +42,7 @@ namespace IRTweaks.Modules.Combat
             }
         }
 
+        [HarmonyPostfix]
         static void Postfix(AbstractActor target, WeaponHitInfo hitInfo, Weapon weapon)
         {
             ModState.ShouldGetReducedDamageIgnoreDR = false;
@@ -50,18 +51,19 @@ namespace IRTweaks.Modules.Combat
 
 #endif
 
-    [HarmonyPatch(typeof(AbstractActor), "GetReducedDamage",
-        new Type[]
-        {
-            typeof(float), typeof(WeaponCategoryValue), typeof(LineOfFireLevel), typeof(bool)
-        })]
+    [HarmonyPatch(typeof(AbstractActor), "GetReducedDamage", new Type[] {typeof(float), typeof(WeaponCategoryValue), typeof(LineOfFireLevel), typeof(bool)})]
     static class AbstractActor_GetReducedDamage
     {
+        [HarmonyPrepare]
         static bool Prepare() => Mod.Config.Fixes.BreachingShotIgnoresAllDR;
 
-        static bool Prefix(AbstractActor __instance, float incomingDamage, WeaponCategoryValue weaponCategoryValue, LineOfFireLevel lofLevel, bool doLogging, ref float __result)
+        [HarmonyPrefix]
+        static void Prefix(ref bool __runOriginal, AbstractActor __instance, float incomingDamage, WeaponCategoryValue weaponCategoryValue, LineOfFireLevel lofLevel, bool doLogging, ref float __result)
         {
-            if (!ModState.ShouldGetReducedDamageIgnoreDR) return true;
+            if (!__runOriginal) return;
+
+            if (!ModState.ShouldGetReducedDamageIgnoreDR) return;
+
             var num = 1f;
             var dmgReductionCurrent = __instance.StatCollection.GetValue<float>("DamageReductionMultiplierAll");
             if (dmgReductionCurrent > 1f)
@@ -109,21 +111,22 @@ namespace IRTweaks.Modules.Combat
                 }
             }
             __result = incomingDamage * num;
-            return false;
+            
+            __runOriginal = false;
         }
     }
 
-    [HarmonyPatch(typeof(Mech), "ResolveWeaponDamage",
-        new Type[]
-        {
-            typeof(WeaponHitInfo)
-        })]
+    [HarmonyPatch(typeof(Mech), "ResolveWeaponDamage", new Type[] {typeof(WeaponHitInfo)})]
     static class Mech_ResolveWeaponDamage
     {
+        [HarmonyPrepare]
         static bool Prepare() => Mod.Config.Fixes.BreachingShotIgnoresAllDR;
 
-        static void Prefix(Mech __instance, WeaponHitInfo hitInfo)
+        [HarmonyPrefix]
+        static void Prefix(ref bool __runOriginal, Mech __instance, WeaponHitInfo hitInfo)
         {
+            if (!__runOriginal) return;
+
             var combat = UnityGameInstance.BattleTechGame.Combat;
             var attackSequence = combat.AttackDirector.GetAttackSequence(hitInfo.attackSequenceId);
             if (attackSequence.IsBreachingShot || combat.HitLocation.GetAttackDirection(attackSequence.attackPosition, attackSequence.chosenTarget) == AttackDirection.FromBack || attackSequence.meleeAttackType != MeleeAttackType.NotSet)
@@ -132,31 +135,32 @@ namespace IRTweaks.Modules.Combat
             }
         }
 
+        [HarmonyPostfix]
         static void Postfix(Mech __instance, WeaponHitInfo hitInfo)
         {
             ModState.ShouldGetReducedDamageIgnoreDR = false;
         }
     }
 
-    [HarmonyPatch(typeof(AttackDirector.AttackSequence), "OnAttackSequenceImpact",
-        new Type[]
-        {
-            typeof(MessageCenterMessage)
-        })]
+    [HarmonyPatch(typeof(AttackDirector.AttackSequence), "OnAttackSequenceImpact", new Type[]{typeof(MessageCenterMessage)})]
     static class AttackDirectorAttackSequence_OnAttackSequenceImpact
     {
+        [HarmonyPrepare]
         static bool Prepare() => Mod.Config.Fixes.BreachingShotIgnoresAllDR;
 
-        static void Prefix(AttackDirector.AttackSequence __instance, MessageCenterMessage message)
+        [HarmonyPrefix]
+        static void Prefix(ref bool __runOriginal, AttackDirector.AttackSequence __instance, MessageCenterMessage message)
         {
+            if (!__runOriginal) return;
+
             var combat = UnityGameInstance.BattleTechGame.Combat;
-            //var attackSequence = combat.AttackDirector.GetAttackSequence(hitInfo.attackSequenceId);
             if (__instance.IsBreachingShot || combat.HitLocation.GetAttackDirection(__instance.attackPosition, __instance.chosenTarget) == AttackDirection.FromBack || __instance.meleeAttackType != MeleeAttackType.NotSet)
             {
                 ModState.ShouldGetReducedDamageIgnoreDR = true;
             }
         }
 
+        [HarmonyPostfix]
         static void Postfix(AttackDirector.AttackSequence __instance, MessageCenterMessage message)
         {
             ModState.ShouldGetReducedDamageIgnoreDR = false;

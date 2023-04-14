@@ -209,8 +209,10 @@ namespace IRTweaks.Modules.UI
 
             static bool Prepare() { return Mod.Config.Fixes.StreamlinedMainMenu; }
 
-            static void Prefix(SGNavigationButton __instance, DropshipMenuType buttonID, LocalizableText ___text, SGNavigationList ___buttonParent)
+            static void Prefix(ref bool __runOriginal, SGNavigationButton __instance, DropshipMenuType buttonID, LocalizableText ___text, SGNavigationList ___buttonParent)
             {
+                if (!__runOriginal) return;
+
                 Mod.Log.Debug?.Write($"SGNB:FC - button clicked for ID: {__instance.ID} for menuType:{buttonID} with transition:{SimGameCameraController.TransitionInProgress}");
                 // Skip if there's already a transition in progress
                 if (SimGameCameraController.TransitionInProgress) { return; }

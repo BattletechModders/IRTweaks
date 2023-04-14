@@ -10,8 +10,10 @@ namespace IRTweaks.Modules.Combat
     {
         static bool Prepare() => Mod.Config.Fixes.WeakAgainstMeleeFix;
 
-        static bool Prefix(CombatHUDStatusPanel __instance, AbstractActor actor)
+        static void Prefix(ref bool __runOriginal, CombatHUDStatusPanel __instance, AbstractActor actor)
         {
+            if (!__runOriginal) return;
+
             if (actor.UnitType == UnitType.Vehicle)
             {
                 var dmg = actor.Combat.Constants.ResolutionConstants.MeleeDamageMultiplierVehicle * 100;
@@ -28,7 +30,8 @@ namespace IRTweaks.Modules.Combat
                     new Text(ModText.CG_Title_WeakMelee, Array.Empty<object>()),
                     new Text(ModText.CG_Text_WeakMeleeVehicles, dmg),
                     __instance.defaultIconScale, false);
-                return false;
+                __runOriginal = false;
+                return;
             }
 
             if (actor.UnitType == UnitType.Turret)
@@ -47,10 +50,12 @@ namespace IRTweaks.Modules.Combat
                     new Text(ModText.CG_Title_WeakMelee, Array.Empty<object>()),
                     new Text(ModText.CG_Text_WeakMeleeVehicles, dmg),
                     __instance.defaultIconScale, false);
-                return false;
+                __runOriginal = false;
+                return;
             }
 
-            return false;
+            __runOriginal = false;
+            return;
         }
     }
 }

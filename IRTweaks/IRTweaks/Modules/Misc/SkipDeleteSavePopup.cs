@@ -9,6 +9,10 @@ namespace IRTweaks.Modules.Misc
     {
         public static bool Prepare() => !Mod.Config.Fixes.SkipDeleteSavePopup;
 
-        public static bool Prefix() => false;
+        public static void Prefix(ref bool __runOriginal)
+        {
+            if (!__runOriginal) return;
+            __runOriginal = false;
+        }
     }
 }

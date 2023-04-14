@@ -8,9 +8,11 @@
 
         static bool Prepare() { return Mod.Config.Fixes.DisableMPHashCalculation; }
 
-        public static bool Prefix()
+        static void Prefix(ref bool __runOriginal)
         {
-            return false;
+            if (!__runOriginal) return;
+
+            __runOriginal = false;
         }
     }
 }

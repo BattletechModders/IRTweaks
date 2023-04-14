@@ -9,10 +9,15 @@ namespace IRTweaks.Modules.Combat
     [HarmonyPatch(typeof(MechMeleeSequence), "ConsumesFiring", MethodType.Getter)]
     static class MechMeleeSequence_ConsumesFiring_Getter
     {
+        [HarmonyPrepare]
         static bool Prepare() => Mod.Config.Fixes.BraceOnMeleeWithJuggernaut;
 
-        static void Prefix(MechMeleeSequence __instance)
+        [HarmonyPrefix]
+        static void Prefix(ref bool __runOriginal, MechMeleeSequence __instance)
         {
+
+            if (!__runOriginal) return;
+
             if (__instance == null || __instance.OwningMech == null || __instance.OwningMech.GetPilot() == null)
                 return; // Nothing to do
 
@@ -25,8 +30,6 @@ namespace IRTweaks.Modules.Combat
                     {
                         Mod.Log.Info?.Write("Pilot has Juggernaut, bracing after melee attack using Mech.ApplyBraced.");
                         __instance.OwningMech.ApplyBraced();
-                        //__instance.OwningMech.BracedLastRound = true;
-                        //__instance.OwningMech.ApplyInstabilityReduction(StabilityChangeSource.Bracing);
                     }
                 }
             }
@@ -38,10 +41,14 @@ namespace IRTweaks.Modules.Combat
     [HarmonyPatch(typeof(MechDFASequence), "ConsumesFiring", MethodType.Getter)]
     static class MechDFASequence_ConsumesFiring_Getter
     {
+        [HarmonyPrepare]
         static bool Prepare() => Mod.Config.Fixes.BraceOnMeleeWithJuggernaut;
 
-        static void Prefix(MechDFASequence __instance)
+        [HarmonyPrefix]
+        static void Prefix(ref bool __runOriginal, MechDFASequence __instance)
         {
+            if (!__runOriginal) return;
+
             if (__instance == null || __instance.OwningMech == null || __instance.OwningMech.GetPilot() == null)
                 return; // Nothing to do
 
@@ -54,8 +61,6 @@ namespace IRTweaks.Modules.Combat
                     {
                         Mod.Log.Info?.Write("Pilot has Juggernaut, bracing after DFA attack using Mech.ApplyBraced.");
                         __instance.OwningMech.ApplyBraced();
-                        //__instance.OwningMech.BracedLastRound = true;
-                        //__instance.OwningMech.ApplyInstabilityReduction(StabilityChangeSource.Bracing);
                     }
                 }
             }

@@ -105,7 +105,7 @@ namespace IRTweaks.Modules.UI
 
     // Add damage reduction to the combat hud, next to evasion pips.
     [HarmonyPatch(typeof(CombatHUDEvasiveBarPips), "ShowCurrent")]
-    static class CombatHUDEvasiveBarPips_ShowCurrent
+    public static class CombatHUDEvasiveBarPips_ShowCurrent
     {
         static bool Prepare() => Mod.Config.Fixes.DamageReductionInCombatHud;
 
@@ -120,8 +120,8 @@ namespace IRTweaks.Modules.UI
 
     }
 
-    [HarmonyPatch(typeof(CombatHUDEvasiveBarPips), "CalcAndActivatePips2")]
-    static class CombatHUDEvasiveBarPips_CalcAndActivatePips
+    [HarmonyPatch(typeof(CombatHUDEvasiveBarPips), "CalcPipsAndActivate")]
+    static class CombatHUDEvasiveBarPips_CalcPipsAndActivate
     {
         static bool Prepare() => Mod.Config.Fixes.DamageReductionInCombatHud;
 
@@ -199,9 +199,10 @@ namespace IRTweaks.Modules.UI
     {
         static bool Prepare() => Mod.Config.Fixes.DamageReductionInCombatHud;
 
-        static bool Prefix()
+        static void Prefix(ref bool __runOriginal)
         {
-            return false;
+            if (!__runOriginal) return;
+            __runOriginal = false;
         }
     }
 
@@ -212,8 +213,10 @@ namespace IRTweaks.Modules.UI
     {
         static bool Prepare() => Mod.Config.Fixes.DamageReductionInCombatHud;
 
-        static bool Prefix(AttackStackSequence __instance, AttackDirector.AttackSequence sequence)
+        static void Prefix(ref bool __runOriginal, AttackStackSequence __instance, AttackDirector.AttackSequence sequence)
         {
+            if (!__runOriginal) return;
+
             EffectData effect = __instance.Combat.Constants.Visibility.FiredWeaponsEffect;
             __instance.owningActor.CreateEffect(effect, null, sequence.id.ToString(), sequence.stackItemUID, __instance.owningActor);
             __instance.owningActor.UpdateVisibilityCache(__instance.Combat.GetAllCombatants());
@@ -247,7 +250,7 @@ namespace IRTweaks.Modules.UI
                 }
             }
 
-            return false;
+            __runOriginal = false;
         }
     }
 }

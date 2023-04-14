@@ -1,6 +1,4 @@
-﻿#if NO_CAC
-#else
-using CustAmmoCategories;
+﻿using CustAmmoCategories;
 using CustomAmmoCategoriesPatches;
 using CustomUnits;
 using System;
@@ -189,15 +187,16 @@ namespace IRTweaks.Modules.Combat
     }
 
     [HarmonyPatch(typeof(AttackDirector), "OnAttackComplete", new Type[] { typeof(MessageCenterMessage) })]
-    public static class AttackDirector_OnAttackComplete
+    static class AttackDirector_OnAttackComplete
     {
-        public static bool Prepare()
-        {
-            return Mod.Config.Fixes.OnWeaponFireFix;
-        }
+        [HarmonyPrepare]
+        static bool Prepare() => Mod.Config.Fixes.OnWeaponFireFix;
 
-        public static void Prefix(AttackDirector __instance, MessageCenterMessage message)
+        [HarmonyPrefix]
+        static void Prefix(ref bool __runOriginal, AttackDirector __instance, MessageCenterMessage message)
         {
+            if (!__runOriginal) return;
+
             AttackCompleteMessage attackCompleteMessage = (AttackCompleteMessage)message;
             int sequenceId = attackCompleteMessage.sequenceId;
             AttackDirector.AttackSequence attackSequence = __instance.GetAttackSequence(sequenceId);
@@ -336,8 +335,6 @@ namespace IRTweaks.Modules.Combat
                 {
                     foreach (var targetActorID in ModState.AttackShouldCheckActorsForShutdown)
                     {
-                        //var targetActorID = ModState.AttackShouldCheckActorsForShutdown[index];
-                        //if (!ModState.AttackShouldCheckActorsForShutdown.Contains(targetActorID)) continue;
                         Mod.Log.Info?.Write(
                             $"[OnAttackComplete] Processing OnHit forced shutdown check for {targetActorID}.");
                         var targetActor = __instance.Combat.FindActorByGUID(targetActorID);
@@ -372,4 +369,3 @@ namespace IRTweaks.Modules.Combat
         }
     }
 }
-#endif

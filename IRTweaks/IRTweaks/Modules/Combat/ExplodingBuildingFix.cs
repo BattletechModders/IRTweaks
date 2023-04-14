@@ -7,15 +7,16 @@ namespace IRTweaks.Modules.Combat
 {
 
     [HarmonyPatch(typeof(ObstructionGameLogic), "ExplodeBuildingIfNeeded", new Type[] { })]
-    public static class ObstructionGameLogic_ExplodeBuildingIfNeeded
+    static class ObstructionGameLogic_ExplodeBuildingIfNeeded
     {
-        public static bool Prepare()
-        {
-            return Mod.Config.Fixes.ExplodingBuildingFix;
-        }
+        [HarmonyPrepare]
+        static bool Prepare() => Mod.Config.Fixes.ExplodingBuildingFix;
 
-        public static bool Prefix(ObstructionGameLogic __instance)
+        [HarmonyPrefix]
+        static void Prefix(ref bool __runOriginal, ObstructionGameLogic __instance)
         {
+            if (!__runOriginal) return;
+
             if (__instance.IsBuildingEnabled && __instance.explodeBuildingSettings.explode)
             {
                 float num = UnityEngine.Random.Range(25f, 30f);
@@ -42,7 +43,8 @@ namespace IRTweaks.Modules.Combat
                 }
                 __instance.StartCoroutine(__instance.SpawnExplodeEffectOnCells(__instance.transform.position, __instance.explodeBuildingSettings.radius, __instance.explodeBuildingSettings.paintTerrainVFXName, __instance.explodeBuildingSettings.paintTerrainMask, __instance.explodeBuildingSettings.removeTerrainMask));
             }
-            return false;
+
+            __runOriginal = false;
         }
     }
 }

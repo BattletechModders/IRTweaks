@@ -6,10 +6,12 @@ namespace IRTweaks.Modules.Misc
     {
         static bool Prepare() => Mod.Config.Fixes.DisableLowFundsNotification;
 
-        public static bool Prefix()
+        static void Prefix(ref bool __runOriginal)
         {
+            if (!__runOriginal) return;
+
             Mod.Log.Info?.Write($"Skipping Low Funds warning.");
-            return false;
+            __runOriginal = false;
         }
     }
 }

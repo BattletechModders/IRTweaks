@@ -5,13 +5,16 @@ namespace IRTweaks.Modules.Misc
 {
 
     [HarmonyPatch(typeof(MainMenu), "Init")]
-    public static class MainMenu_Init
+    static class MainMenu_Init
     {
 
         static bool Prepare() => Mod.Config.Fixes.DisableCampaign || Mod.Config.Fixes.DisableDebug;
 
-        public static void Prefix(MainMenu __instance)
+        static void Prefix(ref bool __runOriginal, MainMenu __instance)
         {
+
+            if (!__runOriginal) return;
+
             if (Mod.Config.Fixes.DisableCampaign)
             {
                 Mod.Log.Info?.Write($"Disabling the campaign button on the main menu.");
@@ -33,7 +36,7 @@ namespace IRTweaks.Modules.Misc
             }
         }
 
-        public static void Postfix(MainMenu __instance)
+        static void Postfix(MainMenu __instance)
         {
             if (Mod.Config.Fixes.DisableDebug)
             {

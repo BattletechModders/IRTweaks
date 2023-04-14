@@ -9,11 +9,14 @@
         //   from multiple-lances. It looks like TurnDirector.OnDropshipAnimationComplete invokes this,
         //   which can ultimately lead to weird state as the first round gets replayed over and over again.
         //   See https://github.com/BattletechModders/IRTweaks/issues/62 for more details.
-        static bool Prefix(TurnDirector __instance)
+        static void Prefix(ref bool __runOriginal, TurnDirector __instance)
         {
-            if (__instance.GameHasBegun) return false;
+            if (!__runOriginal) return;
 
-            return true;
+            if (__instance.GameHasBegun)
+            {
+                __runOriginal = false;
+            }
         }
     }
 }

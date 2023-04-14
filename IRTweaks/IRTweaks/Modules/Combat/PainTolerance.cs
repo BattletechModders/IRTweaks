@@ -16,8 +16,9 @@ namespace IRTweaks.Modules.Combat
     {
         static bool Prepare() => Mod.Config.Fixes.PainTolerance;
 
-        static void Prefix(Mech __instance, ArmorLocation aLoc, Weapon weapon, float totalArmorDamage, float directStructureDamage)
+        static void Prefix(ref bool __runOriginal, Mech __instance, ArmorLocation aLoc, Weapon weapon, float totalArmorDamage, float directStructureDamage)
         {
+            if (!__runOriginal) return;
 
             Mod.Log.Trace?.Write("M:DL - entered");
 
@@ -53,8 +54,9 @@ namespace IRTweaks.Modules.Combat
     {
         static bool Prepare() => Mod.Config.Fixes.PainTolerance;
 
-        static void Prefix(AmmunitionBox __instance, ComponentDamageLevel damageLevel, bool applyEffects)
+        static void Prefix(ref bool __runOriginal, AmmunitionBox __instance, ComponentDamageLevel damageLevel, bool applyEffects)
         {
+            if (!__runOriginal) return;
 
             if (__instance == null || __instance.ammunitionBoxDef == null || SharedState.Combat?.Constants?.PilotingConstants == null) return; // Nothing to do
 
@@ -90,8 +92,10 @@ namespace IRTweaks.Modules.Combat
 
         static bool Prepare() => Mod.Config.Fixes.PainTolerance;
 
-        static bool Prefix(Pilot __instance, DamageType damageType, ref bool ___needsInjury, ref InjuryReason ___injuryReason)
+        static void Prefix(ref bool __runOriginal, Pilot __instance, DamageType damageType, ref bool ___needsInjury, ref InjuryReason ___injuryReason)
         {
+            if (!__runOriginal) return;
+
             Mod.Log.Trace?.Write("P:SNI - entered");
 
             // DEBUG Line here: Someone is emitting an injuryReason of 101. Try to identify them by emitting a stack trace when this happens.
@@ -106,7 +110,8 @@ namespace IRTweaks.Modules.Combat
                 //                return true;
             }
 
-            if (__instance.ParentActor == null) return true;
+            if (__instance.ParentActor == null) 
+                return;
 
             Mod.Log.Info?.Write($"Checking pilot: {__instance.ParentActor.DistinctId()} to resist injury of type: {___injuryReason}");
 
@@ -155,7 +160,8 @@ namespace IRTweaks.Modules.Combat
             if (__instance.ParentActor.ImmuneToHeadInjuries() && (damageType == DamageType.HeadShot || damageType == DamageType.HeadShotMelee))
             {
                 Mod.Log.Info?.Write($"Ignoring head injury on actor: {__instance.ParentActor.DistinctId()} due to stat");
-                return false;
+                __runOriginal = false;
+                return;
             }
 
             // Need default resistance?
@@ -171,7 +177,8 @@ namespace IRTweaks.Modules.Combat
                     IStackSequence stackSequence = new ShowActorInfoSequence(__instance.ParentActor, localText, FloatieMessage.MessageNature.PilotInjury, useCamera: false);
                     SharedState.Combat.MessageCenter.PublishMessage(new AddSequenceToStackMessage(stackSequence));
 
-                    return false;
+                    __runOriginal = false;
+                    return;
                 }
                 else
                 {
@@ -181,8 +188,6 @@ namespace IRTweaks.Modules.Combat
                 ModState.InjuryResistPenalty = -1;
 
             }
-
-            return true;
         }
     }
 

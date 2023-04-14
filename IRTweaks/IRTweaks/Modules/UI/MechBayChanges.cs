@@ -88,18 +88,22 @@ namespace IRTweaks.Modules.UI
     static class MechLabPanel_OnMaxArmor_Patch
     {
         static bool Prepare() => Mod.Config.Fixes.MaxArmorMaxesArmor;
-        static bool Prefix(MechLabPanel __instance, MechLabMechInfoWidget ___mechInfoWidget, MechLabItemSlotElement ___dragItem)
+        static void Prefix(ref bool __runOriginal, MechLabPanel __instance, MechLabMechInfoWidget ___mechInfoWidget, MechLabItemSlotElement ___dragItem)
         {
+            if (!__runOriginal) return;
+
             var hk = Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl);
-            if (hk) return true;
+            if (hk) return;
 
             if (!__instance.Initialized)
             {
-                return false;
+                __runOriginal = false;
+                return;
             }
             if (___dragItem != null)
             {
-                return false;
+                __runOriginal = false;
+                return;
             }
             if (__instance.headWidget.IsDestroyed || __instance.centerTorsoWidget.IsDestroyed || __instance.leftTorsoWidget.IsDestroyed || __instance.rightTorsoWidget.IsDestroyed || __instance.leftArmWidget.IsDestroyed || __instance.rightArmWidget.IsDestroyed || __instance.leftLegWidget.IsDestroyed || __instance.rightLegWidget.IsDestroyed)
             {
@@ -108,7 +112,8 @@ namespace IRTweaks.Modules.UI
                 {
                     __instance.modifiedDialogShowing = false;
                 }).Render();
-                return false;
+                __runOriginal = false;
+                return;
             }
 
             __instance.headWidget.ModifyArmor(false, __instance.headWidget.maxArmor, true);
@@ -126,7 +131,8 @@ namespace IRTweaks.Modules.UI
 
             __instance.FlagAsModified();
             __instance.ValidateLoadout(false);
-            return false;
+
+            __runOriginal = false;
         }
     }
 
@@ -135,18 +141,22 @@ namespace IRTweaks.Modules.UI
     {
         static bool Prepare() => Mod.Config.Fixes.MechbayAdvancedStripping;
 
-        static bool Prefix(MechLabPanel __instance, bool ___batchActionInProgress, MechLabItemSlotElement ___dragItem)
+        static void Prefix(ref bool __runOriginal, MechLabPanel __instance, bool ___batchActionInProgress, MechLabItemSlotElement ___dragItem)
         {
+            if (!__runOriginal) return;
+
             var hk = Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl);
-            if (!hk) return true;
+            if (!hk) return;
 
             if (!__instance.Initialized)
             {
-                return false;
+                __runOriginal = false;
+                return;
             }
             if (___dragItem != null)
             {
-                return false;
+                __runOriginal = false;
+                return;
             }
             ___batchActionInProgress = true;
             __instance.headWidget.AdvancedStripping(__instance);
@@ -160,7 +170,8 @@ namespace IRTweaks.Modules.UI
             __instance.FlagAsModified();
             __instance.ValidateLoadout(false);
             ___batchActionInProgress = false;
-            return false;
+
+            __runOriginal = false;
         }
 
         internal static void AdvancedStripping(this MechLabLocationWidget widget, MechLabPanel panel)
@@ -219,25 +230,25 @@ namespace IRTweaks.Modules.UI
         }
     }
 
-    [HarmonyPatch(typeof(MechLabLocationWidget), "OnMechLabDrop",
-        new Type[] { typeof(PointerEventData), typeof(MechLabDropTargetType) })]
+    [HarmonyPatch(typeof(MechLabLocationWidget), "OnMechLabDrop", new Type[] { typeof(PointerEventData), typeof(MechLabDropTargetType) })]
     static class MechLabLocationWidget_OnMechLabDrop
     {
         static bool Prepare() => Mod.Config.Misc.MechLabRefitReqs.MechLabRefitReqs.Count > 0;
-        public static bool Prefix(MechLabLocationWidget __instance, PointerEventData eventData, MechLabDropTargetType addToType, MechLabPanel ___mechLab, Text ____dropErrorMessage)
+        static void Prefix(ref bool __runOriginal, MechLabLocationWidget __instance, PointerEventData eventData, MechLabDropTargetType addToType, MechLabPanel ___mechLab, Text ____dropErrorMessage)
         {
+            if (!__runOriginal) return;
+
             var sim = UnityGameInstance.BattleTechGame.Simulation;
 
-            if (sim == null) return true;
+            if (sim == null) return;
 
             if (!ModState.IsComponentValidForRefit)
             {
                 ___mechLab.ShowDropErrorMessage(____dropErrorMessage);
                 ___mechLab.OnDrop(eventData);
-                return false;
+                __runOriginal = false;
             }
 
-            return true;
         }
     }
 

@@ -153,13 +153,14 @@ namespace IRTweaks.Modules.Combat
     [HarmonyPatch(typeof(CombatSelectionHandler), "AddFireState", new Type[] { typeof(AbstractActor) })]
     public static class CombatSelectionHandler_AddFireState
     {
-        public static bool Prepare()
-        {
-            return Mod.Config.Fixes.AbilityResourceFix;
-        }
+        [HarmonyPrepare]
+        public static bool Prepare() => Mod.Config.Fixes.AbilityResourceFix;
 
-        public static bool Prefix(CombatSelectionHandler __instance, AbstractActor actor)
+        [HarmonyPrefix]
+        public static void Prefix(ref bool __runOriginal, CombatSelectionHandler __instance, AbstractActor actor)
         {
+            if (!__runOriginal) return;
+
             if (actor != null && actor.GetAbilityUsedFiring())
             {
                 var HUD = __instance.HUD;
@@ -172,31 +173,32 @@ namespace IRTweaks.Modules.Combat
                         HUD.MechWarriorTray.DoneWithMechButton, actor);
                     HUD.SelectionHandler.addNewState(doneState);
                 }
-                return false;
+
+                __runOriginal = false;
+                return;
             }
 
-            return true;
         }
     }
 
     [HarmonyPatch(typeof(CombatSelectionHandler), "AddFireState", new Type[] { typeof(AbstractActor), typeof(ICombatant), typeof(CombatHUDAttackModeSelector.SelectedButton) })]
-    public static class CombatSelectionHandler_AddFireState2
+    static class CombatSelectionHandler_AddFireState2
     {
-        public static bool Prepare()
-        {
-            return Mod.Config.Fixes.AbilityResourceFix;
-        }
+        [HarmonyPrepare]
+        static bool Prepare() => Mod.Config.Fixes.AbilityResourceFix;
 
-        public static bool Prefix(CombatSelectionHandler __instance, AbstractActor actor, ICombatant target, CombatHUDAttackModeSelector.SelectedButton preferredButton)
+        [HarmonyPrefix]
+        static void Prefix(ref bool __runOriginal, CombatSelectionHandler __instance, AbstractActor actor, ICombatant target, CombatHUDAttackModeSelector.SelectedButton preferredButton)
         {
+            if (!__runOriginal) return;
+
             if (actor != null && actor.GetAbilityUsedFiring())
             {
                 var HUD = __instance.HUD;
                 HUD.MechWarriorTray.FireButton.DisableButton(); //donewithmech button getting disabled after movement
-                return false;
+                __runOriginal = false;
             }
 
-            return true;
         }
     }
 

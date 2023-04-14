@@ -39,12 +39,16 @@ namespace IRTweaks.Modules.Combat
 
         //can be disabled when ME fixes it
         [HarmonyPatch(typeof(AbstractActor), "FlagForDeath")]
-        public static class Turret_FlagForDeath
+        static class Turret_FlagForDeath
         {
+            [HarmonyPrepare]
             static bool Prepare() => !string.IsNullOrEmpty(Mod.Config.Combat.TorsoMountStatName);
 
-            public static bool Prefix(AbstractActor __instance, string reason, DeathMethod deathMethod, DamageType damageType, int location, int stackItemID, string attackerID, bool isSilent)
+            [HarmonyPrefix]
+            static void Prefix(ref bool __runOriginal, AbstractActor __instance, string reason, DeathMethod deathMethod, DamageType damageType, int location, int stackItemID, string attackerID, bool isSilent)
             {
+                if (!__runOriginal) return;
+
                 if (__instance is Turret turret)
                 {
                     if (deathMethod == DeathMethod.HeadDestruction && turret.StatCollection.ContainsStatistic(Mod.Config.Combat.TorsoMountStatName))
@@ -52,23 +56,26 @@ namespace IRTweaks.Modules.Combat
                         if (turret.StatCollection.GetValue<bool>(Mod.Config.Combat.TorsoMountStatName))
                         {
                             Mod.Log.Info?.Write($"Head destroyed, but unit is Torso Mount! Not flagging for death!");
-                            return false;
+                            __runOriginal = false;
                         }
                     }
                 }
-                return true;
             }
         }
 
         //keep this always
         [HarmonyPatch(typeof(Mech), "OnLocationDestroyed")]
+        [HarmonyBefore(new string[] { "io.mission.customunits" })]
         public static class Mech_OnLocationDestroyed_Patch
         {
+            [HarmonyPrepare]
             static bool Prepare() => Mod.Config.Fixes.CTDestructInjuryFix;
-            [HarmonyBefore(new string[] { "io.mission.customunits" })]
 
-            public static void Prefix(Mech __instance, ChassisLocations location, Vector3 attackDirection, WeaponHitInfo hitInfo, DamageType damageType)
+            [HarmonyPrefix]
+            static void Prefix(ref bool __runOriginal, Mech __instance, ChassisLocations location, Vector3 attackDirection, WeaponHitInfo hitInfo, DamageType damageType)
             {
+                if (!__runOriginal) return;
+
                 if (location == ChassisLocations.CenterTorso)
                 {
                     if (__instance.MechDef.MechTags.Any(x => Mod.Config.Combat.DisableCTMaxInjureTags.Contains(x)))

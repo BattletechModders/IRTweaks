@@ -246,8 +246,10 @@ namespace IRTweaks.Modules.UI
             static bool Prepare() => Mod.Config.Fixes.CombatLog;
 
             [HarmonyPrefix]
-            static bool Prefix(CombatChatModule __instance, ActiveChatListView ____activeChatList)
+            static void Prefix(ref bool __runOriginal, CombatChatModule __instance, ActiveChatListView ____activeChatList)
             {
+                if (!__runOriginal) return;
+
                 //Mod.Log.Info?.Write(" -- CCM:Update:pre invoked");
                 // Invoke base.Update()
                 CombatChatModule_UIModule_Update.Invoke(__instance);
@@ -264,7 +266,7 @@ namespace IRTweaks.Modules.UI
                     Mod.Log.Info?.Write("Could not find chat button");
                 }
 
-                return false;
+                __runOriginal = false;
             }
         }
 
@@ -275,7 +277,7 @@ namespace IRTweaks.Modules.UI
             static bool Prepare() => Mod.Config.Fixes.CombatLog;
 
             [HarmonyPrefix]
-            static void Prefix(CombatHUDInWorldElementMgr __instance, MessageCenterMessage message, ref bool __runOriginal)
+            static void Prefix(ref bool __runOriginal, CombatHUDInWorldElementMgr __instance, MessageCenterMessage message)
             {
                 if (!__runOriginal) return;
 
@@ -307,8 +309,8 @@ namespace IRTweaks.Modules.UI
             static bool Prepare() => Mod.Config.Fixes.CombatLog;
 
             [HarmonyPrefix]
-            static void Prefix(MessageCenterMessageType GUID,
-                Dictionary<MessageCenterMessageType, List<MessageSubscription>> ___messageTable, ref bool __runOriginal)
+            static void Prefix(ref bool __runOriginal, MessageCenterMessageType GUID,
+                Dictionary<MessageCenterMessageType, List<MessageSubscription>> ___messageTable)
             {
                 if (!__runOriginal) return;
 

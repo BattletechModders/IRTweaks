@@ -40,14 +40,15 @@ namespace IRTweaks.Modules.Misc
         }
     }
 
-    [HarmonyPatch(typeof(SimGameDifficulty))]
-    [HarmonyPatch("RefreshCareerScoreMultiplier")]
-    public static class SimGameDifficulty_RefreshCareerScoreMultiplier
+    [HarmonyPatch(typeof(SimGameDifficulty), "RefreshCareerScoreMultiplier")]
+    static class SimGameDifficulty_RefreshCareerScoreMultiplier
     {
+        [HarmonyPrepare]
         static bool Prepare() => Mod.Config.Fixes.DifficultyModsFromStats;
 
-        public static bool Prefix(SimGameDifficulty __instance, Dictionary<string, SimGameDifficulty.DifficultySetting> ___difficultyDict, Dictionary<string, int> ___difficultyIndices, ref float ___curCareerModifier)
+        static void Prefix(ref bool __runOriginal, SimGameDifficulty __instance, Dictionary<string, SimGameDifficulty.DifficultySetting> ___difficultyDict, Dictionary<string, int> ___difficultyIndices, ref float ___curCareerModifier)
         {
+            if (!__runOriginal) return;
 
             float num = 0f;
             foreach (string key in ___difficultyDict.Keys)
@@ -63,8 +64,16 @@ namespace IRTweaks.Modules.Misc
             ___curCareerModifier = num;
 
             var sim = UnityGameInstance.BattleTechGame.Simulation;
-            if (sim == null) return false;
-            if (!sim.CompanyStats.ContainsStatistic("IRTweaks_DiffMod")) return false;
+            if (sim == null)
+            {
+                __runOriginal = false;
+                return;
+            }
+            if (!sim.CompanyStats.ContainsStatistic("IRTweaks_DiffMod"))
+            {
+                __runOriginal = false;
+                return;
+            }
 
             var curMod = __instance.GetRawCareerModifier();
             var irMod = sim.CompanyStats.GetValue<float>("IRTweaks_DiffMod");
@@ -72,7 +81,8 @@ namespace IRTweaks.Modules.Misc
             ___curCareerModifier += irMod;
             Mod.Log.Info?.Write(
                 $"DiffMods: Adding IRMod {irMod} to current career mod {curMod} for final career difficulty modifier {___curCareerModifier}.");
-            return false;
+
+            __runOriginal = false;
         }
     }
 

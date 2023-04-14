@@ -63,8 +63,10 @@ namespace IRTweaks.Modules.Combat
         static bool Prepare() => Mod.Config.Fixes.UrbanExplosionsFix;
 
         // Replica of HBS logic to work around the errors in this
-        static void Prefix(ArtilleryObjectiveSequence __instance, float ___timeSinceLastAttack, float ___timeBetweenAttacks)
+        static void Prefix(ref bool __runOriginal, ArtilleryObjectiveSequence __instance, float ___timeSinceLastAttack, float ___timeBetweenAttacks)
         {
+            if (!__runOriginal) return;
+
             // If there are buildings to destroy, destroy them in one attack. This will use the camera of the first actual target
             if (ModState.ExplosionBuildingTargets.Count > 0)
             {

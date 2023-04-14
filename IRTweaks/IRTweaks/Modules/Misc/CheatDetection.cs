@@ -115,8 +115,10 @@ namespace IRTweaks.Modules.Misc
     {
         static bool Prepare() => Mod.Config.CheatDetection.CheatDetection && false; //disabled for now
 
-        public static void Prefix()
+        public static void Prefix(ref bool __runOriginal)
         {
+            if (!__runOriginal) return;
+
             ModState.UnitCurrentArmor.Clear();
             ModState.UnitCurrentHeat.Clear();
             ModState.UnitStartingArmor.Clear();
@@ -221,12 +223,14 @@ namespace IRTweaks.Modules.Misc
 
     [HarmonyPatch(typeof(Pilot))]
     [HarmonyPatch("SpendExperience")]
-    public static class Pilot_SpendXP
+    static class Pilot_SpendXP
     {
         static bool Prepare() => Mod.Config.CheatDetection.CheatDetection;
 
-        public static void Prefix(Pilot __instance)
+        static void Prefix(ref bool __runOriginal, Pilot __instance)
         {
+            if (!__runOriginal) return;
+
             var sim = UnityGameInstance.BattleTechGame.Simulation;
             if (sim == null) return;
             if (String.IsNullOrEmpty(__instance.GUID)) return;
@@ -317,17 +321,16 @@ namespace IRTweaks.Modules.Misc
     }
 
     [HarmonyPatch(typeof(SGBarracksAdvancementPanel), "OnValueClick")]
-    [HarmonyBefore(new string[]
-    {
-        "ca.gnivler.BattleTech.Abilifier"
-    })]
+    [HarmonyBefore(new string[] {"ca.gnivler.BattleTech.Abilifier"})]
     [HarmonyPriority(Priority.First)]
-    public static class SGBarracksAdvancementPanel_OnValueClick_Patch
+    static class SGBarracksAdvancementPanel_OnValueClick_Patch
     {
         static bool Prepare() => Mod.Config.CheatDetection.CheatDetection;
 
-        public static void Prefix(SGBarracksAdvancementPanel __instance, string type, int value)
+        static void Prefix(ref bool __runOriginal, SGBarracksAdvancementPanel __instance, string type, int value)
         {
+            if (!__runOriginal) return;
+
             if (__instance.curPilot.StatCollection.GetValue<int>(type) > value)
             {
                 var sim = UnityGameInstance.BattleTechGame.Simulation;
@@ -376,15 +379,16 @@ namespace IRTweaks.Modules.Misc
         }
     }
 
-
     [HarmonyPatch(typeof(SimGameState))]
     [HarmonyPatch("AddFunds")]
-    public static class SimGameState_AddFunds
+    static class SimGameState_AddFunds
     {
         static bool Prepare() => Mod.Config.CheatDetection.CheatDetection;
 
-        public static void Prefix(SimGameState __instance, int val)
+        static void Prefix(ref bool __runOriginal, SimGameState __instance, int val)
         {
+            if (!__runOriginal) return;
+
             if (String.IsNullOrEmpty(__instance.InstanceGUID)) return;
             if (!ModState.SimGameFunds.ContainsKey(__instance.InstanceGUID))
             {
@@ -584,14 +588,17 @@ namespace IRTweaks.Modules.Misc
     }
 
 
-    [HarmonyPatch(typeof(SimGameState))]
-    [HarmonyPatch("Dehydrate")]
+    [HarmonyPatch(typeof(SimGameState), "Dehydrate")]
     public static class SimGameState_Dehydrate_CH
     {
+        [HarmonyPrepare]
         static bool Prepare() => Mod.Config.CheatDetection.CheatDetection;
 
-        public static void Prefix(SimGameState __instance)
+        [HarmonyPrefix]
+        static void Prefix(ref bool __runOriginal, SimGameState __instance)
         {
+            if (!__runOriginal) return;
+
             if (!ModState.SimGameFunds.ContainsKey(__instance.InstanceGUID))
             {
                 ModState.SimGameFunds.Add(__instance.InstanceGUID, __instance.Funds);

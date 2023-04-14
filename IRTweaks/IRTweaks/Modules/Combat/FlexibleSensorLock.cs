@@ -137,7 +137,7 @@ namespace IRTweaks.Modules.Combat
         static bool Prepare() => Mod.Config.Fixes.FlexibleSensorLock;
 
         [HarmonyPrefix]
-        static void Prefix(AbstractActor ___owningActor, ref bool __runOriginal)
+        static void Prefix(ref bool __runOriginal, AbstractActor ___owningActor)
         {
             if (!__runOriginal) return;
 
@@ -178,7 +178,7 @@ namespace IRTweaks.Modules.Combat
         static bool Prepare() => Mod.Config.Fixes.FlexibleSensorLock;
 
         [HarmonyPrefix]
-        static void Prefix(OrderSequence __instance, AbstractActor ___owningActor, ref bool __runOriginal)
+        static void Prefix(ref bool __runOriginal, OrderSequence __instance, AbstractActor ___owningActor)
         {
             if (!__runOriginal) return;
 
@@ -237,7 +237,7 @@ namespace IRTweaks.Modules.Combat
         static bool Prepare() => Mod.Config.Fixes.FlexibleSensorLock;
 
         [HarmonyPrefix]
-        static void Prefix(ref bool __result, AbstractActor movingUnit, ICombatant target, out float quality, ref bool __runOriginal)
+        static void Prefix(ref bool __runOriginal, ref bool __result, AbstractActor movingUnit, ICombatant target, out float quality)
         {
             if (!__runOriginal)
             {
@@ -268,7 +268,7 @@ namespace IRTweaks.Modules.Combat
         static bool Prepare() => Mod.Config.Fixes.FlexibleSensorLock;
 
         [HarmonyPrefix]
-        static void Prefix(AbstractActor __instance, ref bool __runOriginal)
+        static void Prefix(ref bool __runOriginal, AbstractActor __instance)
         {
             if (!__runOriginal) return;
 
@@ -389,7 +389,7 @@ namespace IRTweaks.Modules.Combat
 
 
         [HarmonyPrefix]
-        static void Prefix(ActiveProbeSequence __instance, AbstractActor ___owningActor, ParticleSystem ___probeParticles, ref bool __runOriginal)
+        static void Prefix(ref bool __runOriginal, ActiveProbeSequence __instance, AbstractActor ___owningActor, ParticleSystem ___probeParticles)
         {
             if (!__runOriginal) return;
 
