@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using BattleTech.Save.SaveGameStructure;
+using System.Linq;
 using UnityEngine;
 
 namespace IRTweaks.Modules.Combat
@@ -31,30 +32,38 @@ namespace IRTweaks.Modules.Combat
     }
 
     // --- SelectionStateSensorLock classes ---
-    [HarmonyPatch(typeof(SelectionStateSensorLock), "ConsumesFiring", MethodType.Getter)]
-    static class SelectionStateSensorLock_ConsumesFiring
+    // HarmonyX does not allow targeting inherited properties, so target the override on SelectionStateTarget instead of SelectionStateSensorLock
+    [HarmonyPatch(typeof(SelectionStateTarget), "ConsumesFiring", MethodType.Getter)]
+    static class SelectionStateTarget_ConsumesFiring
     {
         [HarmonyPrepare]
         static bool Prepare() => Mod.Config.Fixes.FlexibleSensorLock;
 
         [HarmonyPostfix]
-        static void Postfix(ref bool __result)
+        static void Postfix(SelectionStateTarget __instance, ref bool __result)
         {
-            __result = false;
+            if (__instance != null && __instance.GetType() == typeof(SelectionStateSensorLock))
+            {
+                __result = false;
+            }
+            
         }
 
     }
 
-    [HarmonyPatch(typeof(SelectionStateSensorLock), "ConsumesMovement", MethodType.Getter)]
-    static class SelectionStateSensorLock_ConsumesMovement
+    [HarmonyPatch(typeof(SelectionStateTarget), "ConsumesMovement", MethodType.Getter)]
+    static class SelectionStateTarget_ConsumesMovement
     {
         [HarmonyPrepare]
         static bool Prepare() => Mod.Config.Fixes.FlexibleSensorLock;
 
         [HarmonyPostfix]
-        static void Postfix(ref bool __result)
+        static void Postfix(SelectionStateTarget __instance, ref bool __result)
         {
-            __result = false;
+            if (__instance != null && __instance.GetType() == typeof(SelectionStateSensorLock))
+            {
+                __result = false;
+            }
         }
 
     }
