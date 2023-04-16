@@ -26,18 +26,16 @@
     <AssemblyTitle>IRTweaks</AssemblyTitle>
     <Product>IRTweaks</Product>
     <Copyright>Copyright © 2023</Copyright>
-    <AssemblyVersion>2.1.0</AssemblyVersion>
-    <FileVersion>2.1.0</FileVersion>
+    <AssemblyVersion>2.2.0</AssemblyVersion>
+    <FileVersion>2.2.0</FileVersion>
     <LangVersion>11</LangVersion>
   </PropertyGroup>
 
   <Target Name="AfterBuildMigrated" AfterTargets="CopyFilesToOutputDirectory">
-    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(BattleTechGameDir)\Mods\Core\IRTweaks" 
-          Condition="'$(BattleTechGameDir)' != '' And Exists('$(BattleTechGameDir)\Mods\Core\IRTweaks')" />
-    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(BattleTechGameDir)\Mods_CBDE\Core\IRTweaks" 
-          Condition="'$(BattleTechGameDir)' != '' And Exists('$(BattleTechGameDir)\Mods_CBDE\Core\IRTweaks')" />
-    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(RogueTechRepo)\Core\IRTweaks" 
-          Condition="'$(RogueTechRepo)' != '' And Exists('$(RogueTechRepo)\Core\IRTweaks')" />
+      <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(BattleTechGameDir)\Mods\IRTweaks" Condition="'$(BattleTechGameDir)' != '' And Exists('$(BattleTechGameDir)\Mods\IRTweaks')" />
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(BattleTechGameDir)\Mods\Core\IRTweaks" Condition="'$(BattleTechGameDir)' != '' And Exists('$(BattleTechGameDir)\Mods\Core\IRTweaks')" />
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(BattleTechGameDir)\Mods_CBDE\Core\IRTweaks" Condition="'$(BattleTechGameDir)' != '' And Exists('$(BattleTechGameDir)\Mods_CBDE\Core\IRTweaks')" />
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(RogueTechRepo)\Core\IRTweaks" Condition="'$(RogueTechRepo)' != '' And Exists('$(RogueTechRepo)\Core\IRTweaks')" />
   </Target>
 
   <PropertyGroup>
