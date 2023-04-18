@@ -12,11 +12,11 @@ namespace IRTweaks.Modules.Combat
     {
         static bool Prepare() => Mod.Config.Fixes.UrbanExplosionsFix;
 
-        static void Postfix(ArtilleryObjectiveSequence __instance, ArtilleryVFXType ___artilleryVFXType)
+        static void Postfix(ArtilleryObjectiveSequence __instance)
         {
 
             if (__instance != null &&
-                (___artilleryVFXType == ArtilleryVFXType.ElectricTransformerExplosion || ___artilleryVFXType == ArtilleryVFXType.CoolantExplosion)
+                (__instance.artilleryVFXType == ArtilleryVFXType.ElectricTransformerExplosion || __instance.artilleryVFXType == ArtilleryVFXType.CoolantExplosion)
                 )
             {
                 Mod.Log.Info?.Write($"ELECTRICAL EXPLOSION FOUND WITH SEQUENCE GUID {__instance.SequenceGUID}");
@@ -63,7 +63,7 @@ namespace IRTweaks.Modules.Combat
         static bool Prepare() => Mod.Config.Fixes.UrbanExplosionsFix;
 
         // Replica of HBS logic to work around the errors in this
-        static void Prefix(ref bool __runOriginal, ArtilleryObjectiveSequence __instance, float ___timeSinceLastAttack, float ___timeBetweenAttacks)
+        static void Prefix(ref bool __runOriginal, ArtilleryObjectiveSequence __instance)
         {
             if (!__runOriginal) return;
 

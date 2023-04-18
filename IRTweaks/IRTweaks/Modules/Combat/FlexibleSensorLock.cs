@@ -146,16 +146,16 @@ namespace IRTweaks.Modules.Combat
         static bool Prepare() => Mod.Config.Fixes.FlexibleSensorLock;
 
         [HarmonyPrefix]
-        static void Prefix(ref bool __runOriginal, AbstractActor ___owningActor)
+        static void Prefix(ref bool __runOriginal, SensorLockSequence __instance)
         {
             if (!__runOriginal) return;
 
             Mod.Log.Trace?.Write("SLS:CO entered, aborting invocation");
 
             // Force the ability to be on cooldown
-            if (FlexibleSensorLockHelper.ActorHasFreeSensorLock(___owningActor))
+            if (FlexibleSensorLockHelper.ActorHasFreeSensorLock(__instance.owningActor))
             {
-                Pilot pilot = ___owningActor.GetPilot();
+                Pilot pilot = __instance.owningActor.GetPilot();
                 Ability ability = pilot.GetActiveAbility(ActiveAbilityID.SensorLock);
                 Mod.Log.Debug?.Write($"  On sensor lock complete, cooldown is:{ability.CurrentCooldown}");
                 if (ability.CurrentCooldown < 1)
@@ -187,17 +187,17 @@ namespace IRTweaks.Modules.Combat
         static bool Prepare() => Mod.Config.Fixes.FlexibleSensorLock;
 
         [HarmonyPrefix]
-        static void Prefix(ref bool __runOriginal, OrderSequence __instance, AbstractActor ___owningActor)
+        static void Prefix(ref bool __runOriginal, OrderSequence __instance)
         {
             if (!__runOriginal) return;
 
             if ((__instance is SensorLockSequence ||
                 (__instance is ActiveProbeSequence && Mod.Config.Combat.FlexibleSensorLock.AlsoAppliesToActiveProbe))
-                && FlexibleSensorLockHelper.ActorHasFreeSensorLock(___owningActor))
+                && FlexibleSensorLockHelper.ActorHasFreeSensorLock(__instance.owningActor))
             {
                 Mod.Log.Trace?.Write($"OS:OC entered, cm:{__instance.ConsumesMovement} cf:{__instance.ConsumesFiring}");
-                Mod.Log.Trace?.Write($"    oa:{___owningActor.DisplayName}_{___owningActor.GetPilot().Name} hasFired:{___owningActor.HasFiredThisRound} " +
-                    $"hasMoved:{___owningActor.HasMovedThisRound} hasActivated:{___owningActor.HasActivatedThisRound}");
+                Mod.Log.Trace?.Write($"    oa:{__instance.owningActor.DisplayName}_{__instance.owningActor.GetPilot().Name} hasFired:{__instance.owningActor.HasFiredThisRound} " +
+                    $"hasMoved:{__instance.owningActor.HasMovedThisRound} hasActivated:{__instance.owningActor.HasActivatedThisRound}");
                 Mod.Log.Trace?.Write($"    ca:{__instance.ConsumesActivation} fae:{__instance.ForceActivationEnd}");
 
                 Mod.Log.Trace?.Write(" SensorLockSequence, skipping.");
@@ -223,12 +223,12 @@ namespace IRTweaks.Modules.Combat
         static bool Prepare() => Mod.Config.Fixes.FlexibleSensorLock;
 
         [HarmonyPostfix]
-        static void Postfix(OrderSequence __instance, ref bool __result, AbstractActor ___owningActor)
+        static void Postfix(OrderSequence __instance, ref bool __result)
         {
             if (__instance is SensorLockSequence || (__instance is ActiveProbeSequence && Mod.Config.Combat.FlexibleSensorLock.AlsoAppliesToActiveProbe))
             {
                 __result = true;
-                if (FlexibleSensorLockHelper.ActorHasFreeSensorLock(___owningActor))
+                if (FlexibleSensorLockHelper.ActorHasFreeSensorLock(__instance.owningActor))
                 {
                     __result = false;
                 }
@@ -398,19 +398,19 @@ namespace IRTweaks.Modules.Combat
 
 
         [HarmonyPrefix]
-        static void Prefix(ref bool __runOriginal, ActiveProbeSequence __instance, AbstractActor ___owningActor, ParticleSystem ___probeParticles)
+        static void Prefix(ref bool __runOriginal, ActiveProbeSequence __instance)
         {
             if (!__runOriginal) return;
 
             Mod.Log.Trace?.Write("SLS:CO entered, aborting invocation");
 
             // Force the ability to be on cooldown
-            if (FlexibleSensorLockHelper.ActorHasFreeSensorLock(___owningActor))
+            if (FlexibleSensorLockHelper.ActorHasFreeSensorLock(__instance.owningActor))
             {
-                if (___probeParticles != null)
+                if (__instance.probeParticles != null)
                 {
-                    ___probeParticles.Stop(true);
-                    __instance.Combat.DataManager.PoolGameObject(__instance.Combat.Constants.VFXNames.active_probe_effect, ___probeParticles.gameObject);
+                    __instance.probeParticles.Stop(true);
+                    __instance.Combat.DataManager.PoolGameObject(__instance.Combat.Constants.VFXNames.active_probe_effect, __instance.probeParticles.gameObject);
                 }
                 WwiseManager.PostEvent(AudioEventList_activeProbe.activeProbe_stop, WwiseManager.GlobalAudioObject, null, null);
 

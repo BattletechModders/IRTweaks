@@ -36,7 +36,7 @@ namespace IRTweaks.Modules.UI
             // a la base.OnComplete() from the context of a BallisticEffect
             // https://blogs.msdn.microsoft.com/rmbyers/2008/08/16/invoking-a-virtual-method-non-virtually/
             // https://docs.microsoft.com/en-us/dotnet/api/system.activator?view=netframework-3.5
-            // https://docs.microsoft.com/en-us/dotnet/api/system.reflection.emit.dynamicmethod.-ctor?view=netframework-3.5#System_Reflection_Emit_DynamicMethod__ctor_System_String_System_Type_System_Type___System_Type_
+            // https://docs.microsoft.com/en-us/dotnet/api/system.reflection.emit.dynamicmethod.-ctor?view=netframework-3.5#System_Reflection_Emit_DynamicMethod__ctor_System_String_System_Type_System_Type__instance.System_Type_
             // https://stackoverflow.com/a/4358250/1976
             var method = typeof(UIModule).GetMethod("Update", AccessTools.all);
             var dm = new DynamicMethod("CombatChatModule_UIModule_Update", null, new Type[] { typeof(CombatChatModule) }, typeof(CombatChatModule));
@@ -150,15 +150,15 @@ namespace IRTweaks.Modules.UI
             static bool Prepare() => Mod.Config.Fixes.CombatLog;
 
             [HarmonyPostfix]
-            public static void Postfix(MessageCenter ____messageCenter, HBSDOTweenButton ____chatBtn, HBSDOTweenButton ____muteBtn)
+            public static void Postfix(CombatChatModule __instance)
             {
-                ____chatBtn.enabled = false;
-                ____chatBtn.gameObject.SetActive(false);
-                ____muteBtn.enabled = false;
-                ____muteBtn.gameObject.SetActive(false);
+                __instance._chatBtn.enabled = false;
+                __instance._chatBtn.gameObject.SetActive(false);
+                __instance._muteBtn.enabled = false;
+                __instance._muteBtn.gameObject.SetActive(false);
 
-                ____messageCenter.AddSubscriber(MessageCenterMessageType.FloatieMessage, OnFloatie);
-                messageCenter = ____messageCenter;
+                __instance._messageCenter.AddSubscriber(MessageCenterMessageType.FloatieMessage, OnFloatie);
+                messageCenter = __instance._messageCenter;
             }
         }
 
@@ -169,20 +169,19 @@ namespace IRTweaks.Modules.UI
             static bool Prepare() => Mod.Config.Fixes.CombatLog;
 
             [HarmonyPostfix]
-            public static void Postfix(HBSDOTweenButton ____chatBtn, HBSDOTweenButton ____muteBtn,
-                HBS_InputField ____inputField, GameObject ____activeChatWindow)
+            public static void Postfix(CombatChatModule __instance)
             {
 
-                ____chatBtn.enabled = true;
-                ____chatBtn.gameObject.SetActive(true);
-                ____muteBtn.enabled = false;
-                ____muteBtn.gameObject.SetActive(false);
-                ____inputField.enabled = false;
-                ____inputField.gameObject.SetActive(false);
-                ____inputField.readOnly = true;
+                __instance._chatBtn.enabled = true;
+                __instance._chatBtn.gameObject.SetActive(true);
+                __instance._muteBtn.enabled = false;
+                __instance._muteBtn.gameObject.SetActive(false);
+                __instance._inputField.enabled = false;
+                __instance._inputField.gameObject.SetActive(false);
+                __instance._inputField.readOnly = true;
 
                 // Hide the send button
-                Transform sendButtonT = ____activeChatWindow.gameObject.transform.Find("uixPrf_genericButton");
+                Transform sendButtonT = __instance._activeChatWindow.gameObject.transform.Find("uixPrf_genericButton");
                 if (sendButtonT != null)
                 {
                     sendButtonT.gameObject.SetActive(false);
@@ -193,7 +192,7 @@ namespace IRTweaks.Modules.UI
                 }
 
                 // Set the scroll spacing to 0
-                Transform scrollListT = ____activeChatWindow.gameObject.transform.Find("panel_history/uixPrfPanl_listView/ScrollRect/Viewport/List");
+                Transform scrollListT = __instance._activeChatWindow.gameObject.transform.Find("panel_history/uixPrfPanl_listView/ScrollRect/Viewport/List");
                 if (scrollListT != null)
                 {
                     VerticalLayoutGroup scrollListVLG = scrollListT.gameObject.GetComponent<VerticalLayoutGroup>();
@@ -205,7 +204,7 @@ namespace IRTweaks.Modules.UI
                 }
 
                 // Resize the image background
-                Transform imageBackgroundT = ____activeChatWindow.gameObject.transform.Find("image_background");
+                Transform imageBackgroundT = __instance._activeChatWindow.gameObject.transform.Find("image_background");
                 if (imageBackgroundT != null)
                 {
                     RectTransform imageBackgroundRT = imageBackgroundT.gameObject.GetComponent<RectTransform>();
@@ -232,9 +231,9 @@ namespace IRTweaks.Modules.UI
 
             // Re-enable keyboard input (don't block out wasd)
             [HarmonyPostfix]
-            public static void Postfix(HBS_InputField ____inputField)
+            public static void Postfix(CombatChatModule __instance)
             {
-                ____inputField.DeactivateInputField();
+                __instance._inputField.DeactivateInputField();
                 BTInput.Instance.DynamicActions.Enabled = true;
             }
         }
@@ -246,7 +245,7 @@ namespace IRTweaks.Modules.UI
             static bool Prepare() => Mod.Config.Fixes.CombatLog;
 
             [HarmonyPrefix]
-            static void Prefix(ref bool __runOriginal, CombatChatModule __instance, ActiveChatListView ____activeChatList)
+            static void Prefix(ref bool __runOriginal, CombatChatModule __instance)
             {
                 if (!__runOriginal) return;
 
@@ -309,15 +308,18 @@ namespace IRTweaks.Modules.UI
             static bool Prepare() => Mod.Config.Fixes.CombatLog;
 
             [HarmonyPrefix]
-            static void Prefix(ref bool __runOriginal, MessageCenterMessageType GUID,
-                Dictionary<MessageCenterMessageType, List<MessageSubscription>> ___messageTable)
+            static void Prefix(ref bool __runOriginal, MessageCenter __instance, MessageCenterMessageType GUID)
             {
                 if (!__runOriginal) return;
 
-                if (GUID == MessageCenterMessageType.FloatieMessage)
+                if (GUID == MessageCenterMessageType.FloatieMessage && __instance.messageTable != null)
                 {
-                    List<MessageSubscription> list = ___messageTable[GUID];
-                    Mod.Log.Info?.Write($"MCMT subscription list is size: {list.Count}");
+                    List<MessageSubscription> list;
+                    bool hadKey = __instance.messageTable.TryGetValue(GUID, out list);
+                    if (hadKey)
+                    {
+                        Mod.Log.Info?.Write($"MCMT subscription list is size: {list.Count}");
+                    }
                 }
             }
         }
@@ -329,9 +331,9 @@ namespace IRTweaks.Modules.UI
             static bool Prepare() => Mod.Config.Fixes.CombatLog;
 
             [HarmonyPostfix]
-            static void Postfix(MessageCenter ____messageCenter)
+            static void Postfix(CombatChatModule __instance)
             {
-                ____messageCenter.RemoveSubscriber(MessageCenterMessageType.FloatieMessage, OnFloatie);
+                __instance._messageCenter.RemoveSubscriber(MessageCenterMessageType.FloatieMessage, OnFloatie);
                 messageCenter = null;
             }
         }
@@ -429,7 +431,7 @@ namespace IRTweaks.Modules.UI
                     ChatListViewItem view = _views.GetOrCreateView(i);
                     view.gameObject.transform.SetAsLastSibling();
                     view.ItemIndex = i;
-                    ChatListViewItem_SetData(view, chatMessage, (LocalizableText)lt_field_info.GetValue(view));
+                    ChatListViewItem_SetData(view, chatMessage);
 
                     if (i > max_messages)
                     {
@@ -458,8 +460,7 @@ namespace IRTweaks.Modules.UI
             }
         }
 
-        private static void ChatListViewItem_SetData(ChatListViewItem __instance, ChatMessage message,
-            LocalizableText ____chatMessage)
+        private static void ChatListViewItem_SetData(ChatListViewItem __instance, ChatMessage message)
         {
 
             string expandedSender = message.SenderName.Replace("&gt;", ">");
@@ -474,7 +475,7 @@ namespace IRTweaks.Modules.UI
             Mod.Log.Debug?.Write($"Message text: '{expandedMessage}'");
 
             Localize.Text translatedText = new Localize.Text("<size=-3>" + senderText + " " + messageText + "</size>");
-            ____chatMessage.text = translatedText.ToString();
+            __instance._chatMessage.text = translatedText.ToString();
 
         }
 

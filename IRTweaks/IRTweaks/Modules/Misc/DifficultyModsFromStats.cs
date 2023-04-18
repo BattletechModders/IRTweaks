@@ -46,22 +46,22 @@ namespace IRTweaks.Modules.Misc
         [HarmonyPrepare]
         static bool Prepare() => Mod.Config.Fixes.DifficultyModsFromStats;
 
-        static void Prefix(ref bool __runOriginal, SimGameDifficulty __instance, Dictionary<string, SimGameDifficulty.DifficultySetting> ___difficultyDict, Dictionary<string, int> ___difficultyIndices, ref float ___curCareerModifier)
+        static void Prefix(ref bool __runOriginal, SimGameDifficulty __instance)
         {
             if (!__runOriginal) return;
 
             float num = 0f;
-            foreach (string key in ___difficultyDict.Keys)
+            foreach (string key in __instance.difficultyDict.Keys)
             {
-                SimGameDifficulty.DifficultySetting difficultySetting = ___difficultyDict[key];
-                SimGameDifficulty.DifficultyOption difficultyOption = difficultySetting.Options[___difficultyIndices[key]];
+                SimGameDifficulty.DifficultySetting difficultySetting = __instance.difficultyDict[key];
+                SimGameDifficulty.DifficultyOption difficultyOption = difficultySetting.Options[__instance.difficultyIndices[key]];
                 if (difficultySetting.Enabled)
                 {
                     num += difficultyOption.CareerScoreModifier;
                 }
             }
 
-            ___curCareerModifier = num;
+            __instance.curCareerModifier = num;
 
             var sim = UnityGameInstance.BattleTechGame.Simulation;
             if (sim == null)
@@ -78,9 +78,9 @@ namespace IRTweaks.Modules.Misc
             var curMod = __instance.GetRawCareerModifier();
             var irMod = sim.CompanyStats.GetValue<float>("IRTweaks_DiffMod");
 
-            ___curCareerModifier += irMod;
+            __instance.curCareerModifier += irMod;
             Mod.Log.Info?.Write(
-                $"DiffMods: Adding IRMod {irMod} to current career mod {curMod} for final career difficulty modifier {___curCareerModifier}.");
+                $"DiffMods: Adding IRMod {irMod} to current career mod {curMod} for final career difficulty modifier {__instance.curCareerModifier}.");
 
             __runOriginal = false;
         }

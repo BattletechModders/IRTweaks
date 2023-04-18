@@ -24,7 +24,7 @@ namespace IRTweaks.Modules.Combat
     {
         static bool Prepare() => Mod.Config.Fixes.CalledShotTweaks;
 
-        static void Postfix(HUDMechArmorReadout __instance, ArmorLocation location, Mech ___displayedMech)
+        static void Postfix(HUDMechArmorReadout __instance, ArmorLocation location)
         {
             if (__instance == null || __instance.HUD == null ||
               __instance.HUD.SelectedActor == null || __instance.HUD.SelectedTarget == null)
@@ -37,8 +37,8 @@ namespace IRTweaks.Modules.Combat
                 bool attackerCanAlwaysMakeCalledShot = __instance.HUD.SelectedActor.CanAlwaysUseCalledShot();
                 bool targetCanBeCalledShot = __instance.HUD.SelectedTarget.IsShutDown || __instance.HUD.SelectedTarget.IsProne || attackerCanAlwaysMakeCalledShot;
 
-                Mod.Log.Debug?.Write($"  Hover - target:({___displayedMech.DistinctId()}) canBeTargeted:{targetCanBeCalledShot} by attacker:({__instance.HUD.SelectedActor.DistinctId()})");
-                Mod.Log.Debug?.Write($"      isShutdown:{___displayedMech.IsShutDown} isProne:{___displayedMech.IsProne} canAlwaysCalledShot:{attackerCanAlwaysMakeCalledShot}");
+                Mod.Log.Debug?.Write($"  Hover - target:({__instance.displayedMech.DistinctId()}) canBeTargeted:{targetCanBeCalledShot} by attacker:({__instance.HUD.SelectedActor.DistinctId()})");
+                Mod.Log.Debug?.Write($"      isShutdown:{__instance.displayedMech.IsShutDown} isProne:{__instance.displayedMech.IsProne} canAlwaysCalledShot:{attackerCanAlwaysMakeCalledShot}");
 
                 if (!targetCanBeCalledShot)
                 {
@@ -187,22 +187,22 @@ namespace IRTweaks.Modules.Combat
     {
         static bool Prepare() => Mod.Config.Fixes.CalledShotTweaks;
 
-        static void Postfix(CombatHUDWeaponSlot __instance, ICombatant target, Weapon ___displayedWeapon, CombatHUD ___HUD)
+        static void Postfix(CombatHUDWeaponSlot __instance, ICombatant target)
         {
-            if (__instance == null || ___displayedWeapon == null || ___HUD.SelectedActor == null || target == null) return;
+            if (__instance == null || __instance.displayedWeapon == null || __instance.HUD.SelectedActor == null || target == null) return;
 
             Mod.Log.Trace?.Write("CHUDWS:SHC entered");
 
-            if (___HUD.SelectionHandler.ActiveState.SelectionType == SelectionType.FireMorale)
+            if (__instance.HUD.SelectionHandler.ActiveState.SelectionType == SelectionType.FireMorale)
             {
-                int calledShotMod = ActorHelper.CalledShotModifier(___HUD.SelectedActor);
+                int calledShotMod = ActorHelper.CalledShotModifier(__instance.HUD.SelectedActor);
                 if (calledShotMod != 0)
                 {
                     string localText = new Text(Mod.LocalizedText.Modifiers[ModText.Mod_CalledShot]).ToString();
                     __instance.AddToolTipDetail(localText, calledShotMod);
                     Mod.Log.Debug?.Write($"Adding calledShot tooltip with text: {localText} and mod: {calledShotMod}");
                 }
-                Mod.Log.Debug?.Write($"Updated TooltipsForFiring for actor: {___HUD.SelectedActor} with mod: {calledShotMod}");
+                Mod.Log.Debug?.Write($"Updated TooltipsForFiring for actor: {__instance.HUD.SelectedActor} with mod: {calledShotMod}");
             }
             else
             {
@@ -217,16 +217,16 @@ namespace IRTweaks.Modules.Combat
     {
         static bool Prepare() => Mod.Config.Fixes.CalledShotTweaks;
 
-        static void Postfix(CombatHUDCalledShotPopUp __instance, CombatHUD ___HUD)
+        static void Postfix(CombatHUDCalledShotPopUp __instance)
         {
-            if (__instance.Visible && ___HUD.SelectionHandler.ActiveState is SelectionStateFire selectionStateFire &&
+            if (__instance.Visible && __instance.HUD.SelectionHandler.ActiveState is SelectionStateFire selectionStateFire &&
                 selectionStateFire.SelectionType == SelectionType.FireMorale)
             {
-                bool attackerCanAlwaysMakeCalledShot = ___HUD.SelectedActor.CanAlwaysUseCalledShot();
+                bool attackerCanAlwaysMakeCalledShot = __instance.HUD.SelectedActor.CanAlwaysUseCalledShot();
                 bool targetCanBeCalledShot = __instance.DisplayedActor.IsShutDown || __instance.DisplayedActor.IsProne || attackerCanAlwaysMakeCalledShot;
                 if (!targetCanBeCalledShot && Mod.Config.Combat.CalledShot.DisableAllLocations)
                 {
-                    Mod.Log.Info?.Write($"  Disabling called shot popup from attacker: {___HUD.SelectedActor.DistinctId()} against target vehicle: {__instance.DisplayedActor.DistinctId()}");
+                    Mod.Log.Info?.Write($"  Disabling called shot popup from attacker: {__instance.HUD.SelectedActor.DistinctId()} against target vehicle: {__instance.DisplayedActor.DistinctId()}");
                     __instance.Visible = false;
                 }
             }

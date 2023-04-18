@@ -9,7 +9,7 @@ namespace IRTweaks.Modules.UI
 
         static bool Prepare() { return Mod.Config.Fixes.SkirmishAlwaysUnlimited; }
 
-        public static void Postfix(SkirmishSettings_Beta __instance, HBS_Dropdown ___lanceBudgetDropdown)
+        public static void Postfix(SkirmishSettings_Beta __instance)
         {
             Mod.Log.Trace?.Write("SS_B:OLC - ENTERED!");
 

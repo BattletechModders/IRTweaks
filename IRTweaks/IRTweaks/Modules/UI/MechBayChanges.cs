@@ -16,23 +16,23 @@ namespace IRTweaks.Modules.UI
 
         static bool HasRun = false;
 
-        static void Postfix(MechLabPanel __instance, MechLabDismountWidget ___dismountWidget, HBSDOTweenButton ___btn_mechViewerButton)
+        static void Postfix(MechLabPanel __instance)
         {
             if (__instance.IsSimGame && !HasRun)
             {
                 // dismountWidget.gameObject.SetActive(IsSimGame); => change it's rectTransform.sizeDelta.y to 180
-                if (___dismountWidget != null && ___dismountWidget.gameObject != null)
+                if (__instance.dismountWidget != null && __instance.dismountWidget.gameObject != null)
                 {
-                    RectTransform rt = ___dismountWidget.gameObject.GetComponent<RectTransform>();
+                    RectTransform rt = __instance.dismountWidget.gameObject.GetComponent<RectTransform>();
                     Vector3 newDeltas = rt.sizeDelta;
                     newDeltas.y = 180;
                     rt.sizeDelta = newDeltas;
                 }
 
                 // btn_mechViewerButton.gameObject.SetActive(IsSimGame); => change it's pos_x from 1274 to 690
-                if (___btn_mechViewerButton != null && ___btn_mechViewerButton.gameObject != null)
+                if (__instance.btn_mechViewerButton != null && __instance.btn_mechViewerButton.gameObject != null)
                 {
-                    RectTransform rt = ___btn_mechViewerButton.gameObject.GetComponent<RectTransform>();
+                    RectTransform rt = __instance.btn_mechViewerButton.gameObject.GetComponent<RectTransform>();
                     Vector3 newPos = rt.position;
                     newPos.x -= 584;
                     rt.position = newPos;
@@ -88,7 +88,7 @@ namespace IRTweaks.Modules.UI
     static class MechLabPanel_OnMaxArmor_Patch
     {
         static bool Prepare() => Mod.Config.Fixes.MaxArmorMaxesArmor;
-        static void Prefix(ref bool __runOriginal, MechLabPanel __instance, MechLabMechInfoWidget ___mechInfoWidget, MechLabItemSlotElement ___dragItem)
+        static void Prefix(ref bool __runOriginal, MechLabPanel __instance)
         {
             if (!__runOriginal) return;
 
@@ -100,7 +100,7 @@ namespace IRTweaks.Modules.UI
                 __runOriginal = false;
                 return;
             }
-            if (___dragItem != null)
+            if (__instance.dragItem != null)
             {
                 __runOriginal = false;
                 return;
@@ -127,7 +127,7 @@ namespace IRTweaks.Modules.UI
             __instance.rightArmWidget.ModifyArmor(false, __instance.rightArmWidget.maxArmor, true);
             __instance.leftLegWidget.ModifyArmor(false, __instance.leftLegWidget.maxArmor, true);
             __instance.rightLegWidget.ModifyArmor(false, __instance.rightLegWidget.maxArmor, true);
-            ___mechInfoWidget.RefreshInfo(false);
+            __instance.mechInfoWidget.RefreshInfo(false);
 
             __instance.FlagAsModified();
             __instance.ValidateLoadout(false);
@@ -141,7 +141,7 @@ namespace IRTweaks.Modules.UI
     {
         static bool Prepare() => Mod.Config.Fixes.MechbayAdvancedStripping;
 
-        static void Prefix(ref bool __runOriginal, MechLabPanel __instance, bool ___batchActionInProgress, MechLabItemSlotElement ___dragItem)
+        static void Prefix(ref bool __runOriginal, MechLabPanel __instance)
         {
             if (!__runOriginal) return;
 
@@ -153,12 +153,12 @@ namespace IRTweaks.Modules.UI
                 __runOriginal = false;
                 return;
             }
-            if (___dragItem != null)
+            if (__instance.dragItem != null)
             {
                 __runOriginal = false;
                 return;
             }
-            ___batchActionInProgress = true;
+            __instance.batchActionInProgress = true;
             __instance.headWidget.AdvancedStripping(__instance);
             __instance.centerTorsoWidget.AdvancedStripping(__instance);
             __instance.leftTorsoWidget.AdvancedStripping(__instance);
@@ -169,7 +169,7 @@ namespace IRTweaks.Modules.UI
             __instance.rightLegWidget.AdvancedStripping(__instance);
             __instance.FlagAsModified();
             __instance.ValidateLoadout(false);
-            ___batchActionInProgress = false;
+            __instance.batchActionInProgress = false;
 
             __runOriginal = false;
         }
@@ -200,7 +200,7 @@ namespace IRTweaks.Modules.UI
     static class MechLabLocationWidget_ValidateAdd
     {
         static bool Prepare() => Mod.Config.Misc.MechLabRefitReqs.MechLabRefitReqs.Count > 0;
-        public static void Postfix(MechLabLocationWidget __instance, MechComponentRef newComponent, MechLabPanel ___mechLab)
+        public static void Postfix(MechLabLocationWidget __instance, MechComponentRef newComponent)
         {
             var sim = UnityGameInstance.BattleTechGame.Simulation;
 
@@ -234,7 +234,7 @@ namespace IRTweaks.Modules.UI
     static class MechLabLocationWidget_OnMechLabDrop
     {
         static bool Prepare() => Mod.Config.Misc.MechLabRefitReqs.MechLabRefitReqs.Count > 0;
-        static void Prefix(ref bool __runOriginal, MechLabLocationWidget __instance, PointerEventData eventData, MechLabDropTargetType addToType, MechLabPanel ___mechLab, Text ____dropErrorMessage)
+        static void Prefix(ref bool __runOriginal, MechLabLocationWidget __instance, PointerEventData eventData, MechLabDropTargetType addToType)
         {
             if (!__runOriginal) return;
 
@@ -244,8 +244,8 @@ namespace IRTweaks.Modules.UI
 
             if (!ModState.IsComponentValidForRefit)
             {
-                ___mechLab.ShowDropErrorMessage(____dropErrorMessage);
-                ___mechLab.OnDrop(eventData);
+                __instance.mechLab.ShowDropErrorMessage(__instance._dropErrorMessage);
+                __instance.mechLab.OnDrop(eventData);
                 __runOriginal = false;
             }
 

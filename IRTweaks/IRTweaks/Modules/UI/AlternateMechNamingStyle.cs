@@ -37,11 +37,11 @@ namespace IRTweaks.Modules.UI
 
         static bool Prepare() { return MechNamesHelper.IsEnabled(); }
 
-        public static void Postfix(MechDef mechDef, MechLabPanel ___mechLab, HBS_InputField ___mechNickname)
+        public static void Postfix(MechDef mechDef, MechLabMechInfoWidget __instance)
         {
-            if (MechNamesHelper.HasUiName(___mechLab.activeMechDef))
+            if (MechNamesHelper.HasUiName(__instance.mechLab.activeMechDef))
             {
-                ___mechNickname.SetText(___mechLab.activeMechDef.Description.UIName);
+                __instance.mechNickname.SetText(__instance.mechLab.activeMechDef.Description.UIName);
             }
         }
     }
@@ -51,11 +51,11 @@ namespace IRTweaks.Modules.UI
     {
         static bool Prepare() { return MechNamesHelper.IsEnabled(); }
 
-        public static void Postfix(MechBayMechInfoWidget __instance, MechDef ___selectedMech, HBS_InputField ___mechNameInput)
+        public static void Postfix(MechBayMechInfoWidget __instance)
         {
-            if (__instance != null && MechNamesHelper.HasUiName(___selectedMech))
+            if (__instance != null && MechNamesHelper.HasUiName(__instance.selectedMech))
             {
-                ___mechNameInput.SetText(___selectedMech.Description.UIName);
+                __instance.mechNameInput.SetText(__instance.selectedMech.Description.UIName);
             }
         }
     }
@@ -65,11 +65,11 @@ namespace IRTweaks.Modules.UI
     {
         static bool Prepare() { return MechNamesHelper.IsEnabled(); }
 
-        public static void Postfix(LanceLoadoutMechItem __instance, MechDef mechDef, LocalizableText ___MechNameText)
+        public static void Postfix(LanceLoadoutMechItem __instance, MechDef mechDef)
         {
             if (__instance != null && MechNamesHelper.HasUiName(mechDef))
             {
-                ___MechNameText.SetText(mechDef.Description.UIName);
+                __instance.MechNameText.SetText(mechDef.Description.UIName);
             }
         }
     }
@@ -104,17 +104,17 @@ namespace IRTweaks.Modules.UI
         static bool Prepare() { return MechNamesHelper.IsEnabled(); }
 
         [HarmonyPriority(Priority.Last)]
-        public static void Postfix(object data, LocalizableText ___NameField, LocalizableText ___VariantField)
+        public static void Postfix(TooltipPrefab_Mech __instance, object data)
         {
             MechDef mechDef = data as MechDef;
             if (MechNamesHelper.HasUiName(mechDef))
             {
-                ___NameField.SetText(mechDef.Description.UIName, Array.Empty<object>());
+                __instance.NameField.SetText(mechDef.Description.UIName, Array.Empty<object>());
             }
             else
             {
-                ___NameField.SetText(mechDef.Description.Name, Array.Empty<object>());
-                ___VariantField.SetText("( {0} {1} )", new object[]
+                __instance.NameField.SetText(mechDef.Description.Name, Array.Empty<object>());
+                __instance.VariantField.SetText("( {0} {1} )", new object[]
             {
                 mechDef.Chassis.Description.Name,
                 mechDef.Chassis.VariantName

@@ -115,22 +115,22 @@ namespace IRTweaks.Modules.UI
     {
         static bool Prepare() => Mod.Config.Fixes.BulkScrapping;
 
-        static void Postfix(MechBayMechStorageWidget __instance, List<IMechLabDraggableItem> ___inventory, IMechLabDropTarget ___parentDropTarget)
+        static void Postfix(MechBayMechStorageWidget __instance)
         {
             // Not MechBay, skip
-            if (___parentDropTarget == null || !(___parentDropTarget is MechBayPanel mechBayPanel))
+            if (__instance.parentDropTarget == null || !(__instance.parentDropTarget is MechBayPanel mechBayPanel))
                 return;
 
             // Components tab isn't selected, skip
             if (!__instance.gameObject.activeInHierarchy) return;
 
             Mod.Log.Info?.Write("MBMSW:F_WA FIRED");
-            if (___inventory != null && ___inventory.Count > 0 &&
+            if (__instance.inventory != null && __instance.inventory.Count > 0 &&
                 Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt))
             {
                 string titleLT = new Text(Mod.LocalizedText.Dialog[ModText.DT_Title_ScrapAll]).ToString();
 
-                List<ChassisCount> chassisCounts = ___inventory
+                List<ChassisCount> chassisCounts = __instance.inventory
                     .OfType<MechBayChassisUnitElement>()
                     .Select(x => ScrapHelper.MapChassisUnitElement(x, __instance.Sim))
                     .ToList();
@@ -146,10 +146,10 @@ namespace IRTweaks.Modules.UI
     {
         static bool Prepare() => Mod.Config.Fixes.BulkScrapping;
 
-        static void Postfix(MechBayMechStorageWidget __instance, List<IMechLabDraggableItem> ___inventory, IMechLabDropTarget ___parentDropTarget)
+        static void Postfix(MechBayMechStorageWidget __instance)
         {
             // Not MechBay, skip
-            if (___parentDropTarget == null || !(___parentDropTarget is MechBayPanel mechBayPanel))
+            if (__instance.parentDropTarget == null || !(__instance.parentDropTarget is MechBayPanel mechBayPanel))
                 return;
 
             // Components tab isn't selected, skip
@@ -157,12 +157,12 @@ namespace IRTweaks.Modules.UI
 
 
 
-            if (___inventory != null && ___inventory.Count > 0 &&
+            if (__instance.inventory != null && __instance.inventory.Count > 0 &&
                 Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt))
             {
                 string titleLT = new Text(Mod.LocalizedText.Dialog[ModText.DT_Title_ScrapAssaults]).ToString();
 
-                List<ChassisCount> chassisCounts = ___inventory
+                List<ChassisCount> chassisCounts = __instance.inventory
                     .OfType<MechBayChassisUnitElement>()
                     .Where(x => x.ChassisDef.weightClass == WeightClass.ASSAULT)
                     .Select(x => ScrapHelper.MapChassisUnitElement(x, __instance.Sim))
@@ -179,22 +179,22 @@ namespace IRTweaks.Modules.UI
     {
         static bool Prepare() => Mod.Config.Fixes.BulkScrapping;
 
-        static void Postfix(MechBayMechStorageWidget __instance, List<IMechLabDraggableItem> ___inventory, IMechLabDropTarget ___parentDropTarget)
+        static void Postfix(MechBayMechStorageWidget __instance)
         {
             // Not MechBay, skip
-            if (___parentDropTarget == null || !(___parentDropTarget is MechBayPanel mechBayPanel))
+            if (__instance.parentDropTarget == null || !(__instance.parentDropTarget is MechBayPanel mechBayPanel))
                 return;
 
             // Components tab isn't selected, skip
             if (!__instance.gameObject.activeInHierarchy) return;
 
 
-            if (___inventory != null && ___inventory.Count > 0 &&
+            if (__instance.inventory != null && __instance.inventory.Count > 0 &&
                 Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt))
             {
                 string titleLT = new Text(Mod.LocalizedText.Dialog[ModText.DT_Title_ScrapHeavies]).ToString();
 
-                List<ChassisCount> chassisCounts = ___inventory
+                List<ChassisCount> chassisCounts = __instance.inventory
                     .OfType<MechBayChassisUnitElement>()
                     .Where(x => x.ChassisDef.weightClass == WeightClass.HEAVY)
                     .Select(x => ScrapHelper.MapChassisUnitElement(x, __instance.Sim))
@@ -211,22 +211,22 @@ namespace IRTweaks.Modules.UI
     {
         static bool Prepare() => Mod.Config.Fixes.BulkScrapping;
 
-        static void Postfix(MechBayMechStorageWidget __instance, List<IMechLabDraggableItem> ___inventory, IMechLabDropTarget ___parentDropTarget)
+        static void Postfix(MechBayMechStorageWidget __instance)
         {
             // Not MechBay, skip
-            if (___parentDropTarget == null || !(___parentDropTarget is MechBayPanel mechBayPanel))
+            if (__instance.parentDropTarget == null || !(__instance.parentDropTarget is MechBayPanel mechBayPanel))
                 return;
 
             // Components tab isn't selected, skip
             if (!__instance.gameObject.activeInHierarchy) return;
 
 
-            if (___inventory != null && ___inventory.Count > 0 &&
+            if (__instance.inventory != null && __instance.inventory.Count > 0 &&
                 Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt))
             {
                 string titleLT = new Text(Mod.LocalizedText.Dialog[ModText.DT_Title_ScrapLights]).ToString();
 
-                List<ChassisCount> chassisCounts = ___inventory
+                List<ChassisCount> chassisCounts = __instance.inventory
                     .OfType<MechBayChassisUnitElement>()
                     .Where(x => x.ChassisDef.weightClass == WeightClass.LIGHT)
                     .Select(x => ScrapHelper.MapChassisUnitElement(x, __instance.Sim))
@@ -243,22 +243,22 @@ namespace IRTweaks.Modules.UI
     {
         static bool Prepare() => Mod.Config.Fixes.BulkScrapping;
 
-        static void Postfix(MechBayMechStorageWidget __instance, List<IMechLabDraggableItem> ___inventory, IMechLabDropTarget ___parentDropTarget)
+        static void Postfix(MechBayMechStorageWidget __instance)
         {
             // Not MechBay, skip
-            if (___parentDropTarget == null || !(___parentDropTarget is MechBayPanel mechBayPanel))
+            if (__instance.parentDropTarget == null || !(__instance.parentDropTarget is MechBayPanel mechBayPanel))
                 return;
 
             // Components tab isn't selected, skip
             if (!__instance.gameObject.activeInHierarchy) return;
 
 
-            if (___inventory != null && ___inventory.Count > 0 &&
+            if (__instance.inventory != null && __instance.inventory.Count > 0 &&
                 Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt))
             {
                 string titleLT = new Text(Mod.LocalizedText.Dialog[ModText.DT_Title_ScrapMediums]).ToString();
 
-                List<ChassisCount> chassisCounts = ___inventory
+                List<ChassisCount> chassisCounts = __instance.inventory
                     .OfType<MechBayChassisUnitElement>()
                     .Where(x => x.ChassisDef.weightClass == WeightClass.MEDIUM)
                     .Select(x => ScrapHelper.MapChassisUnitElement(x, __instance.Sim))
