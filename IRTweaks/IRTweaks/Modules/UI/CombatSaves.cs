@@ -11,9 +11,7 @@ namespace IRTweaks.Modules.UI
     {
         static bool Prepare() => Mod.Config.Fixes.DisableCombatSaves || Mod.Config.Fixes.DisableCombatRestarts;
 
-        static void Postfix(SimGameOptionsMenu __instance,
-            HBSDOTweenButton ___saveGame, HBSTooltipHBSButton ___saveTooltip,
-            HBSDOTweenButton ___restartMission, HBSTooltipHBSButton ___restartTooltip)
+        static void Postfix(SimGameOptionsMenu __instance)
         {
             CombatGameState combatGameState = SharedState.Combat;
             if (combatGameState != null && !combatGameState.TurnDirector.IsMissionOver && combatGameState.TurnDirector.GameHasBegun)
@@ -23,23 +21,23 @@ namespace IRTweaks.Modules.UI
                 if (Mod.Config.Fixes.DisableCombatRestarts)
                 {
                     Mod.Log.Trace?.Write("Disabling combat restarts.");
-                    ___restartMission.SetState(ButtonState.Disabled);
+                    __instance.restartMission.SetState(ButtonState.Disabled);
 
                     string title = new Text(Mod.LocalizedText.Tooltips[ModText.TT_CombatRestartMission_Title]).ToString();
                     string details = new Text(Mod.LocalizedText.Tooltips[ModText.TT_CombatRestartMission_Details]).ToString();
                     BaseDescriptionDef def = new BaseDescriptionDef("SGMTipData", title, details, null);
-                    ___restartTooltip.SetStateDataForButtonState(ButtonState.Disabled, TooltipUtilities.GetStateDataFromObject(def));
+                    __instance.restartTooltip.SetStateDataForButtonState(ButtonState.Disabled, TooltipUtilities.GetStateDataFromObject(def));
                 }
 
-                if (Mod.Config.Fixes.DisableCombatSaves && ___saveGame.State != ButtonState.Disabled)
+                if (Mod.Config.Fixes.DisableCombatSaves && __instance.saveGame.State != ButtonState.Disabled)
                 {
                     Mod.Log.Trace?.Write("Disabling combat saves.");
-                    ___saveGame.SetState(ButtonState.Disabled);
+                    __instance.saveGame.SetState(ButtonState.Disabled);
 
                     string title = new Text(Mod.LocalizedText.Tooltips[ModText.TT_CombatSave_Title]).ToString();
                     string details = new Text(Mod.LocalizedText.Tooltips[ModText.TT_CombatSave_Details]).ToString();
                     BaseDescriptionDef def = new BaseDescriptionDef("SGMTipData", title, details, null);
-                    ___saveTooltip.SetStateDataForButtonState(ButtonState.Disabled, TooltipUtilities.GetStateDataFromObject(def));
+                    __instance.saveTooltip.SetStateDataForButtonState(ButtonState.Disabled, TooltipUtilities.GetStateDataFromObject(def));
                 }
             }
         }

@@ -16,11 +16,11 @@ namespace IRTweaks.Modules.UI
         {
             static bool Prepare() { return Mod.Config.Fixes.StreamlinedMainMenu; }
 
-            static void Postfix(SGContractsWidget __instance, GameObject ___ContractList)
+            static void Postfix(SGContractsWidget __instance)
             {
                 Mod.Log.Trace?.Write($"SGCW:I - entered.");
 
-                RectTransform clRT = ___ContractList.GetComponent<RectTransform>();
+                RectTransform clRT = __instance.ContractList.GetComponent<RectTransform>();
                 if (clRT != null)
                 {
                     Vector3 ns = clRT.sizeDelta;
@@ -39,12 +39,12 @@ namespace IRTweaks.Modules.UI
         {
             static bool Prepare() { return Mod.Config.Fixes.StreamlinedMainMenu; }
 
-            static void Postfix(SGNavigationButton __instance, LocalizableText ___text, List<SGNavFlyoutButton> ___FlyoutButtonList, int ___flyoutButtonCount)
+            static void Postfix(SGNavigationButton __instance)
             {
-                Mod.Log.Trace?.Write($"SGNB:RFTP - entered button {___text.GetParsedText()} with {___flyoutButtonCount} flyout buttons for ID: {__instance.ID}");
-                if (__instance.ID != DropshipLocation.CPT_QUARTER && !___text.text.Contains("CMD Staff"))
+                Mod.Log.Trace?.Write($"SGNB:RFTP - entered button {__instance.text.GetParsedText()} with {__instance.flyoutButtonCount} flyout buttons for ID: {__instance.ID}");
+                if (__instance.ID != DropshipLocation.CPT_QUARTER && !__instance.text.text.Contains("CMD Staff"))
                 {
-                    foreach (SGNavFlyoutButton flyoutButton in ___FlyoutButtonList)
+                    foreach (SGNavFlyoutButton flyoutButton in __instance.FlyoutButtonList)
                     {
                         flyoutButton.gameObject.SetActive(false);
                     }
@@ -57,12 +57,12 @@ namespace IRTweaks.Modules.UI
         {
             static bool Prepare() { return Mod.Config.Fixes.StreamlinedMainMenu; }
 
-            static void Postfix(SGNavigationButton __instance, DropshipType shipType, List<SGNavFlyoutButton> ___FlyoutButtonList, LocalizableText ___text)
+            static void Postfix(SGNavigationButton __instance, DropshipType shipType)
             {
                 Mod.Log.Trace?.Write($"SGNB:SSATSD - entered shipType:{shipType} for ID: {__instance.ID}");
-                if (__instance.ID != DropshipLocation.CPT_QUARTER && !___text.text.Contains("CMD Staff"))
+                if (__instance.ID != DropshipLocation.CPT_QUARTER && !__instance.text.text.Contains("CMD Staff"))
                 {
-                    foreach (SGNavFlyoutButton flyoutButton in ___FlyoutButtonList)
+                    foreach (SGNavFlyoutButton flyoutButton in __instance.FlyoutButtonList)
                     {
                         flyoutButton.gameObject.SetActive(false);
                     }
@@ -75,12 +75,12 @@ namespace IRTweaks.Modules.UI
         {
             static bool Prepare() { return Mod.Config.Fixes.StreamlinedMainMenu; }
 
-            static void Postfix(SGNavigationButton __instance, PointerEventData eventData, List<SGNavFlyoutButton> ___FlyoutButtonList, LocalizableText ___text)
+            static void Postfix(SGNavigationButton __instance, PointerEventData eventData)
             {
                 Mod.Log.Trace?.Write($"SGNB:OPE - entered.");
-                if (__instance.ID != DropshipLocation.CPT_QUARTER && !___text.text.Contains("CMD Staff"))
+                if (__instance.ID != DropshipLocation.CPT_QUARTER && !__instance.text.text.Contains("CMD Staff"))
                 {
-                    foreach (SGNavFlyoutButton flyoutButton in ___FlyoutButtonList)
+                    foreach (SGNavFlyoutButton flyoutButton in __instance.FlyoutButtonList)
                     {
                         flyoutButton.gameObject.SetActive(false);
                     }
@@ -93,7 +93,7 @@ namespace IRTweaks.Modules.UI
         {
             static bool Prepare() { return Mod.Config.Fixes.StreamlinedMainMenu; }
 
-            static void Postfix(SGNavigationButton __instance, SGNavigationList ___buttonParent, LocalizableText ___text)
+            static void Postfix(SGNavigationButton __instance)
             {
                 Mod.Log.Debug?.Write($"SGNB:OC - button clicked for ID: {__instance.ID}");
                 SimGameState simulation = UnityGameInstance.BattleTechGame.Simulation;
@@ -101,68 +101,68 @@ namespace IRTweaks.Modules.UI
                 switch (__instance.ID)
                 {
                     case DropshipLocation.CMD_CENTER:
-                        QueueOrForceActivation(DropshipMenuType.Contract, __instance.ID, ___buttonParent.navParent, simulation);
+                        QueueOrForceActivation(DropshipMenuType.Contract, __instance.ID, __instance.buttonParent.navParent, simulation);
                         if (SGNavigationButton_FlyoutClicked.ClickedID != DropshipMenuType.INVALID_UNSET)
                         {
-                            if (___text.text.Contains("CMD Staff"))
+                            if (__instance.text.text.Contains("CMD Staff"))
                             {
                                 switch (SGNavigationButton_FlyoutClicked.ClickedID)
                                 {
                                     case DropshipMenuType.Darius:
                                     case DropshipMenuType.Alexander:
-                                        QueueOrForceActivation(SGNavigationButton_FlyoutClicked.ClickedID, DropshipLocation.CMD_CENTER, ___buttonParent.navParent, simulation);
+                                        QueueOrForceActivation(SGNavigationButton_FlyoutClicked.ClickedID, DropshipLocation.CMD_CENTER, __instance.buttonParent.navParent, simulation);
                                         break;
                                     case DropshipMenuType.Yang:
-                                        QueueOrForceActivation(SGNavigationButton_FlyoutClicked.ClickedID, DropshipLocation.MECH_BAY, ___buttonParent.navParent, simulation);
+                                        QueueOrForceActivation(SGNavigationButton_FlyoutClicked.ClickedID, DropshipLocation.MECH_BAY, __instance.buttonParent.navParent, simulation);
                                         break;
                                     case DropshipMenuType.Sumire:
-                                        QueueOrForceActivation(SGNavigationButton_FlyoutClicked.ClickedID, DropshipLocation.NAVIGATION, ___buttonParent.navParent, simulation);
+                                        QueueOrForceActivation(SGNavigationButton_FlyoutClicked.ClickedID, DropshipLocation.NAVIGATION, __instance.buttonParent.navParent, simulation);
                                         break;
                                     case DropshipMenuType.Farah:
-                                        QueueOrForceActivation(SGNavigationButton_FlyoutClicked.ClickedID, DropshipLocation.ENGINEERING, ___buttonParent.navParent, simulation);
+                                        QueueOrForceActivation(SGNavigationButton_FlyoutClicked.ClickedID, DropshipLocation.ENGINEERING, __instance.buttonParent.navParent, simulation);
                                         break;
                                     default:
                                         break;
                                 }
                             }
-                            else if (___text.text.Contains("Memorial"))
+                            else if (__instance.text.text.Contains("Memorial"))
                             {
-                                QueueOrForceActivation(SGNavigationButton_FlyoutClicked.ClickedID, DropshipLocation.BARRACKS, ___buttonParent.navParent, simulation);
+                                QueueOrForceActivation(SGNavigationButton_FlyoutClicked.ClickedID, DropshipLocation.BARRACKS, __instance.buttonParent.navParent, simulation);
                             }
                             SGNavigationButton_FlyoutClicked.ClickedID = DropshipMenuType.INVALID_UNSET;
                         }
                         break;
                     case DropshipLocation.BARRACKS:
-                        QueueOrForceActivation(DropshipMenuType.Mechwarrior, __instance.ID, ___buttonParent.navParent, simulation);
+                        QueueOrForceActivation(DropshipMenuType.Mechwarrior, __instance.ID, __instance.buttonParent.navParent, simulation);
                         break;
                     case DropshipLocation.ENGINEERING:
-                        QueueOrForceActivation(DropshipMenuType.ShipUpgrade, __instance.ID, ___buttonParent.navParent, simulation);
+                        QueueOrForceActivation(DropshipMenuType.ShipUpgrade, __instance.ID, __instance.buttonParent.navParent, simulation);
                         break;
                     case DropshipLocation.MECH_BAY:
-                        QueueOrForceActivation(DropshipMenuType.MechBay, __instance.ID, ___buttonParent.navParent, simulation);
+                        QueueOrForceActivation(DropshipMenuType.MechBay, __instance.ID, __instance.buttonParent.navParent, simulation);
                         break;
                     case DropshipLocation.NAVIGATION:
-                        QueueOrForceActivation(DropshipMenuType.Navigation, __instance.ID, ___buttonParent.navParent, simulation);
+                        QueueOrForceActivation(DropshipMenuType.Navigation, __instance.ID, __instance.buttonParent.navParent, simulation);
                         break;
                     default:
                         break;
                 }
 
-                if (___text.text.Contains("Store"))
+                if (__instance.text.text.Contains("Store"))
                 {
                     if (simulation.CurRoomState != DropshipLocation.SHOP)
                     {
-                        ___buttonParent.ArgoButtonFlyoutChangeRoom(DropshipLocation.SHOP);
+                        __instance.buttonParent.ArgoButtonFlyoutChangeRoom(DropshipLocation.SHOP);
                     }
-                    QueueOrForceActivation(DropshipMenuType.Shop, DropshipLocation.SHOP, ___buttonParent.navParent, simulation);
+                    QueueOrForceActivation(DropshipMenuType.Shop, DropshipLocation.SHOP, __instance.buttonParent.navParent, simulation);
                 }
-                else if (___text.text.Contains("Memorial"))
+                else if (__instance.text.text.Contains("Memorial"))
                 {
                     if (simulation.CurRoomState != DropshipLocation.BARRACKS)
                     {
-                        ___buttonParent.ArgoButtonFlyoutChangeRoom(DropshipLocation.BARRACKS);
+                        __instance.buttonParent.ArgoButtonFlyoutChangeRoom(DropshipLocation.BARRACKS);
                     }
-                    QueueOrForceActivation(DropshipMenuType.MemorialWall, DropshipLocation.BARRACKS, ___buttonParent.navParent, simulation);
+                    QueueOrForceActivation(DropshipMenuType.MemorialWall, DropshipLocation.BARRACKS, __instance.buttonParent.navParent, simulation);
                 }
             }
 
@@ -190,15 +190,15 @@ namespace IRTweaks.Modules.UI
         {
             static bool Prepare() { return Mod.Config.Fixes.StreamlinedMainMenu; }
 
-            static void Postfix(SGNavigationWidgetLeft __instance, SGShipMap ___shipMap, SGNavigationList ___locationList)
+            static void Postfix(SGNavigationWidgetLeft __instance)
             {
                 Mod.Log.Info?.Write($"SGNWL:I - entered with instanceType: {__instance.GetType()}.");
 
-                ___shipMap.gameObject.SetActive(false);
+                __instance.shipMap.gameObject.SetActive(false);
 
-                Vector3 startPos = ___locationList.transform.position;
+                Vector3 startPos = __instance.locationList.transform.position;
                 startPos.y += 200;
-                ___locationList.transform.position = startPos;
+                __instance.locationList.transform.position = startPos;
             }
         }
 
@@ -209,7 +209,7 @@ namespace IRTweaks.Modules.UI
 
             static bool Prepare() { return Mod.Config.Fixes.StreamlinedMainMenu; }
 
-            static void Prefix(ref bool __runOriginal, SGNavigationButton __instance, DropshipMenuType buttonID, LocalizableText ___text, SGNavigationList ___buttonParent)
+            static void Prefix(ref bool __runOriginal, SGNavigationButton __instance, DropshipMenuType buttonID)
             {
                 if (!__runOriginal) return;
 
@@ -259,7 +259,7 @@ namespace IRTweaks.Modules.UI
 
             static bool Prepare() { return Mod.Config.Fixes.StreamlinedMainMenu; }
 
-            static void Postfix(SGNavigationList __instance, HBSRadioSet ___radioSet, SGNavigationButton ___argoButton)
+            static void Postfix(SGNavigationList __instance)
             {
                 if (__instance.navParent != null)
                 {
@@ -270,31 +270,31 @@ namespace IRTweaks.Modules.UI
                     {
                         // Create the store button
                         Mod.Log.Info?.Write(" - Creating store button");
-                        GameObject storeButtonGO = GameObject.Instantiate(___argoButton.gameObject);
+                        GameObject storeButtonGO = GameObject.Instantiate(__instance.argoButton.gameObject);
                         storeButtonGO.SetActive(true);
-                        storeButtonGO.transform.position = ___argoButton.gameObject.transform.position;
-                        storeButtonGO.transform.SetParent(___argoButton.gameObject.transform.parent);
+                        storeButtonGO.transform.position = __instance.argoButton.gameObject.transform.position;
+                        storeButtonGO.transform.SetParent(__instance.argoButton.gameObject.transform.parent);
                         storeButtonGO.transform.localScale = Vector3.one;
                         storeButtonGO.transform.SetSiblingIndex(1);
 
                         storeButton = storeButtonGO.GetComponent<SGNavigationButton>();
                         storeButton.id = DropshipLocation.SHIP;
-                        storeButton.SetupElement(__instance, ___radioSet, "Store",
+                        storeButton.SetupElement(__instance, __instance.radioSet, "Store",
                             LazySingletonBehavior<UIManager>.Instance.UILookAndColorConstants.DropshipRoomCaptainsQuartersIcon, simulation);
 
                         // Create the staff button
                         Mod.Log.Info?.Write(" - Creating staff button");
-                        GameObject staffButtonGO = GameObject.Instantiate(___argoButton.gameObject);
+                        GameObject staffButtonGO = GameObject.Instantiate(__instance.argoButton.gameObject);
                         staffButtonGO.SetActive(true);
-                        staffButtonGO.transform.position = ___argoButton.gameObject.transform.position;
-                        staffButtonGO.transform.SetParent(___argoButton.gameObject.transform.parent);
+                        staffButtonGO.transform.position = __instance.argoButton.gameObject.transform.position;
+                        staffButtonGO.transform.SetParent(__instance.argoButton.gameObject.transform.parent);
                         staffButtonGO.transform.localScale = Vector3.one;
                         staffButtonGO.transform.SetSiblingIndex(7);
 
                         staffButton = staffButtonGO.GetComponent<SGNavigationButton>();
                         staffButton.id = DropshipLocation.CMD_CENTER;
 
-                        staffButton.SetupElement(__instance, ___radioSet, "CMD Staff",
+                        staffButton.SetupElement(__instance, __instance.radioSet, "CMD Staff",
                             LazySingletonBehavior<UIManager>.Instance.UILookAndColorConstants.DropshipRoomCommandCenterIcon, simulation);
                         staffButton.AddFlyoutButton("Darius", DropshipMenuType.Darius);
                         staffButton.AddFlyoutButton("Yang", DropshipMenuType.Yang);
@@ -307,17 +307,17 @@ namespace IRTweaks.Modules.UI
 
                         // Create the memorial button
                         Mod.Log.Info?.Write(" - Creating memorial button");
-                        GameObject memorialButtonGO = GameObject.Instantiate(___argoButton.gameObject);
+                        GameObject memorialButtonGO = GameObject.Instantiate(__instance.argoButton.gameObject);
                         memorialButtonGO.SetActive(true);
-                        memorialButtonGO.transform.position = ___argoButton.gameObject.transform.position;
-                        memorialButtonGO.transform.SetParent(___argoButton.gameObject.transform.parent);
+                        memorialButtonGO.transform.position = __instance.argoButton.gameObject.transform.position;
+                        memorialButtonGO.transform.SetParent(__instance.argoButton.gameObject.transform.parent);
                         memorialButtonGO.transform.localScale = Vector3.one;
                         memorialButtonGO.transform.SetSiblingIndex(9);
 
                         memorialButton = memorialButtonGO.GetComponent<SGNavigationButton>();
                         memorialButton.id = DropshipLocation.BARRACKS;
 
-                        memorialButton.SetupElement(__instance, ___radioSet, "Memorial",
+                        memorialButton.SetupElement(__instance, __instance.radioSet, "Memorial",
                             LazySingletonBehavior<UIManager>.Instance.UILookAndColorConstants.DropshipRoomBarracksIcon, simulation);
 
                     }

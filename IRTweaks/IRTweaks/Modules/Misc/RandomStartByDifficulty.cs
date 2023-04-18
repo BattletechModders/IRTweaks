@@ -35,15 +35,14 @@ namespace IRTweaks.Modules.Misc
     static class SimGameDifficultySettingsModule_UpdateDifficultyScoreBar_Patch
     {
 
-        static void Prefix(ref bool __runOriginal, SimGameDifficultySettingsModule __instance, SimGameDifficulty ___cachedDiff,
-            PreGameCareerModeSettingsTotalScoreDescAndBar ___difficultyBarAndMod)
+        static void Prefix(ref bool __runOriginal, SimGameDifficultySettingsModule __instance)
         {
             if (!__runOriginal) return;
 
             float num = __instance.CalculateRawScoreMod();
             bool active = __instance.ShouldShowDifficultyData();
-            ___difficultyBarAndMod.gameObject.SetActive(active);
-            ___difficultyBarAndMod.RefreshInfo(num);
+            __instance.difficultyBarAndMod.gameObject.SetActive(active);
+            __instance.difficultyBarAndMod.RefreshInfo(num);
 
             if (__instance.CanModifyStartSettings)
             {
@@ -113,17 +112,17 @@ namespace IRTweaks.Modules.Misc
     [HarmonyPatch(typeof(SimGameDifficultySettingsModule), "InitSettings")]
     static class SimGameDifficultySettingsModule_InitSettings_Patch
     {
-        static void Prefix(ref bool __runOriginal, SimGameDifficultySettingsModule __instance, SimGameDifficulty ___cachedDiff, PreGameCareerModeSettingsTotalScoreDescAndBar ___difficultyBarAndMod)
+        static void Prefix(ref bool __runOriginal, SimGameDifficultySettingsModule __instance)
         {
             if (!__runOriginal) return;
 
             if (ModState.HaveDiffSettingsInitiated) return;
 
-            ___cachedDiff = UnityGameInstance.BattleTechGame.DifficultySettings;
+            __instance.cachedDiff = UnityGameInstance.BattleTechGame.DifficultySettings;
 
             if (ModState.MaxDiffModifier == 0f && ModState.MinDiffModifier == 0f)
             {
-                Helper.DifficultyHelper.GetDifficultyModifierRange(___cachedDiff);
+                Helper.DifficultyHelper.GetDifficultyModifierRange(__instance.cachedDiff);
             }
 
             if (__instance.CanModifyStartSettings)
@@ -136,7 +135,7 @@ namespace IRTweaks.Modules.Misc
                 Mod.Log.Info?.Write($"From INITSETTINGS: Atlas values: {atlasImage.color.r}, {atlasImage.color.g}, {atlasImage.color.b}, {atlasImage.color.a}");
             }
 
-            var settings = ___cachedDiff.GetSettings();
+            var settings = __instance.cachedDiff.GetSettings();
             settings.Sort(delegate (SimGameDifficulty.DifficultySetting a, SimGameDifficulty.DifficultySetting b)
             {
                 if (a.UIOrder != b.UIOrder)
@@ -166,7 +165,7 @@ namespace IRTweaks.Modules.Misc
             {
                 if (__instance.CanModifyStartSettings)
                 {
-                    var barRect = ___difficultyBarAndMod.gameObject.GetComponent<RectTransform>();
+                    var barRect = __instance.difficultyBarAndMod.gameObject.GetComponent<RectTransform>();
                     var currentbarPos = barRect.position;
                     currentbarPos.x = 700f;
                     currentbarPos.y = 400f;
@@ -174,7 +173,7 @@ namespace IRTweaks.Modules.Misc
                 }
                 else
                 {
-                    var barRect = ___difficultyBarAndMod.gameObject.GetComponent<RectTransform>();
+                    var barRect = __instance.difficultyBarAndMod.gameObject.GetComponent<RectTransform>();
                     var currentbarPos = barRect.position;
                     currentbarPos.y = 820f;
                     barRect.position = currentbarPos;
@@ -214,21 +213,21 @@ namespace IRTweaks.Modules.Misc
 
         }
 
-        static void Postfix(SimGameDifficultySettingsModule __instance, SimGameDifficulty ___cachedDiff, string ___ironManModeId, string ___autoEquipMechsId, string ___mechPartsReqId, string ___skipPrologueId, string ___randomMechId, string ___argoUpgradeCostId, SGDSToggle ___ironManModeToggle, SGDSDropdown ___mechPartsReqDropdown, GameObject ___disabledOverlay, List<SGDSDropdown> ___activeDropdowns, List<SGDSToggle> ___activeToggles, List<SGDSDropdown> ___cachedDropdowns, List<SGDSToggle> ___cachedToggles, SGDSToggle ___togglePrefab, SGDSDropdown ___dropdownPrefab)
+        static void Postfix(SimGameDifficultySettingsModule __instance)
         {
 
             var existingStartOnlyVars = new List<string>()
             {
-                ___ironManModeId,
-                ___autoEquipMechsId,
-                ___mechPartsReqId,
-                ___skipPrologueId,
-                ___randomMechId,
-                ___argoUpgradeCostId
+                __instance.ironManModeId,
+                __instance.autoEquipMechsId,
+                __instance.mechPartsReqId,
+                __instance.skipPrologueId,
+                __instance.randomMechId,
+                __instance.argoUpgradeCostId
             };
 
-            ___cachedDiff = UnityGameInstance.BattleTechGame.DifficultySettings;
-            var settings = ___cachedDiff.GetSettings();
+            __instance.cachedDiff = UnityGameInstance.BattleTechGame.DifficultySettings;
+            var settings = __instance.cachedDiff.GetSettings();
             settings.Sort(delegate (SimGameDifficulty.DifficultySetting a, SimGameDifficulty.DifficultySetting b)
             {
                 if (a.UIOrder != b.UIOrder)
@@ -242,13 +241,13 @@ namespace IRTweaks.Modules.Misc
             {
                 if (setting.Visible)
                 {
-                    int curSettingIndex = ___cachedDiff.GetCurSettingIndex(setting.ID);
+                    int curSettingIndex = __instance.cachedDiff.GetCurSettingIndex(setting.ID);
 
                     if (setting.StartOnly && existingStartOnlyVars.All(x => x != setting.ID))
                     {
                         if (!setting.Toggle)
                         {
-                            var sourceSettingDropDownGO = ___mechPartsReqDropdown.gameObject;
+                            var sourceSettingDropDownGO = __instance.mechPartsReqDropdown.gameObject;
 
                             GameObject newDropDownObject = UnityEngine.Object.Instantiate<GameObject>(sourceSettingDropDownGO, sourceSettingDropDownGO.transform.parent);
 
@@ -263,7 +262,7 @@ namespace IRTweaks.Modules.Misc
 
                             if (!ModState.InstantiatedDropdowns.Contains(newDropDown))
                             {
-                                ___activeDropdowns.Add(newDropDown);
+                                __instance.activeDropdowns.Add(newDropDown);
                                 newDropDown.Initialize(__instance, setting, curSettingIndex);
                                 newDropDown.gameObject.SetActive(true);
                                 ModState.InstantiatedDropdowns.Add(newDropDown);
@@ -271,13 +270,13 @@ namespace IRTweaks.Modules.Misc
                         }
                         else if (setting.Toggle)
                         {
-                            var sourceDiffToggleGO = ___ironManModeToggle.gameObject;
+                            var sourceDiffToggleGO = __instance.ironManModeToggle.gameObject;
                             GameObject sourceDiffToggle = UnityEngine.Object.Instantiate<GameObject>(sourceDiffToggleGO, sourceDiffToggleGO.transform.parent);
                             SGDSToggle newToggle = sourceDiffToggle.GetOrAddComponent<SGDSToggle>();
 
                             if (!ModState.InstantiatedToggles.Contains(newToggle))
                             {
-                                ___activeToggles.Add(newToggle);
+                                __instance.activeToggles.Add(newToggle);
                                 newToggle.Initialize(__instance, setting, curSettingIndex);
                                 newToggle.gameObject.SetActive(true);
                                 ModState.InstantiatedToggles.Add(newToggle);
@@ -288,8 +287,8 @@ namespace IRTweaks.Modules.Misc
             }
 
             var newDisabledOverlay =
-                UnityEngine.Object.Instantiate<GameObject>(___disabledOverlay, ___disabledOverlay.transform.parent);
-            ___disabledOverlay.SetActive(false);
+                UnityEngine.Object.Instantiate<GameObject>(__instance.disabledOverlay, __instance.disabledOverlay.transform.parent);
+            __instance.disabledOverlay.SetActive(false);
             newDisabledOverlay.SetActive(!__instance.CanModifyStartSettings);
             __instance.UpdateDifficultyScoreBar();
             ModState.HaveDiffSettingsInitiated = true;
@@ -400,16 +399,16 @@ namespace IRTweaks.Modules.Misc
     {
         static bool Prepare() => Mod.Config.Fixes.RandomStartByDifficulty;
 
-        static void Prefix(ref bool __runOriginal, SGDifficultySettingObject __instance, ref float __result, int ___curIdx)
+        static void Prefix(ref bool __runOriginal, SGDifficultySettingObject __instance, ref float __result)
         {
             if (!__runOriginal) return;
 
             Mod.Log.Trace?.Write("SGDSO:CCM entered.");
 
             float careerScoreModifier = 0f;
-            if (__instance != null && __instance.Setting != null && __instance.Setting.Options != null && __instance.Setting.Options.Count > ___curIdx)
+            if (__instance != null && __instance.Setting != null && __instance.Setting.Options != null && __instance.Setting.Options.Count > __instance.curIdx)
             {
-                careerScoreModifier = __instance.Setting.Options[___curIdx].CareerScoreModifier;
+                careerScoreModifier = __instance.Setting.Options[__instance.curIdx].CareerScoreModifier;
             }
 
             __result = careerScoreModifier;

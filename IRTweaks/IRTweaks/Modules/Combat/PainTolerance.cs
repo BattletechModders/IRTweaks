@@ -92,16 +92,16 @@ namespace IRTweaks.Modules.Combat
 
         static bool Prepare() => Mod.Config.Fixes.PainTolerance;
 
-        static void Prefix(ref bool __runOriginal, Pilot __instance, DamageType damageType, ref bool ___needsInjury, ref InjuryReason ___injuryReason)
+        static void Prefix(ref bool __runOriginal, Pilot __instance, DamageType damageType)
         {
             if (!__runOriginal) return;
 
             Mod.Log.Trace?.Write("P:SNI - entered");
 
             // DEBUG Line here: Someone is emitting an injuryReason of 101. Try to identify them by emitting a stack trace when this happens.
-            if ((int)___injuryReason > 6)
+            if ((int)__instance.injuryReason > 6)
             {
-                Mod.Log.Warn?.Write($"PainTolerance intercepted injuryReason with value of: {(int)___injuryReason} and desc: {___injuryReason}. Either TBAS or ME running InjureOnOverheat.");
+                Mod.Log.Warn?.Write($"PainTolerance intercepted injuryReason with value of: {(int)__instance.injuryReason} and desc: {__instance.injuryReason}. Either TBAS or ME running InjureOnOverheat.");
                 Mod.Log.Info?.Write($"  -- injured actor was: {__instance.ParentActor.DistinctId()}");
                 System.Diagnostics.StackTrace t = new System.Diagnostics.StackTrace();
                 Mod.Log.Info?.Write($" -- PainTolerance:InjurePilot intercepted call stack:");
@@ -113,7 +113,7 @@ namespace IRTweaks.Modules.Combat
             if (__instance.ParentActor == null) 
                 return;
 
-            Mod.Log.Info?.Write($"Checking pilot: {__instance.ParentActor.DistinctId()} to resist injury of type: {___injuryReason}");
+            Mod.Log.Info?.Write($"Checking pilot: {__instance.ParentActor.DistinctId()} to resist injury of type: {__instance.injuryReason}");
 
             // Compute the resist penalty for each damage type that we support
             if (damageType == DamageType.HeadShot)
@@ -142,7 +142,7 @@ namespace IRTweaks.Modules.Combat
                 ModState.WasCTDestroyed = false;
             }
 
-            else if (damageType == DamageType.Overheat || damageType == DamageType.OverheatSelf || (int)___injuryReason == 101 || (int)___injuryReason == 666
+            else if (damageType == DamageType.Overheat || damageType == DamageType.OverheatSelf || (int)__instance.injuryReason == 101 || (int)__instance.injuryReason == 666
                                                        || "OVERHEATED".Equals(__instance.InjuryReasonDescription, StringComparison.InvariantCultureIgnoreCase))
             {
                 // comparison string must match label in https://github.com/BattletechModders/MechEngineer/blob/master/source/Features/ShutdownInjuryProtection/Patches/Pilot_InjuryReasonDescription_Patch.cs
@@ -170,7 +170,7 @@ namespace IRTweaks.Modules.Combat
                 bool success = PainHelper.MakeResistCheck(__instance);
                 if (success)
                 {
-                    Mod.Log.Info?.Write($"Ignoring {___injuryReason} injury on pilot.");
+                    Mod.Log.Info?.Write($"Ignoring {__instance.injuryReason} injury on pilot.");
 
                     // Publish a floatie
                     string localText = new Text(Mod.LocalizedText.Floaties[ModText.FT_InjuryResist], new object[] { }).ToString();
@@ -182,7 +182,7 @@ namespace IRTweaks.Modules.Combat
                 }
                 else
                 {
-                    Mod.Log.Info?.Write($"Pilot will suffer injury type: {___injuryReason}.");
+                    Mod.Log.Info?.Write($"Pilot will suffer injury type: {__instance.injuryReason}.");
                 }
 
                 ModState.InjuryResistPenalty = -1;

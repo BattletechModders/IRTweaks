@@ -53,7 +53,7 @@ namespace IRTweaks.Modules.Combat
             return Mod.Config.Fixes.OnWeaponFireFix;
         }
 
-        public static void Postfix(Weapon __instance, CombatGameState ___combat)
+        public static void Postfix(Weapon __instance)
         {
             var effectsFromAmmoAndMode = new List<EffectData>();
             effectsFromAmmoAndMode.AddRange(__instance.ammo().statusEffects.Where(x => x.effectType == EffectType.StatisticEffect && x.targetingData.effectTriggerType == EffectTriggerType.OnWeaponFire));
@@ -64,19 +64,19 @@ namespace IRTweaks.Modules.Combat
                 if (effect.targetingData.effectTriggerType == EffectTriggerType.OnWeaponFire)
                 {
                     string effectID = string.Format("{0}Effect_{1}_{2}", effect.targetingData.effectTriggerType.ToString(), __instance.parent.GUID, -1);
-                    foreach (ICombatant combatant in ___combat.EffectManager.GetTargetCombatantForEffect(effect, __instance.parent, __instance.parent))
+                    foreach (ICombatant combatant in __instance.combat.EffectManager.GetTargetCombatantForEffect(effect, __instance.parent, __instance.parent))
                     {
                         combatant.CreateEffect(effect, null, effectID, -1, __instance.parent);
-                        //___combat.EffectManager.CreateEffect(effect, effectID, -1, __instance.parent, combatant, default(WeaponHitInfo), 0, false);
+                        //__instance.combat.EffectManager.CreateEffect(effect, effectID, -1, __instance.parent, combatant, default(WeaponHitInfo), 0, false);
                         if (!effect.targetingData.hideApplicationFloatie)
                         {
-                            ___combat.MessageCenter.PublishMessage(new FloatieMessage(__instance.parent.GUID, combatant.GUID, effect.Description.Name, FloatieMessage.MessageNature.Buff));
+                            __instance.combat.MessageCenter.PublishMessage(new FloatieMessage(__instance.parent.GUID, combatant.GUID, effect.Description.Name, FloatieMessage.MessageNature.Buff));
                         }
                     }
                 }
             }
 
-            List<Effect> allEffectsTargeting = ___combat.EffectManager.GetAllEffectsTargeting(__instance.parent);
+            List<Effect> allEffectsTargeting = __instance.combat.EffectManager.GetAllEffectsTargeting(__instance.parent);
             for (int i = 0; i < allEffectsTargeting.Count; i++)
             {
                 if (allEffectsTargeting[i].EffectData.effectType == EffectType.FloatieEffect && allEffectsTargeting[i].EffectData.targetingData.effectTriggerType == EffectTriggerType.OnWeaponFire)

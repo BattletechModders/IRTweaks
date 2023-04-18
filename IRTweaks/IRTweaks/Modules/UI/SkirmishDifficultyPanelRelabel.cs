@@ -10,11 +10,11 @@ namespace IRTweaks.Modules.UI
     {
         static bool Prepare() => Mod.Config.Fixes.SimGameDifficultyLabelsReplacer;
 
-        static void Postfix(SimGameDifficultySettingsModule __instance, PreGameCareerModeSettingsTotalScoreDescAndBar ___difficultyBarAndMod)
+        static void Postfix(SimGameDifficultySettingsModule __instance)
         {
-            if (__instance != null && ___difficultyBarAndMod != null)
+            if (__instance != null && __instance.difficultyBarAndMod != null)
             {
-                ___difficultyBarAndMod.TotalScoreModifierLabel.SetText(
+                __instance.difficultyBarAndMod.TotalScoreModifierLabel.SetText(
                     new Text(Mod.LocalizedText.SimGameDifficultyStrings[ModText.SGDS_Desc], new object[] { })
                     );
 
