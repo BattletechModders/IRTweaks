@@ -140,46 +140,54 @@ namespace IRTweaks.Modules.Combat
             WeaponHitInfo hitInfo = attackSequenceResolveDamageMessage.hitInfo;
             AttackDirector.AttackSequence attackSequence = __instance.Director.GetAttackSequence(hitInfo.attackSequenceId);
             Weapon weapon = __instance.GetWeapon(attackSequenceResolveDamageMessage.hitInfo.attackGroupIndex, attackSequenceResolveDamageMessage.hitInfo.attackWeaponIndex);
-            foreach (EffectData effectData in weapon.StatusEffects())
+            if (weapon != null)
             {
-                if (effectData.targetingData.effectTriggerType == EffectTriggerType.OnHit &&
-                    effectData?.statisticData?.statName ==
-                    Mod.Config.Combat.OnWeaponHitOpts.ForceShutdownOnHitStat)
+                if (weapon.StatusEffects().Length > 0)
                 {
-                    if (attackSequence?.allAffectedTargetIds != null)
+                    foreach (EffectData effectData in weapon.StatusEffects())
                     {
+                        if (effectData.targetingData.effectTriggerType != EffectTriggerType.OnHit ||
+                            effectData?.statisticData?.statName !=
+                            Mod.Config.Combat.OnWeaponHitOpts.ForceShutdownOnHitStat) continue;
+                        if (attackSequence?.allAffectedTargetIds == null) continue;
                         for (int j = 0; j < attackSequence.allAffectedTargetIds.Count; j++)
                         {
                             AbstractActor abstractActor =
-                                __instance.Director.Combat.FindActorByGUID(attackSequence.allAffectedTargetIds[j]);
+                                __instance.Director.Combat.FindActorByGUID(
+                                    attackSequence.allAffectedTargetIds[j]);
                             if (abstractActor is Mech mech && !mech.IsShutDown)
                             {
-                                if (mech.GetTags().Contains(Mod.Config.Combat.OnWeaponHitOpts.IgnoreShutdownTag))
+                                if (mech.GetTags()
+                                    .Contains(Mod.Config.Combat.OnWeaponHitOpts.IgnoreShutdownTag))
                                     continue;
                                 int firstHitLocationForTarget =
                                     hitInfo.GetFirstHitLocationForTarget(abstractActor.GUID);
-                                if (firstHitLocationForTarget >= 0 && !abstractActor.IsDead)
+                                if (firstHitLocationForTarget >= 0 && !abstractActor.IsDead &&
+                                    !ModState.AttackShouldCheckActorsForShutdown.Contains(abstractActor.GUID))
                                 {
                                     ModState.AttackShouldCheckActorsForShutdown.Add(mech.GUID);
                                 }
                             }
                         }
                     }
+                }
+            }
 
-                    var advInfo = hitInfo.advInfo();
-                    if (advInfo == null) continue;
-                    foreach (var aoeRecord in advInfo.hits)
+            var advInfo = hitInfo.advInfo();
+            if (advInfo?.hits == null) return;
+            foreach (var aoeRecord in advInfo.hits)
+            {
+                if (aoeRecord.isHit && aoeRecord.isAOE && aoeRecord.target is Mech aoeMech &&
+                    !aoeMech.IsShutDown)
+                {
+                    if (aoeMech.GetTags().Contains(Mod.Config.Combat.OnWeaponHitOpts.IgnoreShutdownTag))
+                        continue;
+                    //int firstHitLocationForTarget = hitInfo.GetFirstHitLocationForTarget(aoeMech.GUID);
+                    if (!aoeMech.IsDead && !ModState.AttackShouldCheckActorsForShutdown.Contains(aoeMech.GUID))
                     {
-                        if (aoeRecord.isHit && aoeRecord.isAOE && aoeRecord.target is Mech aoeMech && !aoeMech.IsShutDown)
-                        {
-                            if (aoeMech.GetTags().Contains(Mod.Config.Combat.OnWeaponHitOpts.IgnoreShutdownTag)) continue;
-                            //int firstHitLocationForTarget = hitInfo.GetFirstHitLocationForTarget(aoeMech.GUID);
-                            if (!aoeMech.IsDead && !ModState.AttackShouldCheckActorsForShutdown.Contains(aoeMech.GUID))
-                            {
-                                ModState.AttackShouldCheckActorsForShutdown.Add(aoeMech.GUID);
-                                Mod.Log.Info?.Write($"[OnAttackSequenceResolveDamage] Added {aoeMech.DisplayName} to state for AOE shutdown check.");
-                            }
-                        }
+                        ModState.AttackShouldCheckActorsForShutdown.Add(aoeMech.GUID);
+                        Mod.Log.Info?.Write(
+                            $"[OnAttackSequenceResolveDamage] Added {aoeMech.DisplayName} to state for AOE shutdown check.");
                     }
                 }
             }
