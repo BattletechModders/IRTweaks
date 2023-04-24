@@ -65,7 +65,7 @@ namespace IRTweaks.Modules.Misc
 
                 __instance.deadEventTracker.baseProbability = __instance.Constants.Story.DeadEventStartingChance;
                 __instance.deadEventTracker.chanceIncrement = __instance.Constants.Story.DeadEventIncreaseRate;
-                Mod.Log.Info?.Write($"DEBUG DSIABLE TBONE AttemptEvents : dead event starting chance in tracker after setting: {__instance.deadEventTracker.EventChance} should be {__instance.Constants.Story.DeadEventStartingChance}.");
+                Mod.Log.Trace?.Write($"DEBUG DSIABLE TBONE AttemptEvents : dead event starting chance in tracker after setting: {__instance.deadEventTracker.EventChance} should be {__instance.Constants.Story.DeadEventStartingChance}.");
                 __instance.LogReport("% Chance for Dead MW Event: " + __instance.deadEventTracker.EventChance);
                 __instance.LogReport("Dead MW Event Invoked: " + __instance.deadEventTracker.AttemptEvent(true).ToString());
             }
