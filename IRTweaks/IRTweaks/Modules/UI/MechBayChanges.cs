@@ -1,8 +1,10 @@
 ﻿using BattleTech.UI.TMProWrapper;
+using CustomComponents;
 using HBS;
 using Localize;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
@@ -186,7 +188,7 @@ namespace IRTweaks.Modules.UI
             for (int i = loclInv.Count - 1; i >= 0; i--)
             {
                 MechLabItemSlotElement mechLabItemSlotElement = loclInv[i];
-                if (!mechLabItemSlotElement.ComponentRef.IsFixed && (mechLabItemSlotElement.ComponentRef.Def is WeaponDef || mechLabItemSlotElement.ComponentRef.Def is AmmunitionBoxDef))
+                if (!mechLabItemSlotElement.ComponentRef.IsFixed && (mechLabItemSlotElement.ComponentRef.Def is WeaponDef || mechLabItemSlotElement.ComponentRef.Def is AmmunitionBoxDef || mechLabItemSlotElement.componentRef.Def.GetComponents<Category>().Any(c => c.CategoryID == "WeaponAttachment")))
                 {
                     widget.OnRemoveItem(mechLabItemSlotElement, true);
                     panel.ForceItemDrop(mechLabItemSlotElement);
