@@ -14,7 +14,6 @@ namespace IRTweaks.Modules.Misc
 
         public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
         {
-
             var codes = new List<CodeInstruction>(instructions);
             FieldInfo currentAlliedFactionSaveFieldInfo = typeof(SimGameSave).GetField("AlliedFactions");
             FieldInfo careerEndAlliedFactionSaveFieldInfo = typeof(SimGameSave).GetField("CareerModeEndAlliedFactions");
@@ -95,10 +94,6 @@ namespace IRTweaks.Modules.Misc
             }
         }
     }
-
-
-
-
 
     //remove duplicates
     [HarmonyPatch(typeof(SimGameState), "AddAllyFaction")]
