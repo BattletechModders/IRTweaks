@@ -45,6 +45,7 @@ namespace IRTweaks.Modules.Combat
             static bool Prepare() => !string.IsNullOrEmpty(Mod.Config.Combat.TorsoMountStatName);
 
             [HarmonyPrefix]
+            [HarmonyPriority(Priority.First)]
             static void Prefix(ref bool __runOriginal, AbstractActor __instance, string reason, DeathMethod deathMethod, DamageType damageType, int location, int stackItemID, string attackerID, bool isSilent)
             {
                 if (!__runOriginal) return;

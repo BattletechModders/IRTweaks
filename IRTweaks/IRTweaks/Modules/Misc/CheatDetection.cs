@@ -321,12 +321,11 @@ namespace IRTweaks.Modules.Misc
     }
 
     [HarmonyPatch(typeof(SGBarracksAdvancementPanel), "OnValueClick")]
-    [HarmonyBefore(new string[] {"ca.gnivler.BattleTech.Abilifier"})]
-    [HarmonyPriority(Priority.First)]
     static class SGBarracksAdvancementPanel_OnValueClick_Patch
     {
         static bool Prepare() => Mod.Config.CheatDetection.CheatDetection;
-
+        [HarmonyBefore(new string[] { "ca.gnivler.BattleTech.Abilifier" })]
+        [HarmonyPriority(Priority.First)]
         static void Prefix(ref bool __runOriginal, SGBarracksAdvancementPanel __instance, string type, int value)
         {
             if (!__runOriginal) return;

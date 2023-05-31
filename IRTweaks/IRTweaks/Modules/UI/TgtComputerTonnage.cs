@@ -11,7 +11,6 @@ namespace IRTweaks.Modules.UI
             static bool Prepare() => Mod.Config.Fixes.TgtComputerTonnageDisplay;
 
             [HarmonyPriority(Priority.Last)]
-
             public static void Postfix(CombatHUDActorDetailsDisplay __instance)
             {
                 if (__instance.DisplayedActor is Mech mech)
