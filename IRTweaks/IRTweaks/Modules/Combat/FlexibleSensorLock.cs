@@ -155,13 +155,13 @@ namespace IRTweaks.Modules.Combat
             // Force the ability to be on cooldown
             if (FlexibleSensorLockHelper.ActorHasFreeSensorLock(__instance.owningActor))
             {
-                Pilot pilot = __instance.owningActor.GetPilot();
-                Ability ability = pilot.GetActiveAbility(ActiveAbilityID.SensorLock);
-                Mod.Log.Debug?.Write($"  On sensor lock complete, cooldown is:{ability.CurrentCooldown}");
-                if (ability.CurrentCooldown < 1)
-                {
-                    ability.ActivateCooldown();
-                }
+                //Pilot pilot = __instance.owningActor.GetPilot();
+                //Ability ability = pilot.GetActiveAbility(ActiveAbilityID.SensorLock);
+                //Mod.Log.Debug?.Write($"  On sensor lock complete, cooldown is:{ability.CurrentCooldown}");
+                //if (ability.CurrentCooldown < 1)
+                //{
+                //    ability.ActivateCooldown();
+                //}
 
                 Mod.Log.Debug?.Write($"  Clearing all sequences");
 
