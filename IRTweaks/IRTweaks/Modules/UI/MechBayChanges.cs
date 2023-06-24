@@ -1,10 +1,13 @@
-﻿using BattleTech.UI.TMProWrapper;
+﻿using BattleTech.UI;
+using BattleTech.UI.TMProWrapper;
 using CustomComponents;
 using HBS;
 using Localize;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using CustomComponents.Changes;
+using UIWidgetsSamples.Shops;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
@@ -155,11 +158,13 @@ namespace IRTweaks.Modules.UI
                 __runOriginal = false;
                 return;
             }
+
             if (__instance.dragItem != null)
             {
                 __runOriginal = false;
                 return;
             }
+
             __instance.batchActionInProgress = true;
             __instance.headWidget.AdvancedStripping(__instance);
             __instance.centerTorsoWidget.AdvancedStripping(__instance);
@@ -185,15 +190,34 @@ namespace IRTweaks.Modules.UI
 
             var loclInv = widget.localInventory;
 
+            var invChangesCC = new InventoryOperationState(new Queue<IChange>(), panel.activeMechDef);
             for (int i = loclInv.Count - 1; i >= 0; i--)
             {
                 MechLabItemSlotElement mechLabItemSlotElement = loclInv[i];
-                if (!mechLabItemSlotElement.ComponentRef.IsFixed && (mechLabItemSlotElement.ComponentRef.Def is WeaponDef || mechLabItemSlotElement.ComponentRef.Def is AmmunitionBoxDef || mechLabItemSlotElement.componentRef.Def.GetComponents<Category>().Any(c => c.CategoryID == "WeaponAttachment")))
+                if (!mechLabItemSlotElement.ComponentRef.IsFixed &&
+                    (mechLabItemSlotElement.ComponentRef.Def is WeaponDef ||
+                     mechLabItemSlotElement.ComponentRef.Def is AmmunitionBoxDef || mechLabItemSlotElement.componentRef
+                         .Def.GetComponents<Category>().Any(c => c.CategoryID == "WeaponAttachment")))
                 {
                     widget.OnRemoveItem(mechLabItemSlotElement, true);
                     panel.ForceItemDrop(mechLabItemSlotElement);
+                    var autoLinks = mechLabItemSlotElement.ComponentRef.GetComponents<AutoLinked>();
+                    if (autoLinks != null)
+                    {
+                        
+                        foreach (var autoLink in autoLinks)
+                        {
+                            if (autoLink.Links != null)
+                            {
+                                autoLink.OnRemove(ChassisLocations.All, invChangesCC);
+                            }
+                        }
+                        
+                    }
                 }
             }
+            invChangesCC.DoChanges();
+            invChangesCC.ApplyMechlab();
         }
     }
 
