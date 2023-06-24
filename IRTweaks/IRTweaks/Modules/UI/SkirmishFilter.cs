@@ -1,6 +1,4 @@
-﻿using BattleTech.UI.TMProWrapper;
-
-namespace IRTweaks.Modules.UI
+﻿namespace IRTweaks.Modules.UI
 {
 
     [HarmonyPatch(typeof(SkirmishSettings_Beta), "OnLoadComplete")]

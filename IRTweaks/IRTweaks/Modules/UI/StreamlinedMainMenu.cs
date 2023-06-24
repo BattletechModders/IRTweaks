@@ -1,7 +1,5 @@
-﻿using BattleTech.UI.TMProWrapper;
-using HBS;
+﻿using HBS;
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 

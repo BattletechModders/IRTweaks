@@ -1,8 +1,4 @@
-﻿using BattleTech;
-using BattleTech.Data;
-using HBS.Collections;
-using System;
-using System.Collections.Generic;
+﻿using HBS.Collections;
 
 namespace IRTweaks.Modules.Misc
 {

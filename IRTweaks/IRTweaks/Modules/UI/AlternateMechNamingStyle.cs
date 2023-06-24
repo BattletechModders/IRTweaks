@@ -1,5 +1,4 @@
-﻿using BattleTech.UI.TMProWrapper;
-using BattleTech.UI.Tooltips;
+﻿using BattleTech.UI.Tooltips;
 using System;
 using System.Collections.Generic;
 using System.Linq;

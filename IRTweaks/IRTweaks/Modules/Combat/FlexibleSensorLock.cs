@@ -1,6 +1,4 @@
-﻿using BattleTech.Save.SaveGameStructure;
-using System.Linq;
-using UnityEngine;
+﻿using System.Linq;
 
 namespace IRTweaks.Modules.Combat
 {
