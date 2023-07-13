@@ -4,6 +4,7 @@ using CustomUnits;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using AdvWeaponHitInfoHelper = CustAmmoCategories.AdvWeaponHitInfoHelper;
 
 namespace IRTweaks.Modules.Combat
 {
@@ -137,8 +138,16 @@ namespace IRTweaks.Modules.Combat
         public static void Postfix(AttackDirector.AttackSequence __instance, MessageCenterMessage message)
         {
             AttackSequenceResolveDamageMessage attackSequenceResolveDamageMessage = (AttackSequenceResolveDamageMessage)message;
+            if (attackSequenceResolveDamageMessage == null) return;
             WeaponHitInfo hitInfo = attackSequenceResolveDamageMessage.hitInfo;
             AttackDirector.AttackSequence attackSequence = __instance.Director.GetAttackSequence(hitInfo.attackSequenceId);
+            if (attackSequence == null) return;
+            if (__instance.id != hitInfo.attackSequenceId || __instance.id != attackSequence.id || attackSequence.id != hitInfo.attackSequenceId)
+            {
+                Mod.Log.Info?.Write(
+                    $"[OnAttackSequenceResolveDamage] ERROR!!! attackSequence IDs did not match!\r\n__instance {__instance.id}\r\nfetched attacksequence {attackSequence.id}\r\n hitInfo{hitInfo.attackSequenceId}.");
+                return;
+            }
             Weapon weapon = __instance.GetWeapon(attackSequenceResolveDamageMessage.hitInfo.attackGroupIndex, attackSequenceResolveDamageMessage.hitInfo.attackWeaponIndex);
             if (weapon != null)
             {
