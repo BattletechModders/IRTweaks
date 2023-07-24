@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 namespace IRTweaks.Modules.Combat
 {
+    // why is this on a getter thats called frequently instead of OnComplete????????
     // Updated reference to https://github.com/RealityMachina/Better-Juggernaut, further refined by LadyAlekto
     //   as MightyJuggernaut. Applies braced on attack if your pilot has the Guts 8 ability ability. 
 
@@ -10,7 +11,7 @@ namespace IRTweaks.Modules.Combat
     static class MechMeleeSequence_ConsumesFiring_Getter
     {
         [HarmonyPrepare]
-        static bool Prepare() => Mod.Config.Fixes.BraceOnMeleeWithJuggernaut;
+        static bool Prepare() => Mod.Config.Fixes.BraceOnMeleeWithJuggernaut && false;
 
         [HarmonyPrefix]
         static void Prefix(ref bool __runOriginal, MechMeleeSequence __instance)
@@ -42,7 +43,7 @@ namespace IRTweaks.Modules.Combat
     static class MechDFASequence_ConsumesFiring_Getter
     {
         [HarmonyPrepare]
-        static bool Prepare() => Mod.Config.Fixes.BraceOnMeleeWithJuggernaut;
+        static bool Prepare() => Mod.Config.Fixes.BraceOnMeleeWithJuggernaut && false;
 
         [HarmonyPrefix]
         static void Prefix(ref bool __runOriginal, MechDFASequence __instance)
@@ -66,6 +67,41 @@ namespace IRTweaks.Modules.Combat
             }
 
             return;
+        }
+    }
+
+
+
+    [HarmonyPatch(typeof(OrderSequence), "OnComplete")]
+    static class OrderSequence_OnComplete_Jugg
+    {
+        [HarmonyPrepare]
+        static bool Prepare() => Mod.Config.Fixes.BraceOnMeleeWithJuggernaut;
+
+        [HarmonyPrefix]
+    [HarmonyPatch(typeof(OrderSequence), "OnComplete")]
+        static void Postfix(OrderSequence __instance)
+        {
+            if (__instance is MechMeleeSequence || __instance is MechDFASequence)
+            {
+                if (__instance == null || __instance.owningActor == null || __instance.owningActor.GetPilot() == null)
+                    return; // Nothing to do
+
+                List<Ability> passives = __instance.owningActor.GetPilot().PassiveAbilities;
+                if (passives.Count > 0)
+                {
+                    foreach (Ability ability in passives)
+                    {
+                        if (ability.Def.Description.Id.Equals(Mod.Config.Abilities.JuggernautId,
+                                StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            Mod.Log.Info?.Write(
+                                "[OrderSequence_OnComplete_Jugg] Pilot has Juggernaut, bracing after melee or DFA attack using Mech.ApplyBraced.");
+                            __instance.owningActor.ApplyBraced();
+                        }
+                    }
+                }
+            }
         }
     }
 }
