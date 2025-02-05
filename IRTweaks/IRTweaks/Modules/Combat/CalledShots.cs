@@ -141,6 +141,9 @@ namespace IRTweaks.Modules.Combat
     }
 
     [HarmonyPatch(typeof(ToHit), "GetAllModifiers")]
+    [HarmonyAfter(new string[] {
+        "io.mission.modrepuation", "us.frostraptor.LowVisibility", "us.frostraptor.CBTBehaviorsEnhanced"
+    })]
     static class ToHit_GetAllModifiers
     {
         static bool Prepare() => Mod.Config.Fixes.CalledShotTweaks;
