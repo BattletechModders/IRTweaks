@@ -44,6 +44,7 @@ namespace IRTweaks.Helper
                     Mod.Log.Info?.Write($" -- calledShotMod: {calledShotMod} = defaultMod: {baseMod} + tacticsMod: {tacticsMod} + tagsCSMod: {tagsCSMod} + actorMod: {actorMod}");
 
                     ModState.PilotCalledShotModifiers[pilotKey] = calledShotMod;
+                    mod = calledShotMod;
                 }
                 else
                 {
