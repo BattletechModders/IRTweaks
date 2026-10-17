@@ -245,7 +245,7 @@ namespace IRTweaks.Modules.Combat
                         var fromTonnage = 0f;
 
                         if (mech.tonnage < Mod.Config.Combat.OnWeaponFireOpts
-                                .SelfInstabilityTonnageFactor)
+                                .SelfInstabilityTonnageBonusThreshold)
                         {
                             fromTonnage = mech.tonnage * Mod.Config.Combat.OnWeaponFireOpts.SelfInstabilityTonnageFactor;
                         }
