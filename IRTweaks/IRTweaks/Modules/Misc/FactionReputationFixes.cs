@@ -95,6 +95,28 @@ namespace IRTweaks.Modules.Misc
         }
     }
 
+    [HarmonyPatch(typeof(SimGameState), "SetReputation")]
+    public static class SimGameState_SetReputation
+    {
+        static bool Prepare() => Mod.Config.Fixes.FactionReputationFixes;
+
+        public static void Prefix(ref bool __runOriginal, SimGameState __instance, FactionValue factionValue, int val, StatCollection.StatOperation op, string sourceID)
+        {
+            if (!__runOriginal)
+            {
+                return;
+            }
+
+            int num = __instance.ClampNewRepValue(__instance.GetRepID("Reputation", factionValue), val, op, factionValue.IsMercenaryReviewBoard);
+            __instance.SetFactionVal(factionValue, "Reputation", num, op, sourceID);
+            if (__instance.CurSystem != null && !factionValue.IsOwner && factionValue.ID == __instance.CurSystem.OwnerValue.ID)
+            {
+                __instance.SetSystemOwnerReputation();
+            }
+            __runOriginal = false;
+        }
+    }
+
     //remove duplicates
     [HarmonyPatch(typeof(SimGameState), "AddAllyFaction")]
     public static class SimGameState_AddAllyFaction
