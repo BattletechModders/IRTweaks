@@ -240,6 +240,7 @@ namespace IRTweaks
         public bool EventRequirementsScopeFix = true;
         public bool FactionReputationFixes = true;
         public bool FactionValueFix = true;
+        public bool MonthlyContractRefresh = false;
         public bool MultiTargetStat = true;
         public bool RandomStartByDifficulty = true;
         public bool ReduceSaveCompression = true;
@@ -313,6 +314,7 @@ namespace IRTweaks
             Mod.Log.Info?.Write($"  FactionReputationFixes:             {this.Fixes.FactionReputationFixes}");
             Mod.Log.Info?.Write($"  FlexibleSensorLock:                 {this.Fixes.FlexibleSensorLock}");
             Mod.Log.Info?.Write($"  MaxArmorMaxesArmor:                 {this.Fixes.MaxArmorMaxesArmor}");
+            Mod.Log.Info?.Write($"  MonthlyContractRefresh:             {this.Fixes.MonthlyContractRefresh}");
             Mod.Log.Info?.Write($"  MechbayLayout:                      {this.Fixes.MechbayLayout}");
             Mod.Log.Info?.Write($"  MechbayLayoutDisableStore:          {this.Fixes.MechbayLayoutDisableStore}");
             Mod.Log.Info?.Write($"  OnWeaponFireFix:                    {this.Fixes.OnWeaponFireFix}");

@@ -48,6 +48,7 @@ This mod replaces the following mods, which used to be stand-alone:
 * **MaxArmorMaxesArmor**: "Max Armor" button in mechbay now sets armor to the maximum possible for the chassis; ignores available tonnage. Holding Control while clicking will use vanilla functionality (does not work well with MechEngineer armors like ferro, etc.)
 * **MechbayLayoutFix**: Moves a few UI elements in the mechbay to work better in a MechEngineer based mod. Thanks to Tiraxx for the idea!
 * **MechbayAdvancedStripping**: Holding Left or Right Control while clicking the "Strip Equipment" button in the mechbay will strip <i>only</i> weapons and ammo.
+* **MonthlyContractRefresh**: At month end the procedurally generated contracts and travel contracts of the current system are replaced with newly generated ones, up to the system's maximum. Any contracts added through mods or events remain. 
 * **MultiTargetStat**: This allows units to gain the Multi-Target ability from a Statistic, which can be applied via effects.
 * **OnWeaponFireFix**: Fixes OnWeaponFire effects so that extendDurationOnTrigger and triggerLimit work properly for StatisticEffects. Also necessary for OnWeaponHit effects and self-knockdown check
 * **PainTolerance**: Provides Guts-based resistance to injuries. See below for details.
